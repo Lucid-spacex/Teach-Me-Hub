@@ -113,7 +113,7 @@ export function PendingTutorsList({ onUpdate, refreshTrigger }: PendingTutorsLis
           <div className="flex gap-2">
             <Button
               size="sm"
-              variant="primary"
+              variant="default"
               onClick={() => handleVetting(tutorProfileId, 'APPROVED')}
               disabled={actionLoading === tutorProfileId}
               className="gap-1"

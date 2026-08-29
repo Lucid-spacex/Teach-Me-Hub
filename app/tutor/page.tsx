@@ -166,9 +166,9 @@ export default function TutorDashboard() {
             <p className="text-muted-foreground mt-2">Manage your tutoring sessions and students</p>
           </div>
           <div className="flex gap-2">
-            <Button 
-              onClick={handleRefresh} 
-              variant="primary" 
+            <Button
+              onClick={handleRefresh}
+              variant="default"
               size="sm"
               className="gap-2"
             >
@@ -176,7 +176,7 @@ export default function TutorDashboard() {
               Refresh
             </Button>
             <Button
-              variant="primary"
+              variant="default"
               size="sm"
               onClick={() => setProfileModalOpen(true)}
               className="gap-2"

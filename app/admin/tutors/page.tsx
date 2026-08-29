@@ -42,9 +42,9 @@ export default function AdminTutorsPage() {
               </div>
             </div>
           </div>
-          <Button 
-            onClick={refreshData} 
-            variant="primary" 
+          <Button
+            onClick={refreshData}
+            variant="default"
             size="sm"
             className="gap-2"
           >
