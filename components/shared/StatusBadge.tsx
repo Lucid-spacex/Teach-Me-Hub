@@ -15,7 +15,7 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
       case "APPROVED":
         return {
           icon: CheckCircle,
-          variant: "primary" as const,
+          variant: "default" as const,
           label: status,
         }
       case "PAUSED":
@@ -23,7 +23,7 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
       case "PENDING_VETTING":
         return {
           icon: Clock,
-          variant: "primary" as const,
+          variant: "outline" as const,
           label: status,
         }
       case "CANCELLED":
@@ -31,19 +31,19 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
       case "MISSED":
         return {
           icon: XCircle,
-          variant: "primary" as const,
+          variant: "outline" as const,
           label: status,
         }
       case "SCHEDULED":
         return {
           icon: Clock,
-          variant: "primary" as const,
+          variant: "secondary" as const,
           label: status,
         }
       default:
         return {
           icon: AlertCircle,
-          variant: "primary" as const,
+          variant: "outline" as const,
           label: status,
         }
     }

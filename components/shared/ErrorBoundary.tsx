@@ -61,8 +61,8 @@ export class ErrorBoundary extends Component<Props, State> {
                   <RefreshCw className="h-4 w-4" />
                   Refresh Page
                 </Button>
-                <Button 
-                  variant="primary" 
+                <Button
+                  variant="default"
                   onClick={() => window.location.href = '/'}
                   className="flex-1 gap-2"
                 >

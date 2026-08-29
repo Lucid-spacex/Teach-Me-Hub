@@ -199,7 +199,7 @@ export function UnmatchedEnrollmentsList({ onUpdate, refreshTrigger }: Unmatched
         footer={
           <div className="flex gap-2 justify-end">
             <Button
-              variant="primary"
+              variant="default"
               onClick={() => setAssignModalOpen(false)}
               disabled={actionLoading}
             >

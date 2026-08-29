@@ -72,7 +72,7 @@ export function SessionList({ enrollments, refreshTrigger }: SessionListProps) {
       header: 'Zoom Link',
       cell: (session: Session) => (
         session.zoomLink ? (
-          <Button variant="primary" size="sm" asChild>
+          <Button variant="default" size="sm" asChild>
             <a href={session.zoomLink} target="_blank" rel="noopener noreferrer" className="gap-2">
               <Video className="h-4 w-4" />
               Join

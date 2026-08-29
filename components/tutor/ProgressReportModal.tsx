@@ -88,7 +88,7 @@ export function ProgressReportModal({ open, onOpenChange, enrollments, onSuccess
         <div className="flex gap-2 justify-end">
           <Button
             type="button"
-            variant="primary"
+            variant="default"
             onClick={() => onOpenChange(false)}
             disabled={loading}
           >

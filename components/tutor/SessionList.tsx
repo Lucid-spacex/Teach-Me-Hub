@@ -83,7 +83,7 @@ export function TutorSessionList({ refreshTrigger }: TutorSessionListProps) {
       cell: (session: Session) => (
         <div className="flex gap-2">
           {session.zoomLink && session.status === 'SCHEDULED' && (
-            <Button variant="primary" size="sm" asChild>
+            <Button variant="default" size="sm" asChild>
               <a href={session.zoomLink} target="_blank" rel="noopener noreferrer" className="gap-2">
                 <Video className="h-4 w-4" />
                 Join

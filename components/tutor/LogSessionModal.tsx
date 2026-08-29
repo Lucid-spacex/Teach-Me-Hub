@@ -72,7 +72,7 @@ export function LogSessionModal({ open, onOpenChange, session, onSuccess }: LogS
         <div className="flex gap-2 justify-end">
           <Button
             type="button"
-            variant="primary"
+            variant="default"
             onClick={() => onOpenChange(false)}
             disabled={loading}
           >

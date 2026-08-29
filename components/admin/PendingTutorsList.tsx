@@ -127,7 +127,7 @@ export function PendingTutorsList({ onUpdate, refreshTrigger }: PendingTutorsLis
             </Button>
             <Button
               size="sm"
-              variant="primary"
+              variant="default"
               onClick={() => handleVetting(tutorProfileId, 'REJECTED')}
               disabled={actionLoading === tutorProfileId}
               className="gap-1"
