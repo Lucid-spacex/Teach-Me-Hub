@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { api } from '@/lib/api'
 import { AdminStudent } from '@/lib/types'
 import { DataTable } from '@/components/shared/DataTable'
+import { Avatar } from '@/components/shared/Avatar'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
@@ -46,13 +47,19 @@ export function AllStudentsList({ refreshTrigger }: AllStudentsListProps) {
       key: 'studentName',
       header: 'Student Name',
       cell: (student: AdminStudent) => (
-        <div className="font-medium">{student.fullName}</div>
+        <div className="flex items-center gap-3">
+          <Avatar
+            fullName={student.fullName}
+            size="sm"
+          />
+          <div className="font-medium">{student.fullName}</div>
+        </div>
       ),
     },
     {
-      key: 'gradeLevel',
+      key: 'actualGrade',
       header: 'Grade Level',
-      cell: (student: AdminStudent) => student.gradeLevel,
+      cell: (student: AdminStudent) => student.actualGrade,
     },
     {
       key: 'school',

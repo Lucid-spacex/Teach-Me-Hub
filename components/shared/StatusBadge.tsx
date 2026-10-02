@@ -26,6 +26,12 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
           variant: "outline" as const,
           label: status,
         }
+      case "PENDING_PAYMENT":
+        return {
+          icon: Clock,
+          variant: "outline" as const,
+          label: "Pending Payment",
+        }
       case "CANCELLED":
       case "REJECTED":
       case "MISSED":

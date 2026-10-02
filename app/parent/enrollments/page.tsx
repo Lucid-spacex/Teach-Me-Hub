@@ -2,14 +2,14 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { getUser, getUserRole } from '@/lib/auth'
-import Navbar from '@/components/shared/Navbar'
 import { EnrollmentList } from '@/components/parent/EnrollmentList'
 import { EnrollStudentModal } from '@/components/parent/EnrollStudentModal'
 import { Student } from '@/lib/types'
 import { api } from '@/lib/api'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, GraduationCap, Plus } from 'lucide-react'
+import { BookOpen, Plus, RefreshCw, CreditCard, Sparkles } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
 
@@ -20,6 +20,7 @@ export default function ParentEnrollmentsPage() {
   const [enrollModalOpen, setEnrollModalOpen] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [refreshTrigger, setRefreshTrigger] = useState(0)
 
   useEffect(() => {
     const user = getUser()
@@ -36,14 +37,14 @@ export default function ParentEnrollmentsPage() {
     setError(null)
     try {
       const data = await api.getStudents()
-      setStudents(data)
+      setStudents(data || [])
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load students'
       setError(errorMessage)
       toast({
-        title: "Error",
+        title: 'Error',
         description: errorMessage,
-        variant: "destructive",
+        variant: 'destructive',
       })
     } finally {
       setLoading(false)
@@ -51,96 +52,90 @@ export default function ParentEnrollmentsPage() {
   }
 
   const refreshEnrollments = () => {
+    setRefreshTrigger((prev) => prev + 1)
     loadStudents()
   }
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <Navbar />
-        <div className="flex items-center justify-center min-h-[calc(100vh-64px)]">
-          <LoadingSpinner size="lg" text="Loading enrollments..." />
-        </div>
+      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+        <div className="w-12 h-12 rounded-full border-2 border-primary/20 border-t-[#D4A017] animate-spin" />
+        <p className="text-sm text-zinc-400 font-medium">Loading enrollments...</p>
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-background">
-        <Navbar />
-        <div className="flex items-center justify-center min-h-[calc(100vh-64px)]">
-          <div className="text-center max-w-md">
-            <div className="bg-destructive/10 text-destructive p-6 rounded-lg mb-4">
-              <p className="font-medium">Failed to load enrollments</p>
-              <p className="text-sm mt-2">{error}</p>
-            </div>
-            <Button onClick={refreshEnrollments} className="gap-2">
-              Try Again
-            </Button>
-          </div>
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-center max-w-md p-6 rounded-2xl bg-card border border-red-500/30">
+          <div className="text-red-400 mb-3 font-semibold">Failed to load enrollments</div>
+          <p className="text-xs text-zinc-400 mb-4">{error}</p>
+          <Button
+            onClick={refreshEnrollments}
+            className="bg-primary hover:bg-secondary text-black font-semibold rounded-xl"
+          >
+            Try Again
+          </Button>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
-      <Navbar />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => router.push('/parent')}
-              className="gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back to Dashboard
-            </Button>
-            <div className="h-6 w-px bg-border" />
-            <div className="flex items-center gap-2">
-              <div className="bg-green-100 p-2 rounded-lg">
-                <GraduationCap className="h-5 w-5 text-green-600" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-foreground">My Enrollments</h1>
-                <p className="text-sm text-muted-foreground">Manage tutoring enrollments</p>
-              </div>
-            </div>
+    <div className="space-y-6 pb-12">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-6 rounded-2xl bg-gradient-to-r from-muted via-muted to-muted border border-border">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-primary/15 border border-primary/30 text-primary flex items-center justify-center shrink-0">
+            <BookOpen className="h-6 w-6" />
           </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl font-bold text-white tracking-tight">Academic Enrollments</h1>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/15 text-secondary border border-primary/30 font-medium">
+                Courses
+              </span>
+            </div>
+            <p className="text-xs text-zinc-400 mt-0.5">
+              Review active courses, tutor assignments, monthly tuition status, and enrollment approvals
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2.5">
+          <Button
+            onClick={refreshEnrollments}
+            variant="ghost"
+            className="text-zinc-400 hover:text-white hover:bg-white/5 h-10 px-3 rounded-xl"
+            title="Refresh"
+          >
+            <RefreshCw className="h-4 w-4" />
+          </Button>
+          <Link href="/parent/payments">
+            <Button
+              variant="outline"
+              className="border-primary/40 bg-muted text-secondary hover:bg-primary/10 hover:border-primary font-semibold h-10 px-4 rounded-xl flex items-center gap-2"
+            >
+              <CreditCard className="h-4 w-4" />
+              Pay Fees
+            </Button>
+          </Link>
           <Button
             onClick={() => setEnrollModalOpen(true)}
-            className="gap-2"
-            disabled={students.length === 0}
+            className="bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-primary/80 text-black font-bold h-10 px-4 rounded-xl shadow-[0_4px_16px_rgba(212,160,23,0.25)] flex items-center gap-2"
           >
-            <Plus className="h-4 w-4" />
-            Enroll Student
+            <Plus className="h-4 w-4 stroke-[3]" />
+            Enroll Subject
           </Button>
         </div>
-        
-        {students.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="bg-muted rounded-lg p-8 max-w-md mx-auto">
-              <GraduationCap className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No students yet</h3>
-              <p className="text-muted-foreground mb-4">
-                Add your first child to start enrolling them in tutoring programs.
-              </p>
-              <Button onClick={() => router.push('/parent/students')}>
-                Add Your First Child
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <EnrollmentList 
-            students={students}
-            onEnrollStudent={() => setEnrollModalOpen(true)}
-          />
-        )}
       </div>
+
+      <EnrollmentList
+        students={students}
+        onEnrollStudent={() => setEnrollModalOpen(true)}
+        refreshTrigger={refreshTrigger}
+      />
 
       <EnrollStudentModal
         open={enrollModalOpen}

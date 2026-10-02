@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation'
 import { api } from '@/lib/api'
 import { getUser, clearUser } from '@/lib/auth'
 import { Button } from '@/components/ui/button'
+import { ThemeToggle } from '@/components/shared/ThemeToggle'
+import { Avatar } from '@/components/shared/Avatar'
 import { LogOut, LayoutDashboard, GraduationCap, Shield } from 'lucide-react'
 
 export default function Navbar() {
@@ -55,21 +57,31 @@ export default function Navbar() {
               {getDashboardIcon()}
               <span>Smart Tutor</span>
             </button>
-            <div className="hidden sm:flex items-center gap-2 text-sm text-muted-foreground">
-              <span>{user.fullName || 'User'}</span>
-              <span>•</span>
-              <span className="font-medium">{user.role || 'Guest'}</span>
+            <div className="hidden sm:flex items-center gap-3">
+              <Avatar
+                fullName={user.fullName || 'User'}
+                profilePictureUrl={user.profilePictureUrl}
+                size="sm"
+              />
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <span>{user.fullName || 'User'}</span>
+                <span>•</span>
+                <span className="font-medium">{user.role || 'Guest'}</span>
+              </div>
             </div>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleLogout}
-            className="gap-2"
-          >
-            <LogOut className="h-4 w-4" />
-            <span className="hidden sm:inline">Logout</span>
-          </Button>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleLogout}
+              className="gap-2"
+            >
+              <LogOut className="h-4 w-4" />
+              <span className="hidden sm:inline">Logout</span>
+            </Button>
+          </div>
         </div>
       </div>
     </nav>

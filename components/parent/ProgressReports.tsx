@@ -5,6 +5,7 @@ import { api } from '@/lib/api'
 import { ProgressReport, Enrollment } from '@/lib/types'
 import { FileText } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { EmptyState } from '@/components/shared/EmptyState'
 
 interface ProgressReportsProps {
@@ -24,13 +25,13 @@ export function ProgressReports({ enrollments, refreshTrigger }: ProgressReports
   const loadReports = async () => {
     try {
       const reportsByEnrollment: Record<string, ProgressReport[]> = {}
-      
+
       // Load reports for each enrollment
       for (const enrollment of enrollments) {
         const data = await api.getProgressReports(enrollment.id)
         reportsByEnrollment[enrollment.id] = data
       }
-      
+
       setReports(reportsByEnrollment)
     } catch (err) {
       console.error('Failed to load progress reports:', err)
@@ -50,7 +51,7 @@ export function ProgressReports({ enrollments, refreshTrigger }: ProgressReports
   }
 
   if (loading) {
-    return <div className="text-sm text-muted-foreground">Loading progress reports...</div>
+    return <div className="text-sm text-gray-400">Loading progress reports...</div>
   }
 
   if (enrollments.length === 0) {
@@ -64,66 +65,73 @@ export function ProgressReports({ enrollments, refreshTrigger }: ProgressReports
   }
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-lg font-semibold">Progress Reports</h2>
-      
-      {enrollments.map((enrollment) => {
-        const enrollmentReports = reports[enrollment.id] || []
-        const isExpanded = expandedEnrollments.has(enrollment.id)
+    <Card className="bg-card border-brand-gold/30">
+      <CardHeader>
+        <CardTitle className="text-white flex items-center gap-2">
+          <FileText className="h-5 w-5 text-brand-gold" />
+          Progress Reports
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        {enrollments.map((enrollment) => {
+          const enrollmentReports = reports[enrollment.id] || []
+          const isExpanded = expandedEnrollments.has(enrollment.id)
+          const subjectName = enrollment.subject?.name || enrollment.subjectId
 
-        return (
-          <div key={enrollment.id} className="border rounded-lg">
-            <Button
-              variant="ghost"
-              className="w-full justify-between px-4 py-3 hover:bg-muted"
-              onClick={() => toggleEnrollment(enrollment.id)}
-            >
-              <div className="text-left">
-                <div className="font-medium">Subject: {enrollment.subjectId}</div>
-                <div className="text-sm text-muted-foreground">
-                  {enrollmentReports.length} report{enrollmentReports.length !== 1 ? 's' : ''}
-                </div>
-              </div>
-              <FileText className={`h-4 w-4 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
-            </Button>
-            
-            {isExpanded && (
-              <div className="border-t p-4">
-                {enrollmentReports.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">No progress reports yet</p>
-                ) : (
-                  <div className="space-y-4">
-                    {enrollmentReports.map((report) => (
-                      <div key={report.id} className="border rounded-lg p-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-medium">{report.period}</h4>
-                          <span className="text-xs text-muted-foreground">
-                            {new Date(report.createdAt).toLocaleDateString()}
-                          </span>
-                        </div>
-                        <div className="space-y-2 text-sm">
-                          <div>
-                            <span className="font-medium">Summary:</span>
-                            <p className="text-muted-foreground">{report.summary}</p>
-                          </div>
-                          <div>
-                            <span className="font-medium">Strengths:</span>
-                            <p className="text-muted-foreground">{report.strengths}</p>
-                          </div>
-                          <div>
-                            <span className="font-medium">Areas to Improve:</span>
-                            <p className="text-muted-foreground">{report.areasToImprove}</p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+          return (
+            <div key={enrollment.id} className="border border-brand-gold/20 rounded-lg mb-2">
+              <Button
+                variant="ghost"
+                className="w-full justify-between px-4 py-3 hover:bg-brand-gold/10 text-white"
+                onClick={() => toggleEnrollment(enrollment.id)}
+              >
+                <div className="text-left">
+                  <div className="font-medium">{subjectName}</div>
+                  <div className="text-sm text-gray-400">
+                    {enrollmentReports.length} report{enrollmentReports.length !== 1 ? 's' : ''}
                   </div>
-                )}
-              </div>
-            )}
-          </div>
-        )
-      })}
-    </div>
+                </div>
+                <FileText className={`h-4 w-4 transition-transform text-brand-gold ${isExpanded ? 'rotate-90' : ''}`} />
+              </Button>
+
+              {isExpanded && (
+                <div className="border-t border-brand-gold/20 p-4">
+                  {enrollmentReports.length === 0 ? (
+                    <p className="text-sm text-gray-400">No progress reports yet</p>
+                  ) : (
+                    <div className="space-y-4">
+                      {enrollmentReports.map((report) => (
+                        <div key={report.id} className="border border-brand-gold/20 rounded-lg p-4 bg-brand-dark/50">
+                          <div className="flex items-center justify-between mb-2">
+                            <h4 className="font-medium text-white">{report.period}</h4>
+                            <span className="text-xs text-gray-400">
+                              {new Date(report.createdAt).toLocaleDateString()}
+                            </span>
+                          </div>
+                          <div className="space-y-2 text-sm">
+                            <div>
+                              <span className="font-medium text-brand-gold">Summary:</span>
+                              <p className="text-gray-300">{report.summary}</p>
+                            </div>
+                            <div>
+                              <span className="font-medium text-brand-gold">Strengths:</span>
+                              <p className="text-gray-300">{report.strengths}</p>
+                            </div>
+                            <div>
+                              <span className="font-medium text-brand-gold">Areas to Improve:</span>
+                              <p className="text-gray-300">{report.areasToImprove}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </CardContent>
+    </Card>
   )
 }

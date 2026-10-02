@@ -10,6 +10,8 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
 import { useToast } from '@/components/ui/use-toast'
+import { ProfilePictureUpload } from '@/components/shared/ProfilePictureUpload'
+import { getUser } from '@/lib/auth'
 
 interface TutorProfileModalProps {
   open: boolean
@@ -31,6 +33,7 @@ export function TutorProfileModal({ open, onOpenChange, existingProfile, onSucce
   const [availabilityText, setAvailabilityText] = useState('')
   const [subjectsText, setSubjectsText] = useState('')
   const [loading, setLoading] = useState(false)
+  const currentUser = getUser()
 
   useEffect(() => {
     if (existingProfile) {
@@ -122,6 +125,13 @@ export function TutorProfileModal({ open, onOpenChange, existingProfile, onSucce
     }
   }
 
+  const handleProfilePictureChange = (url: string | null) => {
+    if (currentUser) {
+      const updatedUser = { ...currentUser, profilePictureUrl: url }
+      localStorage.setItem('user', JSON.stringify(updatedUser))
+    }
+  }
+
   return (
     <Modal
       open={open}
@@ -148,8 +158,18 @@ export function TutorProfileModal({ open, onOpenChange, existingProfile, onSucce
         </div>
       }
     >
-      <form id="profile-form" onSubmit={handleSubmit} className="space-y-4">
-        {!isEditMode && (
+      <div className="space-y-6">
+        {/* Profile Picture Section */}
+        <div className="flex flex-col items-center gap-4 pb-6 border-b border-border/40">
+          <ProfilePictureUpload
+            currentPictureUrl={currentUser?.profilePictureUrl}
+            fullName={currentUser?.fullName || 'Tutor'}
+            onPictureChange={handleProfilePictureChange}
+          />
+        </div>
+
+        <form id="profile-form" onSubmit={handleSubmit} className="space-y-4">
+          {!isEditMode && (
           <>
             <div className="space-y-2">
               <Label htmlFor="subjects">Subjects *</Label>
@@ -219,7 +239,8 @@ export function TutorProfileModal({ open, onOpenChange, existingProfile, onSucce
             </p>
           </div>
         )}
-      </form>
+        </form>
+      </div>
     </Modal>
   )
 }

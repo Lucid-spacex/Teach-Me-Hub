@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { api } from '@/lib/api'
 import { TutorWithProfile } from '@/lib/types'
 import { DataTable } from '@/components/shared/DataTable'
+import { Avatar } from '@/components/shared/Avatar'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
@@ -51,7 +52,14 @@ export function AllTutorsList({ refreshTrigger }: AllTutorsListProps) {
       key: 'tutorName',
       header: 'Tutor Name',
       cell: (tutor: TutorWithProfile) => (
-        <div className="font-medium">{tutor.fullName}</div>
+        <div className="flex items-center gap-3">
+          <Avatar
+            fullName={tutor.fullName}
+            profilePictureUrl={tutor.profilePictureUrl}
+            size="sm"
+          />
+          <div className="font-medium">{tutor.fullName}</div>
+        </div>
       ),
     },
     {

@@ -1,5 +1,6 @@
 'use client'
 
+// Fixed variant="primary" to variant="default" for TypeScript compatibility
 import { useEffect, useState } from 'react'
 import { api } from '@/lib/api'
 import { PendingTutor } from '@/lib/types'

@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { getUser, getUserRole } from '@/lib/auth'
-import Navbar from '@/components/shared/Navbar'
 import { ProgressReportModal } from '@/components/tutor/ProgressReportModal'
 import { ProgressReport, Enrollment } from '@/lib/types'
 import { api } from '@/lib/api'
@@ -62,8 +61,7 @@ export default function TutorProgressReportsPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <Navbar />
-        <div className="flex items-center justify-center min-h-[calc(100vh-64px)]">
+                <div className="flex items-center justify-center min-h-[calc(100vh-64px)]">
           <LoadingSpinner size="lg" text="Loading progress reports..." />
         </div>
       </div>
@@ -73,8 +71,7 @@ export default function TutorProgressReportsPage() {
   if (error) {
     return (
       <div className="min-h-screen bg-background">
-        <Navbar />
-        <div className="flex items-center justify-center min-h-[calc(100vh-64px)]">
+                <div className="flex items-center justify-center min-h-[calc(100vh-64px)]">
           <div className="text-center max-w-md">
             <div className="bg-destructive/10 text-destructive p-6 rounded-lg mb-4">
               <p className="font-medium">Failed to load progress reports</p>
@@ -90,9 +87,8 @@ export default function TutorProgressReportsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
-      <Navbar />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-background">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -100,15 +96,15 @@ export default function TutorProgressReportsPage() {
               variant="ghost"
               size="sm"
               onClick={() => router.push('/tutor')}
-              className="gap-2"
+              className="gap-2 text-muted-foreground hover:text-foreground"
             >
               <ArrowLeft className="h-4 w-4" />
               Back to Dashboard
             </Button>
             <div className="h-6 w-px bg-border" />
             <div className="flex items-center gap-2">
-              <div className="bg-orange-100 p-2 rounded-lg">
-                <FileText className="h-5 w-5 text-orange-600" />
+              <div className="bg-brand-gold/20 p-2 rounded-lg border border-brand-gold/30">
+                <FileText className="h-5 w-5 text-brand-gold" />
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-foreground">Progress Reports</h1>
@@ -116,9 +112,9 @@ export default function TutorProgressReportsPage() {
               </div>
             </div>
           </div>
-          <Button 
-            onClick={() => setReportModalOpen(true)} 
-            className="gap-2"
+          <Button
+            onClick={() => setReportModalOpen(true)}
+            className="gap-2 bg-brand-gold hover:bg-brand-goldLight text-brand-dark"
             disabled={enrollments.length === 0}
           >
             <Plus className="h-4 w-4" />
