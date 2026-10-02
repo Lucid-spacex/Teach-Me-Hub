@@ -143,13 +143,17 @@ export function DashboardNav({ role, unreadCount = 0 }: DashboardNavProps) {
           <div className="flex items-center space-x-2">
             {/* User Avatar */}
             {user && (
-              <Avatar
-                fullName={user.fullName}
-                profilePictureUrl={user.profilePictureUrl}
-                size="md"
-                className="cursor-pointer"
+              <button
                 onClick={() => router.push(`/${role.toLowerCase()}/settings`)}
-              />
+                className="cursor-pointer"
+              >
+                <Avatar
+                  fullName={user.fullName}
+                  profilePictureUrl={user.profilePictureUrl}
+                  size="md"
+                  className=""
+                />
+              </button>
             )}
 
             {/* Theme Toggle */}

@@ -146,12 +146,13 @@ export default function TutorMessagesPage() {
 
       // Handle admin thread specially
       if (selectedThread.id === 'admin') {
-        if (!otherParticipant.id) {
+        const adminId = 'recipientId' in otherParticipant ? otherParticipant.recipientId : otherParticipant.id
+        if (!adminId) {
           throw new Error('Admin recipient ID is missing')
         }
-        console.log('Sending message to admin with ID:', otherParticipant.id)
+        console.log('Sending message to admin with ID:', adminId)
         const sent = await api.sendMessage({
-          recipientId: otherParticipant.id,
+          recipientId: adminId,
           body: messageText
         })
         setNewMessage('')
@@ -167,7 +168,11 @@ export default function TutorMessagesPage() {
           await loadMessages(adminThread.id)
         }
       } else {
-        const sent = await api.sendMessage(otherParticipant.id, messageText)
+        const recipientId = 'recipientId' in otherParticipant ? otherParticipant.recipientId : otherParticipant.id
+        if (!recipientId) {
+          throw new Error('Recipient ID is missing')
+        }
+        const sent = await api.sendMessage(recipientId, messageText)
         setNewMessage('')
         setMessages(prev => [...prev, sent])
 
@@ -182,7 +187,7 @@ export default function TutorMessagesPage() {
                     body: messageText,
                     content: messageText,
                     createdAt: new Date().toISOString(),
-                    senderId: currentUser?.id,
+                    senderId: currentUser?.id || '',
                     readAt: null
                   },
                   lastMessageAt: new Date().toISOString()
@@ -249,7 +254,7 @@ export default function TutorMessagesPage() {
       setSelectedThread({
         id: 'admin',
         otherParticipant: {
-          id: adminContact.recipientId,
+          recipientId: adminContact.recipientId,
           fullName: 'Admin',
           role: 'ADMIN',
         },
@@ -425,7 +430,7 @@ export default function TutorMessagesPage() {
                     >
                       <Avatar
                         fullName={other.fullName}
-                        profilePictureUrl={other.profilePictureUrl}
+                        profilePictureUrl={'profilePictureUrl' in other && other.profilePictureUrl ? other.profilePictureUrl : undefined}
                         size="sm"
                         className="shrink-0"
                       />
@@ -476,7 +481,7 @@ export default function TutorMessagesPage() {
                       <div className="flex items-center gap-3">
                         <Avatar
                           fullName={other.fullName}
-                          profilePictureUrl={other.profilePictureUrl}
+                          profilePictureUrl={'profilePictureUrl' in other && other.profilePictureUrl ? other.profilePictureUrl : undefined}
                           size="sm"
                         />
                         <div>

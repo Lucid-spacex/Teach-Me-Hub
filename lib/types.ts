@@ -82,6 +82,7 @@ export interface Student {
   email: string | null
   preferredStartDate: string | null
   studentCode?: string
+  profilePictureUrl?: string | null
   createdAt: string
 }
 
@@ -355,6 +356,12 @@ export interface StudentProfile {
   createdAt: string
 }
 
+export interface AdminContact {
+  recipientId: string
+  fullName: string
+  role: 'ADMIN'
+}
+
 export interface StudentActivity {
   totalSessions: number
   attendanceRate: number
@@ -382,7 +389,8 @@ export interface MessageThread {
     profilePictureUrl?: string | null
   }>
   otherParticipant?: {
-    id: string
+    id?: string
+    recipientId?: string
     fullName: string
     role: UserRole
     profilePictureUrl?: string | null
@@ -392,7 +400,7 @@ export interface MessageThread {
     body: string
     content?: string
     createdAt: string
-    senderId: string
+    senderId?: string
     readAt: string | null
   }
   lastMessageAt: string

@@ -191,7 +191,7 @@ export default function TutorAssignmentsPage() {
           title: formData.title,
           description: formData.description,
           type: formData.type,
-          dueDate: formData.dueDate ? new Date(formData.dueDate).toISOString() : undefined,
+          dueDate: formData.dueDate ? new Date(formData.dueDate).toISOString() : new Date().toISOString(),
           attachment: attachmentFile || undefined,
         })
         toast({

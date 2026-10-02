@@ -88,7 +88,11 @@ export default function StudentMessagesPage() {
     }
     setSending(true)
     try {
-      await api.sendMessage(otherParticipant.id, content)
+      const recipientId = 'recipientId' in otherParticipant ? otherParticipant.recipientId : otherParticipant.id
+      if (!recipientId) {
+        throw new Error('Recipient ID is missing')
+      }
+      await api.sendMessage(recipientId, content)
       setNewMessage('')
       await loadMessages(selectedThread.id)
       const updatedThreads = await api.getMessageThreads().catch(() => threads)

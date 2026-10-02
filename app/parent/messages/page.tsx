@@ -115,7 +115,11 @@ export default function ParentMessagesPage() {
           await loadMessages(adminThread.id)
         }
       } else {
-        await api.sendMessage(otherParticipant.id, newMessage)
+        const recipientId = 'recipientId' in otherParticipant ? otherParticipant.recipientId : otherParticipant.id
+        if (!recipientId) {
+          throw new Error('Recipient ID is missing')
+        }
+        await api.sendMessage(recipientId, newMessage)
         setNewMessage('')
         await loadMessages(selectedThread.id)
         await loadThreads() // Refresh to update last message
@@ -242,7 +246,7 @@ export default function ParentMessagesPage() {
                           <div className="flex items-start gap-3">
                             <Avatar
                               fullName={participant?.fullName || 'Unknown'}
-                              profilePictureUrl={participant?.profilePictureUrl}
+                              profilePictureUrl={'profilePictureUrl' in (participant || {}) && participant?.profilePictureUrl ? participant.profilePictureUrl : undefined}
                               size="md"
                             />
                             <div className="flex-1 min-w-0">
