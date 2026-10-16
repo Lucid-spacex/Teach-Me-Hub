@@ -237,14 +237,14 @@ export default function StudentAssignmentsPage() {
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between gap-2 mb-2">
                       <span className={`text-xs px-2.5 py-0.5 rounded font-semibold ${
-                        isTest ? 'bg-purple-500/20 text-purple-300' : 'bg-brand-gold/20 text-brand-gold'
+                        isTest ? 'bg-muted text-foreground' : 'bg-brand-gold/20 text-brand-gold'
                       }`}>
                         {item.type}
                       </span>
                       <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${
-                        item.status === 'PENDING' ? 'bg-yellow-500/20 text-yellow-400' :
-                        item.status === 'SUBMITTED' ? 'bg-blue-500/20 text-blue-400' :
-                        'bg-green-500/20 text-green-400'
+                        item.status === 'PENDING' ? 'bg-brand-gold/20 text-brand-gold' :
+                        item.status === 'SUBMITTED' ? 'bg-muted text-foreground' :
+                        'bg-muted text-muted-foreground'
                       }`}>
                         {item.status}
                       </span>
