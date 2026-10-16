@@ -2,16 +2,17 @@
 
 import { useEffect, useState } from 'react'
 import { api } from '@/lib/api'
-import { Enrollment, TutorWithProfile } from '@/lib/types'
+import { Enrollment, TutorWithProfile, SuggestedTutor } from '@/lib/types'
 import { DataTable } from '@/components/shared/DataTable'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
-import { UserCheck, ClipboardList } from 'lucide-react'
+import { UserCheck, ClipboardList, AlertCircle, CheckCircle } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
 import { Modal } from '@/components/shared/Modal'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Checkbox } from '@/components/ui/checkbox'
 
 interface UnmatchedEnrollmentsListProps {
   onUpdate: () => void
@@ -26,18 +27,15 @@ export function UnmatchedEnrollmentsList({ onUpdate, refreshTrigger }: Unmatched
   const [selectedEnrollment, setSelectedEnrollment] = useState<Enrollment | null>(null)
   const [tutorId, setTutorId] = useState('')
   const [actionLoading, setActionLoading] = useState(false)
-  const [tutors, setTutors] = useState<TutorWithProfile[]>([])
+  const [suggestedTutors, setSuggestedTutors] = useState<SuggestedTutor[]>([])
   const [tutorsLoading, setTutorsLoading] = useState(false)
+  const [forceAssignment, setForceAssignment] = useState(false)
 
   const [includeUnpaid, setIncludeUnpaid] = useState(false)
 
   useEffect(() => {
     loadEnrollments()
   }, [refreshTrigger, includeUnpaid])
-
-  useEffect(() => {
-    loadTutors()
-  }, [])
 
   const loadEnrollments = async () => {
     setLoading(true)
@@ -52,28 +50,27 @@ export function UnmatchedEnrollmentsList({ onUpdate, refreshTrigger }: Unmatched
     }
   }
 
-  const loadTutors = async () => {
+  const openAssignModal = async (enrollment: Enrollment) => {
+    setSelectedEnrollment(enrollment)
+    setTutorId('')
+    setForceAssignment(false)
     setTutorsLoading(true)
+    setAssignModalOpen(true)
+
     try {
-      const data = await api.getTutors('APPROVED')
-      setTutors(Array.isArray(data) ? data : [])
+      const data = await api.getSuggestedTutors(enrollment.id)
+      setSuggestedTutors(Array.isArray(data) ? data : [])
     } catch (err) {
-      console.error('Failed to load tutors:', err)
-      setTutors([])
+      console.error('Failed to load suggested tutors:', err)
+      setSuggestedTutors([])
       toast({
-        title: "Error",
-        description: "Failed to load tutors",
-        variant: "destructive",
+        title: "Warning",
+        description: "Could not load suggested tutors. All approved tutors will be shown.",
+        variant: "default",
       })
     } finally {
       setTutorsLoading(false)
     }
-  }
-
-  const openAssignModal = (enrollment: Enrollment) => {
-    setSelectedEnrollment(enrollment)
-    setTutorId('')
-    setAssignModalOpen(true)
   }
 
   const handleAssignTutor = async () => {
@@ -86,10 +83,21 @@ export function UnmatchedEnrollmentsList({ onUpdate, refreshTrigger }: Unmatched
       return
     }
 
+    // Check if force assignment is needed
+    const selectedTutor = suggestedTutors.find(t => t.id === tutorId)
+    if (!forceAssignment && selectedTutor && (selectedTutor.availabilityStatus === 'UNAVAILABLE' || selectedTutor.currentStudents >= selectedTutor.maxStudents)) {
+      toast({
+        title: "Warning",
+        description: "This tutor is at capacity or unavailable. Check 'Force assignment' to proceed anyway.",
+        variant: "default",
+      })
+      return
+    }
+
     setActionLoading(true)
 
     try {
-      await api.assignTutor(selectedEnrollment.id, { tutorId })
+      await api.assignTutorWithForce(selectedEnrollment.id, { tutorId, force: forceAssignment })
       toast({
         title: "Success",
         description: "Tutor assigned successfully",
@@ -252,40 +260,81 @@ export function UnmatchedEnrollmentsList({ onUpdate, refreshTrigger }: Unmatched
           )}
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Tutor *</label>
-            <Select
-              value={tutorId}
-              onValueChange={(value) => setTutorId(value)}
-              disabled={tutorsLoading}
-            >
-              <SelectTrigger className="bg-background border-input">
-                <SelectValue placeholder={tutorsLoading ? "Loading tutors..." : "Select a tutor"} />
-              </SelectTrigger>
-              <SelectContent>
-                {tutors.length === 0 ? (
-                  <SelectItem value="" disabled>
-                    No tutors available
-                  </SelectItem>
-                ) : (
-                  tutors
-                    .filter(tutor => tutor?.id)
-                    .map((tutor) => {
-                      const tutorId = tutor.id
-                      const fullName = tutor.fullName
-                      const subjects = Array.isArray(tutor.tutorProfile?.subjects) && tutor.tutorProfile.subjects.length > 0
-                        ? tutor.tutorProfile.subjects.join(', ')
-                        : 'No profile'
+            <label className="text-sm font-medium text-gray-300">Suggested Tutors *</label>
+            {tutorsLoading ? (
+              <div className="flex items-center justify-center py-4">
+                <LoadingSpinner size="sm" />
+              </div>
+            ) : suggestedTutors.length === 0 ? (
+              <div className="text-sm text-gray-400 py-2">No suggested tutors available for this enrollment</div>
+            ) : (
+              <div className="space-y-2 max-h-64 overflow-y-auto">
+                {suggestedTutors.map((tutor) => {
+                  const isUnavailable = tutor.availabilityStatus === 'UNAVAILABLE'
+                  const atCapacity = tutor.currentStudents >= tutor.maxStudents
+                  const needsWarning = isUnavailable || atCapacity
 
-                      return (
-                        <SelectItem key={tutorId} value={tutorId}>
-                          {fullName} ({subjects})
-                        </SelectItem>
-                      )
-                    })
-                )}
-              </SelectContent>
-            </Select>
+                  return (
+                    <div
+                      key={tutor.id}
+                      className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
+                        tutorId === tutor.id
+                          ? 'border-brand-gold bg-brand-gold/10'
+                          : needsWarning
+                            ? 'border-yellow-500/30 bg-yellow-500/5 hover:border-yellow-500/50'
+                            : 'border-brand-gold/20 bg-brand-dark/30 hover:border-brand-gold/40'
+                      }`}
+                      onClick={() => setTutorId(tutor.id)}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <p className="font-medium text-white">{tutor.fullName}</p>
+                          <p className="text-xs text-gray-400 mt-1">
+                            {tutor.subjects.map(s => s.name).join(', ')}
+                          </p>
+                          <div className="flex items-center gap-2 mt-2 text-xs">
+                            <span className="text-gray-400">
+                              {tutor.currentStudents}/{tutor.maxStudents} students
+                            </span>
+                            <span className="text-gray-500">•</span>
+                            <span className={`${
+                              tutor.availabilityStatus === 'AVAILABLE' ? 'text-green-400' :
+                              tutor.availabilityStatus === 'LIMITED' ? 'text-yellow-400' :
+                              'text-red-400'
+                            }`}>
+                              {tutor.availabilityStatus}
+                            </span>
+                          </div>
+                        </div>
+                        {needsWarning && (
+                          <AlertCircle className="h-5 w-5 text-yellow-500 shrink-0 ml-2" />
+                        )}
+                        {tutorId === tutor.id && !needsWarning && (
+                          <CheckCircle className="h-5 w-5 text-brand-gold shrink-0 ml-2" />
+                        )}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
           </div>
+
+          {suggestedTutors.some(t => t.availabilityStatus === 'UNAVAILABLE' || t.currentStudents >= t.maxStudents) && (
+            <div className="flex items-center gap-2 pt-2">
+              <Checkbox
+                id="force"
+                checked={forceAssignment}
+                onCheckedChange={(checked) => setForceAssignment(checked === true)}
+              />
+              <label
+                htmlFor="force"
+                className="text-sm text-gray-300 cursor-pointer"
+              >
+                Force assignment (override capacity/availability warnings)
+              </label>
+            </div>
+          )}
         </div>
       </Modal>
     </>

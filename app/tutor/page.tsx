@@ -34,6 +34,19 @@ export default function TutorDashboard() {
         return
       }
 
+      // Redirect pending tutors to application page
+      if (user.status === 'PENDING_VETTING') {
+        router.push('/tutor/application')
+        return
+      }
+
+      // Show error for rejected tutors
+      if (user.status === 'REJECTED') {
+        setError('Your application was not approved. Please contact support.')
+        setLoading(false)
+        return
+      }
+
       loadInitialData()
     } catch (err) {
       console.error('Error in tutor dashboard useEffect:', err)

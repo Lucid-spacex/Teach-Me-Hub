@@ -319,22 +319,22 @@ export default function StudentDashboard() {
         </Link>
 
         {/* Academic Grades */}
-        <Link href="/student/grades" className="block group">
+        <Link href="/student/performance" className="block group">
           <Card className="bg-card/90 border border-brand-border hover:border-brand-gold/40 rounded-2xl transition-all duration-200 group-hover:-translate-y-0.5 overflow-hidden">
             <CardHeader className="pb-2 pt-5 px-5 flex flex-row items-center justify-between space-y-0">
               <span className="text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors">
                 Performance
               </span>
               <div className="w-9 h-9 rounded-xl bg-brand-subtle border border-brand-border text-brand-gold flex items-center justify-center group-hover:border-brand-gold/40 group-hover:bg-brand-gold/10 transition-colors">
-                <BarChart3 className="h-4 w-4" />
+                <TrendingUp className="h-4 w-4" />
               </div>
             </CardHeader>
             <CardContent className="px-5 pb-5 pt-1">
               <div className="flex items-baseline justify-between">
-                <p className="text-3xl font-bold text-brand-gold tracking-tight">Active</p>
+                <p className="text-3xl font-bold text-brand-gold tracking-tight">View</p>
                 <ArrowUpRight className="w-4 h-4 text-muted-foreground group-hover:text-brand-gold transition-colors" />
               </div>
-              <p className="text-[11px] text-muted-foreground mt-1">View grade breakdown</p>
+              <p className="text-[11px] text-muted-foreground mt-1">Track progress & grades</p>
             </CardContent>
           </Card>
         </Link>

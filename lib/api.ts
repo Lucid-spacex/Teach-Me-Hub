@@ -1,6 +1,8 @@
 import {
+  AdminActionLog,
   AdminOverview,
   AdminStudent,
+  AdminStudentDetail,
   ApiError,
   AssignTutorRequest,
   Assignment,
@@ -16,20 +18,31 @@ import {
   Enrollment,
   ExchangeRate,
   Grade,
+  GradeBandTier,
+  HighestQualification,
+  HowHeardSource,
   InitiatePaymentRequest,
   InitiatePaymentResponse,
   LoginRequest,
   Message,
   MessageThread,
   Notification,
+  ParentDetailProfile,
+  ParentDirectoryEntry,
   Payment,
-  PendingTutor,
+  PaymentDetail,
+  PaymentNote,
+  PaymentSummary,
+  PeriodFilter,
+  PerformanceOverview,
+  PricingQuote,
   PricingTier,
   ProgressReport,
   QuizAttempt,
   QuizQuestion,
   RegisterRequest,
   RegisterResponse,
+  RegenerateStudentPasswordResponse,
   Session,
   Student,
   StudentActivity,
@@ -37,6 +50,12 @@ import {
   StudentLoginRequest,
   StudentProfile,
   Subject,
+  SubjectPrice,
+  SuggestedTutor,
+  TutorApplication,
+  TutorAvailabilityStatus,
+  TutorDocument,
+  TutorLevel,
   TutorProfile,
   TutorStudent,
   TutorWithProfile,
@@ -59,17 +78,18 @@ class ApiClient {
 
   private async request<T>(
     endpoint: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
+    retryCount = 0
   ): Promise<T> {
     // Health endpoint is special - remove /api prefix
     const isHealthEndpoint = endpoint === '/health'
     const url = isHealthEndpoint
       ? `${this.baseUrl.replace('/api', '')}/health`
       : `${this.baseUrl}${endpoint}`
-    
+
     // Get token from cookies (client-side)
     const token = this.getToken()
-    
+
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       ...(options.headers as Record<string, string>),
@@ -88,17 +108,31 @@ class ApiClient {
 
     console.log('API Response status:', response.status, response.statusText)
 
-    // Handle 429 Rate Limit - show specific retry time
+    // Handle 429 Rate Limit - retry with exponential backoff
     if (response.status === 429) {
+      const maxRetries = 3
+      const baseDelay = 1000 // 1 second
+
+      if (retryCount < maxRetries) {
+        const delay = baseDelay * Math.pow(2, retryCount) // 1s, 2s, 4s
+        console.log(`Rate limit hit. Retrying in ${delay}ms (attempt ${retryCount + 1}/${maxRetries})`)
+
+        await new Promise(resolve => setTimeout(resolve, delay))
+
+        // Retry the request
+        return this.request<T>(endpoint, options, retryCount + 1)
+      }
+
+      // Max retries reached, show error
       const resetTime = response.headers.get('X-RateLimit-Reset')
       let errorMessage = 'Too many attempts. Please try again later.'
-      
+
       if (resetTime) {
         const resetDate = new Date(parseInt(resetTime) * 1000)
         const now = new Date()
         const diffMs = resetDate.getTime() - now.getTime()
         const diffMins = Math.ceil(diffMs / 60000)
-        
+
         if (diffMins <= 1) {
           errorMessage = 'Too many attempts. Please try again in 1 minute.'
         } else if (diffMins < 60) {
@@ -109,16 +143,26 @@ class ApiClient {
           errorMessage = `Too many attempts. Please try again in ${hours} hour${hours > 1 ? 's' : ''}${mins > 0 ? ` ${mins} minute${mins > 1 ? 's' : ''}` : ''}.`
         }
       }
-      
-      console.error('Rate limit exceeded:', errorMessage)
+
+      console.error('Rate limit exceeded after retries:', errorMessage)
       throw new Error(errorMessage)
     }
 
-    // Handle 401 Unauthorized - try to refresh token
+    // Handle 401 Unauthorized - try to refresh token only if we have a token
     if (response.status === 401) {
-      console.log('Token expired, attempting refresh...')
+      const token = this.getToken()
       const refreshToken = this.getRefreshToken()
-      
+
+      // If we don't have a token, this is likely a login/auth request that failed
+      // Just throw the error instead of trying to refresh
+      if (!token && !refreshToken) {
+        const errorData: ApiError = await response.json().catch(() => ({ error: 'Invalid credentials' }))
+        console.error('API Error (no token available):', errorData)
+        throw new Error(errorData.error || errorData.message || 'Invalid credentials')
+      }
+
+      console.log('Token expired, attempting refresh...')
+
       if (refreshToken) {
         try {
           const refreshResponse = await this.refresh(refreshToken)
@@ -177,7 +221,7 @@ class ApiClient {
               window.location.href = '/login'
             }
           }
-          throw new Error('Session expired. Please log in again.')
+          throw new Error('You were signed out.')
         }
       } else {
         // No refresh token available, clear tokens and redirect to appropriate login page
@@ -193,7 +237,7 @@ class ApiClient {
             window.location.href = '/login'
           }
         }
-        throw new Error('Session expired. Please log in again.')
+        throw new Error('You were signed out.')
       }
     }
 
@@ -226,11 +270,13 @@ class ApiClient {
 
   private setToken(token: string): void {
     if (typeof document === 'undefined') return
-    document.cookie = `accessToken=${token}; path=/; max-age=3600; SameSite=Strict`
+    // Access token: 1 day (86400 seconds)
+    document.cookie = `accessToken=${token}; path=/; max-age=86400; SameSite=Strict`
   }
 
   private setRefreshToken(token: string): void {
     if (typeof document === 'undefined') return
+    // Refresh token: 7 days (604800 seconds)
     document.cookie = `refreshToken=${token}; path=/; max-age=604800; SameSite=Strict`
   }
 
@@ -399,6 +445,10 @@ class ApiClient {
     return this.request<StudentProfile>('/student/me')
   }
 
+  async getStudentDetail(studentId: string): Promise<AdminStudentDetail> {
+    return this.request<AdminStudentDetail>(`/admin/students/${studentId}`)
+  }
+
   async getStudentSchedule(): Promise<Session[]> {
     return this.request<Session[]>('/student/me/schedule')
   }
@@ -472,8 +522,8 @@ class ApiClient {
     })
   }
 
-  // Subject endpoints
-  async getSubjects(): Promise<Subject[]> {
+  // Subject endpoints (legacy, for backward compatibility)
+  async getSubjectsLegacy(): Promise<Subject[]> {
     return this.request<Subject[]>('/subjects')
   }
 
@@ -616,25 +666,91 @@ class ApiClient {
   }
 
   // Admin endpoints
-  async getPendingTutors(): Promise<PendingTutor[]> {
-    return this.request<PendingTutor[]>('/admin/tutors/pending')
+  async getPendingTutors(): Promise<TutorWithProfile[]> {
+    const response = await this.request<{ data: TutorWithProfile[]; page: number; limit: number; total: number }>('/admin/tutors?status=PENDING_VETTING&applicationStatus=SUBMITTED')
+    return response.data || []
   }
 
   async getTutors(status?: string): Promise<TutorWithProfile[]> {
     const params = status ? `?status=${status}` : ''
-    return this.request<TutorWithProfile[]>(`/admin/tutors${params}`)
+    const response = await this.request<{ data: TutorWithProfile[]; page: number; limit: number; total: number }>(`/admin/tutors${params}`)
+    return response.data || []
+  }
+
+  async getTutorDetail(tutorId: string): Promise<any> {
+    return this.request<any>(`/admin/tutors/${tutorId}`)
+  }
+
+  // Tutor Application endpoints
+  async getTutorApplication(): Promise<TutorApplication> {
+    return this.request<TutorApplication>('/tutor-application')
+  }
+
+  async updateTutorApplication(data: Partial<TutorApplication>): Promise<TutorApplication> {
+    return this.request<TutorApplication>('/tutor-application', {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async submitTutorApplication(): Promise<{ message: string }> {
+    return this.request<{ message: string }>('/tutor-application/submit', {
+      method: 'POST',
+    })
+  }
+
+  async uploadTutorDocument(file: File): Promise<TutorDocument> {
+    const formData = new FormData()
+    formData.append('document', file)
+
+    const token = this.getToken()
+    const url = `${this.baseUrl}/tutor-application/documents`
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+      },
+      body: formData,
+    })
+
+    if (!response.ok) {
+      const errorData: ApiError = await response.json().catch(() => ({ error: 'Unknown error' }))
+      throw new Error(errorData.error || errorData.message || 'Failed to upload document')
+    }
+
+    return response.json()
+  }
+
+  async getTutorDocuments(): Promise<TutorDocument[]> {
+    return this.request<TutorDocument[]>('/tutor-application/documents')
+  }
+
+  async deleteTutorDocument(documentId: string): Promise<{ message: string }> {
+    return this.request<{ message: string }>(`/tutor-application/documents/${documentId}`, {
+      method: 'DELETE',
+    })
   }
 
   async getAdminStudents(parentId?: string): Promise<AdminStudent[]> {
     const params = parentId ? `?parentId=${parentId}` : ''
-    return this.request<AdminStudent[]>(`/admin/students${params}`)
+    const response = await this.request<{ data: AdminStudent[]; page: number; limit: number; total: number }>(`/admin/students${params}`)
+    return response.data || []
   }
 
-  async updateTutorVetting(id: string, data: VettingRequest): Promise<TutorProfile> {
+  async updateTutorVetting(id: string, data: { vettingStatus: 'APPROVED' | 'REJECTED'; reason?: string }): Promise<TutorProfile> {
     return this.request<TutorProfile>(`/admin/tutors/${id}/vetting`, {
       method: 'PATCH',
       body: JSON.stringify(data),
     })
+  }
+
+  async getAdminTutorStudents(tutorId: string): Promise<TutorStudent[]> {
+    return this.request<TutorStudent[]>(`/admin/tutors/${tutorId}/students`)
+  }
+
+  async getAdminTutorSessions(tutorId: string): Promise<Session[]> {
+    return this.request<Session[]>(`/admin/tutors/${tutorId}/sessions`)
   }
 
   async getUnmatchedEnrollments(includeUnpaid?: boolean): Promise<Enrollment[]> {
@@ -655,6 +771,10 @@ class ApiClient {
 
   async getAdminOverview(): Promise<AdminOverview> {
     return this.request<AdminOverview>('/admin/reports/overview')
+  }
+
+  async getPaymentsSummary(): Promise<PaymentSummary> {
+    return this.request<PaymentSummary>('/admin/payments/summary')
   }
 
   // Payment endpoints (unverified)
@@ -908,6 +1028,7 @@ class ApiClient {
     // Transform API response to match frontend expectations
     // API returns: { threadId, otherParticipant, lastMessage, unreadCount }
     // Frontend expects: { id, participants/otherParticipant, lastMessage, lastMessageAt, unreadCount }
+    console.log('getMessageThreads raw data:', data)
     return data.map(item => ({
       id: item.threadId,
       otherParticipant: item.otherParticipant,
@@ -1026,8 +1147,8 @@ class ApiClient {
   }
 
   async updatePricingTier(tierId: string, data: {
-    priceNGN?: number
-    priceUSD?: number
+    yearlyPriceNGN?: number
+    yearlyPriceUSD?: number
   }): Promise<PricingTier> {
     return this.request<PricingTier>(`/admin/pricing-tiers/${tierId}`, {
       method: 'PATCH',
@@ -1039,15 +1160,15 @@ class ApiClient {
     return this.request<ExchangeRate>('/admin/exchange-rate/current')
   }
 
-  async getEnrollmentPricing(enrollmentId: string): Promise<{ priceNGN: number; priceUSD: number }> {
-    return this.request<{ priceNGN: number; priceUSD: number }>(`/admin/enrollments/${enrollmentId}/pricing`)
+  async getEnrollmentPricing(enrollmentId: string): Promise<{ yearlyPriceNGN: number; yearlyPriceUSD: number }> {
+    return this.request<{ yearlyPriceNGN: number; yearlyPriceUSD: number }>(`/admin/enrollments/${enrollmentId}/pricing`)
   }
 
   async updateEnrollmentPricing(enrollmentId: string, data: {
-    priceNGN?: number
-    priceUSD?: number
-  }): Promise<{ priceNGN: number; priceUSD: number }> {
-    return this.request<{ priceNGN: number; priceUSD: number }>(`/admin/enrollments/${enrollmentId}/pricing`, {
+    yearlyPriceNGN?: number
+    yearlyPriceUSD?: number
+  }): Promise<{ yearlyPriceNGN: number; yearlyPriceUSD: number }> {
+    return this.request<{ yearlyPriceNGN: number; yearlyPriceUSD: number }>(`/admin/enrollments/${enrollmentId}/pricing`, {
       method: 'PATCH',
       body: JSON.stringify(data),
     })
@@ -1055,7 +1176,8 @@ class ApiClient {
 
   // Admin user management
   async getSuspendedUsers(): Promise<User[]> {
-    return this.request<User[]>('/admin/users/suspended')
+    const response = await this.request<{ data: User[]; page: number; limit: number; total: number }>('/admin/users/suspended')
+    return response.data || []
   }
 
   async reactivateUser(userId: string): Promise<User> {
@@ -1170,6 +1292,441 @@ class ApiClient {
 
   async getUsers(): Promise<any[]> {
     return this.request<any[]>('/users')
+  }
+
+  // Subject endpoints with per-grade pricing
+  async getPublicSubjects(): Promise<Subject[]> {
+    return this.request<Subject[]>('/subjects/public')
+  }
+
+  async getSubjects(gradeBandTier?: GradeBandTier, category?: string): Promise<Subject[]> {
+    const params = new URLSearchParams()
+    if (gradeBandTier) params.append('gradeBandTier', gradeBandTier)
+    if (category) params.append('category', category)
+    const queryString = params.toString()
+    return this.request<Subject[]>(`/subjects${queryString ? `?${queryString}` : ''}`)
+  }
+
+  async getAdminSubjects(): Promise<Subject[]> {
+    return this.request<Subject[]>('/admin/subjects')
+  }
+
+  async createSubject(data: {
+    name: string
+    category: 'CORE' | 'ENRICHMENT' | 'TEST_PREP'
+    prices: Array<{
+      gradeBandTier: GradeBandTier
+      yearlyPriceNGN: number
+      yearlyPriceUSD: number
+    }>
+  }): Promise<Subject> {
+    return this.request<Subject>('/admin/subjects', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async updateSubjectPricing(subjectId: string, data: {
+    gradeBandTier: GradeBandTier
+    yearlyPriceNGN: number
+    yearlyPriceUSD: number
+  }): Promise<Subject> {
+    return this.request<Subject>(`/admin/subjects/${subjectId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async updateSubject(id: string, data: {
+    name?: string
+    category?: string
+    isActive?: boolean
+  }): Promise<Subject> {
+    return this.request<Subject>(`/admin/subjects/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async deleteSubject(id: string): Promise<{ message: string }> {
+    return this.request<{ message: string }>(`/admin/subjects/${id}`, {
+      method: 'DELETE',
+    })
+  }
+
+  async getPricingQuote(studentId: string, subjectIds: string[]): Promise<PricingQuote> {
+    const params = new URLSearchParams()
+    params.append('studentId', studentId)
+    subjectIds.forEach(id => params.append('subjectIds', id))
+    return this.request<PricingQuote>(`/pricing/quote?${params.toString()}`)
+  }
+
+  // Tutor availability endpoints
+  async updateTutorAvailabilityStatus(data: {
+    availabilityStatus: TutorAvailabilityStatus
+    maxStudents?: number
+    statusNote?: string
+  }): Promise<TutorProfile> {
+    return this.request<TutorProfile>('/tutor-profile/availability-status', {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async getSuggestedTutors(enrollmentId: string): Promise<SuggestedTutor[]> {
+    return this.request<SuggestedTutor[]>(`/admin/enrollments/${enrollmentId}/suggested-tutors`)
+  }
+
+  async assignTutorWithForce(enrollmentId: string, data: {
+    tutorId: string
+    force?: boolean
+  }): Promise<Enrollment> {
+    return this.request<Enrollment>(`/admin/enrollments/${enrollmentId}/assign-tutor`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    })
+  }
+
+  // Parent directory endpoints
+  async getParentDirectory(params?: {
+    search?: string
+    status?: string
+    page?: number
+    limit?: number
+  }): Promise<{ data: ParentDirectoryEntry[]; total: number; page: number; limit: number }> {
+    const queryParams = new URLSearchParams()
+    if (params?.search) queryParams.append('search', params.search)
+    if (params?.status) queryParams.append('status', params.status)
+    if (params?.page) queryParams.append('page', params.page.toString())
+    if (params?.limit) queryParams.append('limit', params.limit.toString())
+    const queryString = queryParams.toString()
+    return this.request<{ data: ParentDirectoryEntry[]; total: number; page: number; limit: number }>(
+      `/admin/parents${queryString ? `?${queryString}` : ''}`
+    )
+  }
+
+  async getParentDetail(parentId: string): Promise<ParentDetailProfile> {
+    return this.request<ParentDetailProfile>(`/admin/parents/${parentId}`)
+  }
+
+  // Transaction endpoints
+  async getTransactions(params?: {
+    status?: string
+    currency?: string
+    provider?: string
+    parentId?: string
+    from?: string
+    to?: string
+    search?: string
+    page?: number
+    limit?: number
+  }): Promise<{ payments: PaymentDetail[]; total: number; page: number; limit: number }> {
+    const queryParams = new URLSearchParams()
+    if (params?.status) queryParams.append('status', params.status)
+    if (params?.currency) queryParams.append('currency', params.currency)
+    if (params?.provider) queryParams.append('provider', params.provider)
+    if (params?.parentId) queryParams.append('parentId', params.parentId)
+    if (params?.from) queryParams.append('from', params.from)
+    if (params?.to) queryParams.append('to', params.to)
+    if (params?.search) queryParams.append('search', params.search)
+    if (params?.page) queryParams.append('page', params.page.toString())
+    if (params?.limit) queryParams.append('limit', params.limit.toString())
+    const queryString = queryParams.toString()
+    return this.request<{ payments: PaymentDetail[]; total: number; page: number; limit: number }>(
+      `/admin/payments${queryString ? `?${queryString}` : ''}`
+    )
+  }
+
+  async getTransactionDetail(paymentId: string): Promise<PaymentDetail> {
+    return this.request<PaymentDetail>(`/admin/payments/${paymentId}`)
+  }
+
+  async getTransactionSummary(params?: {
+    from?: string
+    to?: string
+  }): Promise<PaymentSummary> {
+    const queryParams = new URLSearchParams()
+    if (params?.from) queryParams.append('from', params.from)
+    if (params?.to) queryParams.append('to', params.to)
+    const queryString = queryParams.toString()
+    return this.request<PaymentSummary>(`/admin/reports/payments/summary${queryString ? `?${queryString}` : ''}`)
+  }
+
+  // Student password regeneration
+  async regenerateStudentPassword(studentId: string): Promise<RegenerateStudentPasswordResponse> {
+    return this.request<RegenerateStudentPasswordResponse>(`/students/${studentId}/regenerate-password`, {
+      method: 'POST',
+    })
+  }
+
+  async adminRegenerateStudentPassword(studentId: string): Promise<RegenerateStudentPasswordResponse> {
+    return this.request<RegenerateStudentPasswordResponse>(`/admin/students/${studentId}/regenerate-password`, {
+      method: 'PATCH',
+    })
+  }
+
+  // Performance Overview endpoints
+  async getStudentPerformance(period?: PeriodFilter): Promise<PerformanceOverview> {
+    const params = period ? `?period=${period}` : ''
+    return this.request<PerformanceOverview>(`/student/me/performance${params}`)
+  }
+
+  async getParentStudentPerformance(studentId: string, period?: PeriodFilter): Promise<PerformanceOverview> {
+    const params = period ? `?period=${period}` : ''
+    return this.request<PerformanceOverview>(`/students/${studentId}/performance${params}`)
+  }
+
+  async getTutorStudentPerformance(studentId: string, period?: PeriodFilter): Promise<PerformanceOverview> {
+    const params = period ? `?period=${period}` : ''
+    return this.request<PerformanceOverview>(`/tutor/students/${studentId}/performance${params}`)
+  }
+
+  async getAdminStudentPerformance(studentId: string, period?: PeriodFilter, includePending?: boolean): Promise<PerformanceOverview> {
+    const queryParams = new URLSearchParams()
+    if (period) queryParams.append('period', period)
+    if (includePending) queryParams.append('includePending', 'true')
+    const queryString = queryParams.toString()
+    return this.request<PerformanceOverview>(`/admin/students/${studentId}/performance${queryString ? `?${queryString}` : ''}`)
+  }
+
+  // Admin payment action endpoints
+  async addPaymentNote(paymentId: string, note: string): Promise<{ message: string }> {
+    return this.request<{ message: string }>(`/admin/payments/${paymentId}/note`, {
+      method: 'PATCH',
+      body: JSON.stringify({ note }),
+    })
+  }
+
+  async reverifyPayment(paymentId: string): Promise<PaymentDetail> {
+    return this.request<PaymentDetail>(`/admin/payments/${paymentId}/reverify`, {
+      method: 'POST',
+    })
+  }
+
+  // Admin suspend endpoints
+  async suspendTutor(tutorId: string): Promise<{ message: string }> {
+    return this.request<{ message: string }>(`/admin/tutors/${tutorId}/suspend`, {
+      method: 'PATCH',
+    })
+  }
+
+  async suspendStudent(studentId: string): Promise<{ message: string }> {
+    return this.request<{ message: string }>(`/admin/students/${studentId}/suspend`, {
+      method: 'PATCH',
+    })
+  }
+
+  async suspendParent(parentId: string): Promise<{ message: string }> {
+    return this.request<{ message: string }>(`/admin/parents/${parentId}/suspend`, {
+      method: 'PATCH',
+    })
+  }
+
+  // Admin complaints endpoints
+  async getComplaints(): Promise<Complaint[]> {
+    return this.request<Complaint[]>('/admin/complaints')
+  }
+
+  async resolveComplaint(complaintId: string, reply: string): Promise<Complaint> {
+    return this.request<Complaint>(`/admin/complaints/${complaintId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ reply }),
+    })
+  }
+
+  // Admin sessions endpoints
+  async getAdminSessions(params?: {
+    status?: string
+    tutorId?: string
+    studentId?: string
+    page?: number
+    limit?: number
+  }): Promise<{ data: Session[]; total: number; page: number; limit: number }> {
+    const queryParams = new URLSearchParams()
+    if (params?.status) queryParams.append('status', params.status)
+    if (params?.tutorId) queryParams.append('tutorId', params.tutorId)
+    if (params?.studentId) queryParams.append('studentId', params.studentId)
+    if (params?.page) queryParams.append('page', params.page.toString())
+    if (params?.limit) queryParams.append('limit', params.limit.toString())
+    const queryString = queryParams.toString()
+    return this.request<{ data: Session[]; total: number; page: number; limit: number }>(
+      `/admin/sessions${queryString ? `?${queryString}` : ''}`
+    )
+  }
+
+  async getAdminSession(sessionId: string): Promise<Session> {
+    return this.request<Session>(`/admin/sessions/${sessionId}`)
+  }
+
+  async updateAdminSession(sessionId: string, data: {
+    scheduledAt?: string
+    durationMinutes?: number
+    zoomLink?: string
+    status?: string
+    notes?: string
+    homework?: string
+  }): Promise<Session> {
+    return this.request<Session>(`/admin/sessions/${sessionId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    })
+  }
+
+  // Admin enrollments endpoints
+  async getAdminEnrollments(params?: {
+    status?: string
+    tutorId?: string
+    studentId?: string
+    page?: number
+    limit?: number
+  }): Promise<{ data: Enrollment[]; total: number; page: number; limit: number }> {
+    const queryParams = new URLSearchParams()
+    if (params?.status) queryParams.append('status', params.status)
+    if (params?.tutorId) queryParams.append('tutorId', params.tutorId)
+    if (params?.studentId) queryParams.append('studentId', params.studentId)
+    if (params?.page) queryParams.append('page', params.page.toString())
+    if (params?.limit) queryParams.append('limit', params.limit.toString())
+    const queryString = queryParams.toString()
+    return this.request<{ data: Enrollment[]; total: number; page: number; limit: number }>(
+      `/admin/enrollments${queryString ? `?${queryString}` : ''}`
+    )
+  }
+
+  async getAdminEnrollment(enrollmentId: string): Promise<Enrollment> {
+    return this.request<Enrollment>(`/admin/enrollments/${enrollmentId}`)
+  }
+
+  // Tutor profile endpoints
+  async getTutorProfile(): Promise<TutorProfile> {
+    return this.request<TutorProfile>('/tutor/me')
+  }
+
+  async updateTutorProfileInfo(data: {
+    bio?: string
+    hourlyRate?: number
+  }): Promise<TutorProfile> {
+    return this.request<TutorProfile>('/tutor/me', {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async getTutorNotifications(): Promise<Notification[]> {
+    return this.request<Notification[]>('/tutor/me/notifications')
+  }
+
+  async getTutorUnreadCount(): Promise<{ count: number }> {
+    return this.request<{ count: number }>('/tutor/me/unread-count')
+  }
+
+  async getTutorStudentDetail(studentId: string): Promise<any> {
+    return this.request<any>(`/tutor/me/students/${studentId}`)
+  }
+
+  async getTutorStudentAssignments(studentId: string): Promise<Assignment[]> {
+    return this.request<Assignment[]>(`/tutor/me/students/${studentId}/assignments`)
+  }
+
+  async getTutorStudentGrades(studentId: string): Promise<Grade[]> {
+    return this.request<Grade[]>(`/tutor/me/students/${studentId}/grades`)
+  }
+
+  async getTutorStudentAttendance(studentId: string): Promise<StudentAttendance[]> {
+    return this.request<StudentAttendance[]>(`/tutor/me/students/${studentId}/attendance`)
+  }
+
+  // Parent/Me endpoints
+  async getParentProfile(): Promise<ParentDetailProfile> {
+    return this.request<ParentDetailProfile>('/me')
+  }
+
+  async updateParentProfile(data: {
+    fullName?: string
+    phone?: string
+    timezone?: string
+  }): Promise<ParentDetailProfile> {
+    return this.request<ParentDetailProfile>('/me', {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async getParentNotifications(): Promise<Notification[]> {
+    return this.request<Notification[]>('/me/notifications')
+  }
+
+  async getParentUnreadCount(): Promise<{ count: number }> {
+    return this.request<{ count: number }>('/me/unread-count')
+  }
+
+  // Student detail endpoints
+  async getStudentDetailInfo(studentId: string): Promise<Student> {
+    return this.request<Student>(`/students/${studentId}`)
+  }
+
+  async updateStudentInfo(studentId: string, data: {
+    fullName?: string
+    actualGrade?: string
+    school?: string
+    notes?: string
+  }): Promise<Student> {
+    return this.request<Student>(`/students/${studentId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async deleteStudentInfo(studentId: string): Promise<{ message: string }> {
+    return this.request<{ message: string }>(`/students/${studentId}`, {
+      method: 'DELETE',
+    })
+  }
+
+  async getStudentEnrollmentsList(studentId: string): Promise<Enrollment[]> {
+    return this.request<Enrollment[]>(`/students/${studentId}/enrollments`)
+  }
+
+  async getStudentSessionsList(studentId: string): Promise<Session[]> {
+    return this.request<Session[]>(`/students/${studentId}/sessions`)
+  }
+
+  async getStudentGradesList(studentId: string): Promise<Grade[]> {
+    return this.request<Grade[]>(`/students/${studentId}/grades`)
+  }
+
+  async getStudentAssignmentsList(studentId: string): Promise<Assignment[]> {
+    return this.request<Assignment[]>(`/students/${studentId}/assignments`)
+  }
+
+  async getStudentAttendanceList(studentId: string): Promise<StudentAttendance[]> {
+    return this.request<StudentAttendance[]>(`/students/${studentId}/attendance`)
+  }
+
+  async getStudentProgressReportsList(studentId: string): Promise<ProgressReport[]> {
+    return this.request<ProgressReport[]>(`/students/${studentId}/progress-reports`)
+  }
+
+  // Session recording endpoint
+  async getSessionRecording(sessionId: string): Promise<{ recordingUrl: string }> {
+    return this.request<{ recordingUrl: string }>(`/sessions/${sessionId}/recording`)
+  }
+
+  // Grade approve/reject endpoints
+  async approveGrade(gradeId: string): Promise<Grade> {
+    return this.request<Grade>(`/grades/${gradeId}/approve`, {
+      method: 'PATCH',
+    })
+  }
+
+  async rejectGrade(gradeId: string): Promise<Grade> {
+    return this.request<Grade>(`/grades/${gradeId}/reject`, {
+      method: 'PATCH',
+    })
+  }
+
+  // Message unread count endpoint
+  async getMessageUnreadCount(): Promise<{ count: number }> {
+    return this.request<{ count: number }>('/messages/unread-count')
   }
 }
 

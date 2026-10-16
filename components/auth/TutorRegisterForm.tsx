@@ -1,0 +1,339 @@
+'use client'
+
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { BrandHeader } from '@/components/shared/BrandHeader'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
+import { useToast } from '@/components/ui/use-toast'
+import { User, Mail, Phone, Lock, CheckCircle2, ArrowLeft, ShieldCheck, GraduationCap, MapPin, Eye, EyeOff } from 'lucide-react'
+import { api } from '@/lib/api'
+import { RegisterRequest } from '@/lib/types'
+
+export default function TutorRegisterForm() {
+  const router = useRouter()
+  const { toast } = useToast()
+  const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [success, setSuccess] = useState(false)
+
+  const [formData, setFormData] = useState<RegisterRequest>({
+    firstName: '',
+    lastName: '',
+    middleName: '',
+    email: '',
+    phone: '',
+    password: '',
+    role: 'TUTOR',
+    address: '',
+  })
+
+  const [error, setError] = useState('')
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+    setLoading(true)
+
+    // Client-side password validation
+    if (formData.password.length < 8) {
+      setError('Password must be at least 8 characters long')
+      toast({
+        title: 'Password Too Short',
+        description: 'Password must be at least 8 characters long',
+        variant: 'destructive',
+      })
+      setLoading(false)
+      return
+    }
+
+    if (!/[A-Z]/.test(formData.password)) {
+      setError('Password must contain at least one uppercase letter')
+      toast({
+        title: 'Password Invalid',
+        description: 'Password must contain at least one uppercase letter',
+        variant: 'destructive',
+      })
+      setLoading(false)
+      return
+    }
+
+    if (!formData.address) {
+      setError('Address is required for tutor registration')
+      toast({
+        title: 'Address Required',
+        description: 'Please provide your address',
+        variant: 'destructive',
+      })
+      setLoading(false)
+      return
+    }
+
+    try {
+      const response = await api.register(formData)
+
+      // Check if email was sent successfully
+      if (response.emailSent === false) {
+        toast({
+          title: 'Email Not Sent',
+          description: 'Verification email could not be sent. Please click "Resend OTP" on the next page.',
+          variant: 'destructive',
+        })
+      }
+
+      // Store email for verification page
+      sessionStorage.setItem('pendingVerificationEmail', formData.email)
+      setSuccess(true)
+      toast({
+        title: 'Registration Successful',
+        description: 'Please check your email for the verification OTP.',
+      })
+      // Redirect immediately after success
+      router.push('/verify')
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Registration failed'
+
+      // Parse validation errors for better UX
+      if (errorMessage.includes('Validation failed') || errorMessage.includes('details')) {
+        try {
+          const errorObj = JSON.parse(errorMessage)
+          if (errorObj.details && Array.isArray(errorObj.details)) {
+            const fieldErrors = errorObj.details.map((d: any) => `${d.field}: ${d.message}`).join(', ')
+            setError(fieldErrors)
+          } else {
+            setError(errorMessage)
+          }
+        } catch {
+          setError(errorMessage)
+        }
+      } else {
+        setError(errorMessage)
+      }
+
+      toast({
+        title: 'Registration Failed',
+        description: errorMessage,
+        variant: 'destructive',
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (success) {
+    return (
+      <div className="w-full max-w-md mx-auto relative z-10">
+        <Card className="bg-card/95 backdrop-blur-xl border border-primary/30 shadow-[0_10px_40px_rgba(0,0,0,0.8)] rounded-2xl overflow-hidden">
+          <div className="h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
+          <CardContent className="pt-8 pb-8">
+            <div className="flex flex-col items-center text-center space-y-4">
+              <div className="w-16 h-16 rounded-full bg-primary/15 border border-primary/40 flex items-center justify-center">
+                <CheckCircle2 className="h-9 w-9 text-primary" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-white font-serif">Welcome to Teachmenest!</h2>
+                <p className="text-sm text-zinc-400 mt-2 max-w-xs mx-auto">
+                  Your tutor account has been created. After verification, you'll complete your application.
+                </p>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-primary font-medium pt-2">
+                <LoadingSpinner size="sm" className="text-primary" />
+                <span>Redirecting to verification...</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  return (
+    <div className="w-full max-w-lg mx-auto relative z-10 space-y-6">
+      {/* Brand Header */}
+      <div className="text-center space-y-3">
+        <div className="flex justify-center transform hover:scale-105 transition-transform duration-300">
+          <BrandHeader />
+        </div>
+        <p className="text-xs uppercase tracking-widest text-primary font-semibold">
+          Tutor Registration
+        </p>
+      </div>
+
+      {/* Main Register Card */}
+      <Card className="bg-card/95 backdrop-blur-xl border border-primary/30 shadow-[0_10px_40px_rgba(0,0,0,0.8),0_0_30px_rgba(212,160,23,0.08)] rounded-2xl overflow-hidden">
+        <div className="h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-80" />
+
+        <CardHeader className="pt-6 pb-4">
+          <CardTitle className="text-xl font-bold text-white flex items-center justify-between">
+            <span className="flex items-center gap-2">
+              <GraduationCap className="w-5 h-5 text-primary" />
+              Create Your Tutor Account
+            </span>
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/15 text-secondary border border-primary/30 font-medium">
+              Step 1 of 2
+            </span>
+          </CardTitle>
+          <CardDescription className="text-zinc-400 text-xs mt-1">
+            Enter your details to create your account. You'll complete your application after verification.
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="firstName" className="text-xs font-medium text-zinc-300">
+                  First Name *
+                </Label>
+                <Input
+                  id="firstName"
+                  required
+                  value={formData.firstName}
+                  onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                  placeholder="e.g. Sarah"
+                  className="bg-muted border-border text-white placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="lastName" className="text-xs font-medium text-zinc-300">
+                  Last Name *
+                </Label>
+                <Input
+                  id="lastName"
+                  required
+                  value={formData.lastName}
+                  onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                  placeholder="e.g. Jenkins"
+                  className="bg-muted border-border text-white placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11"
+                />
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="middleName" className="text-xs font-medium text-zinc-300">
+                Middle Name (Optional)
+              </Label>
+              <Input
+                id="middleName"
+                value={formData.middleName}
+                onChange={(e) => setFormData({ ...formData, middleName: e.target.value })}
+                placeholder="Optional"
+                className="bg-muted border-border text-white placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="email" className="text-xs font-medium text-zinc-300">
+                  Email Address *
+                </Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-zinc-500" />
+                  <Input
+                    id="email"
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="your@email.com"
+                    className="bg-muted border-border text-white placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11 pl-10"
+                  />
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="phone" className="text-xs font-medium text-zinc-300">
+                  Phone Number *
+                </Label>
+                <div className="relative">
+                  <Phone className="absolute left-3 top-3 h-4 w-4 text-zinc-500" />
+                  <Input
+                    id="phone"
+                    type="tel"
+                    required
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    placeholder="+234 XXX XXX XXXX"
+                    className="bg-muted border-border text-white placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11 pl-10"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="address" className="text-xs font-medium text-zinc-300">
+                Address *
+              </Label>
+              <div className="relative">
+                <MapPin className="absolute left-3 top-3 h-4 w-4 text-zinc-500" />
+                <Input
+                  id="address"
+                  required
+                  value={formData.address}
+                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                  placeholder="Your full address"
+                  className="bg-muted border-border text-white placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11 pl-10"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="password" className="text-xs font-medium text-zinc-300">
+                Password *
+              </Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 h-4 w-4 text-zinc-500" />
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  required
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  placeholder="Min 8 chars, 1 uppercase"
+                  className="bg-muted border-border text-white placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11 pl-10 pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-2.5 text-zinc-500 hover:text-zinc-300"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+            </div>
+
+            {error && (
+              <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3">
+                <p className="text-xs text-destructive">{error}</p>
+              </div>
+            )}
+
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-primary to-secondary text-black font-semibold rounded-xl h-11 hover:opacity-90 transition-opacity"
+            >
+              {loading ? (
+                <div className="flex items-center gap-2">
+                  <LoadingSpinner size="sm" className="text-black" />
+                  <span>Creating Account...</span>
+                </div>
+              ) : (
+                'Create Account'
+              )}
+            </Button>
+          </form>
+
+          <div className="pt-4 border-t border-zinc-800">
+            <Link href="/register" className="flex items-center justify-center gap-2 text-xs text-zinc-400 hover:text-primary transition-colors">
+              <ArrowLeft className="h-3 w-3" />
+              Back to Parent Registration
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}

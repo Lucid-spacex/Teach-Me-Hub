@@ -9,13 +9,17 @@ import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
 import { AlertCircle, CreditCard } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
-export function FailedPaymentsList() {
+interface FailedPaymentsListProps {
+  refreshTrigger?: number
+}
+
+export function FailedPaymentsList({ refreshTrigger }: FailedPaymentsListProps) {
   const [payments, setPayments] = useState<Payment[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     loadPayments()
-  }, [])
+  }, [refreshTrigger])
 
   const loadPayments = async () => {
     try {

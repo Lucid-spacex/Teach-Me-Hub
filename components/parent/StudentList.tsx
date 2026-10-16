@@ -64,13 +64,7 @@ export function StudentList({ onAddStudent, refreshTrigger }: StudentListProps) 
         <div className="font-medium text-white">{student.fullName}</div>
       ),
     },
-    {
-      key: 'studentCode',
-      header: 'Student Code',
-      cell: (student: Student) => (
-        <div className="font-mono text-brand-gold">{(student as any).studentCode || '—'}</div>
-      ),
-    },
+
     {
       key: 'grade',
       header: 'Grade',

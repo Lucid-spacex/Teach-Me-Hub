@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import { getUser, getUserRole } from '@/lib/auth'
 import { DashboardStats } from '@/components/admin/DashboardStats'
 import { UnmatchedEnrollmentsList } from '@/components/admin/UnmatchedEnrollmentsList'
-import { FailedPaymentsList } from '@/components/admin/FailedPaymentsList'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { RefreshCw, Shield, Users, GraduationCap, CreditCard, AlertCircle, Sparkles, ArrowUpRight } from 'lucide-react'
@@ -37,20 +36,64 @@ export default function AdminDashboard() {
     }
   }, [router])
 
-  const loadInitialData = async () => {
+  const loadInitialData = async (forceRefresh = false) => {
     setLoading(true)
     setError(null)
+
     try {
+      // Check cache first if not forcing refresh
+      const cacheKey = 'adminOverviewCache'
+      const cacheTimestampKey = 'adminOverviewCacheTimestamp'
+      const cacheExpiry = 5 * 60 * 1000 // 5 minutes
+
+      if (!forceRefresh) {
+        const cachedData = localStorage.getItem(cacheKey)
+        const cachedTimestamp = localStorage.getItem(cacheTimestampKey)
+
+        if (cachedData && cachedTimestamp) {
+          const timestamp = parseInt(cachedTimestamp, 10)
+          const now = Date.now()
+
+          if (now - timestamp < cacheExpiry) {
+            console.log('Using cached admin overview data')
+            setOverview(JSON.parse(cachedData))
+            setLoading(false)
+            return
+          }
+        }
+      }
+
+      // Fetch fresh data
       const overviewData = await api.getAdminOverview()
+      console.log('Admin overview data:', overviewData)
+
+      // Cache the data
+      localStorage.setItem(cacheKey, JSON.stringify(overviewData))
+      localStorage.setItem(cacheTimestampKey, Date.now().toString())
+
       setOverview(overviewData)
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load data'
-      setError(errorMessage)
-      toast({
-        title: "Error",
-        description: errorMessage,
-        variant: "destructive",
-      })
+      console.error('Failed to load admin overview:', err)
+
+      // Try to use cached data as fallback
+      const cachedData = localStorage.getItem('adminOverviewCache')
+      if (cachedData && !forceRefresh) {
+        console.log('Using cached data as fallback')
+        setOverview(JSON.parse(cachedData))
+        toast({
+          title: "Using cached data",
+          description: "Could not fetch fresh data. Showing cached information.",
+          variant: "default",
+        })
+      } else {
+        setError(errorMessage)
+        toast({
+          title: "Error",
+          description: errorMessage,
+          variant: "destructive",
+        })
+      }
     } finally {
       setLoading(false)
     }
@@ -58,7 +101,7 @@ export default function AdminDashboard() {
 
   const handleRefresh = () => {
     setRefreshTrigger(prev => prev + 1)
-    loadInitialData()
+    loadInitialData(true) // Force refresh, bypass cache
     toast({
       title: "Refreshed",
       description: "Dashboard data has been refreshed",
@@ -138,10 +181,10 @@ export default function AdminDashboard() {
       href: '/admin/enrollments',
     },
     {
-      label: 'Pricing Tiers',
-      description: 'Manage pricing and exchange rates',
+      label: 'Transactions',
+      description: 'View payment transactions and failed payments',
       icon: CreditCard,
-      href: '/admin/pricing',
+      href: '/admin/transactions',
     },
   ]
 
@@ -230,13 +273,11 @@ export default function AdminDashboard() {
 
       {/* Main Content */}
       <div className="space-y-8">
-        <DashboardStats />
+        <DashboardStats overview={overview} />
 
         <div className="grid gap-8 lg:grid-cols-2">
           <UnmatchedEnrollmentsList onUpdate={handleRefresh} refreshTrigger={refreshTrigger} />
         </div>
-
-        <FailedPaymentsList />
       </div>
     </div>
   )

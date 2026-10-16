@@ -9,7 +9,8 @@ interface StatusBadgeProps {
 
 export function StatusBadge({ status, className }: StatusBadgeProps) {
   const getStatusConfig = () => {
-    switch (status.toUpperCase()) {
+    const statusUpper = status?.toUpperCase() || 'UNKNOWN'
+    switch (statusUpper) {
       case "ACTIVE":
       case "COMPLETED":
       case "APPROVED":

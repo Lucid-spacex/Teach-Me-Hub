@@ -64,21 +64,29 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
   const [subjects, setSubjects] = useState<Subject[]>([])
   const [subjectsLoading, setSubjectsLoading] = useState(false)
   const [userTimezone, setUserTimezone] = useState<string>('UTC')
-  const [pricingTiers, setPricingTiers] = useState<any[]>([])
-  const [pricingLoading, setPricingLoading] = useState(false)
+  const [pricingQuote, setPricingQuote] = useState<{ ngn: number; usd: number } | null>(null)
+  const [loadingQuote, setLoadingQuote] = useState(false)
 
   useEffect(() => {
     if (open) {
       loadSubjects()
-      loadPricingTiers()
       loadUserTimezone()
     }
   }, [open])
 
+  useEffect(() => {
+    // Load pricing quote when student and subjects are selected
+    if (formData.studentId && formData.subjectIds.length > 0) {
+      loadPricingQuote()
+    } else {
+      setPricingQuote(null)
+    }
+  }, [formData.studentId, formData.subjectIds])
+
   const loadSubjects = async () => {
     setSubjectsLoading(true)
     try {
-      const data = await api.getSubjects()
+      const data = await api.getSubjects() // New per-grade pricing API
       setSubjects(data)
     } catch (err) {
       console.error('Failed to load subjects:', err)
@@ -92,19 +100,33 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
     }
   }
 
-  const loadPricingTiers = async () => {
-    setPricingLoading(true)
-    try {
-      // Try to get pricing from a public endpoint if available
-      // If that fails, we'll rely on the backend to provide pricing during enrollment creation
-      const data = await api.getPricingTiers()
-      setPricingTiers(data)
-    } catch (err) {
-      console.error('Failed to load pricing tiers (expected for non-admin users):', err)
-      // This is expected for non-admin users - pricing will be calculated by backend
-    } finally {
-      setPricingLoading(false)
+  const loadPricingQuote = async () => {
+    if (!formData.studentId || formData.subjectIds.length === 0) {
+      setPricingQuote(null)
+      return
     }
+
+    setLoadingQuote(true)
+    try {
+      const quote = await api.getPricingQuote(formData.studentId, formData.subjectIds) as any
+      // API returns: { gradeBandTier, quotes: [...], totals: { yearlyPriceNGN, yearlyPriceUSD } }
+      setPricingQuote({
+        ngn: quote.totals?.yearlyPriceNGN || 0,
+        usd: quote.totals?.yearlyPriceUSD || 0
+      })
+    } catch (err) {
+      console.error('Failed to load pricing quote:', err)
+      // Don't show error toast - just set null and let the user proceed
+      // The backend will calculate pricing during payment
+      setPricingQuote(null)
+    } finally {
+      setLoadingQuote(false)
+    }
+  }
+
+  const loadPricingTiers = async () => {
+    // Legacy pricing tiers are deprecated - pricing is now per-grade-band per subject
+    // This function is kept for backward compatibility but no longer used
   }
 
   const loadUserTimezone = async () => {
@@ -147,33 +169,7 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
     }
   }
 
-  const calculateTotalPrice = (): { ngn: number; usd: number; hasPricing: boolean } => {
-    let totalNGN = 0
-    let totalUSD = 0
-    let hasPricing = false
 
-    formData.subjectIds.forEach(subjectId => {
-      const subject = subjects.find(s => s.id === subjectId)
-      if (subject) {
-        // First try to use subject's own pricing if available
-        if (subject.priceNGN && subject.priceUSD) {
-          totalNGN += subject.priceNGN
-          totalUSD += subject.priceUSD
-          hasPricing = true
-        } else {
-          // Fall back to pricing tiers based on grade band
-          const pricingTier = pricingTiers.find(tier => tier.gradeBandTier === subject.gradeBand)
-          if (pricingTier) {
-            totalNGN += pricingTier.priceNGN
-            totalUSD += pricingTier.priceUSD
-            hasPricing = true
-          }
-        }
-      }
-    })
-
-    return { ngn: totalNGN, usd: totalUSD, hasPricing }
-  }
 
   const getDayCountValidation = (): { valid: boolean; message: string } => {
     const frequency = SESSION_FREQUENCIES.find(f => f.value === formData.sessionFrequency)
@@ -382,7 +378,10 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
     )
   }
 
-  const totalPrice = calculateTotalPrice()
+  const totalPrice = {
+    ngn: pricingQuote?.ngn ?? 0,
+    usd: pricingQuote?.usd ?? 0
+  }
 
   return (
     <Modal
@@ -493,10 +492,10 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
                       htmlFor={`subject-${subject.id}`}
                       className="text-sm text-gray-300 cursor-pointer flex-1"
                     >
-                      {subject.name} ({subject.gradeBand})
-                      {subject.priceNGN && (
+                      {subject.name} {subject.gradeBand && `(${subject.gradeBand})`}
+                      {subject.prices && subject.prices.length > 0 && (
                         <span className="ml-2 text-xs text-brand-gold">
-                          ₦{subject.priceNGN.toLocaleString()} / ${subject.priceUSD?.toLocaleString()}
+                          {subject.prices.map(p => `${p.gradeBandTier}: ₦${p.yearlyPriceNGN.toLocaleString()}`).join(', ')}
                         </span>
                       )}
                     </label>
@@ -509,23 +508,25 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
 
           {formData.subjectIds.length > 0 && (
             <>
-              <Card className="bg-brand-gold/10 border-brand-gold/30">
-                <CardContent className="pt-4">
-                  <p className="text-sm font-medium text-white mb-2">Total Price</p>
-                  <div className="space-y-1 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">NGN:</span>
-                      <span className="text-brand-gold font-bold">₦{totalPrice.ngn.toLocaleString()}</span>
+              {loadingQuote ? (
+                <div className="text-sm text-gray-400">Loading pricing...</div>
+              ) : pricingQuote ? (
+                <Card className="bg-brand-gold/10 border-brand-gold/30">
+                  <CardContent className="pt-4">
+                    <p className="text-sm font-medium text-white mb-2">Total Price</p>
+                    <div className="space-y-1 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">NGN:</span>
+                        <span className="text-brand-gold font-bold">₦{totalPrice.ngn.toLocaleString()}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">USD:</span>
+                        <span className="text-brand-gold font-bold">${totalPrice.usd.toLocaleString()}</span>
+                      </div>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">USD:</span>
-                      <span className="text-brand-gold font-bold">${totalPrice.usd.toLocaleString()}</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              {!totalPrice.hasPricing && (
+                  </CardContent>
+                </Card>
+              ) : (
                 <div className="bg-yellow-500/10 border border-yellow-500/30 p-3 rounded-lg">
                   <div className="flex items-center gap-2 text-sm text-yellow-400">
                     <AlertCircle className="h-4 w-4" />
@@ -747,6 +748,17 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
                     <span className="text-brand-gold font-bold">${totalPrice.usd.toLocaleString()}</span>
                   </div>
                 </div>
+
+                {!pricingQuote && (
+                  <div className="bg-yellow-500/10 border border-yellow-500/30 p-3 rounded-lg">
+                    <div className="flex items-center gap-2 text-sm text-yellow-400">
+                      <AlertCircle className="h-4 w-4" />
+                      <span>
+                        Pricing will be calculated by the server based on your selected subjects and billing frequency. You'll see the exact amount during payment.
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -832,10 +844,10 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="NGN">
-                  Nigerian Naira (NGN){totalPrice.hasPricing ? ` - ₦${totalPrice.ngn.toLocaleString()}` : ''}
+                  Nigerian Naira (NGN){pricingQuote ? ` - ₦${totalPrice.ngn.toLocaleString()}` : ''}
                 </SelectItem>
                 <SelectItem value="USD">
-                  US Dollar (USD){totalPrice.hasPricing ? ` - $${totalPrice.usd.toLocaleString()}` : ''}
+                  US Dollar (USD){pricingQuote ? ` - $${totalPrice.usd.toLocaleString()}` : ''}
                 </SelectItem>
               </SelectContent>
             </Select>

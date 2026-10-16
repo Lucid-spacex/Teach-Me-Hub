@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { api } from '@/lib/api'
 import { TutorWithProfile } from '@/lib/types'
 import { DataTable } from '@/components/shared/DataTable'
@@ -8,7 +9,8 @@ import { Avatar } from '@/components/shared/Avatar'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
-import { GraduationCap, UserCheck } from 'lucide-react'
+import { StatusBadge } from '@/components/shared/StatusBadge'
+import { GraduationCap, Eye } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
@@ -18,6 +20,7 @@ interface AllTutorsListProps {
 
 export function AllTutorsList({ refreshTrigger }: AllTutorsListProps) {
   const { toast } = useToast()
+  const router = useRouter()
   const [tutors, setTutors] = useState<TutorWithProfile[]>([])
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState<string>('ALL')
@@ -30,7 +33,9 @@ export function AllTutorsList({ refreshTrigger }: AllTutorsListProps) {
     setLoading(true)
     try {
       const params = statusFilter === 'ALL' ? undefined : statusFilter
-      const data = await api.getTutors(params)
+      const response = await api.getTutors(params)
+      // API returns { data: [...], page, limit, total }
+      const data = (response as any)?.data || response
       setTutors(Array.isArray(data) ? data : [])
     } catch (err) {
       console.error('Failed to load tutors:', err)
@@ -89,21 +94,41 @@ export function AllTutorsList({ refreshTrigger }: AllTutorsListProps) {
       key: 'vettingStatus',
       header: 'Status',
       cell: (tutor: TutorWithProfile) => {
-        const status = tutor.tutorProfile?.vettingStatus || 'NO_PROFILE'
+        // User status determines if tutor is active (APPROVED), not vettingStatus
+        const userStatus = tutor.status || 'NO_STATUS'
+        const vettingStatus = tutor.tutorProfile?.vettingStatus || 'NO_PROFILE'
+        // Treat APPROVED as "active" in every badge, filter, and check
+        const status = userStatus === 'APPROVED' ? 'APPROVED' : vettingStatus
         return (
           <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-            status === 'APPROVED' 
-              ? 'bg-green-100 text-green-800' 
-              : status === 'PENDING'
+            status === 'APPROVED'
+              ? 'bg-green-100 text-green-800'
+              : status === 'PENDING_VETTING'
               ? 'bg-yellow-100 text-yellow-800'
               : status === 'REJECTED'
               ? 'bg-red-100 text-red-800'
+              : status === 'SUSPENDED'
+              ? 'bg-gray-100 text-gray-800'
               : 'bg-gray-100 text-gray-800'
           }`}>
             {status === 'NO_PROFILE' ? 'No Profile' : status}
           </span>
         )
       },
+    },
+    {
+      key: 'actions',
+      header: 'Actions',
+      cell: (tutor: TutorWithProfile) => (
+        <Button
+          size="sm"
+          onClick={() => router.push(`/admin/tutors/${tutor.id}`)}
+          className="gap-2 bg-brand-gold hover:bg-brand-goldLight text-brand-dark"
+        >
+          <Eye className="h-4 w-4" />
+          View Details
+        </Button>
+      ),
     },
   ]
 
@@ -123,7 +148,7 @@ export function AllTutorsList({ refreshTrigger }: AllTutorsListProps) {
             <SelectContent>
               <SelectItem value="ALL">All Status</SelectItem>
               <SelectItem value="APPROVED">Approved</SelectItem>
-              <SelectItem value="PENDING">Pending</SelectItem>
+              <SelectItem value="PENDING_VETTING">Pending Vetting</SelectItem>
               <SelectItem value="REJECTED">Rejected</SelectItem>
               <SelectItem value="SUSPENDED">Suspended</SelectItem>
             </SelectContent>

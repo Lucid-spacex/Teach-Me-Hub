@@ -19,7 +19,6 @@ import {
   Calendar,
   BookOpen,
   Award,
-  Key,
   RefreshCw,
   Clock,
   Video,
@@ -30,6 +29,7 @@ import {
   User,
   Shield,
   ExternalLink,
+  ChevronRight,
 } from 'lucide-react'
 
 interface PageProps {
@@ -258,10 +258,6 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
                     DOB: {new Date(student.dateOfBirth).toLocaleDateString()}
                   </span>
                 )}
-                <span className="flex items-center gap-1.5 font-mono text-brand-gold font-medium">
-                  <Key className="h-3.5 w-3.5" />
-                  Code: {(student as any).studentCode || '—'}
-                </span>
               </div>
             </div>
           </div>
@@ -762,10 +758,18 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
           {/* Grades */}
           <Card className="bg-card border-brand-gold/25">
             <CardHeader className="pb-3 border-b border-white/5">
-              <CardTitle className="text-lg font-serif font-bold text-white flex items-center gap-2">
-                <Award className="h-5 w-5 text-brand-gold" />
-                Grades &amp; Assessments ({grades.length})
-              </CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg font-serif font-bold text-white flex items-center gap-2">
+                  <Award className="h-5 w-5 text-brand-gold" />
+                  Grades &amp; Assessments ({grades.length})
+                </CardTitle>
+                <Link
+                  href={`/parent/students/${studentId}/performance`}
+                  className="text-xs text-brand-gold hover:text-brand-goldLight font-medium flex items-center gap-1"
+                >
+                  View Performance <ChevronRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
             </CardHeader>
             <CardContent className="pt-5">
               {grades.length === 0 ? (

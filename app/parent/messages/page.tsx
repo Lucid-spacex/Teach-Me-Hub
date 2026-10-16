@@ -38,37 +38,105 @@ export default function ParentMessagesPage() {
     }
   }, [])
 
-  const loadThreads = async () => {
+  const loadThreads = async (forceRefresh = false) => {
+    // Check cache first if not forcing refresh
+    const cacheKey = 'parentMessageThreadsCache'
+    const cacheTimestampKey = 'parentMessageThreadsCacheTimestamp'
+    const cacheExpiry = 2 * 60 * 1000 // 2 minutes
+
+    if (!forceRefresh) {
+      const cachedData = localStorage.getItem(cacheKey)
+      const cachedTimestamp = localStorage.getItem(cacheTimestampKey)
+
+      if (cachedData && cachedTimestamp) {
+        const timestamp = parseInt(cachedTimestamp, 10)
+        const now = Date.now()
+
+        if (now - timestamp < cacheExpiry) {
+          console.log('Using cached message threads')
+          setThreads(Array.isArray(JSON.parse(cachedData)) ? JSON.parse(cachedData) : [])
+          setLoading(false)
+          return
+        }
+      }
+    }
+
     try {
       const data = await api.getMessageThreads()
       setThreads(Array.isArray(data) ? data : [])
+
+      // Cache the data
+      localStorage.setItem(cacheKey, JSON.stringify(data))
+      localStorage.setItem(cacheTimestampKey, Date.now().toString())
     } catch (error) {
       console.error('Failed to load message threads:', error)
-      toast({
-        title: 'Error',
-        description: 'Failed to load messages',
-        variant: 'destructive',
-      })
+
+      // Try to use cached data as fallback
+      const cachedData = localStorage.getItem(cacheKey)
+      if (cachedData && !forceRefresh) {
+        console.log('Using cached threads as fallback')
+        setThreads(Array.isArray(JSON.parse(cachedData)) ? JSON.parse(cachedData) : [])
+      } else {
+        toast({
+          title: 'Error',
+          description: 'Failed to load messages',
+          variant: 'destructive',
+        })
+      }
     } finally {
       setLoading(false)
     }
   }
 
-  const loadMessages = async (threadId: string) => {
+  const loadMessages = async (threadId: string, forceRefresh = false) => {
     if (!threadId) {
       console.error('Invalid threadId: threadId is undefined')
       return
     }
+
+    // Check cache first if not forcing refresh
+    const cacheKey = `parentMessages_${threadId}`
+    const cacheTimestampKey = `parentMessages_${threadId}_timestamp`
+    const cacheExpiry = 1 * 60 * 1000 // 1 minute
+
+    if (!forceRefresh) {
+      const cachedData = localStorage.getItem(cacheKey)
+      const cachedTimestamp = localStorage.getItem(cacheTimestampKey)
+
+      if (cachedData && cachedTimestamp) {
+        const timestamp = parseInt(cachedTimestamp, 10)
+        const now = Date.now()
+
+        if (now - timestamp < cacheExpiry) {
+          console.log('Using cached messages for thread:', threadId)
+          setMessages(Array.isArray(JSON.parse(cachedData)) ? JSON.parse(cachedData) : [])
+          return
+        }
+      }
+    }
+
     try {
       const data = await api.getMessages(threadId)
       setMessages(Array.isArray(data) ? data : [])
+
+      // Cache the data
+      localStorage.setItem(cacheKey, JSON.stringify(data))
+      localStorage.setItem(cacheTimestampKey, Date.now().toString())
     } catch (error) {
       console.error('Failed to load messages:', error)
-      toast({
-        title: 'Error',
-        description: 'Failed to load conversation',
-        variant: 'destructive',
-      })
+
+      // Try to use cached data as fallback
+      const cachedData = localStorage.getItem(cacheKey)
+      if (cachedData && !forceRefresh) {
+        console.log('Using cached messages as fallback')
+        setMessages(Array.isArray(JSON.parse(cachedData)) ? JSON.parse(cachedData) : [])
+      } else {
+        toast({
+          title: 'Error',
+          description: 'Failed to load conversation',
+          variant: 'destructive',
+        })
+      }
     }
   }
 
@@ -104,7 +172,7 @@ export default function ParentMessagesPage() {
         })
         setNewMessage('')
         // Reload threads to get the actual admin thread
-        await loadThreads()
+        await loadThreads(true) // Force refresh
         // Find and select the admin thread
         const adminThread = threads.find(t => {
           const participant = t.otherParticipant || t.participants?.[0]
@@ -112,7 +180,7 @@ export default function ParentMessagesPage() {
         })
         if (adminThread) {
           setSelectedThread(adminThread)
-          await loadMessages(adminThread.id)
+          await loadMessages(adminThread.id, true) // Force refresh
         }
       } else {
         const recipientId = 'recipientId' in otherParticipant ? otherParticipant.recipientId : otherParticipant.id
@@ -121,8 +189,8 @@ export default function ParentMessagesPage() {
         }
         await api.sendMessage(recipientId, newMessage)
         setNewMessage('')
-        await loadMessages(selectedThread.id)
-        await loadThreads() // Refresh to update last message
+        await loadMessages(selectedThread.id, true) // Force refresh
+        await loadThreads(true) // Force refresh to update last message
       }
     } catch (error) {
       console.error('Failed to send message:', error)

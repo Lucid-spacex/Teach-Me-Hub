@@ -50,7 +50,7 @@ export function PendingTutorsList({ onUpdate, refreshTrigger }: PendingTutorsLis
 
     setActionLoading(tutorId)
     try {
-      await api.updateTutorVetting(tutorId, { vettingStatus: status })
+      await api.updateTutorVetting(tutorId, { status })
       toast({
         title: `Tutor ${status.toLowerCase()}`,
         description: `Tutor has been ${status.toLowerCase()} successfully`,

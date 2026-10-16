@@ -34,6 +34,7 @@ import {
   CalendarDays,
   Trash2,
   Loader2,
+  TrendingUp,
 } from 'lucide-react'
 
 interface PageProps {
@@ -390,6 +391,15 @@ export default function TutorStudentDetailPage({ params }: PageProps) {
                 >
                   <MessageSquare className="h-3.5 w-3.5" />
                   Messages
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => router.push(`/tutor/students/${studentId}/performance`)}
+                  className="gap-1.5 text-xs h-9"
+                >
+                  <TrendingUp className="h-3.5 w-3.5" />
+                  Performance
                 </Button>
                 <Button
                   variant="outline"

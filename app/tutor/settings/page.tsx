@@ -8,10 +8,12 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/ui/password-input'
 import { Label } from '@/components/ui/label'
-import { Loader2, Settings, Lock, ArrowLeft } from 'lucide-react'
+import { Textarea } from '@/components/ui/textarea'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Loader2, Settings, Lock, ArrowLeft, UserCheck, AlertCircle } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
 import { api } from '@/lib/api'
-import { User } from '@/lib/types'
+import { User, TutorAvailabilityStatus, TutorProfile } from '@/lib/types'
 import { ProfilePictureUpload } from '@/components/shared/ProfilePictureUpload'
 import { AppearanceSettings } from '@/components/shared/AppearanceSettings'
 
@@ -26,6 +28,12 @@ export default function TutorSettingsPage() {
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [changingPassword, setChangingPassword] = useState(false)
+
+  // Availability status state
+  const [availabilityStatus, setAvailabilityStatus] = useState<TutorAvailabilityStatus>('AVAILABLE')
+  const [maxStudents, setMaxStudents] = useState<number>(10)
+  const [statusNote, setStatusNote] = useState('')
+  const [updatingAvailability, setUpdatingAvailability] = useState(false)
 
   useEffect(() => {
     const user = getUser()
@@ -105,6 +113,40 @@ export default function TutorSettingsPage() {
     }
   }
 
+  const handleAvailabilityUpdate = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setUpdatingAvailability(true)
+    try {
+      await api.updateTutorAvailabilityStatus({
+        availabilityStatus,
+        maxStudents,
+        statusNote: statusNote || undefined,
+      })
+
+      toast({
+        title: 'Availability Updated',
+        description: 'Your availability status has been updated successfully',
+      })
+
+      if (availabilityStatus === 'UNAVAILABLE') {
+        toast({
+          title: 'Note',
+          description: 'Setting your status to UNAVAILABLE will notify the admin team',
+          variant: 'default',
+        })
+      }
+    } catch (error) {
+      console.error('Failed to update availability:', error)
+      toast({
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'Failed to update availability',
+        variant: 'destructive',
+      })
+    } finally {
+      setUpdatingAvailability(false)
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-brand-dark">
@@ -162,6 +204,83 @@ export default function TutorSettingsPage() {
 
           {/* Appearance */}
           <AppearanceSettings />
+
+          {/* Availability Status */}
+          <Card className="bg-card border-brand-gold/30">
+            <CardHeader>
+              <CardTitle className="text-foreground flex items-center gap-2">
+                <UserCheck className="h-5 w-5 text-brand-gold" />
+                Availability Status
+              </CardTitle>
+              <CardDescription className="text-muted-foreground">
+                Manage your availability for new student assignments
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleAvailabilityUpdate} className="space-y-4">
+                <div>
+                  <Label htmlFor="availabilityStatus" className="text-foreground/80">Status</Label>
+                  <Select value={availabilityStatus} onValueChange={(value) => setAvailabilityStatus(value as TutorAvailabilityStatus)}>
+                    <SelectTrigger id="availabilityStatus" className="bg-background border-input mt-2">
+                      <SelectValue placeholder="Select your availability status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="AVAILABLE">Available - Accepting new students</SelectItem>
+                      <SelectItem value="LIMITED">Limited - Some capacity for new students</SelectItem>
+                      <SelectItem value="UNAVAILABLE">Unavailable - Not accepting new students</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="maxStudents" className="text-foreground/80">Maximum Students</Label>
+                  <Input
+                    id="maxStudents"
+                    type="number"
+                    min="1"
+                    max="50"
+                    value={maxStudents}
+                    onChange={(e) => setMaxStudents(parseInt(e.target.value) || 10)}
+                    className="bg-background border-input mt-2"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">The maximum number of students you can teach at once</p>
+                </div>
+                <div>
+                  <Label htmlFor="statusNote" className="text-foreground/80">Status Note (Optional)</Label>
+                  <Textarea
+                    id="statusNote"
+                    value={statusNote}
+                    onChange={(e) => setStatusNote(e.target.value)}
+                    placeholder="Add a note about your availability (e.g., 'Available weekends only')"
+                    className="bg-background border-input mt-2 min-h-[80px]"
+                  />
+                </div>
+                {availabilityStatus === 'UNAVAILABLE' && (
+                  <div className="bg-yellow-500/10 border border-yellow-500/30 p-3 rounded-lg">
+                    <div className="flex items-center gap-2 text-sm text-yellow-400">
+                      <AlertCircle className="h-4 w-4" />
+                      <span>
+                        Setting your status to UNAVAILABLE will notify the admin team. They may contact you to discuss your availability.
+                      </span>
+                    </div>
+                  </div>
+                )}
+                <Button
+                  type="submit"
+                  disabled={updatingAvailability}
+                  className="bg-brand-gold hover:bg-brand-goldLight text-brand-dark"
+                >
+                  {updatingAvailability ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Updating...
+                    </>
+                  ) : (
+                    'Update Availability'
+                  )}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
 
           {/* Password Change */}
           <Card className="bg-card border-brand-gold/30">

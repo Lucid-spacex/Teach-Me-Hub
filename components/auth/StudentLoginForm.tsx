@@ -64,7 +64,7 @@ export default function StudentLoginForm() {
 
     const fullPin = newDigits.join('')
     setValue('studentPin', fullPin)
-    
+
     if (fullPin.length === 6) {
       trigger('studentPin')
     }
@@ -79,7 +79,7 @@ export default function StudentLoginForm() {
   const handlePinPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault()
     const pastedData = e.clipboardData.getData('text').slice(0, 6)
-    
+
     if (/^\d+$/.test(pastedData)) {
       const newDigits = [...pinDigits]
       for (let i = 0; i < pastedData.length; i++) {
@@ -87,7 +87,7 @@ export default function StudentLoginForm() {
       }
       setPinDigits(newDigits)
       setValue('studentPin', newDigits.join(''))
-      
+
       const nextEmptyIndex = newDigits.findIndex(d => d === '')
       if (nextEmptyIndex !== -1) {
         inputRefs.current[nextEmptyIndex]?.focus()
@@ -120,7 +120,7 @@ export default function StudentLoginForm() {
       router.push('/student')
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Invalid credentials'
-      
+
       if (errorMessage.includes('Too many attempts') || errorMessage.includes('try again') || errorMessage.toLowerCase().includes('rate limit')) {
         setRateLimitError(errorMessage)
         toast({

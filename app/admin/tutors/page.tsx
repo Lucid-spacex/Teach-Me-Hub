@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import Navbar from '@/components/shared/Navbar'
-import { PendingTutorsList } from '@/components/admin/PendingTutorsList'
+import { AllTutorsList } from '@/components/admin/AllTutorsList'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, GraduationCap, RefreshCw } from 'lucide-react'
 import { useState } from 'react'
@@ -37,8 +37,8 @@ export default function AdminTutorsPage() {
                 <GraduationCap className="h-5 w-5 text-blue-600" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-foreground">Tutor Management</h1>
-                <p className="text-sm text-muted-foreground">Review and approve tutor applications</p>
+                <h1 className="text-2xl font-bold text-foreground">All Tutors</h1>
+                <p className="text-sm text-muted-foreground">View and manage all tutors across the platform</p>
               </div>
             </div>
           </div>
@@ -52,8 +52,8 @@ export default function AdminTutorsPage() {
             Refresh
           </Button>
         </div>
-        
-        <PendingTutorsList onUpdate={refreshData} refreshTrigger={refreshTrigger} />
+
+        <AllTutorsList refreshTrigger={refreshTrigger} />
       </div>
     </div>
   )

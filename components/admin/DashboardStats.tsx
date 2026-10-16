@@ -1,95 +1,55 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { api } from '@/lib/api'
 import { AdminOverview } from '@/lib/types'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Users, GraduationCap, Wallet, ClipboardList, Clock, UserCheck, AlertCircle, DollarSign } from 'lucide-react'
-import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
 
-export function DashboardStats() {
-  const [stats, setStats] = useState<AdminOverview | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+interface DashboardStatsProps {
+  overview: AdminOverview | null
+}
 
-  useEffect(() => {
-    loadStats()
-  }, [])
-
-  const loadStats = async () => {
-    try {
-      const data = await api.getAdminOverview()
-      // Validate response structure
-      if (!data || typeof data !== 'object') {
-        throw new Error('Invalid admin overview response')
-      }
-      setStats(data)
-    } catch (err) {
-      console.error('Failed to load admin stats:', err)
-      setError(err instanceof Error ? err.message : 'Failed to load dashboard stats')
-      setStats(null)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <LoadingSpinner className="text-brand-gold" />
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-sm text-gray-400">Dashboard stats not available yet</p>
-      </div>
-    )
-  }
-
-  if (!stats) return null
+export function DashboardStats({ overview }: DashboardStatsProps) {
+  if (!overview) return null
 
   const statCards = [
     {
       title: 'Total Users',
-      value: stats.totalUsers,
+      value: overview.totalUsers,
       icon: Users,
     },
     {
       title: 'Total Students',
-      value: stats.totalStudents,
+      value: overview.totalStudents,
       icon: GraduationCap,
     },
     {
       title: 'Total Tutors',
-      value: stats.totalTutors,
+      value: overview.totalTutors,
       icon: UserCheck,
     },
     {
       title: 'Total Parents',
-      value: stats.totalParents,
+      value: overview.totalParents,
       icon: Users,
     },
     {
       title: 'Active Enrollments',
-      value: stats.activeEnrollments,
+      value: overview.activeEnrollments,
       icon: ClipboardList,
     },
     {
       title: 'Pending Tutors',
-      value: stats.pendingTutors,
+      value: overview.pendingTutors,
       icon: Clock,
     },
     {
       title: 'Total Revenue',
-      value: `$${stats.totalRevenue}`,
+      value: `$${overview.totalRevenue}`,
       icon: DollarSign,
     },
     {
       title: 'Failed Payments',
-      value: stats.failedPayments,
+      value: overview.failedPayments || 0,
       icon: AlertCircle,
     },
   ]

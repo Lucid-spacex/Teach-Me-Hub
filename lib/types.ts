@@ -13,13 +13,72 @@ export interface User {
   profilePictureUrl?: string | null
 }
 
-// Auth types
+// Auth types - Updated to match backend spec
 export interface RegisterRequest {
-  fullName: string
+  firstName: string
+  lastName: string
+  middleName?: string
   email: string
   phone: string
   password: string
   role: UserRole
+  address?: string
+}
+
+export interface TutorRegistrationRequest extends RegisterRequest {
+  role: 'TUTOR'
+  firstName: string
+  lastName: string
+  middleName?: string
+  confirmPassword: string
+  // Note: firstName, lastName, middleName, confirmPassword are now in base RegisterRequest
+  // Step 2: About you
+  address?: string
+  birthday?: string
+  country?: string
+  city?: string
+  highestQualification?: string
+  // Step 3: Teaching
+  subjects?: string[]
+  testPreparation?: string[]
+  levels?: string[]
+  yearsOfExperience?: number
+  whyTeach?: string
+  howHeard?: string
+  // Step 4: Profile
+  bio?: string
+  interests?: string
+  profilePicture?: File
+  // Step 5: Documents
+  documents?: File[]
+}
+
+export interface TutorRegistrationRequest extends RegisterRequest {
+  role: 'TUTOR'
+  firstName: string
+  lastName: string
+  middleName?: string
+  confirmPassword: string
+  // Note: firstName, lastName, middleName, confirmPassword are now in base RegisterRequest
+  // Step 2: About you
+  address?: string
+  birthday?: string
+  country?: string
+  city?: string
+  highestQualification?: string
+  // Step 3: Teaching
+  subjects?: string[]
+  testPreparation?: string[]
+  levels?: string[]
+  yearsOfExperience?: number
+  whyTeach?: string
+  howHeard?: string
+  // Step 4: Profile
+  bio?: string
+  interests?: string
+  profilePicture?: File
+  // Step 5: Documents
+  documents?: File[]
 }
 
 export interface VerifyRequest {
@@ -51,6 +110,7 @@ export interface AuthResponse {
 export interface RegisterResponse {
   message: string
   userId: string
+  emailSent?: boolean
 }
 
 export interface VerifyResponse {
@@ -59,13 +119,49 @@ export interface VerifyResponse {
 }
 
 // Subject types
+export type GradeBandTier = 'PRESCHOOL_TO_G1' | 'G2_TO_G4' | 'G5_TO_G8' | 'G9_TO_G12'
+
 export interface Subject {
   id: string
   name: string
-  gradeBand: string
+  gradeBand?: string // Deprecated, kept for migration compatibility
   category: string
-  priceNGN?: number
-  priceUSD?: number
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
+  prices?: SubjectPrice[]
+  subjectPrices?: Array<{
+    id: string
+    subjectId: string
+    gradeBandTier: GradeBandTier
+    yearlyPriceNGN: string
+    yearlyPriceUSD: string
+    isActive: boolean
+    updatedAt: string
+    updatedBy: string
+  }>
+}
+
+export interface SubjectPrice {
+  id: string
+  subjectId: string
+  gradeBandTier: GradeBandTier
+  yearlyPriceNGN: number
+  yearlyPriceUSD: number
+  effectiveFrom: string
+  updatedAt: string
+  subject?: Subject
+}
+
+export interface PriceChangeLog {
+  id: string
+  enrollmentId: string
+  oldPriceNGN: number | null
+  oldPriceUSD: number | null
+  newPriceNGN: number
+  newPriceUSD: number
+  changedBy: string
+  note?: string
   createdAt: string
 }
 
@@ -99,6 +195,12 @@ export interface CreateStudentRequest {
   notes?: string
   email?: string
   preferredStartDate?: string
+}
+
+export interface RegenerateStudentPasswordResponse {
+  message: string
+  studentCode: string
+  // Password is NEVER returned - only emailed to parent
 }
 
 // Enrollment types
@@ -160,6 +262,7 @@ export interface Session {
   scheduledAt: string
   durationMinutes: number
   zoomLink: string | null
+  zoomMeetingId?: string | null
   status: SessionStatus
   recordingStatus?: RecordingStatus
   recordingLink?: string | null
@@ -168,6 +271,23 @@ export interface Session {
   participants?: SessionParticipant[]
   createdBy?: 'TUTOR' | 'ADMIN'
   createdAt: string
+  // Extended fields from admin API
+  enrollment?: {
+    id: string
+    student?: {
+      id: string
+      fullName: string
+    }
+    subject?: {
+      id: string
+      name: string
+    }
+  }
+  tutor?: {
+    id: string
+    fullName: string
+    email: string
+  }
 }
 
 export interface UpdateSessionRequest {
@@ -199,6 +319,7 @@ export interface CreateProgressReportRequest {
 
 // Tutor Profile types
 export type VettingStatus = 'PENDING' | 'APPROVED' | 'REJECTED'
+export type TutorAvailabilityStatus = 'AVAILABLE' | 'LIMITED' | 'UNAVAILABLE'
 
 export interface TutorProfile {
   id: string
@@ -209,8 +330,36 @@ export interface TutorProfile {
   vettingStatus: VettingStatus
   hourlyRate: number
   availability: Record<string, any>
+  availabilityStatus?: TutorAvailabilityStatus
+  maxStudents?: number
+  statusNote?: string
+  statusUpdatedAt?: string
   createdAt: string
   user?: User
+  // Extended profile fields from registration
+  firstName?: string
+  lastName?: string
+  middleName?: string
+  address?: string
+  birthday?: string
+  country?: string
+  city?: string
+  highestQualification?: string
+  testPreparation?: string[]
+  levels?: string[]
+  yearsOfExperience?: number
+  whyTeach?: string
+  howHeard?: string
+  interests?: string
+  profilePictureUrl?: string
+  documents?: string[]
+}
+
+export interface TutorSubject {
+  id: string
+  tutorId: string
+  subjectId: string
+  subject?: Subject
 }
 
 export interface Tutor {
@@ -223,6 +372,45 @@ export interface Tutor {
   vettingStatus: VettingStatus
   hourlyRate: number
   availability: Record<string, any>
+}
+
+// Tutor Application types
+export type ApplicationStatus = 'DRAFT' | 'SUBMITTED' | 'UNDER_REVIEW' | 'APPROVED' | 'REJECTED'
+export type HighestQualification = 'SSCE_WAEC' | 'OND_NCE' | 'HND' | 'BACHELORS' | 'BED_PGDE' | 'MASTERS' | 'PHD' | 'OTHER'
+export type TutorLevel = 'PRESCHOOL_TO_G1' | 'G2_TO_G4' | 'G5_TO_G8' | 'G9_TO_G12' | 'EXAM_LEVELS'
+export type HowHeardSource = 'TEACHMENEST_TUTOR_OR_STAFF' | 'PARENT_OR_FAMILY' | 'FRIEND_OR_FAMILY' | 'INSTAGRAM' | 'FACEBOOK' | 'LINKEDIN' | 'WHATSAPP_GROUP' | 'GOOGLE_SEARCH' | 'JOB_BOARD' | 'OTHER'
+
+export interface TutorApplication {
+  id: string
+  userId: string
+  firstName: string
+  lastName: string
+  middleName?: string
+  phone: string
+  birthday: string // Day and month only
+  country: string
+  city: string
+  highestQualification: HighestQualification
+  subjects: string[]
+  levels: TutorLevel[]
+  yearsOfExperience: number
+  whyTeach: string
+  howHeard: HowHeardSource
+  aboutYou: string
+  applicationStatus: ApplicationStatus
+  submittedAt?: string
+  createdAt: string
+  updatedAt: string
+  missingFields?: string[]
+}
+
+export interface TutorDocument {
+  id: string
+  applicationId: string
+  fileName: string
+  fileUrl: string
+  signedUrl: string
+  createdAt: string
 }
 
 export interface CreateTutorProfileRequest {
@@ -260,6 +448,22 @@ export interface TutorWithProfile {
   updatedAt: string
   profilePictureUrl?: string | null
   tutorProfile: TutorProfile | null
+  // Extended fields from registration
+  firstName?: string
+  lastName?: string
+  middleName?: string
+  address?: string
+  birthday?: string
+  country?: string
+  city?: string
+  highestQualification?: string
+  testPreparation?: string[]
+  levels?: string[]
+  yearsOfExperience?: number
+  whyTeach?: string
+  howHeard?: string
+  interests?: string
+  documents?: string[]
 }
 
 export interface AdminStudent {
@@ -277,8 +481,52 @@ export interface AdminStudent {
   createdAt: string
 }
 
+export interface AdminStudentDetail {
+  student: Student
+  parent: {
+    id: string
+    fullName: string
+    email: string
+    phone: string
+    profilePictureUrl?: string | null
+  }
+  tutors: Array<{
+    id: string
+    fullName: string
+    email: string
+    phone: string
+    profilePictureUrl?: string | null
+    bio?: string
+    subjects: string[]
+    availabilityStatus?: TutorAvailabilityStatus
+    hourlyRate?: number
+  }>
+  enrollments: Enrollment[]
+  sessions: Session[]
+  attendance: Array<{
+    sessionId: string
+    sessionDate: string
+    attended: boolean
+    status: string
+  }>
+  grades: Grade[]
+  assignments: Assignment[]
+  progressReports: Array<{
+    id: string
+    enrollmentId: string
+    period: string
+    summary: string
+    strengths: string
+    areasToImprove: string
+    createdBy: string
+    createdAt: string
+  }>
+  performance?: PerformanceOverview
+}
+
 export interface VettingRequest {
   vettingStatus: 'APPROVED' | 'REJECTED'
+  reason?: string
 }
 
 export interface AssignTutorRequest {
@@ -354,6 +602,42 @@ export interface StudentProfile {
   timezone?: string
   profilePictureUrl?: string | null
   createdAt: string
+  assignedTutors?: Array<{
+    id: string
+    fullName: string
+    profilePictureUrl?: string | null
+    subjectName: string
+  }>
+  // Parent details
+  parent?: {
+    id: string
+    fullName: string
+    email: string
+    phone: string
+    profilePictureUrl?: string | null
+  }
+  // Tutor details for each enrollment
+  tutors?: Array<{
+    id: string
+    fullName: string
+    email: string
+    phone: string
+    profilePictureUrl?: string | null
+    bio?: string
+    subjects: string[]
+    availabilityStatus?: TutorAvailabilityStatus
+    hourlyRate?: number
+  }>
+  // Sessions
+  sessions?: Session[]
+  // Grades
+  grades?: Grade[]
+  // Attendance
+  attendance?: StudentAttendance[]
+  // Reports
+  progressReports?: ProgressReport[]
+  // Performance
+  performance?: PerformanceOverview
 }
 
 export interface AdminContact {
@@ -477,6 +761,15 @@ export interface AssignmentSubmission {
   createdAt: string
 }
 
+// File upload types
+export interface FileUploadResponse {
+  url: string
+  publicId: string
+  originalName: string
+  mimeType: string
+  size: number
+}
+
 // Grade types
 export interface Grade {
   id: string
@@ -521,8 +814,8 @@ export interface QuizAttempt {
 export interface PricingTier {
   id: string
   gradeBandTier: string
-  priceNGN: number
-  priceUSD: number
+  yearlyPriceNGN: number
+  yearlyPriceUSD: number
   effectiveFrom: string
 }
 
@@ -532,6 +825,202 @@ export interface ExchangeRate {
   targetCurrency: string
   rate: number
   effectiveFrom: string
+}
+
+export interface PricingQuote {
+  studentId: string
+  gradeBandTier: GradeBandTier
+  subjects: Array<{
+    subjectId: string
+    subjectName: string
+    yearlyPriceNGN: number
+    yearlyPriceUSD: number
+  }>
+  totalNGN: number
+  totalUSD: number
+}
+
+// Parent Directory types
+export interface ParentDirectoryEntry {
+  id: string
+  fullName: string
+  email: string
+  phone: string
+  status: UserStatus
+  childrenCount: number
+  activeEnrollments: number
+  pendingPayments: number
+  totalPaidNGN: number
+  totalPaidUSD: number
+  complaintCount: number
+  createdAt: string
+}
+
+export interface ParentDetailProfile {
+  parent: ParentDirectoryEntry
+  children: Array<{
+    id: string
+    fullName: string
+    actualGrade: ActualGrade
+    school: string | null
+  }>
+  enrollments: Array<{
+    id: string
+    studentName: string
+    subjectName: string
+    tutorName: string | null
+    status: EnrollmentStatus
+    effectivePriceNGN: number
+    effectivePriceUSD: number
+    priceSource: 'override' | 'subject_price'
+    startDate: string
+  }>
+  recentPayments: Array<{
+    id: string
+    reference: string
+    studentName: string
+    subjectName: string
+    amount: number
+    currency: string
+    status: string
+    createdAt: string
+  }>
+}
+
+// Transaction types
+export type PaymentStatus = 'PENDING' | 'SUCCESS' | 'FAILED' | 'REFUNDED' | 'EXPIRED'
+export type PaymentProvider = 'PAYSTACK' | 'STRIPE'
+
+export interface PaymentDetail {
+  id: string
+  reference: string
+  enrollmentId?: string
+  enrollmentGroupId?: string
+  amount: number
+  currency: string
+  status: PaymentStatus
+  provider: PaymentProvider
+  providerReference?: string
+  initiatedAt: string
+  paidAt?: string
+  enrollment?: {
+    id: string
+    student: {
+      id: string
+      fullName: string
+    }
+    subject: {
+      id: string
+      name: string
+    }
+  }
+  ngnEquivalent?: number
+  adminNote?: string | null
+}
+
+export interface PaymentSummary {
+  totalRevenueNGN: number
+  totalRevenueUSD: number
+  totalCount: number
+  statusCounts: Record<PaymentStatus, number>
+  successRate: number
+  dailyRevenue: Array<{
+    date: string
+    revenueNGN: number
+    revenueUSD: number
+    count: number
+  }>
+}
+
+export interface SuggestedTutor {
+  id: string
+  fullName: string
+  email: string
+  availabilityStatus: TutorAvailabilityStatus
+  maxStudents: number
+  currentStudents: number
+  subjects: Array<{
+    id: string
+    name: string
+  }>
+  availability: Record<string, any>
+}
+
+// Performance Overview types
+export type PeriodFilter = 'week' | 'month' | 'quarter' | 'year' | 'all'
+
+export interface PerformanceOverview {
+  averageGrade: {
+    percentage: number | null
+    gradedCount: number
+    trend: number | null // percentage change vs previous period
+  }
+  gradesBySubject: Array<{
+    subjectName: string
+    averagePercentage: number
+    gradedCount: number
+  }>
+  gradeTimeline: Array<{
+    period: string
+    averagePercentage: number
+    gradedCount: number
+  }>
+  attendance: {
+    rate: number
+    attended: number
+    missed: number
+    trend: number | null
+    timeline: Array<{
+      period: string
+      rate: number
+      attended: number
+      missed: number
+    }>
+  }
+  assignments: {
+    total: number
+    completed: number
+    pending: number
+    overdue: number
+    submittedLate: number
+    completionRate: number
+  }
+  quizzes: {
+    attempts: number
+    averagePercentage: number
+  }
+  recentGrades: Array<{
+    id: string
+    assignmentTitle: string
+    subjectName: string
+    score: number
+    maxScore: number
+    percentage: number
+    feedback: string | null
+    createdAt: string
+  }>
+  period: PeriodFilter
+  studentId: string
+}
+
+// Admin payment action types
+export interface PaymentNote {
+  id: string
+  paymentId: string
+  note: string
+  adminId: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface AdminActionLog {
+  id: string
+  adminId: string
+  action: string
+  targetType: string
+  targetId: string
+  details: Record<string, any>
+  createdAt: string
 }
 
 

@@ -12,13 +12,16 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
 import { useToast } from '@/components/ui/use-toast'
-import { User, Mail, Phone, Lock, CheckCircle2, ArrowLeft, ShieldCheck, Sparkles, GraduationCap, Upload, Camera, Trash2, Eye, EyeOff } from 'lucide-react'
+import { User, Mail, Phone, Lock, CheckCircle2, ArrowLeft, ShieldCheck, Sparkles, GraduationCap, Eye, EyeOff } from 'lucide-react'
 
 export default function RegisterForm() {
   const router = useRouter()
   const { toast } = useToast()
-  const [formData, setFormData] = useState<RegisterRequest>({
+  const [formData, setFormData] = useState<RegisterRequest & { firstName?: string; lastName?: string; middleName?: string }>({
     fullName: '',
+    firstName: '',
+    lastName: '',
+    middleName: '',
     email: '',
     phone: '',
     password: '',
@@ -27,8 +30,6 @@ export default function RegisterForm() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
-  const [profilePicture, setProfilePicture] = useState<File | null>(null)
-  const [profilePicturePreview, setProfilePicturePreview] = useState<string | null>(null)
   const [showPassword, setShowPassword] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -60,7 +61,27 @@ export default function RegisterForm() {
     }
 
     try {
-      await api.register(formData)
+      // Send the fields the backend expects for parent registration
+      const registrationData = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        middleName: formData.middleName,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+        role: formData.role,
+      }
+      const response = await api.register(registrationData)
+
+      // Check if email was sent successfully
+      if (response.emailSent === false) {
+        toast({
+          title: 'Email Not Sent',
+          description: 'Verification email could not be sent. Please click "Resend OTP" on the next page.',
+          variant: 'destructive',
+        })
+      }
+
       // Store email for verification page
       sessionStorage.setItem('pendingVerificationEmail', formData.email)
       setSuccess(true)
@@ -98,43 +119,6 @@ export default function RegisterForm() {
     } finally {
       setLoading(false)
     }
-  }
-
-  const handleProfilePictureSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
-    if (!allowedTypes.includes(file.type)) {
-      toast({
-        title: 'Invalid file type',
-        description: 'Please select an image (JPEG, PNG, GIF, or WebP)',
-        variant: 'destructive',
-      })
-      return
-    }
-
-    const maxSize = 5 * 1024 * 1024
-    if (file.size > maxSize) {
-      toast({
-        title: 'File too large',
-        description: 'Please select an image smaller than 5MB',
-        variant: 'destructive',
-      })
-      return
-    }
-
-    setProfilePicture(file)
-    const reader = new FileReader()
-    reader.onloadend = () => {
-      setProfilePicturePreview(reader.result as string)
-    }
-    reader.readAsDataURL(file)
-  }
-
-  const handleRemoveProfilePicture = () => {
-    setProfilePicture(null)
-    setProfilePicturePreview(null)
   }
 
   if (success) {
@@ -197,96 +181,70 @@ export default function RegisterForm() {
 
         <CardContent className="space-y-4">
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Profile Picture Upload */}
-            <div className="space-y-2">
-              <Label className="text-xs font-medium text-zinc-300">Profile Picture (Optional)</Label>
-              <div className="flex items-center gap-4">
-                {profilePicturePreview ? (
-                  <div className="relative">
-                    <img
-                      src={profilePicturePreview}
-                      alt="Profile preview"
-                      className="w-20 h-20 rounded-full object-cover border-2 border-primary"
-                    />
-                    <button
-                      type="button"
-                      onClick={handleRemoveProfilePicture}
-                      className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1 hover:bg-red-600 transition-colors"
-                    >
-                      <Trash2 className="h-3 w-3 text-white" />
-                    </button>
-                  </div>
-                ) : (
-                  <div className="w-20 h-20 rounded-full bg-muted border-2 border-dashed border-border flex items-center justify-center">
-                    <Camera className="h-8 w-8 text-zinc-500" />
-                  </div>
-                )}
-                <div className="flex-1">
-                  <input
-                    type="file"
-                    id="profilePicture"
-                    accept="image/*"
-                    onChange={handleProfilePictureSelect}
-                    className="hidden"
-                  />
-                  <label
-                    htmlFor="profilePicture"
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-muted border border-border rounded-lg text-xs font-medium text-zinc-300 hover:border-primary hover:text-primary transition-colors cursor-pointer"
-                  >
-                    <Upload className="h-3.5 w-3.5" />
-                    {profilePicture ? 'Change Photo' : 'Upload Photo'}
-                  </label>
-                  <p className="text-[10px] text-zinc-500 mt-1">JPEG, PNG, GIF, WebP (max 5MB)</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Role Switcher */}
+            {/* Role Switcher - Only show Parent option */}
             <div className="space-y-1.5">
               <Label className="text-xs font-medium text-zinc-300">Account Type</Label>
-              <div className="grid grid-cols-2 gap-2 p-1 bg-muted border border-[#282828] rounded-xl">
+              <div className="p-1 bg-muted border border-[#282828] rounded-xl">
                 <button
                   type="button"
-                  onClick={() => setFormData({ ...formData, role: 'PARENT' })}
-                  className={`py-2 px-3 text-xs font-semibold rounded-lg transition-all flex items-center justify-center gap-2 ${
-                    formData.role === 'PARENT'
-                      ? 'bg-gradient-to-r from-primary to-secondary text-black shadow-md'
-                      : 'text-zinc-400 hover:text-white'
-                  }`}
+                  disabled
+                  className="w-full py-2 px-3 text-xs font-semibold rounded-lg transition-all flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-secondary text-black shadow-md cursor-default"
                 >
                   <User className="w-3.5 h-3.5" />
                   Parent
                 </button>
-                <button
-                  type="button"
-                  onClick={() => setFormData({ ...formData, role: 'TUTOR' })}
-                  className={`py-2 px-3 text-xs font-semibold rounded-lg transition-all flex items-center justify-center gap-2 ${
-                    formData.role === 'TUTOR'
-                      ? 'bg-gradient-to-r from-primary to-secondary text-black shadow-md'
-                      : 'text-zinc-400 hover:text-white'
-                  }`}
-                >
-                  <GraduationCap className="w-3.5 h-3.5" />
-                  Tutor
-                </button>
               </div>
+              <p className="text-[10px] text-zinc-500 mt-1">
+                Want to register as a tutor?{' '}
+                <Link href="/register/tutor" className="text-primary hover:text-secondary underline">
+                  Go to Tutor Registration
+                </Link>
+              </p>
             </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="fullName" className="text-xs font-medium text-zinc-300">
-                Full Name
-              </Label>
-              <div className="relative">
-                <User className="absolute left-3 top-3 h-4 w-4 text-zinc-500" />
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="firstName" className="text-xs font-medium text-zinc-300">
+                  First Name *
+                </Label>
                 <Input
-                  id="fullName"
+                  id="firstName"
                   required
-                  value={formData.fullName}
-                  onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                  placeholder="e.g. Sarah Jenkins"
-                  className="pl-9 bg-muted border-border text-white placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11"
+                  value={formData.firstName || ''}
+                  onChange={(e) => {
+                    setFormData({ ...formData, firstName: e.target.value, fullName: `${e.target.value} ${formData.lastName || ''}`.trim() })
+                  }}
+                  placeholder="e.g. Sarah"
+                  className="bg-muted border-border text-white placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11"
                 />
               </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="lastName" className="text-xs font-medium text-zinc-300">
+                  Last Name *
+                </Label>
+                <Input
+                  id="lastName"
+                  required
+                  value={formData.lastName || ''}
+                  onChange={(e) => {
+                    setFormData({ ...formData, lastName: e.target.value, fullName: `${formData.firstName || ''} ${e.target.value}`.trim() })
+                  }}
+                  placeholder="e.g. Jenkins"
+                  className="bg-muted border-border text-white placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11"
+                />
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="middleName" className="text-xs font-medium text-zinc-300">
+                Middle Name (Optional)
+              </Label>
+              <Input
+                id="middleName"
+                value={formData.middleName || ''}
+                onChange={(e) => setFormData({ ...formData, middleName: e.target.value })}
+                placeholder="Optional"
+                className="bg-muted border-border text-white placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11"
+              />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

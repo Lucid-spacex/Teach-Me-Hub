@@ -15,6 +15,7 @@ import {
   FileText,
   BarChart3,
   CreditCard,
+  DollarSign,
   MessageSquare,
   AlertCircle,
   Settings,
@@ -26,6 +27,7 @@ import {
   GraduationCap,
   Sparkles,
   ChevronRight,
+  TrendingUp,
 } from 'lucide-react'
 
 interface SidebarProps {
@@ -44,7 +46,7 @@ export function Sidebar({ role }: SidebarProps) {
   const router = useRouter()
   const { toast } = useToast()
   const [mobileOpen, setMobileOpen] = useState(false)
-  const [user, setUserState] = useState<{ email?: string; name?: string; role?: string } | null>(null)
+  const [user, setUserState] = useState<{ email?: string; name?: string; role?: string; status?: string } | null>(null)
   const [unreadNotifications, setUnreadNotifications] = useState(0)
 
   useEffect(() => {
@@ -96,6 +98,7 @@ export function Sidebar({ role }: SidebarProps) {
     { label: 'Assignments', href: '/parent/assignments', icon: FileText },
     { label: 'Grades & Reports', href: '/parent/grades', icon: BarChart3 },
     { label: 'Payments & Fees', href: '/parent/payments', icon: CreditCard },
+    { label: 'Pricing', href: '/parent/pricing', icon: DollarSign },
     { label: 'Messages', href: '/parent/messages', icon: MessageSquare },
     { label: 'Complaints', href: '/parent/complaints', icon: AlertCircle },
     { label: 'Settings', href: '/parent/settings', icon: Settings },
@@ -107,20 +110,20 @@ export function Sidebar({ role }: SidebarProps) {
     { label: 'My Tutors', href: '/student/my-tutors', icon: Users },
     { label: 'My Assignments', href: '/student/assignments', icon: FileText },
     { label: 'Grades', href: '/student/grades', icon: BarChart3 },
+    { label: 'Performance', href: '/student/performance', icon: TrendingUp },
     { label: 'Progress Reports', href: '/student/progress-reports', icon: BookOpen },
     { label: 'Attendance', href: '/student/attendance', icon: UserCheck },
-    { label: 'Messages', href: '/student/messages', icon: MessageSquare },
     { label: 'My Profile', href: '/student/profile', icon: GraduationCap },
     { label: 'Settings', href: '/student/settings', icon: Settings },
   ]
 
   const tutorNavItems: NavItem[] = [
+    { label: 'Application', href: '/tutor/application', icon: FileText },
     { label: 'Dashboard', href: '/tutor', icon: LayoutDashboard },
     { label: 'Students', href: '/tutor/students', icon: Users },
     { label: 'Sessions', href: '/tutor/sessions', icon: Calendar },
     { label: 'Assignments', href: '/tutor/assignments', icon: FileText },
     { label: 'Grades', href: '/tutor/grades', icon: BarChart3 },
-    { label: 'Messages', href: '/tutor/messages', icon: MessageSquare },
     { label: 'Progress Reports', href: '/tutor/progress-reports', icon: BookOpen },
     { label: 'Notifications', href: '/tutor/notifications', icon: Bell },
     { label: 'Settings', href: '/tutor/settings', icon: Settings },
@@ -131,17 +134,19 @@ export function Sidebar({ role }: SidebarProps) {
     { label: 'Pending Tutors', href: '/admin/tutors/pending', icon: UserCheck },
     { label: 'All Tutors', href: '/admin/tutors', icon: Users },
     { label: 'Unmatched Enrollments', href: '/admin/enrollments', icon: BookOpen },
-    { label: 'Pricing Tiers', href: '/admin/pricing', icon: CreditCard },
+    { label: 'Sessions', href: '/admin/sessions', icon: Calendar },
+    { label: 'Subjects & Pricing', href: '/admin/subjects', icon: CreditCard },
+    { label: 'Parent Directory', href: '/admin/parents', icon: Users },
     { label: 'All Students', href: '/admin/students', icon: GraduationCap },
+    { label: 'Transactions', href: '/admin/transactions', icon: CreditCard },
     { label: 'Suspended Users', href: '/admin/suspended', icon: AlertCircle },
-    { label: 'Failed Payments', href: '/admin/payments/failed', icon: CreditCard },
     { label: 'Complaints', href: '/admin/complaints', icon: AlertCircle },
     { label: 'Messages', href: '/admin/messages', icon: MessageSquare },
     { label: 'Notifications', href: '/admin/notifications', icon: Bell },
     { label: 'Settings', href: '/admin/settings', icon: Settings },
   ]
 
-  const navItems = role === 'PARENT' ? parentNavItems : role === 'STUDENT' ? studentNavItems : role === 'TUTOR' ? tutorNavItems : adminNavItems
+  const navItems = role === 'PARENT' ? parentNavItems : role === 'STUDENT' ? studentNavItems : role === 'TUTOR' ? (user?.status === 'PENDING_VETTING' || user?.status === 'REJECTED' ? tutorNavItems.filter(item => item.href === '/tutor/application') : tutorNavItems) : adminNavItems
 
   const isActive = (href: string) => {
     if (href === '/parent' || href === '/student' || href === '/tutor' || href === '/admin') {

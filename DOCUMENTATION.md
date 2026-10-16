@@ -34,6 +34,224 @@ The platform uses a role-based access control system with JWT authentication and
 
 ---
 
+## Admin Portal
+
+### Dashboard (`/admin`)
+
+**Overview**:
+The admin dashboard provides a comprehensive overview of the entire platform, including users, enrollments, payments, and system health.
+
+**Key Features**:
+- Platform statistics (total users, students, tutors, pending vetting)
+- Quick action cards for common admin tasks
+- Revenue overview (total revenue, failed payments)
+- Unmatched enrollments management
+- Failed payments tracking
+
+**Quick Stats**:
+1. **Total Users** - All registered users across the platform
+2. **Total Students** - Total student profiles
+3. **Total Tutors** - Total tutor profiles
+4. **Pending Vetting** - Tutors awaiting approval
+
+**Quick Actions**:
+- **Pending Tutors** - Review and approve tutor applications
+- **All Tutors** - View and manage all tutors
+- **Manage Enrollments** - Assign tutors to unmatched enrollments
+- **Pricing Tiers** - Manage pricing and exchange rates
+
+### Pending Tutors (`/admin/tutors/pending`)
+
+**Features**:
+- View all pending tutor applications
+- Review tutor profiles and credentials
+- Approve or reject tutor applications
+- View tutor subjects, bio, and hourly rate
+- Access tutor credentials
+
+**Tutor Information Displayed**:
+- Full name, email, and phone
+- Subjects they can teach
+- Professional bio
+- Hourly rate
+- Credentials URL
+- Current vetting status
+
+### All Tutors (`/admin/tutors`)
+
+**Features**:
+- View all tutors (approved, pending, rejected, suspended)
+- Filter by vetting status
+- View detailed tutor profiles
+- Access tutor's assigned students
+- View tutor's session history
+- Monitor tutor performance
+
+**Tutor Detail View Includes**:
+- Personal information (name, email, phone)
+- Profile information (subjects, bio, credentials, hourly rate)
+- Vetting and availability status
+- Assigned students list
+- Recent sessions
+- Performance metrics
+
+### Parent Directory (`/admin/parents`)
+
+**Features**:
+- View all parents on the platform
+- Search by name, email, or phone
+- Filter by status (active, suspended, unverified)
+- View detailed parent profiles
+- View parent's children and enrollments
+- View payment history
+- Direct messaging to parents
+- Payment management
+
+**Parent Detail View Includes**:
+- Parent personal information
+- Children list with student codes and grades
+- Active enrollments for each child
+- Payment history
+- Total paid amount
+- Complaint count
+- Action buttons for messaging and payment management
+
+### All Students (`/admin/students`)
+
+**Features**:
+- View all students (enrolled or not, assigned or not)
+- Search by name or parent name
+- Filter by status and enrollment
+- View detailed student profiles
+- View student's parent information
+- View assigned tutor
+- View enrollment history
+- View grades and progress reports
+- View attendance records
+
+**Student Detail View Includes**:
+- Personal information (name, grade, school)
+- Student code and PIN
+- Parent information
+- Current tutor assignment
+- Active enrollments
+- Academic performance (grades, progress reports)
+- Attendance history
+- Session history
+
+### Transactions (`/admin/transactions`)
+
+**Features**:
+- View all payment transactions
+- Filter by status, currency, provider
+- Search by reference or parent name
+- View payment summary statistics
+- View detailed payment information
+- Payment details view
+
+**Transaction Information**:
+- Reference and provider reference
+- Amount (NGN and USD)
+- Payment status
+- Payment provider (Paystack/Stripe)
+- Initiated and paid timestamps
+- Associated enrollment details
+
+**Summary Statistics**:
+- Total revenue (NGN and USD)
+- Total transaction count
+- Success rate
+
+### Suspended Users (`/admin/suspended`)
+
+**Features**:
+- View all suspended users
+- View suspension reasons
+- Reactivate suspended accounts
+- View user role and status
+
+### Failed Payments (`/admin/payments/failed`)
+
+**Features**:
+- View all failed payment attempts
+- View payment details
+- Identify payment issues
+- Contact parents for resolution
+
+### Complaints (`/admin/complaints`)
+
+**Features**:
+- View all user complaints
+- View complaint details
+- Respond to complaints
+- Mark complaints as resolved
+- Track complaint history
+
+**Complaint Information**:
+- Complaint type (about tutor, student, or general)
+- Description
+- Filing date
+- Status (open, resolved)
+- Admin reply
+
+### Messages (`/admin/messages`)
+
+**Features**:
+- View admin message threads
+- Communicate with parents and tutors
+- Thread-based messaging
+- Real-time message updates
+- Start new conversations
+
+### Notifications (`/admin/notifications`)
+
+**Features**:
+- View system notifications
+- Notification categories
+- Mark notifications as read
+- Notification history
+
+### Settings (`/admin/settings`)
+
+**Features**:
+- Platform configuration
+- System settings
+- User management settings
+
+### Subjects & Pricing (`/admin/subjects`)
+
+**Features**:
+- View all subjects
+- Create new subjects
+- Update subject information
+- Manage per-grade pricing
+- Update exchange rates
+- Manage pricing tiers
+
+**Subject Management**:
+- Subject name and category
+- Per-grade pricing (NGN and USD)
+- Active/inactive status
+- Pricing tier management
+
+### Unmatched Enrollments (`/admin/enrollments`)
+
+**Features**:
+- View enrollments without assigned tutors
+- Get suggested tutors for enrollment
+- Assign tutors to enrollments
+- Force assign tutors if needed
+- View enrollment details
+
+**Enrollment Information**:
+- Student information
+- Subject and grade
+- Session frequency
+- Preferred schedule
+- Pricing information
+
+---
+
 ## Tech Stack
 
 ### Frontend Framework
