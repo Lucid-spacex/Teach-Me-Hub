@@ -29,7 +29,7 @@ export function PendingTutorsList({ onUpdate, refreshTrigger }: PendingTutorsLis
   const loadTutors = async () => {
     try {
       const data = await api.getPendingTutors()
-      setTutors(Array.isArray(data) ? data : [])
+      setTutors(Array.isArray(data) ? data.map((tutor) => ({ ...tutor, user: tutor.user ?? { id: tutor.id, fullName: tutor.fullName, email: tutor.email, role: 'TUTOR', status: tutor.status, createdAt: tutor.createdAt, updatedAt: tutor.updatedAt } })) : [])
     } catch (err) {
       console.error('Failed to load pending tutors:', err)
       setTutors([])
@@ -50,7 +50,7 @@ export function PendingTutorsList({ onUpdate, refreshTrigger }: PendingTutorsLis
 
     setActionLoading(tutorId)
     try {
-      await api.updateTutorVetting(tutorId, { status })
+      await api.updateTutorVetting(tutorId, { vettingStatus: status })
       toast({
         title: `Tutor ${status.toLowerCase()}`,
         description: `Tutor has been ${status.toLowerCase()} successfully`,

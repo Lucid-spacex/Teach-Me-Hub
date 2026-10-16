@@ -200,7 +200,7 @@ export default function AdminSubjectsPage() {
     setEditingSubject(subject)
     setFormData({
       name: subject.name,
-      category: subject.category,
+      category: subject.category as 'CORE' | 'ENRICHMENT' | 'TEST_PREP',
       prices: subject.prices || GRADE_BANDS.map(band => ({
         gradeBandTier: band.value,
         yearlyPriceNGN: 0,
@@ -283,12 +283,12 @@ export default function AdminSubjectsPage() {
                             <div className="flex items-center gap-2">
                               <Input
                                 type="number"
-                                value={price?.yearlyPriceNGN || 0}
+                                value={Number(price?.yearlyPriceNGN) || 0}
                                 onChange={(e) => handleUpdatePrice(
                                   subject.id,
                                   band.value,
                                   parseInt(e.target.value) || 0,
-                                  price?.yearlyPriceUSD || 0
+                                  Number(price?.yearlyPriceUSD) || 0
                                 )}
                                 className="bg-background border-input text-white text-sm h-8"
                                 placeholder="NGN"
@@ -298,11 +298,11 @@ export default function AdminSubjectsPage() {
                             <div className="flex items-center gap-2">
                               <Input
                                 type="number"
-                                value={price?.yearlyPriceUSD || 0}
+                                value={Number(price?.yearlyPriceUSD) || 0}
                                 onChange={(e) => handleUpdatePrice(
                                   subject.id,
                                   band.value,
-                                  price?.yearlyPriceNGN || 0,
+                                  Number(price?.yearlyPriceNGN) || 0,
                                   parseInt(e.target.value) || 0
                                 )}
                                 className="bg-background border-input text-white text-sm h-8"

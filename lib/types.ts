@@ -15,6 +15,7 @@ export interface User {
 
 // Auth types - Updated to match backend spec
 export interface RegisterRequest {
+  fullName?: string
   firstName: string
   lastName: string
   middleName?: string
@@ -433,7 +434,7 @@ export interface TutorStudent {
 
 // Admin types
 export interface PendingTutor {
-  user: User
+  user?: Partial<User>
   tutorProfile: TutorProfile
 }
 
@@ -448,6 +449,7 @@ export interface TutorWithProfile {
   updatedAt: string
   profilePictureUrl?: string | null
   tutorProfile: TutorProfile | null
+  user?: { fullName?: string; email?: string }
   // Extended fields from registration
   firstName?: string
   lastName?: string
@@ -847,6 +849,7 @@ export interface ParentDirectoryEntry {
   email: string
   phone: string
   status: UserStatus
+  timezone?: string | null
   childrenCount: number
   activeEnrollments: number
   pendingPayments: number
@@ -857,23 +860,50 @@ export interface ParentDirectoryEntry {
 }
 
 export interface ParentDetailProfile {
-  parent: ParentDirectoryEntry
+  id?: string
+  fullName?: string
+  email?: string
+  phone?: string | null
+  status?: UserStatus
+  timezone?: string | null
+  profilePicture?: string | null
+  createdAt?: string
+  updatedAt?: string
+  complaintCount?: number
+  parent: Partial<Omit<ParentDirectoryEntry, 'id' | 'phone'>> & { id?: string; phone?: string | null; createdAt?: string }
   children: Array<{
     id: string
+    parentId?: string
+    userId?: string
     fullName: string
     actualGrade: ActualGrade
+    gradeLevel?: string
+    gradeBandTier?: string
+    gender?: string | null
     school: string | null
+    notes?: string | null
+    studentStatus?: UserStatus
+    createdAt?: string
+    enrollments?: Array<Record<string, unknown>>
   }>
   enrollments: Array<{
     id: string
     studentName: string
     subjectName: string
+    subjectCategory?: string
+    subjectGradeBand?: string
     tutorName: string | null
     status: EnrollmentStatus
+    sessionFrequency?: string
+    availableDays?: string[]
+    billingFrequency?: string
+    yearlyPrice?: number
     effectivePriceNGN: number
     effectivePriceUSD: number
-    priceSource: 'override' | 'subject_price'
+    priceSource: 'override' | 'subject_price' | 'error'
     startDate: string
+    hasPendingPayment?: boolean
+    payments?: Array<Record<string, unknown>>
   }>
   recentPayments: Array<{
     id: string

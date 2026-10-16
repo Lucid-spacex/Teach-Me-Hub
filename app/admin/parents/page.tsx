@@ -187,7 +187,9 @@ export default function AdminParentsPage() {
       })
       setPricingModalOpen(false)
       // Reload parent details to show updated pricing
-      await handleSelectParent(selectedParent.parent.id)
+      if (selectedParent) {
+        await handleSelectParent(selectedParent.parent.id ?? '')
+      }
     } catch (err) {
       console.error('Failed to update pricing:', err)
       toast({
@@ -257,7 +259,7 @@ export default function AdminParentsPage() {
                   <div className="flex items-center gap-3">
                     <DollarSign className="h-5 w-5 text-brand-gold" />
                     <div>
-                      <p className="text-2xl font-bold text-white">₦{selectedParent.parent.totalPaidNGN.toLocaleString()}</p>
+                      <p className="text-2xl font-bold text-white">₦{(selectedParent.parent.totalPaidNGN ?? 0).toLocaleString()}</p>
                       <p className="text-xs text-gray-400">Total Paid (NGN)</p>
                     </div>
                   </div>
@@ -319,7 +321,7 @@ export default function AdminParentsPage() {
                   </div>
                   <div>
                     <p className="text-gray-400">Account Created</p>
-                    <p className="text-white">{new Date(selectedParent.parent.createdAt).toLocaleDateString()}</p>
+                    <p className="text-white">{new Date(selectedParent.parent.createdAt ?? '').toLocaleDateString()}</p>
                   </div>
                 </div>
               </CardContent>

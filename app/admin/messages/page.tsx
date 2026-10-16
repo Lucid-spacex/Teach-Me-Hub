@@ -283,7 +283,7 @@ export default function AdminMessagesPage() {
         status: p.status,
       }))
 
-      const tutorUsers = (tutors.data || []).map((t: any) => ({
+      const tutorUsers = (Array.isArray(tutors) ? tutors : []).map((t: any) => ({
         id: t.id,
         fullName: t.fullName,
         email: t.email,

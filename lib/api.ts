@@ -1522,18 +1522,6 @@ class ApiClient {
     })
   }
 
-  // Admin complaints endpoints
-  async getComplaints(): Promise<Complaint[]> {
-    return this.request<Complaint[]>('/admin/complaints')
-  }
-
-  async resolveComplaint(complaintId: string, reply: string): Promise<Complaint> {
-    return this.request<Complaint>(`/admin/complaints/${complaintId}`, {
-      method: 'PATCH',
-      body: JSON.stringify({ reply }),
-    })
-  }
-
   // Admin sessions endpoints
   async getAdminSessions(params?: {
     status?: string

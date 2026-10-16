@@ -12,7 +12,7 @@ import { Avatar } from '@/components/shared/Avatar'
 import { Modal } from '@/components/shared/Modal'
 import { useToast } from '@/components/ui/use-toast'
 import { api } from '@/lib/api'
-import { AdminStudentDetail, Enrollment, Session, Grade, Assignment, TutorWithProfile } from '@/lib/types'
+import { AdminStudentDetail, Enrollment, Session, Grade, Assignment, SuggestedTutor } from '@/lib/types'
 import { ArrowLeft, RefreshCw, Users, Calendar, BookOpen, Award, BarChart3, FileText, TrendingUp, UserCheck, Mail, Phone, Clock, AlertCircle } from 'lucide-react'
 
 export default function AdminStudentDetailPage() {
@@ -25,7 +25,7 @@ export default function AdminStudentDetailPage() {
   const [activeTab, setActiveTab] = useState<'overview' | 'enrollments' | 'sessions' | 'grades' | 'attendance' | 'assignments' | 'reports' | 'performance'>('overview')
   const [assignModalOpen, setAssignModalOpen] = useState(false)
   const [selectedEnrollment, setSelectedEnrollment] = useState<Enrollment | null>(null)
-  const [suggestedTutors, setSuggestedTutors] = useState<TutorWithProfile[]>([])
+  const [suggestedTutors, setSuggestedTutors] = useState<SuggestedTutor[]>([])
   const [selectedTutor, setSelectedTutor] = useState<string>('')
   const [assigning, setAssigning] = useState(false)
   const [regeneratePinConfirm, setRegeneratePinConfirm] = useState(false)

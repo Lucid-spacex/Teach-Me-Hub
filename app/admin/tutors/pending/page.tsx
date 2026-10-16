@@ -51,7 +51,7 @@ export default function AdminPendingTutorsPage() {
   const handleVetting = async (tutorId: string, status: 'APPROVED' | 'REJECTED') => {
     setActionLoading(tutorId)
     try {
-      await api.updateTutorVetting(tutorId, { status })
+      await api.updateTutorVetting(tutorId, { vettingStatus: status })
       toast({
         title: 'Success',
         description: `Tutor ${status === 'APPROVED' ? 'approved' : 'rejected'} successfully`,
@@ -161,7 +161,7 @@ export default function AdminPendingTutorsPage() {
                   )}
                   <div className="flex gap-2 pt-4">
                     <Button
-                      onClick={() => handleVetting(tutor.id || tutor.tutorProfile?.id, 'APPROVED')}
+                      onClick={() => handleVetting(tutor.id || tutor.tutorProfile?.id || '', 'APPROVED')}
                       disabled={actionLoading === (tutor.id || tutor.tutorProfile?.id)}
                       className="bg-brand-gold hover:bg-brand-goldLight text-brand-dark"
                     >
@@ -172,7 +172,7 @@ export default function AdminPendingTutorsPage() {
                       )}
                     </Button>
                     <Button
-                      onClick={() => handleVetting(tutor.id || tutor.tutorProfile?.id, 'REJECTED')}
+                      onClick={() => handleVetting(tutor.id || tutor.tutorProfile?.id || '', 'REJECTED')}
                       disabled={actionLoading === (tutor.id || tutor.tutorProfile?.id)}
                       variant="outline"
                       className="border-destructive/40 text-destructive hover:bg-destructive/10"
