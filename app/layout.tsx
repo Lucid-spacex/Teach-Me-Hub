@@ -5,8 +5,8 @@ import { ErrorBoundaryWrapper } from '@/components/shared/ErrorBoundaryWrapper'
 import { AuthProvider } from '@/components/shared/AuthProvider'
 
 export const metadata: Metadata = {
-  title: 'Teachmenest - Learn. Grow. Thrive.',
-  description: 'Teachmenest tutoring platform connecting parents, tutors, and students for personalized learning experiences.',
+  title: 'TeachMeNest — Confident learning starts here',
+  description: 'Personalized tutoring that helps every learner feel seen, supported, and ready for what comes next.',
 }
 
 export default function RootLayout({
