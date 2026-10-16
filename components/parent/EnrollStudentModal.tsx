@@ -763,7 +763,7 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
             </CardContent>
           </Card>
 
-          {!totalPrice.hasPricing && (
+          {!pricingQuote && (
             <div className="bg-yellow-500/10 border border-yellow-500/30 p-3 rounded-lg">
               <div className="flex items-center gap-2 text-sm text-yellow-400">
                 <AlertCircle className="h-4 w-4" />
@@ -802,7 +802,7 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
                 <DollarSign className="h-4 w-4 text-brand-gold" />
                 Payment Amount
               </p>
-              {totalPrice.hasPricing ? (
+              {pricingQuote ? (
                 <div className="space-y-3">
                   <div className="flex justify-between items-center p-3 bg-brand-dark/50 rounded-lg">
                     <div>

@@ -364,7 +364,7 @@ export default function AdminSubjectsPage() {
             <Label htmlFor="category" className="text-gray-300">Category *</Label>
             <Select
               value={formData.category}
-              onValueChange={(value) => setFormData({ ...formData, category: value })}
+              onValueChange={(value) => setFormData({ ...formData, category: value as 'CORE' | 'ENRICHMENT' | 'TEST_PREP' })}
               required
             >
               <SelectTrigger className="bg-brand-dark/30 border-brand-gold/30 text-white mt-2">

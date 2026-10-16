@@ -98,7 +98,7 @@ export function AllTutorsList({ refreshTrigger }: AllTutorsListProps) {
         const userStatus = tutor.status || 'NO_STATUS'
         const vettingStatus = tutor.tutorProfile?.vettingStatus || 'NO_PROFILE'
         // Treat APPROVED as "active" in every badge, filter, and check
-        const status = userStatus === 'APPROVED' ? 'APPROVED' : vettingStatus
+        const status: string = userStatus === 'APPROVED' ? 'APPROVED' : vettingStatus
         return (
           <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
             status === 'APPROVED'

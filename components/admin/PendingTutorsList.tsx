@@ -3,7 +3,7 @@
 // Fixed variant="primary" to variant="default" for TypeScript compatibility
 import { useEffect, useState } from 'react'
 import { api } from '@/lib/api'
-import { PendingTutor } from '@/lib/types'
+import { TutorWithProfile } from '@/lib/types'
 import { DataTable } from '@/components/shared/DataTable'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/shared/EmptyState'
@@ -18,7 +18,7 @@ interface PendingTutorsListProps {
 
 export function PendingTutorsList({ onUpdate, refreshTrigger }: PendingTutorsListProps) {
   const { toast } = useToast()
-  const [tutors, setTutors] = useState<PendingTutor[]>([])
+  const [tutors, setTutors] = useState<TutorWithProfile[]>([])
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
 
@@ -29,7 +29,7 @@ export function PendingTutorsList({ onUpdate, refreshTrigger }: PendingTutorsLis
   const loadTutors = async () => {
     try {
       const data = await api.getPendingTutors()
-      setTutors(Array.isArray(data) ? data.map((tutor) => ({ ...tutor, user: tutor.user ?? { id: tutor.id, fullName: tutor.fullName, email: tutor.email, role: 'TUTOR', status: tutor.status, createdAt: tutor.createdAt, updatedAt: tutor.updatedAt } })) : [])
+      setTutors(Array.isArray(data) ? data : [])
     } catch (err) {
       console.error('Failed to load pending tutors:', err)
       setTutors([])
@@ -72,19 +72,19 @@ export function PendingTutorsList({ onUpdate, refreshTrigger }: PendingTutorsLis
     {
       key: 'name',
       header: 'Name',
-      cell: (item: PendingTutor) => (
+      cell: (item: TutorWithProfile) => (
         <div className="font-medium">{item.user?.fullName || 'N/A'}</div>
       ),
     },
     {
       key: 'email',
       header: 'Email',
-      cell: (item: PendingTutor) => item.user?.email || 'N/A',
+      cell: (item: TutorWithProfile) => item.user?.email || 'N/A',
     },
     {
       key: 'subjects',
       header: 'Subjects',
-      cell: (item: PendingTutor) => {
+      cell: (item: TutorWithProfile) => {
         const subjects = item.tutorProfile?.subjects || []
         return Array.isArray(subjects) ? subjects.join(', ') : 'N/A'
       },
@@ -92,19 +92,19 @@ export function PendingTutorsList({ onUpdate, refreshTrigger }: PendingTutorsLis
     {
       key: 'rate',
       header: 'Hourly Rate',
-      cell: (item: PendingTutor) => `$${item.tutorProfile?.hourlyRate || 0}/hr`,
+      cell: (item: TutorWithProfile) => `$${item.tutorProfile?.hourlyRate || 0}/hr`,
     },
     {
       key: 'bio',
       header: 'Bio',
-      cell: (item: PendingTutor) => (
+      cell: (item: TutorWithProfile) => (
         <div className="max-w-xs truncate text-sm">{item.tutorProfile?.bio || 'N/A'}</div>
       ),
     },
     {
       key: 'actions',
       header: 'Actions',
-      cell: (item: PendingTutor) => {
+      cell: (item: TutorWithProfile) => {
         const tutorProfileId = item.tutorProfile?.id
         if (!tutorProfileId) {
           return <span className="text-sm text-muted-foreground">No profile ID</span>
