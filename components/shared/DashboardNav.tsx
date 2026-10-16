@@ -196,6 +196,23 @@ export function DashboardNav({ role, unreadCount = 0 }: DashboardNavProps) {
             </Button>
           </div>
         </div>
+
+        <nav aria-label="Mobile navigation" className="flex gap-1 overflow-x-auto border-t border-border py-2 md:hidden">
+          {items.map((item) => {
+            const Icon = item.icon
+            return (
+              <Button
+                key={item.href}
+                variant="ghost"
+                onClick={() => router.push(item.href)}
+                className="shrink-0 gap-2 whitespace-nowrap text-xs text-muted-foreground hover:bg-secondary hover:text-foreground"
+              >
+                <Icon className="h-4 w-4" />
+                {item.label}
+              </Button>
+            )
+          })}
+        </nav>
       </div>
     </header>
   )

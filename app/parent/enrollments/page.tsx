@@ -85,19 +85,19 @@ export default function ParentEnrollmentsPage() {
   return (
     <div className="space-y-6 pb-12">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-6 rounded-2xl bg-gradient-to-r from-muted via-muted to-muted border border-border">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-2xl border border-border bg-card p-6">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-primary/15 border border-primary/30 text-primary flex items-center justify-center shrink-0">
             <BookOpen className="h-6 w-6" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold text-white tracking-tight">Academic Enrollments</h1>
+              <h1 className="text-2xl font-bold tracking-tight text-foreground">Academic Enrollments</h1>
               <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/15 text-secondary border border-primary/30 font-medium">
                 Courses
               </span>
             </div>
-            <p className="text-xs text-zinc-400 mt-0.5">
+            <p className="mt-0.5 text-xs text-muted-foreground">
               Review active courses, tutor assignments, monthly tuition status, and enrollment approvals
             </p>
           </div>
@@ -107,7 +107,7 @@ export default function ParentEnrollmentsPage() {
           <Button
             onClick={refreshEnrollments}
             variant="ghost"
-            className="text-zinc-400 hover:text-white hover:bg-white/5 h-10 px-3 rounded-xl"
+            className="h-10 rounded-xl px-3 text-muted-foreground hover:bg-muted hover:text-foreground"
             title="Refresh"
           >
             <RefreshCw className="h-4 w-4" />
@@ -123,7 +123,7 @@ export default function ParentEnrollmentsPage() {
           </Link>
           <Button
             onClick={() => setEnrollModalOpen(true)}
-            className="bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-primary/80 text-black font-bold h-10 px-4 rounded-xl shadow-[0_4px_16px_rgba(212,160,23,0.25)] flex items-center gap-2"
+            className="flex h-10 items-center gap-2 rounded-xl bg-primary px-4 font-bold text-primary-foreground hover:bg-primary/90"
           >
             <Plus className="h-4 w-4 stroke-[3]" />
             Enroll Subject
