@@ -113,7 +113,7 @@ export function DashboardNav({ role, unreadCount = 0 }: DashboardNavProps) {
   const items = navItems[role] || []
 
   return (
-    <header className="border-b border-brand-gold/20 bg-brand-dark/95 backdrop-blur-sm sticky top-0 z-50">
+    <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -130,7 +130,7 @@ export function DashboardNav({ role, unreadCount = 0 }: DashboardNavProps) {
                   key={item.href}
                   variant="ghost"
                   onClick={() => router.push(item.href)}
-                  className="text-gray-300 hover:text-brand-gold hover:bg-brand-gold/10"
+                  className="text-muted-foreground hover:bg-secondary hover:text-foreground"
                 >
                   <Icon className="mr-2 h-4 w-4" />
                   {item.label}
@@ -164,7 +164,7 @@ export function DashboardNav({ role, unreadCount = 0 }: DashboardNavProps) {
               variant="ghost"
               size="icon"
               onClick={() => router.push(`/${role.toLowerCase()}/notifications`)}
-              className="text-gray-300 hover:text-brand-gold relative"
+              className="relative text-muted-foreground hover:bg-secondary hover:text-foreground"
               title="Notifications"
             >
               <Bell className="h-5 w-5" />
@@ -180,7 +180,7 @@ export function DashboardNav({ role, unreadCount = 0 }: DashboardNavProps) {
               variant="ghost"
               size="icon"
               onClick={() => router.push(`/${role.toLowerCase()}/settings`)}
-              className="text-gray-300 hover:text-brand-gold"
+              className="text-muted-foreground hover:bg-secondary hover:text-foreground"
             >
               <Settings className="h-5 w-5" />
             </Button>
@@ -190,7 +190,7 @@ export function DashboardNav({ role, unreadCount = 0 }: DashboardNavProps) {
               variant="ghost"
               size="icon"
               onClick={handleLogout}
-              className="text-gray-300 hover:text-destructive"
+              className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
             >
               <LogOut className="h-5 w-5" />
             </Button>

@@ -1,37 +1,37 @@
 'use client'
 
-import { BookOpen, Home, Sprout } from 'lucide-react'
+import { Sprout } from 'lucide-react'
 
 export function BrandHeader() {
   return (
     <div className="flex items-center gap-3">
       {/* Logo Mark */}
-      <div className="relative w-12 h-12 rounded-full bg-black border-2 border-brand-gold flex items-center justify-center">
+      <div className="relative flex size-12 items-center justify-center rounded-full border-2 border-primary bg-foreground">
         <div className="relative">
           {/* House outline */}
-          <div className="absolute inset-0 border-2 border-brand-gold rounded-sm" />
+          <div className="absolute inset-0 rounded-sm border-2 border-primary" />
           {/* Parent figure (white) */}
-          <div className="absolute left-1 top-2 w-2 h-3 bg-white rounded-full" />
+          <div className="absolute left-1 top-2 h-3 w-2 rounded-full bg-background" />
           {/* Child figure (gold) */}
-          <div className="absolute left-3 top-3 w-1.5 h-2 bg-brand-gold rounded-full" />
+          <div className="absolute left-3 top-3 h-2 w-1.5 rounded-full bg-primary" />
           {/* Book */}
-          <div className="absolute left-1 bottom-1 w-4 h-1 bg-brand-gold rounded-sm" />
+          <div className="absolute bottom-1 left-1 h-1 w-4 rounded-sm bg-primary" />
           {/* Plant */}
-          <Sprout className="absolute -right-2 top-1 w-3 h-3 text-brand-gold" />
+          <Sprout className="absolute -right-2 top-1 size-3 text-primary" />
         </div>
       </div>
 
       {/* Wordmark */}
       <div className="flex flex-col">
-        <h1 className="text-2xl font-serif font-bold tracking-tight">
+        <h1 className="font-serif text-2xl font-bold tracking-tight">
           <span className="text-foreground">Teachme</span>
-          <span className="text-brand-gold">nest</span>
+          <span className="text-primary">nest</span>
         </h1>
-        <div className="flex items-center gap-2 text-xs text-brand-goldLight">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <span className="text-foreground font-medium">LEARN</span>
-          <span className="text-brand-gold">•</span>
+          <span className="text-primary">•</span>
           <span className="text-foreground font-medium">GROW</span>
-          <span className="text-brand-gold">•</span>
+          <span className="text-primary">•</span>
           <span className="text-foreground font-medium">THRIVE</span>
         </div>
       </div>

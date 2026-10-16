@@ -149,8 +149,8 @@ export default function StudentDashboard() {
   return (
     <div className="space-y-8 pb-12">
       {/* Welcome Banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-brand-subtle via-brand-dark to-brand-card border border-brand-border p-6 sm:p-8">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-brand-gold/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+      <div className="relative overflow-hidden rounded-3xl bg-card border border-brand-border p-6 sm:p-8">
+        
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div className="space-y-2">
@@ -190,7 +190,7 @@ export default function StudentDashboard() {
 
       {/* Next Live Class Card */}
       {nextClass && nextClass.session ? (
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-brand-goldDark/20 via-brand-subtle to-brand-card border-2 border-brand-gold/40 p-6 shadow-[0_8px_30px_rgba(212,160,23,0.1)]">
+        <div className="relative overflow-hidden rounded-2xl bg-secondary border-2 border-brand-gold/40 p-6 shadow-[0_8px_30px_rgba(212,160,23,0.1)]">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
@@ -226,7 +226,7 @@ export default function StudentDashboard() {
                 href={nextClass.session.zoomLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-brand-gold to-brand-goldLight hover:from-brand-goldLight hover:to-brand-goldAccent text-brand-dark font-bold text-sm shadow-[0_4px_20px_rgba(212,160,23,0.3)] transition-all transform active:scale-95"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-primary hover:bg-primary/90 text-brand-dark font-bold text-sm shadow-[0_4px_20px_rgba(212,160,23,0.3)] transition-all transform active:scale-95"
               >
                 <Video className="w-4 h-4 fill-black" />
                 Join Live Classroom

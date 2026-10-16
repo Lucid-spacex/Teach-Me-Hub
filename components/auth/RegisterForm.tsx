@@ -125,7 +125,7 @@ export default function RegisterForm() {
     return (
       <div className="w-full max-w-md mx-auto relative z-10">
         <Card className="bg-card/95 backdrop-blur-xl border border-primary/30 shadow-[0_10px_40px_rgba(0,0,0,0.8)] rounded-2xl overflow-hidden">
-          <div className="h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
+          <div className="h-1 bg-primary" />
           <CardContent className="pt-8 pb-8">
             <div className="flex flex-col items-center text-center space-y-4">
               <div className="w-16 h-16 rounded-full bg-primary/15 border border-primary/40 flex items-center justify-center">
@@ -162,7 +162,7 @@ export default function RegisterForm() {
 
       {/* Main Register Card */}
       <Card className="bg-card/95 backdrop-blur-xl border border-primary/30 shadow-[0_10px_40px_rgba(0,0,0,0.8),0_0_30px_rgba(212,160,23,0.08)] rounded-2xl overflow-hidden">
-        <div className="h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-80" />
+        <div className="h-1 bg-primary opacity-80" />
 
         <CardHeader className="pt-6 pb-4">
           <CardTitle className="text-xl font-bold text-white flex items-center justify-between">
@@ -188,7 +188,7 @@ export default function RegisterForm() {
                 <button
                   type="button"
                   disabled
-                  className="w-full py-2 px-3 text-xs font-semibold rounded-lg transition-all flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-secondary text-black shadow-md cursor-default"
+                  className="w-full py-2 px-3 text-xs font-semibold rounded-lg transition-all flex items-center justify-center gap-2 bg-primary text-black shadow-md cursor-default"
                 >
                   <User className="w-3.5 h-3.5" />
                   Parent
@@ -324,7 +324,7 @@ export default function RegisterForm() {
 
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-primary/80 text-background font-bold py-2.5 h-11 rounded-xl shadow-[0_4px_20px_rgba(212,160,23,0.3)] transition-all duration-200 transform active:scale-[0.98]"
+              className="w-full bg-primary hover:from-secondary hover:to-primary/80 text-background font-bold py-2.5 h-11 rounded-xl shadow-[0_4px_20px_rgba(212,160,23,0.3)] transition-all duration-200 transform active:scale-[0.98]"
               disabled={loading}
             >
               {loading ? <LoadingSpinner size="sm" className="mr-2 text-black" /> : null}

@@ -160,8 +160,8 @@ export default function ParentDashboard() {
   return (
     <div className="space-y-8 pb-12">
       {/* Welcome Banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-brand-subtle via-brand-dark to-brand-card border border-brand-border p-6 sm:p-8">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-brand-gold/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+      <div className="relative overflow-hidden rounded-3xl bg-card border border-brand-border p-6 sm:p-8">
+        
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div className="space-y-2">
@@ -181,7 +181,7 @@ export default function ParentDashboard() {
           <div className="flex flex-wrap items-center gap-3">
             <Button
               onClick={() => setAddStudentModalOpen(true)}
-              className="bg-gradient-to-r from-brand-gold to-brand-goldLight hover:from-brand-goldLight hover:to-brand-goldAccent text-brand-dark font-bold h-11 px-4 rounded-xl shadow-[0_4px_20px_rgba(212,160,23,0.25)] transition-all flex items-center gap-2"
+              className="bg-primary hover:bg-primary/90 text-brand-dark font-bold h-11 px-4 rounded-xl shadow-[0_4px_20px_rgba(212,160,23,0.25)] transition-all flex items-center gap-2"
             >
               <Plus className="h-4 w-4 stroke-[3]" />
               Add Child
@@ -238,7 +238,7 @@ export default function ParentDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Link
           href="/parent/payments"
-          className="p-4 rounded-2xl bg-gradient-to-b from-brand-subtle to-brand-dark border border-brand-border hover:border-brand-gold/40 transition-all flex items-center gap-3.5 group"
+          className="p-4 rounded-2xl bg-card border border-brand-border hover:border-brand-gold/40 transition-all flex items-center gap-3.5 group"
         >
           <div className="w-10 h-10 rounded-xl bg-brand-gold/10 text-brand-gold flex items-center justify-center shrink-0">
             <CreditCard className="w-5 h-5" />
@@ -256,7 +256,7 @@ export default function ParentDashboard() {
 
         <Link
           href="/parent/assignments"
-          className="p-4 rounded-2xl bg-gradient-to-b from-brand-subtle to-brand-dark border border-brand-border hover:border-brand-gold/40 transition-all flex items-center gap-3.5 group"
+          className="p-4 rounded-2xl bg-card border border-brand-border hover:border-brand-gold/40 transition-all flex items-center gap-3.5 group"
         >
           <div className="w-10 h-10 rounded-xl bg-brand-gold/10 text-brand-gold flex items-center justify-center shrink-0">
             <FileText className="w-5 h-5" />
@@ -274,7 +274,7 @@ export default function ParentDashboard() {
 
         <Link
           href="/parent/messages"
-          className="p-4 rounded-2xl bg-gradient-to-b from-brand-subtle to-brand-dark border border-brand-border hover:border-brand-gold/40 transition-all flex items-center gap-3.5 group"
+          className="p-4 rounded-2xl bg-card border border-brand-border hover:border-brand-gold/40 transition-all flex items-center gap-3.5 group"
         >
           <div className="w-10 h-10 rounded-xl bg-brand-gold/10 text-brand-gold flex items-center justify-center shrink-0">
             <Sparkles className="w-5 h-5" />

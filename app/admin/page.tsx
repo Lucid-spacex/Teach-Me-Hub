@@ -192,8 +192,8 @@ export default function AdminDashboard() {
     <div className="space-y-8 pb-12">
 
       {/* Welcome Banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-subtle to-brand-card border border-brand-border p-6 sm:p-8">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-brand-gold/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+      <div className="relative overflow-hidden rounded-3xl bg-card border border-brand-border p-6 sm:p-8">
+        
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div className="space-y-2">

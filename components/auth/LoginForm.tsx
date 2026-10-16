@@ -156,7 +156,7 @@ export default function LoginForm() {
 
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-primary/80 text-background font-bold py-2.5 h-11 rounded-xl shadow-[0_4px_20px_rgba(212,160,23,0.3)] transition-all duration-200 transform active:scale-[0.98]"
+              className="w-full bg-primary hover:bg-primary/90 text-background font-bold py-2.5 h-11 rounded-xl shadow-[0_4px_20px_rgba(212,160,23,0.3)] transition-all duration-200 transform active:scale-[0.98]"
               disabled={loading}
             >
               {loading ? <LoadingSpinner size="sm" className="mr-2 text-black" /> : null}
@@ -185,7 +185,7 @@ export default function LoginForm() {
 
           {/* Quick Switch to Student Login */}
           <div className="mt-6 pt-5 border-t border-border">
-            <div className="p-3 rounded-xl bg-gradient-to-r from-[#171717] to-card border border-border flex items-center justify-between group hover:border-primary/40 transition-colors">
+            <div className="p-3 rounded-xl bg-secondary border border-border flex items-center justify-between group hover:border-primary/40 transition-colors">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-lg bg-primary/15 text-primary flex items-center justify-center font-bold">
                   <GraduationCap className="w-4 h-4" />
