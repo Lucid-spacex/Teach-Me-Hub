@@ -132,8 +132,8 @@ export default function RegisterForm() {
                 <CheckCircle2 className="h-9 w-9 text-primary" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-white font-serif">Welcome to Teachmenest!</h2>
-                <p className="text-sm text-zinc-400 mt-2 max-w-xs mx-auto">
+                <h2 className="text-2xl font-bold text-foreground font-serif">Welcome to Teachmenest!</h2>
+                <p className="text-sm text-muted-foreground mt-2 max-w-xs mx-auto">
                   Your account has been created. An OTP verification code has been dispatched to your email.
                 </p>
               </div>
@@ -165,7 +165,7 @@ export default function RegisterForm() {
         <div className="h-1 bg-primary opacity-80" />
 
         <CardHeader className="pt-6 pb-4">
-          <CardTitle className="text-xl font-bold text-white flex items-center justify-between">
+          <CardTitle className="text-xl font-bold text-foreground flex items-center justify-between">
             <span className="flex items-center gap-2">
               <ShieldCheck className="w-5 h-5 text-primary" />
               Start Your Learning Journey
@@ -174,7 +174,7 @@ export default function RegisterForm() {
               Join
             </span>
           </CardTitle>
-          <CardDescription className="text-zinc-400 text-xs mt-1">
+          <CardDescription className="text-muted-foreground text-xs mt-1">
             Choose your role and enter your details to set up your account
           </CardDescription>
         </CardHeader>
@@ -183,7 +183,7 @@ export default function RegisterForm() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Role Switcher - Only show Parent option */}
             <div className="space-y-1.5">
-              <Label className="text-xs font-medium text-zinc-300">Account Type</Label>
+              <Label className="text-xs font-medium text-muted-foreground">Account Type</Label>
               <div className="p-1 bg-muted border border-[#282828] rounded-xl">
                 <button
                   type="button"
@@ -194,7 +194,7 @@ export default function RegisterForm() {
                   Parent
                 </button>
               </div>
-              <p className="text-[10px] text-zinc-500 mt-1">
+              <p className="text-[10px] text-muted-foreground mt-1">
                 Want to register as a tutor?{' '}
                 <Link href="/register/tutor" className="text-primary hover:text-secondary underline">
                   Go to Tutor Registration
@@ -204,7 +204,7 @@ export default function RegisterForm() {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label htmlFor="firstName" className="text-xs font-medium text-zinc-300">
+                <Label htmlFor="firstName" className="text-xs font-medium text-muted-foreground">
                   First Name *
                 </Label>
                 <Input
@@ -215,11 +215,11 @@ export default function RegisterForm() {
                     setFormData({ ...formData, firstName: e.target.value, fullName: `${e.target.value} ${formData.lastName || ''}`.trim() })
                   }}
                   placeholder="e.g. Sarah"
-                  className="bg-muted border-border text-white placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11"
+                  className="bg-muted border-border text-foreground placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11"
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="lastName" className="text-xs font-medium text-zinc-300">
+                <Label htmlFor="lastName" className="text-xs font-medium text-muted-foreground">
                   Last Name *
                 </Label>
                 <Input
@@ -230,12 +230,12 @@ export default function RegisterForm() {
                     setFormData({ ...formData, lastName: e.target.value, fullName: `${formData.firstName || ''} ${e.target.value}`.trim() })
                   }}
                   placeholder="e.g. Jenkins"
-                  className="bg-muted border-border text-white placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11"
+                  className="bg-muted border-border text-foreground placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11"
                 />
               </div>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="middleName" className="text-xs font-medium text-zinc-300">
+              <Label htmlFor="middleName" className="text-xs font-medium text-muted-foreground">
                 Middle Name (Optional)
               </Label>
               <Input
@@ -243,17 +243,17 @@ export default function RegisterForm() {
                 value={formData.middleName || ''}
                 onChange={(e) => setFormData({ ...formData, middleName: e.target.value })}
                 placeholder="Optional"
-                className="bg-muted border-border text-white placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11"
+                className="bg-muted border-border text-foreground placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label htmlFor="email" className="text-xs font-medium text-zinc-300">
+                <Label htmlFor="email" className="text-xs font-medium text-muted-foreground">
                   Email Address
                 </Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-zinc-500" />
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="email"
                     type="email"
@@ -261,17 +261,17 @@ export default function RegisterForm() {
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     placeholder="sarah@example.com"
-                    className="pl-9 bg-muted border-border text-white placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11"
+                    className="pl-9 bg-muted border-border text-foreground placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="phone" className="text-xs font-medium text-zinc-300">
+                <Label htmlFor="phone" className="text-xs font-medium text-muted-foreground">
                   Phone Number
                 </Label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-3 h-4 w-4 text-zinc-500" />
+                  <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="phone"
                     type="tel"
@@ -279,18 +279,18 @@ export default function RegisterForm() {
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     placeholder="+1 234 567 8900"
-                    className="pl-9 bg-muted border-border text-white placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11"
+                    className="pl-9 bg-muted border-border text-foreground placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11"
                   />
                 </div>
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="password" className="text-xs font-medium text-zinc-300">
+              <Label htmlFor="password" className="text-xs font-medium text-muted-foreground">
                 Password
               </Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-zinc-500" />
+                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
@@ -298,12 +298,12 @@ export default function RegisterForm() {
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   placeholder="At least 8 characters with uppercase letter"
-                  className="pl-9 pr-10 bg-muted border-border text-white placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11"
+                  className="pl-9 pr-10 bg-muted border-border text-foreground placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3 text-zinc-500 hover:text-zinc-300 transition-colors"
+                  className="absolute right-3 top-3 text-muted-foreground hover:text-muted-foreground transition-colors"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -331,7 +331,7 @@ export default function RegisterForm() {
               {loading ? 'Creating Account...' : 'Complete Registration'}
             </Button>
 
-            <div className="pt-2 flex items-center justify-between text-xs text-zinc-400">
+            <div className="pt-2 flex items-center justify-between text-xs text-muted-foreground">
               <span>Already registered?</span>
               <Link
                 href="/login"
@@ -347,7 +347,7 @@ export default function RegisterForm() {
               variant="ghost"
               size="sm"
               onClick={() => router.push('/')}
-              className="text-xs text-zinc-500 hover:text-zinc-300 hover:bg-transparent"
+              className="text-xs text-muted-foreground hover:text-muted-foreground hover:bg-transparent"
             >
               <ArrowLeft className="mr-1.5 h-3.5 w-3.5" />
               Back to Home

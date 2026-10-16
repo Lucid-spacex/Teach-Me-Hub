@@ -128,15 +128,15 @@ export default function TutorRegisterForm() {
     return (
       <div className="w-full max-w-md mx-auto relative z-10">
         <Card className="bg-card/95 backdrop-blur-xl border border-primary/30 shadow-[0_10px_40px_rgba(0,0,0,0.8)] rounded-2xl overflow-hidden">
-          <div className="h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
+          <div className="h-1 bg-primary" />
           <CardContent className="pt-8 pb-8">
             <div className="flex flex-col items-center text-center space-y-4">
               <div className="w-16 h-16 rounded-full bg-primary/15 border border-primary/40 flex items-center justify-center">
                 <CheckCircle2 className="h-9 w-9 text-primary" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-white font-serif">Welcome to Teachmenest!</h2>
-                <p className="text-sm text-zinc-400 mt-2 max-w-xs mx-auto">
+                <h2 className="text-2xl font-bold text-foreground font-serif">Welcome to Teachmenest!</h2>
+                <p className="text-sm text-muted-foreground mt-2 max-w-xs mx-auto">
                   Your tutor account has been created. After verification, you'll complete your application.
                 </p>
               </div>
@@ -165,10 +165,10 @@ export default function TutorRegisterForm() {
 
       {/* Main Register Card */}
       <Card className="bg-card/95 backdrop-blur-xl border border-primary/30 shadow-[0_10px_40px_rgba(0,0,0,0.8),0_0_30px_rgba(212,160,23,0.08)] rounded-2xl overflow-hidden">
-        <div className="h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-80" />
+        <div className="h-1 bg-primary opacity-80" />
 
         <CardHeader className="pt-6 pb-4">
-          <CardTitle className="text-xl font-bold text-white flex items-center justify-between">
+          <CardTitle className="text-xl font-bold text-foreground flex items-center justify-between">
             <span className="flex items-center gap-2">
               <GraduationCap className="w-5 h-5 text-primary" />
               Create Your Tutor Account
@@ -177,7 +177,7 @@ export default function TutorRegisterForm() {
               Step 1 of 2
             </span>
           </CardTitle>
-          <CardDescription className="text-zinc-400 text-xs mt-1">
+          <CardDescription className="text-muted-foreground text-xs mt-1">
             Enter your details to create your account. You'll complete your application after verification.
           </CardDescription>
         </CardHeader>
@@ -186,7 +186,7 @@ export default function TutorRegisterForm() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label htmlFor="firstName" className="text-xs font-medium text-zinc-300">
+                <Label htmlFor="firstName" className="text-xs font-medium text-muted-foreground">
                   First Name *
                 </Label>
                 <Input
@@ -195,11 +195,11 @@ export default function TutorRegisterForm() {
                   value={formData.firstName}
                   onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                   placeholder="e.g. Sarah"
-                  className="bg-muted border-border text-white placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11"
+                  className="bg-muted border-border text-foreground placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11"
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="lastName" className="text-xs font-medium text-zinc-300">
+                <Label htmlFor="lastName" className="text-xs font-medium text-muted-foreground">
                   Last Name *
                 </Label>
                 <Input
@@ -208,12 +208,12 @@ export default function TutorRegisterForm() {
                   value={formData.lastName}
                   onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                   placeholder="e.g. Jenkins"
-                  className="bg-muted border-border text-white placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11"
+                  className="bg-muted border-border text-foreground placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11"
                 />
               </div>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="middleName" className="text-xs font-medium text-zinc-300">
+              <Label htmlFor="middleName" className="text-xs font-medium text-muted-foreground">
                 Middle Name (Optional)
               </Label>
               <Input
@@ -221,17 +221,17 @@ export default function TutorRegisterForm() {
                 value={formData.middleName}
                 onChange={(e) => setFormData({ ...formData, middleName: e.target.value })}
                 placeholder="Optional"
-                className="bg-muted border-border text-white placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11"
+                className="bg-muted border-border text-foreground placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label htmlFor="email" className="text-xs font-medium text-zinc-300">
+                <Label htmlFor="email" className="text-xs font-medium text-muted-foreground">
                   Email Address *
                 </Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-zinc-500" />
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="email"
                     type="email"
@@ -239,16 +239,16 @@ export default function TutorRegisterForm() {
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     placeholder="your@email.com"
-                    className="bg-muted border-border text-white placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11 pl-10"
+                    className="bg-muted border-border text-foreground placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11 pl-10"
                   />
                 </div>
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="phone" className="text-xs font-medium text-zinc-300">
+                <Label htmlFor="phone" className="text-xs font-medium text-muted-foreground">
                   Phone Number *
                 </Label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-3 h-4 w-4 text-zinc-500" />
+                  <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="phone"
                     type="tel"
@@ -256,35 +256,35 @@ export default function TutorRegisterForm() {
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     placeholder="+234 XXX XXX XXXX"
-                    className="bg-muted border-border text-white placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11 pl-10"
+                    className="bg-muted border-border text-foreground placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11 pl-10"
                   />
                 </div>
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="address" className="text-xs font-medium text-zinc-300">
+              <Label htmlFor="address" className="text-xs font-medium text-muted-foreground">
                 Address *
               </Label>
               <div className="relative">
-                <MapPin className="absolute left-3 top-3 h-4 w-4 text-zinc-500" />
+                <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="address"
                   required
                   value={formData.address}
                   onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                   placeholder="Your full address"
-                  className="bg-muted border-border text-white placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11 pl-10"
+                  className="bg-muted border-border text-foreground placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11 pl-10"
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="password" className="text-xs font-medium text-zinc-300">
+              <Label htmlFor="password" className="text-xs font-medium text-muted-foreground">
                 Password *
               </Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-zinc-500" />
+                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
@@ -292,12 +292,12 @@ export default function TutorRegisterForm() {
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   placeholder="Min 8 chars, 1 uppercase"
-                  className="bg-muted border-border text-white placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11 pl-10 pr-10"
+                  className="bg-muted border-border text-foreground placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11 pl-10 pr-10"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-2.5 text-zinc-500 hover:text-zinc-300"
+                  className="absolute right-3 top-2.5 text-muted-foreground hover:text-muted-foreground"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -313,7 +313,7 @@ export default function TutorRegisterForm() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-primary to-secondary text-black font-semibold rounded-xl h-11 hover:opacity-90 transition-opacity"
+              className="w-full bg-primary text-black font-semibold rounded-xl h-11 hover:opacity-90 transition-opacity"
             >
               {loading ? (
                 <div className="flex items-center gap-2">
@@ -327,7 +327,7 @@ export default function TutorRegisterForm() {
           </form>
 
           <div className="pt-4 border-t border-zinc-800">
-            <Link href="/register" className="flex items-center justify-center gap-2 text-xs text-zinc-400 hover:text-primary transition-colors">
+            <Link href="/register" className="flex items-center justify-center gap-2 text-xs text-muted-foreground hover:text-primary transition-colors">
               <ArrowLeft className="h-3 w-3" />
               Back to Parent Registration
             </Link>

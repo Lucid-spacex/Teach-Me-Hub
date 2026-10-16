@@ -96,14 +96,14 @@ export default function VerifyForm() {
     return (
       <div className="w-full max-w-md mx-auto relative z-10">
         <Card className="bg-card/95 backdrop-blur-xl border border-primary/30 shadow-[0_10px_40px_rgba(0,0,0,0.8)] rounded-2xl overflow-hidden">
-          <div className="h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
+          <div className="h-1 bg-primary" />
           <CardContent className="pt-8 pb-8 text-center space-y-4">
             <div className="w-16 h-16 rounded-full bg-primary/15 border border-primary/40 flex items-center justify-center mx-auto">
               <CheckCircle2 className="h-9 w-9 text-primary" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-white font-serif">Account Verified!</h2>
-              <p className="text-sm text-zinc-400 mt-2">
+              <h2 className="text-2xl font-bold text-foreground font-serif">Account Verified!</h2>
+              <p className="text-sm text-muted-foreground mt-2">
                 Your email is confirmed and your account is ready.
               </p>
             </div>
@@ -130,10 +130,10 @@ export default function VerifyForm() {
       </div>
 
       <Card className="bg-card/95 backdrop-blur-xl border border-primary/30 shadow-[0_10px_40px_rgba(0,0,0,0.8),0_0_30px_rgba(212,160,23,0.08)] rounded-2xl overflow-hidden">
-        <div className="h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-80" />
+        <div className="h-1 bg-primary opacity-80" />
 
         <CardHeader className="pt-6 pb-4">
-          <CardTitle className="text-xl font-bold text-white flex items-center justify-between">
+          <CardTitle className="text-xl font-bold text-foreground flex items-center justify-between">
             <span className="flex items-center gap-2">
               <ShieldCheck className="w-5 h-5 text-primary" />
               Enter Verification Code
@@ -142,7 +142,7 @@ export default function VerifyForm() {
               OTP
             </span>
           </CardTitle>
-          <CardDescription className="text-zinc-400 text-xs mt-1">
+          <CardDescription className="text-muted-foreground text-xs mt-1">
             We sent a verification code to your registered email address
           </CardDescription>
         </CardHeader>
@@ -150,11 +150,11 @@ export default function VerifyForm() {
         <CardContent className="space-y-4">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="email" className="text-xs font-medium text-zinc-300">
+              <Label htmlFor="email" className="text-xs font-medium text-muted-foreground">
                 Email Address
               </Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-zinc-500" />
+                <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="email"
                   type="email"
@@ -163,11 +163,11 @@ export default function VerifyForm() {
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   placeholder="parent@example.com"
                   readOnly={isEmailAutoFilled}
-                  className={`pl-9 bg-muted border-border text-white placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11 ${isEmailAutoFilled ? 'cursor-not-allowed opacity-70' : ''}`}
+                  className={`pl-9 bg-muted border-border text-foreground placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11 ${isEmailAutoFilled ? 'cursor-not-allowed opacity-70' : ''}`}
                 />
               </div>
               {isEmailAutoFilled && (
-                <p className="text-[10px] text-zinc-500">
+                <p className="text-[10px] text-muted-foreground">
                   Email auto-filled from registration. No need to change.
                 </p>
               )}
@@ -175,7 +175,7 @@ export default function VerifyForm() {
 
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <Label htmlFor="otp" className="text-xs font-medium text-zinc-300">
+                <Label htmlFor="otp" className="text-xs font-medium text-muted-foreground">
                   One-Time Code (OTP)
                 </Label>
                 <button
@@ -189,7 +189,7 @@ export default function VerifyForm() {
                 </button>
               </div>
               <div className="relative">
-                <Key className="absolute left-3 top-3 h-4 w-4 text-zinc-500" />
+                <Key className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="otp"
                   type="text"
@@ -197,7 +197,7 @@ export default function VerifyForm() {
                   value={formData.otp}
                   onChange={(e) => setFormData({ ...formData, otp: e.target.value })}
                   placeholder="e.g. 123456"
-                  className="pl-9 bg-muted border-border text-white tracking-widest font-mono placeholder:tracking-normal placeholder:font-sans placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11 text-center font-bold text-lg"
+                  className="pl-9 bg-muted border-border text-foreground tracking-widest font-mono placeholder:tracking-normal placeholder:font-sans placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11 text-center font-bold text-lg"
                 />
               </div>
             </div>
@@ -211,7 +211,7 @@ export default function VerifyForm() {
 
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-primary/80 text-background font-bold py-2.5 h-11 rounded-xl shadow-[0_4px_20px_rgba(212,160,23,0.3)] transition-all duration-200 transform active:scale-[0.98]"
+              className="w-full bg-primary hover:bg-primary/90 text-background font-bold py-2.5 h-11 rounded-xl shadow-[0_4px_20px_rgba(212,160,23,0.3)] transition-all duration-200 transform active:scale-[0.98]"
               disabled={loading}
             >
               {loading ? <LoadingSpinner size="sm" className="mr-2 text-black" /> : null}
@@ -224,7 +224,7 @@ export default function VerifyForm() {
               variant="ghost"
               size="sm"
               onClick={() => router.push('/login')}
-              className="text-xs text-zinc-400 hover:text-white"
+              className="text-xs text-muted-foreground hover:text-foreground"
             >
               <ArrowLeft className="mr-1.5 h-3.5 w-3.5" />
               Back to Sign In
