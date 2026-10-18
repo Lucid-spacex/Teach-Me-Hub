@@ -58,7 +58,7 @@ export default function StudentAttendancePage() {
               variant="ghost"
               size="sm"
               onClick={() => router.push('/student')}
-              className="gap-2 text-gray-300 hover:text-white"
+              className="gap-2 text-muted-foreground hover:text-foreground"
             >
               <ArrowLeft className="h-4 w-4" />
               Back
@@ -83,7 +83,7 @@ export default function StudentAttendancePage() {
 
         {/* Stats Row */}
         <div className="grid gap-4 sm:grid-cols-3">
-          <Card className="bg-card border-brand-gold/30">
+          <Card className="bg-card border-border">
             <CardHeader className="pb-2">
               <CardTitle className="text-xs font-semibold uppercase tracking-wider text-gray-400">
                 Attendance Rate
@@ -103,7 +103,7 @@ export default function StudentAttendancePage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-card border-brand-gold/30">
+          <Card className="bg-card border-border">
             <CardHeader className="pb-2">
               <CardTitle className="text-xs font-semibold uppercase tracking-wider text-gray-400">
                 Attended Lessons
@@ -121,7 +121,7 @@ export default function StudentAttendancePage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-card border-brand-gold/30">
+          <Card className="bg-card border-border">
             <CardHeader className="pb-2">
               <CardTitle className="text-xs font-semibold uppercase tracking-wider text-gray-400">
                 Missed / Absent
@@ -141,7 +141,7 @@ export default function StudentAttendancePage() {
         </div>
 
         {/* Detailed Session History */}
-        <Card className="bg-card border-brand-gold/30">
+        <Card className="bg-card border-border">
           <CardHeader>
             <CardTitle className="text-white text-lg flex items-center gap-2">
               <Clock className="h-5 w-5 text-brand-gold" />

@@ -181,7 +181,7 @@ export default function TutorDashboard() {
           <div className="flex flex-wrap items-center gap-3">
             <Button
               onClick={() => setProfileModalOpen(true)}
-              className="bg-brand-gold hover:bg-brand-goldLight text-black font-bold h-11 px-5 rounded-xl shadow-[0_4px_16px_rgba(243,195,63,0.35)] transition-all flex items-center gap-2"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold h-11 px-5 rounded-xl transition-colors flex items-center gap-2"
             >
               <UserCircle className="h-4 w-4" />
               {tutorProfile ? 'Edit Availability' : 'Create Profile'}

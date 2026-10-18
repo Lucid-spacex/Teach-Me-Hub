@@ -215,8 +215,8 @@ export default function AdminSubjectsPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-serif font-bold text-white">Subjects & Pricing</h1>
-          <p className="text-sm text-gray-400">Manage subjects and their per-grade-band pricing</p>
+          <h1 className="text-3xl font-serif font-bold text-foreground">Subjects & Pricing</h1>
+          <p className="text-sm text-muted-foreground">Manage subjects and their per-grade-band pricing</p>
         </div>
         <Button onClick={openCreateModal} className="bg-brand-gold hover:bg-brand-goldLight text-brand-dark">
           <Plus className="h-4 w-4 mr-2" />
@@ -240,7 +240,7 @@ export default function AdminSubjectsPage() {
       ) : (
         <div className="space-y-4">
           {subjects.map((subject) => (
-            <Card key={subject.id} className="bg-card border-brand-gold/30">
+            <Card key={subject.id} className="bg-card border-border">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
