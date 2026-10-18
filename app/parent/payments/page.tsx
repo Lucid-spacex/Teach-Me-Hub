@@ -129,13 +129,13 @@ export default function PaymentsPage() {
     switch (status.toUpperCase()) {
       case 'SUCCESS':
       case 'COMPLETED':
-        return 'text-green-400'
+        return 'text-foreground'
       case 'PENDING':
-        return 'text-yellow-400'
+        return 'text-brand-gold'
       case 'FAILED':
-        return 'text-red-400'
+        return 'text-destructive'
       default:
-        return 'text-gray-400'
+        return 'text-muted-foreground'
     }
   }
 
@@ -157,7 +157,7 @@ export default function PaymentsPage() {
       key: 'amount',
       header: 'Amount',
       cell: (payment: Payment) => (
-        <div className="text-white font-medium">
+        <div className="text-foreground font-medium">
           {formatAmount(payment.amount, payment.currency || 'NGN')}
         </div>
       ),
@@ -175,7 +175,7 @@ export default function PaymentsPage() {
       key: 'date',
       header: 'Date',
       cell: (payment: Payment) => (
-        <div className="text-gray-300">{formatDate(payment.createdAt)}</div>
+        <div className="text-muted-foreground">{formatDate(payment.createdAt)}</div>
       ),
     },
     {
@@ -186,7 +186,7 @@ export default function PaymentsPage() {
           variant="ghost"
           size="sm"
           onClick={() => toggleExpand(payment.id)}
-          className="h-8 w-8 p-0 text-gray-400 hover:text-white"
+          className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground"
         >
           {expandedPaymentId === payment.id ? (
             <ChevronUp className="h-4 w-4" />
@@ -207,15 +207,15 @@ export default function PaymentsPage() {
               variant="ghost"
               size="sm"
               onClick={() => router.push('/parent')}
-              className="gap-2 text-gray-300 hover:text-white"
+              className="gap-2 text-muted-foreground hover:text-foreground"
             >
               <ArrowLeft className="h-4 w-4" />
               Back to Dashboard
             </Button>
             <div className="h-6 w-px bg-border" />
             <div>
-              <h1 className="text-3xl font-serif font-bold text-white">Payments & Billing</h1>
-              <p className="text-sm text-gray-400">View payment history and pay for pending enrollments</p>
+              <h1 className="text-3xl font-serif font-bold text-foreground">Payments & Billing</h1>
+              <p className="text-sm text-muted-foreground">View payment history and pay for pending enrollments</p>
             </div>
           </div>
           <Button
@@ -232,13 +232,13 @@ export default function PaymentsPage() {
 
         {/* Pending Payments Section */}
         {pendingEnrollments.length > 0 && (
-          <Card className="bg-amber-950/20 border-brand-gold/50 shadow-lg">
+          <Card className="bg-brand-gold/10 border-brand-gold/50 shadow-lg">
             <CardHeader>
               <CardTitle className="text-brand-gold flex items-center gap-2">
                 <AlertCircle className="h-5 w-5" />
                 Pending Payments ({pendingEnrollments.length})
               </CardTitle>
-              <CardDescription className="text-gray-300">
+              <CardDescription className="text-muted-foreground">
                 You have active enrollments awaiting payment to confirm schedules and tutor matching.
               </CardDescription>
             </CardHeader>
@@ -246,19 +246,19 @@ export default function PaymentsPage() {
               {pendingEnrollments.map((enrollment) => (
                 <div
                   key={enrollment.id}
-                  className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg bg-brand-dark/80 border border-brand-gold/20"
+                  className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg bg-muted border border-brand-gold/20"
                 >
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-white">
+                      <span className="font-semibold text-foreground">
                         {getStudentName(enrollment.studentId)}
                       </span>
-                      <span className="text-gray-400">•</span>
+                      <span className="text-muted-foreground">•</span>
                       <span className="text-brand-gold font-medium">
                         {enrollment.subject?.name || 'Tutoring Subject'}
                       </span>
                     </div>
-                    <p className="text-xs text-gray-400 mt-1">
+                    <p className="text-xs text-muted-foreground mt-1">
                       {enrollment.sessionFrequency} • Starts {new Date(enrollment.startDate).toLocaleDateString()}
                     </p>
                   </div>
@@ -288,7 +288,7 @@ export default function PaymentsPage() {
         {/* Payment History Card */}
         <Card className="bg-card border-brand-gold/30">
           <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
+            <CardTitle className="text-foreground flex items-center gap-2">
               <CreditCard className="h-5 w-5 text-brand-gold" />
               Payment History
             </CardTitle>
@@ -306,7 +306,7 @@ export default function PaymentsPage() {
             />
             
             {expandedPaymentId && (
-              <div className="mt-4 p-4 bg-brand-dark/50 border border-brand-gold/30 rounded-lg">
+              <div className="mt-4 p-4 bg-muted border border-brand-gold/30 rounded-lg">
                 {(() => {
                   const payment = payments.find(p => p.id === expandedPaymentId)
                   if (!payment) return null
@@ -314,7 +314,7 @@ export default function PaymentsPage() {
                   return (
                     <div className="space-y-3">
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-400">Payment ID / Ref:</span>
+                        <span className="text-sm text-muted-foreground">Payment ID / Ref:</span>
                         <code className="text-xs bg-brand-gold/10 text-brand-gold px-2 py-1 rounded">
                           {payment.providerReference || payment.reference || payment.id}
                         </code>
@@ -322,21 +322,21 @@ export default function PaymentsPage() {
                       
                       {payment.enrollmentGroupId && (
                         <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-400">Enrollment Group ID:</span>
+                          <span className="text-sm text-muted-foreground">Enrollment Group ID:</span>
                           <code className="text-xs bg-brand-gold/10 text-brand-gold px-2 py-1 rounded">{payment.enrollmentGroupId}</code>
                         </div>
                       )}
                       
                       {payment.enrollmentId && (
                         <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-400">Enrollment ID:</span>
+                          <span className="text-sm text-muted-foreground">Enrollment ID:</span>
                           <code className="text-xs bg-brand-gold/10 text-brand-gold px-2 py-1 rounded">{payment.enrollmentId}</code>
                         </div>
                       )}
                       
                       {payment.subjects && payment.subjects.length > 0 && (
-                        <div className="pt-2 border-t border-gray-700">
-                          <span className="text-sm text-gray-400 block mb-2">Covers:</span>
+                        <div className="pt-2 border-t border-border">
+                          <span className="text-sm text-muted-foreground block mb-2">Covers:</span>
                           <div className="flex flex-wrap gap-2">
                             {payment.subjects.map((subject, index) => (
                               <span
@@ -350,23 +350,23 @@ export default function PaymentsPage() {
                         </div>
                       )}
                       
-                      <div className="flex justify-between items-center pt-2 border-t border-gray-700">
-                        <span className="text-sm text-gray-400">Amount:</span>
-                        <span className="text-white font-bold">
+                      <div className="flex justify-between items-center pt-2 border-t border-border">
+                        <span className="text-sm text-muted-foreground">Amount:</span>
+                        <span className="text-foreground font-bold">
                           {formatAmount(payment.amount, payment.currency || 'NGN')}
                         </span>
                       </div>
                       
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-400">Status:</span>
+                        <span className="text-sm text-muted-foreground">Status:</span>
                         <span className={`text-sm font-medium ${getStatusColor(payment.status)}`}>
                           {payment.status}
                         </span>
                       </div>
                       
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-400">Date:</span>
-                        <span className="text-white">{formatDate(payment.createdAt)}</span>
+                        <span className="text-sm text-muted-foreground">Date:</span>
+                        <span className="text-foreground">{formatDate(payment.createdAt)}</span>
                       </div>
                     </div>
                   )

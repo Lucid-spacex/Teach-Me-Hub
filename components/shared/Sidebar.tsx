@@ -238,7 +238,7 @@ export function Sidebar({ role }: SidebarProps) {
                 href={item.href}
                 className={`group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                   active
-                    ? 'bg-gradient-to-r from-sidebar-primary/20 via-sidebar-primary/10 to-transparent text-sidebar-primary border-l-4 border-sidebar-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] font-semibold pl-3'
+                    ? 'bg-sidebar-primary text-sidebar-primary-foreground border-l-4 border-sidebar-primary font-semibold pl-3'
                     : 'text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent'
                 }`}
               >
@@ -282,7 +282,7 @@ export function Sidebar({ role }: SidebarProps) {
         <div className="p-3 border-t border-sidebar-border bg-sidebar">
           <div className="flex items-center justify-between p-2 rounded-xl bg-sidebar-accent border border-sidebar-border">
             <div className="flex items-center gap-2.5 overflow-hidden">
-              <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-sidebar-primary to-sidebar-primary/80 text-primary-foreground font-bold flex items-center justify-center text-sm shadow-md shrink-0">
+              <div className="w-9 h-9 rounded-full bg-sidebar-primary text-sidebar-primary-foreground font-bold flex items-center justify-center text-sm shadow-md shrink-0">
                 {userInitial}
               </div>
               <div className="min-w-0">

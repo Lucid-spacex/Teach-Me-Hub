@@ -159,7 +159,7 @@ export default function StudentLoginForm() {
 
       {/* Main Student Login Card */}
       <Card className="bg-card/95 backdrop-blur-xl border border-primary/30 shadow-[0_10px_40px_rgba(0,0,0,0.8),0_0_30px_rgba(212,160,23,0.08)] rounded-2xl overflow-hidden">
-        <div className="h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-80" />
+        <div className="h-1 bg-primary" />
 
         <CardHeader className="pt-6 pb-4">
           <CardTitle className="text-xl font-bold text-white flex items-center justify-between">
@@ -282,7 +282,7 @@ export default function StudentLoginForm() {
 
           {/* Quick link to Parent Login */}
           <div className="mt-6 pt-5 border-t border-border">
-            <div className="p-3 rounded-xl bg-gradient-to-r from-[#171717] to-card border border-border flex items-center justify-between group hover:border-primary/40 transition-colors">
+            <div className="p-3 rounded-xl bg-muted border border-border flex items-center justify-between group hover:border-primary/40 transition-colors">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-lg bg-primary/15 text-primary flex items-center justify-center font-bold">
                   <User className="w-4 h-4" />
