@@ -228,12 +228,12 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
       </div>
 
       {/* Child Hero Banner */}
-      <div className="p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-muted via-muted to-muted border border-brand-gold/30 shadow-xl relative overflow-hidden">
+      <div className="p-6 sm:p-8 rounded-2xl bg-muted border border-brand-gold/30 shadow-xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-80 h-80 bg-brand-gold/5 rounded-full blur-3xl pointer-events-none" />
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
           <div className="flex items-start sm:items-center gap-5">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-brand-gold/30 to-brand-gold/10 border border-brand-gold/40 text-brand-gold flex items-center justify-center text-2xl font-bold font-serif shrink-0 shadow-inner">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-brand-gold/15 border border-brand-gold/40 text-brand-gold flex items-center justify-center text-2xl font-bold font-serif shrink-0 shadow-inner">
               {student.fullName.charAt(0)}
             </div>
             <div className="space-y-1">
@@ -532,7 +532,7 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
                   <CardHeader className="bg-white/[0.015] border-b border-white/5 p-6">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-gold/30 to-brand-gold/10 border border-brand-gold/40 text-brand-gold flex items-center justify-center text-xl font-bold font-serif shrink-0">
+                        <div className="w-14 h-14 rounded-2xl bg-brand-gold/15 border border-brand-gold/40 text-brand-gold flex items-center justify-center text-xl font-bold font-serif shrink-0">
                           {tutor.fullName.charAt(0)}
                         </div>
                         <div>

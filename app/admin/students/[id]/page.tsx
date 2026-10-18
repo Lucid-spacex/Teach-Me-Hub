@@ -124,7 +124,7 @@ export default function AdminStudentDetailPage() {
 
   if (!studentData) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
+      <div className="min-h-screen bg-background">
         <Navbar />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 pb-12">
           <div className="flex items-center gap-4 mb-6">
@@ -151,7 +151,7 @@ export default function AdminStudentDetailPage() {
   const { student, parent, tutors, enrollments, sessions, attendance, grades, assignments, progressReports, performance } = studentData
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
+    <div className="min-h-screen bg-background">
       <Navbar />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 pb-12">
         {/* Header */}

@@ -796,7 +796,7 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-brand-gold/20 to-brand-gold/10 border-brand-gold/50">
+          <Card className="bg-brand-gold/10 border-brand-gold/50">
             <CardContent className="pt-6">
               <p className="text-sm font-medium text-white mb-4 flex items-center gap-2">
                 <DollarSign className="h-4 w-4 text-brand-gold" />

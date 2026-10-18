@@ -352,7 +352,7 @@ export default function TutorStudentDetailPage({ params }: PageProps) {
           <CardContent className="p-6 sm:p-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div className="flex items-start sm:items-center gap-5">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-brand-gold/30 to-brand-gold/10 border border-brand-gold/40 text-brand-gold flex items-center justify-center text-2xl font-bold font-serif shrink-0">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-brand-gold/15 border border-brand-gold/40 text-brand-gold flex items-center justify-center text-2xl font-bold font-serif shrink-0">
                   {student.fullName.charAt(0)}
                 </div>
                 <div className="space-y-1.5">

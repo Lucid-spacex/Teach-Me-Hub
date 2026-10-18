@@ -324,7 +324,7 @@ export default function RegisterForm() {
 
             <Button
               type="submit"
-              className="w-full bg-primary hover:from-secondary hover:to-primary/80 text-background font-bold py-2.5 h-11 rounded-xl shadow-[0_4px_20px_rgba(212,160,23,0.3)] transition-all duration-200 transform active:scale-[0.98]"
+              className="w-full bg-primary hover:bg-secondary text-background font-bold py-2.5 h-11 rounded-xl shadow-[0_4px_20px_rgba(212,160,23,0.3)] transition-all duration-200 transform active:scale-[0.98]"
               disabled={loading}
             >
               {loading ? <LoadingSpinner size="sm" className="mr-2 text-black" /> : null}
