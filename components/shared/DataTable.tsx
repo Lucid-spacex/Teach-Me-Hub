@@ -46,7 +46,7 @@ export function DataTable<T>({ data, columns, emptyState, loading }: DataTablePr
   }
 
   return (
-    <div className="rounded-md border">
+    <div className="overflow-hidden rounded-2xl border border-border/80 bg-card shadow-sm">
       <Table>
         <TableHeader>
           <TableRow>

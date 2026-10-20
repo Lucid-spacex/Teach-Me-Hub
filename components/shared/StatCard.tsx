@@ -11,7 +11,7 @@ interface StatCardProps {
 export function StatCard({ title, value, icon: Icon, className }: StatCardProps) {
   const displayValue = value ?? 'N/A'
   return (
-    <div className={cn("rounded-lg border p-6", className)}>
+    <div className={cn("rounded-2xl border border-border/80 bg-card p-6 shadow-sm transition-shadow hover:shadow-md", className)}>
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-medium text-muted-foreground">{title}</p>
