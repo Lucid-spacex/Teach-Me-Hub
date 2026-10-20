@@ -14,7 +14,7 @@ export default function TutorRegisterPage() {
       <div className="absolute bottom-0 left-10 w-[350px] h-[350px] bg-brand-gold/5 rounded-full blur-[100px] pointer-events-none" />
 
       {/* Grid line pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#161616_1px,transparent_1px),linear-gradient(to_bottom,#161616_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-30 pointer-events-none" />
+      <div className="absolute inset-0 bg-secondary/30 opacity-60 pointer-events-none" />
 
       {/* Theme Toggle */}
       <div className="absolute top-4 right-4 z-10">
