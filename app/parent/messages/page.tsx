@@ -275,7 +275,7 @@ export default function ParentMessagesPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Thread List */}
           <div className="lg:col-span-1">
-            <Card className="bg-card border-brand-gold/30">
+            <Card className="bg-card border-border">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-foreground flex items-center gap-2">
@@ -285,7 +285,7 @@ export default function ParentMessagesPage() {
                   <Button
                     size="sm"
                     onClick={handleStartNewThread}
-                    className="bg-brand-gold hover:bg-brand-goldLight text-brand-dark"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground"
                   >
                     Message Admin
                   </Button>
@@ -307,7 +307,7 @@ export default function ParentMessagesPage() {
                           onClick={() => handleSelectThread(thread)}
                           className={`p-3 rounded-xl cursor-pointer transition-colors ${
                             selectedThread?.id === thread.id
-                              ? 'bg-brand-gold/20 border border-brand-gold/30'
+                              ? 'bg-brand-gold/20 border border-border'
                               : 'bg-muted hover:bg-primary/10'
                           }`}
                         >
@@ -323,7 +323,7 @@ export default function ParentMessagesPage() {
                                   {participant?.fullName || 'Unknown'}
                                 </p>
                                 {thread.unreadCount > 0 && (
-                                  <span className="bg-brand-gold text-brand-dark text-xs font-bold px-2 py-0.5 rounded-full">
+                                  <span className="bg-primary text-primary-foreground text-xs font-bold px-2 py-0.5 rounded-full">
                                     {thread.unreadCount}
                                   </span>
                                 )}
@@ -344,10 +344,10 @@ export default function ParentMessagesPage() {
 
           {/* Message Content */}
           <div className="lg:col-span-2">
-            <Card className="bg-card border-brand-gold/30 h-[600px] flex flex-col">
+            <Card className="bg-card border-border h-[600px] flex flex-col">
               {selectedThread ? (
                 <>
-                  <CardHeader className="border-b border-brand-gold/20">
+                  <CardHeader className="border-b border-border">
                     <CardTitle className="text-foreground">
                       {selectedThread.otherParticipant?.fullName || selectedThread.participants?.map(p => p.fullName).join(', ') || 'Unknown'}
                     </CardTitle>
@@ -365,7 +365,7 @@ export default function ParentMessagesPage() {
                             <div
                               className={`max-w-[70%] p-3 rounded-xl ${
                                 isCurrentUser
-                                  ? 'bg-brand-gold text-brand-dark'
+                                  ? 'bg-primary text-primary-foreground'
                                   : 'bg-muted text-foreground'
                               }`}
                             >
@@ -379,7 +379,7 @@ export default function ParentMessagesPage() {
                       })}
                     </div>
                   </CardContent>
-                  <div className="p-4 border-t border-brand-gold/20">
+                  <div className="p-4 border-t border-border">
                     <div className="flex gap-2">
                       <Input
                         value={newMessage}
@@ -391,7 +391,7 @@ export default function ParentMessagesPage() {
                       <Button
                         onClick={handleSendMessage}
                         disabled={sending || !newMessage.trim()}
-                        className="bg-brand-gold hover:bg-brand-goldLight text-brand-dark"
+                        className="bg-primary hover:bg-primary/90 text-primary-foreground"
                       >
                         {sending ? (
                           <Loader2 className="h-4 w-4 animate-spin" />

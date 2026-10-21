@@ -223,7 +223,7 @@ export default function PaymentsPage() {
             size="sm"
             onClick={loadData}
             disabled={loading}
-            className="border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10"
+            className="border-primary/40 text-primary hover:bg-primary/10"
           >
             <RefreshCw className="h-4 w-4 mr-2" />
             Refresh
@@ -232,7 +232,7 @@ export default function PaymentsPage() {
 
         {/* Pending Payments Section */}
         {pendingEnrollments.length > 0 && (
-          <Card className="bg-brand-gold/10 border-brand-gold/50 shadow-lg">
+          <Card className="bg-primary/10 border-primary/40 shadow-sm">
             <CardHeader>
               <CardTitle className="text-brand-gold flex items-center gap-2">
                 <AlertCircle className="h-5 w-5" />
@@ -246,7 +246,7 @@ export default function PaymentsPage() {
               {pendingEnrollments.map((enrollment) => (
                 <div
                   key={enrollment.id}
-                  className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg bg-muted border border-brand-gold/20"
+                  className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl bg-muted border border-brand-gold/20"
                 >
                   <div>
                     <div className="flex items-center gap-2">
@@ -265,7 +265,7 @@ export default function PaymentsPage() {
                   <Button
                     onClick={() => handlePayEnrollment(enrollment)}
                     disabled={payingId === enrollment.id}
-                    className="bg-brand-gold hover:bg-brand-goldLight text-brand-dark font-semibold shrink-0"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shrink-0"
                   >
                     {payingId === enrollment.id ? (
                       <>
@@ -306,7 +306,7 @@ export default function PaymentsPage() {
             />
             
             {expandedPaymentId && (
-              <div className="mt-4 p-4 bg-muted border border-brand-gold/30 rounded-lg">
+              <div className="mt-4 p-4 bg-muted border border-brand-gold/30 rounded-xl">
                 {(() => {
                   const payment = payments.find(p => p.id === expandedPaymentId)
                   if (!payment) return null

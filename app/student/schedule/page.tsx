@@ -100,7 +100,7 @@ export default function StudentSchedulePage() {
               size="sm"
               onClick={loadSchedule}
               disabled={loading}
-              className="border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10"
+              className="border-primary/40 text-primary hover:bg-primary/10"
             >
               <RefreshCw className="h-4 w-4" />
             </Button>
@@ -113,9 +113,9 @@ export default function StudentSchedulePage() {
             <LoadingSpinner size="lg" className="text-brand-gold" />
           </div>
         ) : activeList.length === 0 ? (
-          <Card className="bg-card border-brand-gold/30 text-center py-12">
+          <Card className="bg-card border-border text-center py-12">
             <CardContent>
-              <Calendar className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+              <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-foreground mb-1">
                 {tab === 'UPCOMING' ? 'No Upcoming Sessions' : 'No Past Sessions'}
               </h3>
@@ -143,7 +143,7 @@ export default function StudentSchedulePage() {
                         {session.status}
                       </span>
                       {isToday && session.status === 'SCHEDULED' && (
-                        <span className="text-xs bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded font-semibold animate-pulse">
+                        <span className="text-xs bg-primary/15 text-primary px-2 py-0.5 rounded font-semibold animate-pulse">
                           Today
                         </span>
                       )}
@@ -152,7 +152,7 @@ export default function StudentSchedulePage() {
                       <Clock className="h-4 w-4 text-brand-gold" />
                       {sessionDate.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
                     </CardTitle>
-                    <CardDescription className="text-gray-300">
+                    <CardDescription className="text-muted-foreground">
                       {sessionDate.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' })}
                     </CardDescription>
                   </CardHeader>
@@ -162,14 +162,14 @@ export default function StudentSchedulePage() {
                     </div>
 
                     {session.tutorNotes && (
-                      <div className="bg-muted p-2.5 rounded border border-brand-gold/15 text-xs text-gray-300">
+                      <div className="bg-muted p-2.5 rounded border border-brand-gold/15 text-xs text-muted-foreground">
                         <span className="text-brand-gold font-medium block mb-0.5">Tutor Notes:</span>
                         {session.tutorNotes}
                       </div>
                     )}
 
                     {session.homeworkAssigned && (
-                      <div className="bg-muted p-2.5 rounded border border-brand-gold/15 text-xs text-gray-300">
+                      <div className="bg-muted p-2.5 rounded border border-brand-gold/15 text-xs text-muted-foreground">
                         <span className="text-brand-gold font-medium block mb-0.5">Homework:</span>
                         {session.homeworkAssigned}
                       </div>
