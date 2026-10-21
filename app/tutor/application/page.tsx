@@ -406,7 +406,7 @@ export default function TutorApplicationPage() {
             <div>
               <h2 className="text-2xl font-bold text-white font-serif">Application Not Approved</h2>
               <p className="text-sm text-zinc-400 mt-2 max-w-xs mx-auto">
-                Your application wasn't approved. Please contact support for more information.
+                Your application wasn&apos;t approved. Please contact support for more information.
               </p>
             </div>
             <div className="pt-4">

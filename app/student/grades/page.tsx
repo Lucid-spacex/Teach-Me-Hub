@@ -179,7 +179,7 @@ export default function StudentGradesPage() {
                         <span className="text-brand-gold font-medium block mb-1 flex items-center gap-1">
                           <MessageSquare className="h-3.5 w-3.5" /> Tutor Feedback:
                         </span>
-                        <p className="italic">"{item.feedback}"</p>
+                        <p className="italic">&quot;{item.feedback}&quot;</p>
                       </div>
                     ) : null}
                   </CardContent>

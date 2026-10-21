@@ -531,7 +531,7 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
                   <div className="flex items-center gap-2 text-sm text-yellow-400">
                     <AlertCircle className="h-4 w-4" />
                     <span>
-                      Pricing will be calculated by the server based on your selected subjects and billing frequency. You'll see the exact amount during payment.
+                      Pricing will be calculated by the server based on your selected subjects and billing frequency. You&apos;ll see the exact amount during payment.
                     </span>
                   </div>
                 </div>
@@ -645,7 +645,7 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
 
           <div className="bg-brand-dark/50 border border-brand-gold/30 p-3 rounded-lg">
             <p className="text-xs text-gray-400 mb-2">
-              Pick the time in your own local time — we'll convert it to Nigeria time for your tutor.
+              Pick the time in your own local time — we&apos;ll convert it to Nigeria time for your tutor.
             </p>
             <div className="flex items-center gap-2 text-sm">
               <Clock className="h-4 w-4 text-brand-gold" />
@@ -754,7 +754,7 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
                     <div className="flex items-center gap-2 text-sm text-yellow-400">
                       <AlertCircle className="h-4 w-4" />
                       <span>
-                        Pricing will be calculated by the server based on your selected subjects and billing frequency. You'll see the exact amount during payment.
+                        Pricing will be calculated by the server based on your selected subjects and billing frequency. You&apos;ll see the exact amount during payment.
                       </span>
                     </div>
                   </div>
@@ -768,7 +768,7 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
               <div className="flex items-center gap-2 text-sm text-yellow-400">
                 <AlertCircle className="h-4 w-4" />
                 <span>
-                  Pricing will be calculated by the server based on your selected subjects and billing frequency. You'll see the exact amount during payment.
+                  Pricing will be calculated by the server based on your selected subjects and billing frequency. You&apos;ll see the exact amount during payment.
                 </span>
               </div>
             </div>
@@ -825,7 +825,7 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
                       The exact payment amount will be calculated by the server based on your selected subjects, session frequency, and billing period.
                     </p>
                     <p className="text-xs text-gray-400 mt-2">
-                      You'll see the final amount on the payment page before completing your transaction.
+                      You&apos;ll see the final amount on the payment page before completing your transaction.
                     </p>
                   </div>
                 </div>

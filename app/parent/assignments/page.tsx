@@ -109,7 +109,7 @@ export default function ParentAssignmentsPage() {
             </Button>
             <div className="h-6 w-px bg-border" />
             <div>
-              <h1 className="text-3xl font-serif font-bold text-white">Children's Assignments</h1>
+              <h1 className="text-3xl font-serif font-bold text-white">Children&apos;s Assignments</h1>
               <p className="text-sm text-gray-400">Track tasks, classwork, and tests assigned to your children</p>
             </div>
           </div>

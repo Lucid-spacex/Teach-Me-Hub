@@ -137,7 +137,7 @@ export default function TutorRegisterForm() {
               <div>
                 <h2 className="text-2xl font-bold text-foreground font-serif">Welcome to Teachmenest!</h2>
                 <p className="text-sm text-muted-foreground mt-2 max-w-xs mx-auto">
-                  Your tutor account has been created. After verification, you'll complete your application.
+                  Your tutor account has been created. After verification, you&apos;ll complete your application.
                 </p>
               </div>
               <div className="flex items-center gap-2 text-xs text-primary font-medium pt-2">
@@ -178,7 +178,7 @@ export default function TutorRegisterForm() {
             </span>
           </CardTitle>
           <CardDescription className="text-muted-foreground text-xs mt-1">
-            Enter your details to create your account. You'll complete your application after verification.
+            Enter your details to create your account. You&apos;ll complete your application after verification.
           </CardDescription>
         </CardHeader>
 

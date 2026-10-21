@@ -249,7 +249,7 @@ export function AddStudentModal({ open, onOpenChange, onSuccess }: AddStudentMod
         <div className="space-y-2">
           <Label htmlFor="email" className="text-gray-300 flex items-center gap-2">
             <Mail className="h-4 w-4 text-brand-gold" />
-            Student's Email (Optional)
+            Student&apos;s Email (Optional)
           </Label>
           <Input
             id="email"

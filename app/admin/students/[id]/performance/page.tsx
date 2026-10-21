@@ -238,7 +238,7 @@ export default function AdminStudentPerformancePage() {
                   <div>
                     <h4 className="font-medium text-amber-400">No Approved Grades Yet</h4>
                     <p className="text-sm text-gray-300 mt-1">
-                      This student has not yet had any grades approved by admin. Toggle "Pending Included" to see pending grades, or wait for admin approval.
+                      This student has not yet had any grades approved by admin. Toggle &quot;Pending Included&quot; to see pending grades, or wait for admin approval.
                     </p>
                   </div>
                 </div>

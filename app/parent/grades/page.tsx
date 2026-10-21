@@ -188,7 +188,7 @@ export default function ParentGradesPage() {
                     {item.feedback ? (
                       <div className="text-xs text-gray-300 bg-brand-dark/40 p-2.5 rounded border border-brand-gold/10">
                         <span className="text-brand-gold font-medium block mb-0.5">Tutor Feedback:</span>
-                        <p className="italic">"{item.feedback}"</p>
+                        <p className="italic">&quot;{item.feedback}&quot;</p>
                       </div>
                     ) : null}
 

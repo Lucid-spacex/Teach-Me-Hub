@@ -143,7 +143,7 @@ export default function ParentComplaintsPage() {
               <FileText className="h-12 w-12 text-gray-500 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-white mb-1">No Complaints Filed</h3>
               <p className="text-sm text-gray-400 max-w-md mx-auto mb-6">
-                You haven't submitted any complaints or issues. If you ever have a concern regarding a tutor, session, or account issue, you can file it here.
+                You haven&apos;t submitted any complaints or issues. If you ever have a concern regarding a tutor, session, or account issue, you can file it here.
               </p>
               <Button
                 onClick={() => setModalOpen(true)}
