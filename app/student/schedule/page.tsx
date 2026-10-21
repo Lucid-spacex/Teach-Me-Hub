@@ -65,15 +65,15 @@ export default function StudentSchedulePage() {
               variant="ghost"
               size="sm"
               onClick={() => router.push('/student')}
-              className="gap-2 text-gray-300 hover:text-white"
+              className="gap-2 text-muted-foreground hover:text-foreground"
             >
               <ArrowLeft className="h-4 w-4" />
               Back
             </Button>
             <div className="h-6 w-px bg-border" />
             <div>
-              <h1 className="text-3xl font-serif font-bold text-white">Class Schedule</h1>
-              <p className="text-sm text-gray-400">View upcoming live tutoring sessions and past lessons</p>
+              <h1 className="text-3xl font-serif font-bold text-foreground">Class Schedule</h1>
+              <p className="text-sm text-muted-foreground">View upcoming live tutoring sessions and past lessons</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -82,7 +82,7 @@ export default function StudentSchedulePage() {
                 variant={tab === 'UPCOMING' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setTab('UPCOMING')}
-                className={tab === 'UPCOMING' ? 'bg-brand-gold text-brand-dark text-xs font-semibold' : 'text-gray-400 text-xs'}
+                className={tab === 'UPCOMING' ? 'bg-primary text-primary-foreground text-xs font-semibold' : 'text-muted-foreground text-xs'}
               >
                 Upcoming ({upcomingSessions.length})
               </Button>
@@ -90,7 +90,7 @@ export default function StudentSchedulePage() {
                 variant={tab === 'PAST' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setTab('PAST')}
-                className={tab === 'PAST' ? 'bg-brand-gold text-brand-dark text-xs font-semibold' : 'text-gray-400 text-xs'}
+                className={tab === 'PAST' ? 'bg-primary text-primary-foreground text-xs font-semibold' : 'text-muted-foreground text-xs'}
               >
                 Past ({pastSessions.length})
               </Button>
@@ -116,10 +116,10 @@ export default function StudentSchedulePage() {
           <Card className="bg-card border-brand-gold/30 text-center py-12">
             <CardContent>
               <Calendar className="h-12 w-12 text-gray-500 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-white mb-1">
+              <h3 className="text-lg font-semibold text-foreground mb-1">
                 {tab === 'UPCOMING' ? 'No Upcoming Sessions' : 'No Past Sessions'}
               </h3>
-              <p className="text-sm text-gray-400 max-w-sm mx-auto">
+              <p className="text-sm text-muted-foreground max-w-sm mx-auto">
                 {tab === 'UPCOMING'
                   ? 'Your upcoming tutoring sessions will appear here as soon as they are scheduled by your tutor.'
                   : 'You have not attended any completed sessions yet.'}
@@ -137,8 +137,8 @@ export default function StudentSchedulePage() {
                     <div className="flex items-center justify-between gap-2 mb-2">
                       <span className={`text-xs px-2.5 py-0.5 rounded font-medium ${
                         session.status === 'SCHEDULED' ? 'bg-brand-gold/20 text-brand-gold' :
-                        session.status === 'COMPLETED' ? 'bg-green-500/20 text-green-400' :
-                        'bg-red-500/20 text-red-400'
+                        session.status === 'COMPLETED' ? 'bg-muted text-muted-foreground' :
+                        'bg-destructive/10 text-destructive'
                       }`}>
                         {session.status}
                       </span>
@@ -148,7 +148,7 @@ export default function StudentSchedulePage() {
                         </span>
                       )}
                     </div>
-                    <CardTitle className="text-lg text-white font-semibold flex items-center gap-2">
+                    <CardTitle className="text-lg text-foreground font-semibold flex items-center gap-2">
                       <Clock className="h-4 w-4 text-brand-gold" />
                       {sessionDate.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
                     </CardTitle>
@@ -157,19 +157,19 @@ export default function StudentSchedulePage() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4 pt-0">
-                    <div className="text-xs text-gray-400">
-                      Duration: <span className="text-white font-medium">{session.durationMinutes} minutes</span>
+                    <div className="text-xs text-muted-foreground">
+                      Duration: <span className="text-foreground font-medium">{session.durationMinutes} minutes</span>
                     </div>
 
                     {session.tutorNotes && (
-                      <div className="bg-brand-dark/50 p-2.5 rounded border border-brand-gold/15 text-xs text-gray-300">
+                      <div className="bg-muted p-2.5 rounded border border-brand-gold/15 text-xs text-gray-300">
                         <span className="text-brand-gold font-medium block mb-0.5">Tutor Notes:</span>
                         {session.tutorNotes}
                       </div>
                     )}
 
                     {session.homeworkAssigned && (
-                      <div className="bg-brand-dark/50 p-2.5 rounded border border-brand-gold/15 text-xs text-gray-300">
+                      <div className="bg-muted p-2.5 rounded border border-brand-gold/15 text-xs text-gray-300">
                         <span className="text-brand-gold font-medium block mb-0.5">Homework:</span>
                         {session.homeworkAssigned}
                       </div>
@@ -179,7 +179,7 @@ export default function StudentSchedulePage() {
                       <Button
                         size="sm"
                         asChild
-                        className="w-full bg-brand-gold hover:bg-brand-goldLight text-brand-dark font-semibold mt-2"
+                        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold mt-2"
                       >
                         <a href={session.zoomLink} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2">
                           <Video className="h-4 w-4" />

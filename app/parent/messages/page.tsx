@@ -268,8 +268,8 @@ export default function ParentMessagesPage() {
   return (
     <div className="space-y-6 pb-12">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-white">Messages</h1>
-          <p className="text-gray-400 mt-2">Communicate with the administration team</p>
+          <h1 className="text-3xl font-bold text-foreground">Messages</h1>
+          <p className="text-muted-foreground mt-2">Communicate with the administration team</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -278,7 +278,7 @@ export default function ParentMessagesPage() {
             <Card className="bg-card border-brand-gold/30">
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-white flex items-center gap-2">
+                  <CardTitle className="text-foreground flex items-center gap-2">
                     <MessageSquare className="h-5 w-5 text-brand-gold" />
                     Conversations
                   </CardTitle>
@@ -293,7 +293,7 @@ export default function ParentMessagesPage() {
               </CardHeader>
               <CardContent>
                 {threads.length === 0 ? (
-                  <div className="text-center py-8 text-gray-400">
+                  <div className="text-center py-8 text-muted-foreground">
                     <MessageSquare className="h-12 w-12 mx-auto mb-2 opacity-50" />
                     <p>No conversations yet</p>
                   </div>
@@ -305,10 +305,10 @@ export default function ParentMessagesPage() {
                         <div
                           key={thread.id}
                           onClick={() => handleSelectThread(thread)}
-                          className={`p-3 rounded-lg cursor-pointer transition-colors ${
+                          className={`p-3 rounded-xl cursor-pointer transition-colors ${
                             selectedThread?.id === thread.id
                               ? 'bg-brand-gold/20 border border-brand-gold/30'
-                              : 'bg-brand-dark/50 hover:bg-brand-gold/10'
+                              : 'bg-muted hover:bg-primary/10'
                           }`}
                         >
                           <div className="flex items-start gap-3">
@@ -319,7 +319,7 @@ export default function ParentMessagesPage() {
                             />
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center justify-between">
-                                <p className="text-sm font-medium text-white truncate">
+                                <p className="text-sm font-medium text-foreground truncate">
                                   {participant?.fullName || 'Unknown'}
                                 </p>
                                 {thread.unreadCount > 0 && (
@@ -328,7 +328,7 @@ export default function ParentMessagesPage() {
                                   </span>
                                 )}
                               </div>
-                              <p className="text-xs text-gray-400 truncate mt-1">
+                              <p className="text-xs text-muted-foreground truncate mt-1">
                                 {thread.lastMessage?.body || thread.lastMessage?.content || 'No messages yet'}
                               </p>
                             </div>
@@ -348,7 +348,7 @@ export default function ParentMessagesPage() {
               {selectedThread ? (
                 <>
                   <CardHeader className="border-b border-brand-gold/20">
-                    <CardTitle className="text-white">
+                    <CardTitle className="text-foreground">
                       {selectedThread.otherParticipant?.fullName || selectedThread.participants?.map(p => p.fullName).join(', ') || 'Unknown'}
                     </CardTitle>
                   </CardHeader>
@@ -363,10 +363,10 @@ export default function ParentMessagesPage() {
                             className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'}`}
                           >
                             <div
-                              className={`max-w-[70%] p-3 rounded-lg ${
+                              className={`max-w-[70%] p-3 rounded-xl ${
                                 isCurrentUser
                                   ? 'bg-brand-gold text-brand-dark'
-                                  : 'bg-brand-dark/50 text-white'
+                                  : 'bg-muted text-foreground'
                               }`}
                             >
                               <p className="text-sm">{message.content || message.body || ''}</p>
@@ -404,7 +404,7 @@ export default function ParentMessagesPage() {
                 </>
               ) : (
                 <div className="flex-1 flex items-center justify-center">
-                  <div className="text-center text-gray-400">
+                  <div className="text-center text-muted-foreground">
                     <MessageSquare className="h-16 w-16 mx-auto mb-4 opacity-50" />
                     <p>Select a conversation to start messaging</p>
                   </div>

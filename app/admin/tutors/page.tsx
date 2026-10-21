@@ -26,15 +26,15 @@ export default function AdminTutorsPage() {
               variant="ghost"
               size="sm"
               onClick={() => router.push('/admin')}
-              className="gap-2"
+className="gap-2 rounded-xl"
             >
               <ArrowLeft className="h-4 w-4" />
               Back to Dashboard
             </Button>
             <div className="h-6 w-px bg-border" />
             <div className="flex items-center gap-2">
-              <div className="bg-blue-100 p-2 rounded-lg">
-                <GraduationCap className="h-5 w-5 text-blue-600" />
+              <div className="rounded-xl border border-primary/30 bg-primary/10 p-2">
+                <GraduationCap className="h-5 w-5 text-primary" />
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-foreground">All Tutors</h1>
