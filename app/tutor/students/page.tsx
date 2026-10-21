@@ -9,7 +9,7 @@ export default function TutorStudentsPage() {
   const router = useRouter()
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background text-foreground">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8 flex items-center gap-4">
@@ -24,7 +24,7 @@ export default function TutorStudentsPage() {
           </Button>
           <div className="h-6 w-px bg-border" />
           <div className="flex items-center gap-2">
-            <div className="bg-brand-gold/20 p-2 rounded-lg border border-brand-gold/30">
+            <div className="rounded-xl border border-primary/30 bg-primary/10 p-2">
               <Users className="h-5 w-5 text-brand-gold" />
             </div>
             <div>

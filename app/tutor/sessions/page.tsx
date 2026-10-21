@@ -24,7 +24,7 @@ export default function TutorSessionsPage() {
           </Button>
           <div className="h-6 w-px bg-border" />
           <div className="flex items-center gap-2">
-            <div className="bg-brand-gold/20 p-2 rounded-lg border border-brand-gold/30">
+            <div className="rounded-xl border border-primary/30 bg-primary/10 p-2">
               <Calendar className="h-5 w-5 text-brand-gold" />
             </div>
             <div>

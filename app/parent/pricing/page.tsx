@@ -19,10 +19,10 @@ const GRADE_BAND_LABELS: Record<GradeBandTier, string> = {
 }
 
 const GRADE_BAND_COLORS: Record<GradeBandTier, string> = {
-  PRESCHOOL_TO_G1: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-  G2_TO_G4: 'bg-green-500/20 text-green-400 border-green-500/30',
-  G5_TO_G8: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-  G9_TO_G12: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
+  PRESCHOOL_TO_G1: 'bg-muted text-muted-foreground border-border',
+  G2_TO_G4: 'bg-primary/10 text-foreground border-primary/30',
+  G5_TO_G8: 'bg-primary/20 text-foreground border-primary/40',
+  G9_TO_G12: 'bg-secondary text-foreground border-border',
 }
 
 export default function ParentPricingPage() {
@@ -70,7 +70,7 @@ export default function ParentPricingPage() {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center space-y-4">
           <LoadingSpinner size="lg" className="mx-auto text-brand-gold" />
-          <p className="text-sm text-gray-400">Loading pricing information...</p>
+          <p className="text-sm text-muted-foreground">Loading pricing information...</p>
         </div>
       </div>
     )
@@ -84,7 +84,7 @@ export default function ParentPricingPage() {
           variant="ghost"
           size="sm"
           onClick={() => router.push('/parent')}
-          className="gap-2 text-gray-300 hover:text-white"
+          className="gap-2 text-muted-foreground hover:text-white"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Dashboard
@@ -92,7 +92,7 @@ export default function ParentPricingPage() {
         <div className="h-6 w-px bg-border" />
         <div>
           <h1 className="text-3xl font-serif font-bold text-white">Pricing</h1>
-          <p className="text-sm text-gray-400">View pricing for all available subjects and grade levels</p>
+          <p className="text-sm text-muted-foreground">View pricing for all available subjects and grade levels</p>
         </div>
       </div>
 
@@ -103,7 +103,7 @@ export default function ParentPricingPage() {
             <DollarSign className="h-5 w-5 text-brand-gold mt-0.5" />
             <div className="flex-1">
               <h3 className="font-medium text-white mb-1">Understanding Our Pricing</h3>
-              <p className="text-sm text-gray-300">
+              <p className="text-sm text-muted-foreground">
                 Prices are displayed per grade band. When you enroll your child, the system will automatically
                 calculate the price based on their grade level. Yearly prices are shown below, which are then
                 divided according to your chosen billing frequency (weekly, monthly, or yearly).
@@ -119,7 +119,7 @@ export default function ParentPricingPage() {
           <CardContent>
             <BookOpen className="h-12 w-12 text-gray-500 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-white mb-1">No Subjects Available</h3>
-            <p className="text-sm text-gray-400">Check back later for available subjects and pricing</p>
+            <p className="text-sm text-muted-foreground">Check back later for available subjects and pricing</p>
           </CardContent>
         </Card>
       ) : (
@@ -134,7 +134,7 @@ export default function ParentPricingPage() {
                     </div>
                     <div>
                       <CardTitle className="text-white">{subject.name}</CardTitle>
-                      <p className="text-sm text-gray-400 mt-1">
+                      <p className="text-sm text-muted-foreground mt-1">
                         Category: {subject.category}
                       </p>
                     </div>
@@ -144,7 +144,7 @@ export default function ParentPricingPage() {
                       Active
                     </span>
                   ) : (
-                    <span className="text-xs px-2 py-1 rounded-full bg-gray-500/20 text-gray-400 border border-gray-500/30">
+                    <span className="text-xs px-2 py-1 rounded-full bg-gray-500/20 text-muted-foreground border border-gray-500/30">
                       Inactive
                     </span>
                   )}
@@ -185,7 +185,7 @@ export default function ParentPricingPage() {
                     </div>
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-400 italic">No pricing configured for this subject yet</p>
+                  <p className="text-sm text-muted-foreground italic">No pricing configured for this subject yet</p>
                 )}
               </CardContent>
             </Card>

@@ -122,7 +122,7 @@ export default function StudentDashboard() {
       <div className="flex items-center justify-center min-h-[60vh]">
         <Card className="max-w-md w-full bg-card border-red-500/30 rounded-2xl shadow-xl">
           <CardContent className="pt-6 text-center space-y-4">
-            <div className="w-12 h-12 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center mx-auto">
+            <div className="w-12 h-12 rounded-full bg-destructive/10 border border-destructive/20 text-destructive flex items-center justify-center mx-auto">
               <AlertCircle className="w-6 h-6" />
             </div>
             <div>
@@ -131,7 +131,7 @@ export default function StudentDashboard() {
             </div>
             <Button
               onClick={handleRefresh}
-              className="bg-brand-gold hover:bg-brand-goldLight text-brand-dark font-semibold rounded-xl"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-xl"
             >
               <RefreshCw className="mr-2 h-4 w-4" />
               Try Again
@@ -179,7 +179,7 @@ export default function StudentDashboard() {
             <Button
               onClick={handleRefresh}
               variant="ghost"
-              className="text-muted-foreground hover:text-foreground hover:bg-white/5 h-11 px-3 rounded-xl"
+              className="text-muted-foreground hover:text-foreground hover:bg-muted h-11 px-3 rounded-xl"
               title="Refresh Dashboard"
             >
               <RefreshCw className="h-4 w-4" />
@@ -190,7 +190,7 @@ export default function StudentDashboard() {
 
       {/* Next Live Class Card */}
       {nextClass && nextClass.session ? (
-        <div className="relative overflow-hidden rounded-2xl bg-secondary border-2 border-brand-gold/40 p-6 shadow-[0_8px_30px_rgba(212,160,23,0.1)]">
+        <div className="relative overflow-hidden rounded-2xl bg-secondary border-2 border-brand-gold/40 p-6 shadow-sm">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-2">
               <div className="flex items-center gap-2">

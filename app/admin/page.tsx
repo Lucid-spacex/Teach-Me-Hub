@@ -128,7 +128,7 @@ export default function AdminDashboard() {
               <p className="font-medium">Failed to load dashboard</p>
               <p className="text-sm mt-2">{error}</p>
             </div>
-            <Button onClick={handleRefresh} className="gap-2 bg-brand-gold hover:bg-brand-goldLight text-black">
+            <Button onClick={handleRefresh} className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground">
               <RefreshCw className="h-4 w-4" />
               Try Again
             </Button>
@@ -227,7 +227,7 @@ export default function AdminDashboard() {
         {quickStats.map((stat) => {
           const Icon = stat.icon
           return (
-            <Card key={stat.label} className="group border border-border hover:border-primary/50 rounded-2xl transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 overflow-hidden">
+            <Card key={stat.label} className="group border border-border hover:border-primary/50 rounded-2xl transition-all duration-200 hover:shadow-sm hover:-translate-y-0.5 overflow-hidden">
               <CardHeader className="pb-2 pt-5 px-5 flex flex-row items-center justify-between space-y-0">
                 <span className="text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors">
                   {stat.label}
@@ -253,7 +253,7 @@ export default function AdminDashboard() {
           <a
             key={action.label}
             href={action.href}
-            className="group block bg-card border border-border hover:border-primary/50 rounded-2xl p-5 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 cursor-pointer"
+            className="group block bg-card border border-border hover:border-primary/50 rounded-2xl p-5 transition-all duration-200 hover:shadow-sm hover:-translate-y-0.5 cursor-pointer"
           >
             <div className="flex items-start gap-4">
               <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 text-primary flex items-center justify-center group-hover:bg-primary/20 group-hover:border-primary/40 transition-colors flex-shrink-0">
