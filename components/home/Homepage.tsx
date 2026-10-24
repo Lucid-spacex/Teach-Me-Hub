@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { motion, useReducedMotion } from 'motion/react'
 import { ArrowRight, BookOpen, Check, ChevronDown, GraduationCap, Menu, Sparkles, Users, X } from 'lucide-react'
 
 const programs = [
@@ -20,6 +21,7 @@ export function Homepage() {
   const router = useRouter()
   const [menuOpen, setMenuOpen] = useState(false)
   const [openFaq, setOpenFaq] = useState<number | null>(0)
+  const prefersReducedMotion = useReducedMotion()
 
   const go = (path: string) => {
     setMenuOpen(false)
@@ -47,7 +49,7 @@ export function Homepage() {
         <section className="relative isolate min-h-[620px] overflow-hidden bg-[#25241f] text-white">
           <img src="/teachmenest-hero.png" alt="Parent and child learning together at home" className="absolute inset-0 -z-20 size-full object-cover object-center" />
           <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(17,17,17,0.91)_0%,rgba(17,17,17,0.68)_44%,rgba(17,17,17,0.16)_100%)]" />
-          <div className="mx-auto flex min-h-[620px] max-w-7xl items-center px-5 py-20 sm:px-8 lg:px-12"><div className="max-w-[640px]"><div className="mb-7 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-[#F3C33F] backdrop-blur-sm"><Sparkles className="size-3.5" /> Learning that feels personal</div><h1 className="max-w-[650px] text-5xl font-black leading-[0.98] tracking-[-0.06em] sm:text-7xl">A brighter path to <span className="text-[#F3C33F]">confident learning.</span></h1><p className="mt-7 max-w-[540px] text-lg leading-8 text-white/75 sm:text-xl">Personalized tutoring that helps every learner feel seen, supported, and ready for what comes next.</p><div className="mt-9 flex flex-col gap-3 sm:flex-row"><button onClick={() => go('/register')} className="rounded-full bg-[#F3C33F] px-7 py-4 text-sm font-extrabold text-[#111111] shadow-[0_10px_28px_rgba(0,0,0,0.2)] transition-all hover:-translate-y-0.5 hover:bg-[#e9b72d]">Find the right learning path <ArrowRight className="ml-2 inline size-4" /></button><button onClick={() => go('/login')} className="rounded-full border border-white/45 bg-white/10 px-7 py-4 text-sm font-extrabold text-white backdrop-blur-sm transition-colors hover:bg-white hover:text-[#111111]">Explore the portal</button></div></div></div>
+          <div className="mx-auto flex min-h-[620px] max-w-7xl items-center px-5 py-20 sm:px-8 lg:px-12"><div className="max-w-[640px]"><div className="mb-7 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-[#F3C33F] backdrop-blur-sm"><Sparkles className="size-3.5" /> Learning that feels personal</div><motion.h1 initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }} animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }} className="max-w-[650px] text-5xl font-black leading-[0.98] tracking-[-0.06em] sm:text-7xl">A brighter path to <span className="text-[#F3C33F]">confident learning.</span></motion.h1><p className="mt-7 max-w-[540px] text-lg leading-8 text-white/75 sm:text-xl">Personalized tutoring that helps every learner feel seen, supported, and ready for what comes next.</p><div className="mt-9 flex flex-col gap-3 sm:flex-row"><button onClick={() => go('/register')} className="rounded-full bg-[#F3C33F] px-7 py-4 text-sm font-extrabold text-[#111111] shadow-[0_10px_28px_rgba(0,0,0,0.2)] transition-all hover:-translate-y-0.5 hover:bg-[#e9b72d]">Find the right learning path <ArrowRight className="ml-2 inline size-4" /></button><button onClick={() => go('/login')} className="rounded-full border border-white/45 bg-white/10 px-7 py-4 text-sm font-extrabold text-white backdrop-blur-sm transition-colors hover:bg-white hover:text-[#111111]">Explore the portal</button></div></div></div>
           <div className="absolute bottom-8 right-8 hidden rounded-2xl border border-white/20 bg-white/10 p-4 backdrop-blur-md lg:block"><p className="text-xs font-bold uppercase tracking-[0.14em] text-white/60">A place to</p><p className="mt-1 text-sm font-bold">learn at their own pace.</p></div>
         </section>
 
