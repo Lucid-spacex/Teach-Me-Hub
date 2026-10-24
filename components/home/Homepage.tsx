@@ -1,72 +1,37 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { motion, useReducedMotion } from 'motion/react'
-import { ArrowRight, BookOpen, Check, ChevronDown, GraduationCap, Menu, Sparkles, Users, X } from 'lucide-react'
-
-const programs = [
-  { label: 'Early learners', grades: 'Preschool – Grade 1', description: 'Build joyful foundations in reading, writing, numbers, and confidence.', icon: Sparkles, tone: 'bg-[#fff5d8]' },
-  { label: 'Growing minds', grades: 'Grade 2 – 6', description: 'Strengthen core subjects with patient guidance and a plan that fits.', icon: BookOpen, tone: 'bg-[#f4f1ea]' },
-  { label: 'Future ready', grades: 'Grade 7 – 12', description: 'Prepare for exams, unlock difficult concepts, and think independently.', icon: GraduationCap, tone: 'bg-[#f9e9b6]' },
-]
-
-const faqs = [
-  ['Who is TeachMeNest for?', 'TeachMeNest supports learners from preschool through secondary school, with a parent experience that keeps families informed at every step.'],
-  ['How are tutors matched with learners?', 'We learn about each student’s goals, subjects, pace, and personality so families can begin with a thoughtful tutor match.'],
-  ['How do parents follow progress?', 'Parents can use the portal to stay close to sessions, assignments, grades, progress reports, and messages.'],
-]
+import { Moon, Sun } from 'lucide-react'
+import { Footer, FeatureBento, Hero, HowItWorks, Nav, ProgressQuiz, Roles, SocialProofAndPricing, TrustStrip, WhySection } from './HomeSections'
 
 export function Homepage() {
   const router = useRouter()
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [openFaq, setOpenFaq] = useState<number | null>(0)
-  const prefersReducedMotion = useReducedMotion()
+  const [dark, setDark] = useState(false)
+  const [progress, setProgress] = useState(0)
 
-  const go = (path: string) => {
-    setMenuOpen(false)
-    router.push(path)
-  }
+  useEffect(() => {
+    const onScroll = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight
+      setProgress(max > 0 ? (window.scrollY / max) * 100 : 0)
+    }
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
-  return (
-    <div className="min-h-screen overflow-x-hidden bg-white text-[#111111]">
-      <header className="sticky top-0 z-40 border-b border-black/5 bg-white/95 backdrop-blur-md">
-        <div className="mx-auto flex h-[76px] max-w-7xl items-center justify-between px-5 sm:px-8 lg:px-12">
-          <button onClick={() => go('/')} className="flex items-center gap-3 text-left" aria-label="TeachMeNest home">
-            <span className="grid size-10 place-items-center rounded-[14px] bg-[#F3C33F] text-[#111111] shadow-[0_6px_16px_rgba(243,195,63,0.24)]"><GraduationCap className="size-5" /></span>
-            <span><span className="block text-[18px] font-extrabold tracking-[-0.04em]">TeachMeNest</span><span className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-black/45">Learn. Grow. Thrive.</span></span>
-          </button>
-          <nav className="hidden items-center gap-8 text-sm font-semibold text-black/60 lg:flex" aria-label="Main navigation">
-            <a href="#why" className="transition-colors hover:text-black">Why us</a><a href="#programs" className="transition-colors hover:text-black">Programs</a><a href="#how-it-works" className="transition-colors hover:text-black">How it works</a><a href="#faq" className="transition-colors hover:text-black">FAQ</a>
-          </nav>
-          <div className="hidden items-center gap-3 sm:flex"><button onClick={() => go('/login')} className="px-3 py-2 text-sm font-bold text-black/65 transition-colors hover:text-black">Sign in</button><button onClick={() => go('/register')} className="rounded-full bg-[#F3C33F] px-5 py-3 text-sm font-extrabold text-[#111111] shadow-[0_7px_18px_rgba(243,195,63,0.22)] transition-all hover:-translate-y-0.5 hover:bg-[#e9b72d] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#111111]">Get started <ArrowRight className="ml-1 inline size-4" /></button></div>
-          <button className="grid size-10 place-items-center rounded-xl border border-black/10 sm:hidden" onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? 'Close menu' : 'Open menu'}>{menuOpen ? <X /> : <Menu />}</button>
-        </div>
-        {menuOpen && <div className="border-t border-black/5 bg-white px-5 py-5 sm:hidden"><nav className="flex flex-col gap-4 text-sm font-bold"><a href="#why" onClick={() => setMenuOpen(false)}>Why us</a><a href="#programs" onClick={() => setMenuOpen(false)}>Programs</a><a href="#how-it-works" onClick={() => setMenuOpen(false)}>How it works</a><a href="#faq" onClick={() => setMenuOpen(false)}>FAQ</a><button onClick={() => go('/register')} className="mt-2 rounded-full bg-[#F3C33F] px-5 py-3 text-center">Get started</button></nav></div>}
-      </header>
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', dark)
+    return () => document.documentElement.classList.remove('dark')
+  }, [dark])
 
-      <main>
-        <section className="relative isolate min-h-[620px] overflow-hidden bg-[#25241f] text-white">
-          <img src="/teachmenest-hero.png" alt="Parent and child learning together at home" className="absolute inset-0 -z-20 size-full object-cover object-center" />
-          <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(17,17,17,0.91)_0%,rgba(17,17,17,0.68)_44%,rgba(17,17,17,0.16)_100%)]" />
-          <div className="mx-auto flex min-h-[620px] max-w-7xl items-center px-5 py-20 sm:px-8 lg:px-12"><div className="max-w-[640px]"><div className="mb-7 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-[#F3C33F] backdrop-blur-sm"><Sparkles className="size-3.5" /> Learning that feels personal</div><motion.h1 initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }} animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }} className="max-w-[650px] text-5xl font-black leading-[0.98] tracking-[-0.06em] sm:text-7xl">A brighter path to <span className="text-[#F3C33F]">confident learning.</span></motion.h1><p className="mt-7 max-w-[540px] text-lg leading-8 text-white/75 sm:text-xl">Personalized tutoring that helps every learner feel seen, supported, and ready for what comes next.</p><div className="mt-9 flex flex-col gap-3 sm:flex-row"><button onClick={() => go('/register')} className="rounded-full bg-[#F3C33F] px-7 py-4 text-sm font-extrabold text-[#111111] shadow-[0_10px_28px_rgba(0,0,0,0.2)] transition-all hover:-translate-y-0.5 hover:bg-[#e9b72d]">Find the right learning path <ArrowRight className="ml-2 inline size-4" /></button><button onClick={() => go('/login')} className="rounded-full border border-white/45 bg-white/10 px-7 py-4 text-sm font-extrabold text-white backdrop-blur-sm transition-colors hover:bg-white hover:text-[#111111]">Explore the portal</button></div></div></div>
-          <div className="absolute bottom-8 right-8 hidden rounded-2xl border border-white/20 bg-white/10 p-4 backdrop-blur-md lg:block"><p className="text-xs font-bold uppercase tracking-[0.14em] text-white/60">A place to</p><p className="mt-1 text-sm font-bold">learn at their own pace.</p></div>
-        </section>
-
-        <section id="why" className="mx-auto max-w-7xl px-5 py-20 sm:px-8 lg:px-12 lg:py-28"><div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-24"><div><p className="text-xs font-extrabold uppercase tracking-[0.2em] text-[#b58a10]">Why TeachMeNest</p><h2 className="mt-4 text-4xl font-black leading-tight tracking-[-0.05em] sm:text-5xl">The support behind every small breakthrough.</h2><p className="mt-6 max-w-md leading-7 text-black/58">Learning looks different for every child. We bring structure, encouragement, and the right people together to make progress feel possible.</p><button onClick={() => go('/register')} className="mt-7 inline-flex items-center gap-2 text-sm font-extrabold underline decoration-[#F3C33F] decoration-4 underline-offset-8 hover:text-[#8b6808]">Start your journey <ArrowRight className="size-4" /></button></div><div className="grid gap-x-8 gap-y-10 sm:grid-cols-2">{[['01','Personal attention','Lessons shaped around their goals, pace, and personality.'],['02','Trusted educators','Thoughtful tutors who make difficult concepts feel doable.'],['03','Visible progress','Clear updates that keep families connected to growth.'],['04','One connected place','Sessions, assignments, messages, and reports in one portal.']].map(([number,title,copy]) => <div key={number} className="border-t-2 border-[#F3C33F] pt-5"><span className="text-xs font-black text-black/35">{number}</span><h3 className="mt-3 text-xl font-extrabold tracking-tight">{title}</h3><p className="mt-2 text-sm leading-6 text-black/55">{copy}</p></div>)}</div></div></section>
-
-        <section id="programs" className="bg-[#F8F7F2] px-5 py-20 sm:px-8 lg:px-12 lg:py-28"><div className="mx-auto max-w-7xl"><div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end"><div><p className="text-xs font-extrabold uppercase tracking-[0.2em] text-[#b58a10]">Learning paths</p><h2 className="mt-4 text-4xl font-black tracking-[-0.05em] sm:text-5xl">Room to grow, at every stage.</h2></div><p className="max-w-sm text-sm leading-6 text-black/55">From first sounds to final exams, we meet learners where they are and help them move forward.</p></div><div className="mt-12 grid gap-5 lg:grid-cols-3">{programs.map(({label,grades,description,icon: Icon,tone}) => <article key={grades} className={`${tone} group flex min-h-[300px] flex-col justify-between rounded-[28px] p-7 transition-transform hover:-translate-y-1`}><div><div className="flex items-start justify-between"><span className="grid size-12 place-items-center rounded-2xl bg-white/75"><Icon className="size-5" /></span><span className="text-xs font-extrabold uppercase tracking-[0.15em] text-black/40">{label}</span></div><h3 className="mt-10 text-2xl font-black tracking-[-0.04em]">{grades}</h3><p className="mt-3 max-w-xs leading-6 text-black/60">{description}</p></div><a href="#how-it-works" className="mt-8 inline-flex items-center gap-2 text-sm font-extrabold">Learn more <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" /></a></article>)}</div></div></section>
-
-        <section id="how-it-works" className="mx-auto max-w-7xl px-5 py-20 sm:px-8 lg:px-12 lg:py-28"><div className="grid items-center gap-14 lg:grid-cols-[1fr_0.9fr]"><div><p className="text-xs font-extrabold uppercase tracking-[0.2em] text-[#b58a10]">Simple by design</p><h2 className="mt-4 max-w-lg text-4xl font-black leading-tight tracking-[-0.05em] sm:text-5xl">From curious to capable, together.</h2><div className="mt-10 flex flex-col gap-7">{[['01','Tell us what they need','Share your learner’s goals, subjects, and the kind of support that helps them thrive.'],['02','Meet their match','We connect your family with the right learning experience and educator.'],['03','See the difference','Stay close through sessions, feedback, and progress inside your portal.']].map(([n,t,c]) => <div key={n} className="flex gap-5"><span className="grid size-10 shrink-0 place-items-center rounded-full bg-[#F3C33F] text-xs font-black">{n}</span><div><h3 className="font-extrabold">{t}</h3><p className="mt-1 max-w-md text-sm leading-6 text-black/55">{c}</p></div></div>)}</div></div><div className="relative rounded-[32px] bg-[#111111] p-7 text-white sm:p-9"><div className="absolute -right-3 -top-3 grid size-16 place-items-center rounded-2xl bg-[#F3C33F] text-[#111111] shadow-lg"><Users className="size-7" /></div><p className="text-xs font-bold uppercase tracking-[0.17em] text-white/45">Inside the portal</p><h3 className="mt-5 text-3xl font-black tracking-[-0.04em]">One calm place for the whole learning team.</h3><div className="mt-8 grid gap-3">{['Parent visibility','Student momentum','Tutor workspace'].map((item) => <div key={item} className="flex items-center gap-3 rounded-xl bg-white/10 px-4 py-3 text-sm font-bold"><span className="grid size-6 place-items-center rounded-full bg-[#F3C33F] text-[#111111]"><Check className="size-3.5" /></span>{item}</div>)}</div><button onClick={() => go('/login')} className="mt-8 w-full rounded-full bg-white px-5 py-3 text-sm font-extrabold text-[#111111] transition-colors hover:bg-[#F3C33F]">Sign in to explore</button></div></div></section>
-
-        <section id="faq" className="bg-[#F8F7F2] px-5 py-20 sm:px-8 lg:px-12 lg:py-28"><div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.75fr_1.25fr]"><div><p className="text-xs font-extrabold uppercase tracking-[0.2em] text-[#b58a10]">Questions, answered</p><h2 className="mt-4 text-4xl font-black tracking-[-0.05em] sm:text-5xl">Good to know.</h2><p className="mt-5 max-w-sm leading-7 text-black/55">Still curious? Our team is happy to help you find the best next step.</p></div><div className="divide-y divide-black/10">{faqs.map(([question,answer], index) => <div key={question} className="py-5 first:pt-0"><button className="flex w-full items-center justify-between gap-5 text-left font-extrabold" onClick={() => setOpenFaq(openFaq === index ? null : index)} aria-expanded={openFaq === index}>{question}<ChevronDown className={`size-5 shrink-0 transition-transform ${openFaq === index ? 'rotate-180' : ''}`} /></button>{openFaq === index && <p className="mt-3 max-w-2xl pr-8 text-sm leading-6 text-black/55">{answer}</p>}</div>)}</div></div></section>
-
-        <section className="bg-[#F3C33F] px-5 py-16 sm:px-8 lg:px-12"><div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 sm:flex-row sm:items-center"><div><p className="text-xs font-black uppercase tracking-[0.2em] text-black/55">Ready when you are</p><h2 className="mt-3 max-w-xl text-4xl font-black leading-tight tracking-[-0.05em] sm:text-5xl">Let’s make learning feel possible.</h2></div><button onClick={() => go('/register')} className="rounded-full bg-[#111111] px-7 py-4 text-sm font-extrabold text-white transition-transform hover:-translate-y-0.5">Get started <ArrowRight className="ml-2 inline size-4" /></button></div></section>
-      </main>
-
-      <footer className="bg-[#111111] px-5 py-12 text-white sm:px-8 lg:px-12"><div className="mx-auto flex max-w-7xl flex-col justify-between gap-10 sm:flex-row"><div><div className="flex items-center gap-3"><span className="grid size-9 place-items-center rounded-xl bg-[#F3C33F] text-[#111111]"><GraduationCap className="size-4" /></span><span className="text-lg font-extrabold tracking-[-0.04em]">TeachMeNest</span></div><p className="mt-4 max-w-xs text-sm leading-6 text-white/50">A supportive learning community for every curious mind.</p></div><div className="flex flex-wrap gap-x-10 gap-y-4 text-sm font-semibold text-white/60"><a href="#why" className="hover:text-white">Why us</a><a href="#programs" className="hover:text-white">Programs</a><a href="#faq" className="hover:text-white">FAQ</a><button onClick={() => go('/login')} className="hover:text-white">Sign in</button></div></div><div className="mx-auto mt-12 max-w-7xl border-t border-white/10 pt-5 text-xs text-white/35">© {new Date().getFullYear()} TeachMeNest. All rights reserved.</div></footer>
-    </div>
-  )
+  return <div className="min-h-screen overflow-x-hidden bg-white text-[#171715] transition-colors dark:bg-[#11110f] dark:text-white">
+    <div className="fixed left-0 right-0 top-0 z-[60] h-1 origin-left bg-[#F3C33F]" style={{ transform: `scaleX(${progress / 100})` }} aria-hidden="true" />
+    <div className="fixed bottom-5 right-5 z-50"><button onClick={() => setDark(!dark)} className="grid size-11 place-items-center rounded-full border border-black/10 bg-white/85 text-black shadow-lg backdrop-blur dark:border-white/10 dark:bg-[#22221d] dark:text-white" aria-label={dark ? 'Switch to light theme' : 'Switch to dark theme'}>{dark ? <Sun className="size-4" /> : <Moon className="size-4" />}</button></div>
+    <Nav go={(path) => router.push(path)} />
+    <main><Hero go={(path) => router.push(path)} /><TrustStrip /><WhySection /><HowItWorks /><FeatureBento /><Roles /><ProgressQuiz /><SocialProofAndPricing go={(path) => router.push(path)} /></main>
+    <Footer />
+  </div>
 }
 
 export default Homepage
