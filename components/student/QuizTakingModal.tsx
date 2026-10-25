@@ -130,8 +130,8 @@ export function QuizTakingModal({ open, onOpenChange, assignmentId, assignmentTi
     try {
       await api.completeQuiz(attempt.id)
       toast({
-        title: 'Quiz Completed',
-        description: 'Your quiz has been submitted successfully',
+        title: 'Quiz Submitted',
+        description: 'Quiz submitted. Your tutor will review it.',
       })
       onSuccess()
       onOpenChange(false)

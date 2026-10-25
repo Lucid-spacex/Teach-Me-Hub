@@ -172,11 +172,11 @@
 - [x] Add max students field
 - [x] Add note field
 - [x] Implement PATCH /tutor-profile/availability-status
-- [ ] Warn if UNAVAILABLE with active students alerts admin
+- [x] Warn if UNAVAILABLE with active students alerts admin
 - [x] Keep pending tutors limited to application wizard, notifications, public subjects
 - [x] Keep rejected tutors limited to application wizard, notifications, public subjects
 - [x] Add clear status screen for pending/rejected tutors
-- [ ] Add new sidebar entries and badges
+- [x] Add new sidebar entries and badges
 
 ## Part 5: Parent
 - [x] Replace direct enrollment edit with "Request schedule change"
@@ -194,40 +194,40 @@
 - [x] Show grade breakdown (components, weights, percentages)
 - [x] Never show overrideReason to parents
 - [x] Remove drafts, pending, rejected grades from parent view
-- [ ] Keep parent to Admin messaging only
-- [ ] Remove parent to tutor messaging option
-- [ ] Keep admin-contact flow
-- [ ] Use notifications to refresh messages
+- [x] Keep parent to Admin messaging only
+- [x] Remove parent to tutor messaging option
+- [x] Keep admin-contact flow
+- [x] Use notifications to refresh messages
 - [x] Update sessions to show Google Meet link
 - [x] Add recording button for completed sessions
 - [x] Call recording endpoint for completed sessions
 - [x] Handle 403/404 gracefully for recordings
 - [x] Remove all Zoom wording, use meetLink
-- [ ] Keep pricing page
-- [ ] Make "price updated" notifications link to pricing page
-- [ ] Ensure students never see prices
-- [ ] Keep complaints page
-- [ ] Make resolution notifications link to complaints
-- [ ] Add new sidebar entries and badges
+- [x] Keep pricing page
+- [x] Make "price updated" notifications link to pricing page
+- [x] Ensure students never see prices
+- [x] Keep complaints page
+- [x] Make resolution notifications link to complaints
+- [x] Add new sidebar entries and badges
 
 ## Part 6: Student
-- [ ] Remove "message tutor" action from My Tutors
-- [ ] Remove "message tutor" action from anywhere else
-- [ ] Keep Messages as informational page
+- [x] Remove "message tutor" action from My Tutors
+- [x] Remove "message tutor" action from anywhere else
+- [x] Keep Messages as informational page
 - [x] Update grades page to show only APPROVED grades
 - [x] Show grade breakdown (components, weights, percentages)
 - [x] Never show overrideReason to students
 - [x] Update schedule to use Google Meet
 - [x] Update next class to use Google Meet
-- [ ] Keep quiz taking with 30-second timer
-- [ ] Never show or request correct answers in quiz
-- [ ] Show "Quiz submitted. Your tutor will review it." after completion
-- [ ] Never present quiz result as official grade
-- [ ] Show per-answer correctness if API returns it (but not as grade)
-- [ ] Add student notification page
-- [ ] Add student notification bell
-- [ ] Ensure no prices anywhere in student UI
-- [ ] Add new sidebar entries and badges
+- [x] Keep quiz taking with 30-second timer
+- [x] Never show or request correct answers in quiz
+- [x] Show "Quiz submitted. Your tutor will review it." after completion
+- [x] Never present quiz result as official grade
+- [x] Show per-answer correctness if API returns it (but not as grade)
+- [x] Add student notification page
+- [x] Add student notification bell
+- [x] Ensure no prices anywhere in student UI
+- [x] Add new sidebar entries and badges
 
 ## Part 7: Cleanup of Outdated UI and Docs
 - [x] Remove Zoom wording from pages (admin/sessions, parent/students/[id], student/my-tutors, student/schedule, tutor/students/[id])
@@ -246,28 +246,28 @@
 - [x] Update README with new features
 
 ## Part 8: Quality
-- [ ] Add loading states to all new pages
-- [ ] Add empty states to all new pages
-- [ ] Add error states to all new pages
-- [ ] Use SkeletonLoader for loading states
-- [ ] Ensure mobile responsiveness for all new pages
-- [ ] Add aria labels to bell icon
-- [ ] Add aria labels to badges
-- [ ] Add aria labels to sound toggle
-- [ ] Ensure dialogs are keyboard-operable
-- [ ] Add route protection to all new pages
-- [ ] Create FRONTEND_QA.md with manual QA checklist
-- [ ] Add Vitest setup if not exists
-- [ ] Add test for weight total validation
-- [ ] Add test for reject-reason requirement
-- [ ] Add test for notification badge mapping
-- [ ] Add test for sound-on-live-only logic
-- [ ] Write final report with items done/not done
-- [ ] List new routes in final report
-- [ ] List new components in final report
-- [ ] List new env vars in final report
-- [ ] List open questions about API contract in final report
-- [ ] List unverified items in final report
+- [x] Add loading states to all new pages
+- [x] Add empty states to all new pages
+- [x] Add error states to all new pages
+- [x] Use SkeletonLoader for loading states
+- [x] Ensure mobile responsiveness for all new pages
+- [x] Add aria labels to bell icon
+- [x] Add aria labels to badges
+- [x] Add aria labels to sound toggle
+- [x] Ensure dialogs are keyboard-operable
+- [x] Add route protection to all new pages
+- [x] Create FRONTEND_QA.md with manual QA checklist
+- [x] Add Vitest setup if not exists
+- [x] Add test for weight total validation
+- [x] Add test for reject-reason requirement
+- [x] Add test for notification badge mapping
+- [x] Add test for sound-on-live-only logic
+- [x] Write final report with items done/not done
+- [x] List new routes in final report
+- [x] List new components in final report
+- [x] List new env vars in final report
+- [x] List open questions about API contract in final report
+- [x] List unverified items in final report
 
 ## Environment
 - [ ] Ensure .env.local has NEXT_PUBLIC_API_URL=http://localhost:3001/api

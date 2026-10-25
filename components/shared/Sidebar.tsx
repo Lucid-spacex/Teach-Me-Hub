@@ -162,7 +162,7 @@ export function Sidebar({ role }: SidebarProps) {
           className="p-2 -ml-2 text-foreground/80 hover:text-primary transition-colors rounded-lg hover:bg-foreground/5"
           aria-label="Open navigation menu"
         >
-          <Menu className="w-6 h-6" />
+          <Menu className="w-6 h-6" aria-hidden="true" />
         </button>
 
         <Link href={role === 'PARENT' ? '/parent' : role === 'STUDENT' ? '/student' : role === 'TUTOR' ? '/tutor' : '/admin'} className="flex items-center">
@@ -199,8 +199,9 @@ export function Sidebar({ role }: SidebarProps) {
           <button
             onClick={() => setMobileOpen(false)}
             className="lg:hidden p-1.5 text-sidebar-foreground/60 hover:text-sidebar-foreground rounded-lg hover:bg-sidebar-foreground/5 transition-colors"
+            aria-label="Close navigation menu"
           >
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
 
@@ -296,6 +297,7 @@ export function Sidebar({ role }: SidebarProps) {
                 href={`/${role.toLowerCase()}/notifications`}
                 className="p-1.5 text-sidebar-foreground/70 hover:text-sidebar-primary hover:bg-sidebar-foreground/10 rounded-lg transition-colors"
                 title="Notifications"
+                aria-label="View notifications"
               >
                 <Bell className="w-4 h-4" />
               </Link>
@@ -303,6 +305,7 @@ export function Sidebar({ role }: SidebarProps) {
                 onClick={handleLogout}
                 className="p-1.5 text-sidebar-foreground/70 hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
                 title="Sign Out"
+                aria-label="Sign out"
               >
                 <LogOut className="w-4 h-4" />
               </button>

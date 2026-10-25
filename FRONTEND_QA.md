@@ -1,283 +1,387 @@
 # Frontend QA Checklist
 
-This document provides a manual QA checklist for verifying the frontend implementation against the specification.
+This document provides a comprehensive manual QA checklist for the Teach-Me-Hub frontend application.
+
+## Setup Requirements
+
+- Backend API running at `http://localhost:3001/api`
+- Frontend `.env.local` configured with `NEXT_PUBLIC_API_URL=http://localhost:3001/api`
+- Test accounts for each role (Admin, Tutor, Parent, Student)
 
 ## Part 1: Parent & Student Grades
 
 ### Parent Grades Page (`/parent/grades`)
 - [ ] Only APPROVED grades are displayed
-- [ ] Draft, PENDING_APPROVAL, and REJECTED grades are not shown
-- [ ] Grade breakdown shows components with weights and percentages
+- [ ] DRAFT, PENDING_APPROVAL, and REJECTED grades are hidden
+- [ ] Grade breakdown shows components, weights, and percentages
 - [ ] `overrideReason` field is never displayed to parents
-- [ ] Tutor comments are shown
-- [ ] Approved date is displayed
-- [ ] Empty state shows appropriate message when no approved grades exist
+- [ ] Tutor comments are shown when available
+- [ ] Student filter works correctly
+- [ ] Empty state displays helpful message
 
 ### Student Grades Page (`/student/grades`)
 - [ ] Only APPROVED grades are displayed
-- [ ] Draft, PENDING_APPROVAL, and REJECTED grades are not shown
-- [ ] Grade breakdown shows components with weights and percentages
+- [ ] DRAFT, PENDING_APPROVAL, and REJECTED grades are hidden
+- [ ] Grade breakdown shows components, weights, and percentages
 - [ ] `overrideReason` field is never displayed to students
-- [ ] Tutor comments are shown
-- [ ] Approved date is displayed
-- [ ] Empty state shows appropriate message when no approved grades exist
+- [ ] Tutor comments are shown when available
+- [ ] Empty state displays helpful message
 
 ## Part 2: Parent Enrollment Change Requests
 
-### Change Request Form
-- [ ] Form is accessible from enrollment cards
-- [ ] Form shows current schedule values
-- [ ] User can modify: start date, end date, session frequency, available days, preferred hours
-- [ ] "Change pending approval" banner appears when a request is PENDING
-- [ ] Form is disabled while a request is pending
-- [ ] Cancel request action is available for pending requests
+### Enrollment Change Request Modal
+- [ ] "Request Change" button opens modal
+- [ ] Form pre-fills with current enrollment values
+- [ ] All fields work (start date, end date, frequency, days, hours)
+- [ ] Form is disabled when a request is PENDING
+- [ ] "Change Pending Approval" banner appears when pending
+- [ ] "Cancel Request" button works for pending requests
 - [ ] Request history shows APPROVED and REJECTED requests
 - [ ] Admin rejection reason is displayed for REJECTED requests
-- [ ] Server errors are shown clearly for request conflicts
+- [ ] Error messages display clearly for conflicts
 - [ ] Only one pending request per enrollment is enforced
 
 ## Part 3: Parent Session Recordings
 
-### Recording Access
+### Session Recordings
 - [ ] Recording button appears for COMPLETED sessions
-- [ ] Recording button calls GET /sessions/:id/recording
-- [ ] 403 errors show "Access Denied" toast
-- [ ] 404 errors show "Recording Not Found" toast
-- [ ] Loading state shows while fetching recording
-- [ ] Recording opens in new tab if URL is available
-- [ ] Appropriate error message if recording URL is missing
+- [ ] Recording button does NOT appear for SCHEDULED sessions
+- [ ] Clicking recording opens recording URL in new tab
+- [ ] 403 error shows "Access Denied" toast
+- [ ] 404 error shows "Recording Not Found" toast
+- [ ] Loading state shows during recording fetch
+- [ ] "Recording Not Available" toast when URL is null
 
-## Part 4: Google Meet Integration
+## Part 4: Zoom to Google Meet Migration
 
-### Session Links
-- [ ] All session links use `meetLink` field (not zoomLink)
-- [ ] No Zoom branding or terminology in UI
-- [ ] Join buttons open Google Meet links in new tab
-- [ ] Meet links appear in session lists and detail views
-- [ ] Meet links appear in student schedule
-- [ ] Meet links appear in tutor upcoming classes
-- [ ] Documentation references Google Meet, not Zoom
+### All Session Pages
+- [ ] No references to "Zoom" in user-facing text
+- [ ] All session links use `meetLink` field
+- [ ] Link text says "Join" (not "Join Zoom")
+- [ ] Link buttons show Video icon
+- [ ] Pages checked:
+  - [ ] `/parent/sessions`
+  - [ ] `/parent/students/[id]`
+  - [ ] `/student/schedule`
+  - [ ] `/student/my-tutors`
+  - [ ] `/tutor/students/[id]`
+  - [ ] `/admin/sessions`
 
-## Part 5: Tutor Status Management
+## Part 5: Tutor Status Screens
 
-### Pending Tutors
-- [ ] Pending tutors are redirected to `/tutor/pending`
-- [ ] Status screen shows "Application Under Review"
-- [ ] Navigation is restricted to Application, Notifications, and Public Subjects
-- [ ] "Navigation Restricted" notice is displayed
-- [ ] Approved tutors cannot access pending page
-- [ ] Rejected tutors are redirected to rejected page
+### Pending Tutor Status (`/tutor/pending`)
+- [ ] Page displays for PENDING_VETTING tutors
+- [ ] Status screen shows clear pending message
+- [ ] Sidebar navigation is restricted (only Application link)
+- [ ] Redirects to `/tutor` if status changes to APPROVED
+- [ ] Redirects to `/tutor/rejected` if status changes to REJECTED
 
-### Rejected Tutors
-- [ ] Rejected tutors are redirected to `/tutor/rejected`
-- [ ] Status screen shows "Application Not Approved"
-- [ ] Navigation is restricted to Application, Notifications, and Public Subjects
-- [ ] "Navigation Restricted" notice is displayed
-- [ ] "Reapply" button links to application wizard
-- [ ] Approved tutors cannot access rejected page
+### Rejected Tutor Status (`/tutor/rejected`)
+- [ ] Page displays for REJECTED tutors
+- [ ] Status screen shows clear rejection message
+- [ ] Sidebar navigation is restricted (only Application link)
+- [ ] Redirects to `/tutor/pending` if status changes to PENDING_VETTING
+- [ ] Redirects to `/tutor` if status changes to APPROVED
 
-### Availability Status
-- [ ] Settings page shows availability status selector (AVAILABLE, LIMITED, UNAVAILABLE)
-- [ ] Max students field is displayed
-- [ ] Status note field is optional
-- [ ] UNAVAILABLE warning appears when status is UNAVAILABLE
-- [ ] Warning shows active student count if > 0
-- [ ] Warning indicates admin will be notified
-- [ ] Submitting UNAVAILABLE with active students shows admin alert toast
+### Tutor Settings - Availability
+- [ ] Availability status selector works (AVAILABLE, LIMITED, UNAVAILABLE)
+- [ ] Max students field validates input
+- [ ] Status note field accepts text
+- [ ] UNAVAILABLE warning shows active student count
+- [ ] UNAVAILABLE warning alerts admin if active students > 0
+- [ ] PATCH request updates availability correctly
 
 ## Part 6: Sidebar Navigation & Badges
 
-### Sidebar Badges
-- [ ] Red badges use `byCategory` from NotificationProvider
-- [ ] Badges show 99+ cap for counts over 99
-- [ ] Badges only appear when count > 0
-- [ ] Admin sidebar badges: USERS, Sessions, Messages, Complaints, Enrollments, PAYMENTS, GRADES, SCHEDULE
-- [ ] Tutor sidebar badges: Students, Sessions, Upcoming Classes, Assignments, Grades, Messages
-- [ ] Parent sidebar badges: Enrollments, Sessions, Grades, Messages, Complaints, Pricing
-- [ ] Student sidebar badges: Schedule, Assignments, Grades
+### Admin Sidebar
+- [ ] All entries present and working
+- [ ] Red badges display for categories with unread notifications
+- [ ] Badges show count (or 99+ if > 99)
+- [ ] Badge uses `byCategory` from NotificationProvider
+- [ ] Categories checked: USERS, SESSIONS, MESSAGES, COMPLAINTS, ENROLLMENTS, PAYMENTS, GRADES, SCHEDULE
 
-### Student Notifications
-- [ ] Student sidebar includes "Notifications" entry
-- [ ] Student notification page exists at `/student/notifications`
-- [ ] Bell icon appears in mobile header
-- [ ] Notification page shows filters (category, unread only)
-- [ ] Category filters include: SCHEDULE, ASSIGNMENTS, GRADES
-- [ ] Pagination works correctly
+### Tutor Sidebar
+- [ ] All entries present and working
+- [ ] Red badges display for categories with unread notifications
+- [ ] Badge uses `byCategory` from NotificationProvider
+- [ ] Categories checked: USERS, SESSIONS, SCHEDULE, ASSIGNMENTS, GRADES, MESSAGES
+- [ ] Pending/Rejected tutors see only Application link
+
+### Parent Sidebar
+- [ ] All entries present and working
+- [ ] Red badges display for categories with unread notifications
+- [ ] Badge uses `byCategory` from NotificationProvider
+- [ ] Categories checked: ENROLLMENTS, SESSIONS, ASSIGNMENTS, GRADES, MESSAGES, COMPLAINTS, PAYMENTS
+
+### Student Sidebar
+- [ ] All entries present and working
+- [ ] Red badges display for categories with unread notifications
+- [ ] Badge uses `byCategory` from NotificationProvider
+- [ ] Categories checked: SCHEDULE, ASSIGNMENTS, GRADES
+- [ ] Notifications link present in sidebar
+
+## Part 7: Student Notifications
+
+### Student Notification Page (`/student/notifications`)
+- [ ] Page loads and displays notifications
+- [ ] Bell icon in mobile header links to notifications
+- [ ] Unread count displays correctly
+- [ ] Category filters work (Schedule, Assignments, Grades)
 - [ ] Mark as read action works
 - [ ] Mark all read action works
-- [ ] Empty states display correctly
+- [ ] Pagination works
+- [ ] Empty state displays helpful message
 
-## Part 7: Messaging Restrictions
+## Part 8: Student Messaging Restrictions
 
-### Student Messaging
-- [ ] Student messages page shows information-only content
-- [ ] "Messaging Not Available" message is displayed
-- [ ] Communication guidelines explain parent coordination
-- [ ] No message sending functionality for students
-- [ ] Student my-tutors page has no "message tutor" buttons
-- [ ] Student schedule has no messaging actions
+### Student Messages Page (`/student/messages`)
+- [ ] Page displays information about messaging policy
+- [ ] Explains parents should contact tutors
+- [ ] Explains parents can message Admin
+- [ ] No message sending capability
+- [ ] Links to My Tutors page
 
-### Parent Messaging
-- [ ] Parent messages page only shows admin conversations
-- [ ] "Message Admin" button starts new admin conversation
+### Student My Tutors Page (`/student/my-tutors`)
+- [ ] No "Message Tutor" button
+- [ ] Only "View Sessions" button
+- [ ] Session modal shows meet links (not messaging)
+
+## Part 9: Quiz Taking
+
+### Quiz Taking Modal
+- [ ] 30-second timer per question
+- [ ] Timer counts down correctly
+- [ ] Timer turns red when ≤ 10 seconds
+- [ ] Auto-submits if time runs out (with selected answer)
+- [ ] Option selection works
+- [ ] Submit answer button works
+- [ ] Feedback shows correct/incorrect
+- [ ] Never shows correct answers to students
+- [ ] Completion message: "Quiz submitted. Your tutor will review it."
+- [ ] Not presented as official grade
+- [ ] Per-answer correctness shown if API returns it (but not as grade)
+
+## Part 10: Student UI - No Prices
+
+### Student Pages
+- [ ] No price/cost/fee/payment information visible
+- [ ] No links to pricing pages
+- [ ] No payment-related UI elements
+- [ ] Pages checked:
+  - [ ] `/student`
+  - [ ] `/student/schedule`
+  - [ ] `/student/my-tutors`
+  - [ ] `/student/assignments`
+  - [ ] `/student/grades`
+  - [ ] `/student/profile`
+  - [ ] `/student/settings`
+
+## Part 11: Parent Messaging
+
+### Parent Messages Page (`/parent/messages`)
+- [ ] Only Admin messaging capability
+- [ ] "Message Admin" button creates new thread
 - [ ] No option to message tutors directly
-- [ ] Existing tutor message threads are not shown
-- [ ] Parent can only send messages to admin
+- [ ] Existing threads only show Admin
+- [ ] Message sending works for Admin threads
+- [ ] Thread list shows conversations
 
-### Tutor Messaging
-- [ ] Tutor messages page only shows admin conversations
-- [ ] No option to message students or parents
-- [ ] Tutor can only send messages to admin
-- [ ] Tutor complaints page redirects to messages
+## Part 12: Parent Pricing & Complaints
 
-## Part 8: Quiz Restrictions
+### Parent Pricing Page (`/parent/pricing`)
+- [ ] Page loads and displays subject prices
+- [ ] Grade band pricing displayed correctly
+- [ ] Responsive layout works
 
-### Quiz Taking
-- [ ] Quiz modal shows 30-second timer per question
-- [ ] Timer auto-submits when time runs out
-- [ ] Timer shows visual warning when under 10 seconds
-- [ ] Correct answers are shown after submission (isCorrect flag)
-- [ ] "Quiz submitted" message appears after completion
-- [ ] Quiz is never presented as official grade
-- [ ] Quiz results are stored as scored items, not grades
-- [ ] Per-answer correctness is shown if API returns it
+### Parent Complaints Page (`/parent/complaints`)
+- [ ] Page loads and displays complaints
+- [ ] Create complaint modal works
+- [ ] Complaint list shows status
+- [ ] Resolution details shown for resolved complaints
 
-## Part 9: Pricing Visibility
+## Part 13: Loading, Empty, Error States
 
-### Student Access
-- [ ] Students never see pricing information
-- [ ] No price/cost/fee/payment references in student UI
-- [ ] No currency symbols (NGN, USD) in student UI
-- [ ] Student sidebar has no pricing entry
-- [ ] Student notifications have no pricing category
+### All New Pages
+- [ ] Loading spinner displays during data fetch
+- [ ] Empty state displays when no data
+- [ ] Error state displays with helpful message
+- [ ] Retry button works in error state
+- [ ] Skeleton loaders used where appropriate
 
-### Parent Pricing
-- [ ] Parent pricing page exists at `/parent/pricing`
-- [ ] Shows all subjects with grade band pricing
-- [ ] Shows NGN and USD prices
-- [ ] PAYMENTS category notifications link to pricing page
-- [ ] Toast notifications for PAYMENTS include "View" button to pricing page
-
-## Part 10: Complaints
-
-### Parent Complaints
-- [ ] Parent complaints page exists at `/parent/complaints`
-- [ ] COMPLAINTS category notifications link to complaints page
-- [ ] Toast notifications for COMPLAINTS include "View" button to complaints page
-- [ ] Complaint resolution notifications work correctly
-
-### Tutor Complaints
-- [ ] Tutor complaints page redirects to messages
-- [ ] Message: "Use the Messages page to contact the admin team"
-- [ ] "Go to Messages" button navigates to `/tutor/messages`
-
-## Part 11: Accessibility
+## Part 14: Accessibility
 
 ### ARIA Labels
-- [ ] Bell icon has aria-label with unread count
-- [ ] Notification badges have appropriate labels
-- [ ] Sound toggle has aria-label
-- [ ] All interactive elements have keyboard support
-- [ ] Dialogs are keyboard-operable (Esc to close)
-- [ ] Focus management works correctly in modals
+- [ ] Bell icon has `aria-label="View notifications"`
+- [ ] Sign out button has `aria-label="Sign out"`
+- [ ] Mobile menu button has `aria-label="Open navigation menu"`
+- [ ] Close menu button has `aria-label="Close navigation menu"`
+- [ ] Icons used decoratively have `aria-hidden="true"`
 
 ### Keyboard Navigation
-- [ ] Tab order is logical
 - [ ] All buttons are keyboard accessible
-- [ ] Form inputs have proper labels
-- [ ] Skip links if applicable
+- [ ] All inputs are keyboard accessible
+- [ ] Tab order is logical
+- [ ] Modals can be closed with Escape key
+- [ ] Focus is managed in modals
 
-## Part 12: Loading & Error States
+## Part 15: Notification System
 
-### Loading States
-- [ ] SkeletonLoader or LoadingSpinner used for async operations
-- [ ] Loading states prevent double submissions
-- [ ] Loading indicators are visible during API calls
+### Bell Icon & Dropdown
+- [ ] Bell icon shows in header for all roles
+- [ ] Red badge shows unread count (99+ cap)
+- [ ] Dropdown shows latest notifications
+- [ ] "View all" link goes to notifications page
+- [ ] Sound toggle works in dropdown
+- [ ] Sound preference stored in localStorage
 
-### Empty States
-- [ ] Empty states have appropriate messages
-- [ ] Empty states have helpful icons
-- [ ] Empty states guide users to next actions
+### Notification Pages
+- [ ] Admin notifications page works with filters
+- [ ] Tutor notifications page works with filters
+- [ ] Parent notifications page works with filters
+- [ ] Student notifications page works with filters
+- [ ] Category filters work per role
+- [ ] Mark as read action works
+- [ ] Mark all read action works
+- [ ] Pagination works
 
-### Error States
-- [ ] Error messages are user-friendly
-- [ ] Error states provide recovery options
-- [ ] Network errors are handled gracefully
-- [ ] 401 errors trigger token refresh
-- [ ] 403 errors show permission denied messages
-- [ ] 404 errors show not found messages
+### SSE & Sound
+- [ ] SSE connection established on login
+- [ ] SSE reconnection with backoff works
+- [ ] Sound plays on live notification (if enabled)
+- [ ] Sound throttled to max 1 per 3 seconds
+- [ ] Toast displays for each live notification
+- [ ] Toast click navigates to correct page
+- [ ] Browser tab title shows unread count
 
-## Part 13: Sound Notifications
+## Part 16: Admin Features
 
-### Sound Behavior
-- [ ] Sound plays only on live SSE notifications (not on page load)
-- [ ] Sound is throttled to max once per 3 seconds
-- [ ] Sound toggle in notification dropdown works
-- [ ] Sound toggle in Settings works
-- [ ] Sound preference persists in localStorage
-- [ ] Sound defaults to off
-- [ ] Web Audio API fallback works if audio file fails
+### Grade Review Queue (`/admin/grades`)
+- [ ] Page loads with pending grades
+- [ ] Filters work (tutor, student, subject)
+- [ ] Grade detail page shows full breakdown
+- [ ] Component breakdown shown (weight, item count, percentage)
+- [ ] Frozen snapshot items shown
+- [ ] Computed vs final score shown
+- [ ] Override reason shown
+- [ ] Tutor comment shown
+- [ ] Attachments shown
+- [ ] Approve button works with confirmation
+- [ ] Reject dialog requires reason (minimum length validation)
+- [ ] Bulk-approve works with per-item results
+- [ ] `studentCode` never shown in admin screens
 
-## Part 14: Notification Navigation
+### Class Schedule (`/admin/class-schedule`)
+- [ ] Page shows all students with next class
+- [ ] Tutor and status chips display correctly
+- [ ] Filters work (tutor, status, date range)
+- [ ] Pagination works
+- [ ] Red badge shows for unscheduled within 24h
 
-### Toast Actions
-- [ ] PAYMENTS notifications have "View" button linking to pricing page
-- [ ] COMPLAINTS notifications have "View" button linking to complaints page
-- [ ] Toast buttons navigate correctly
-- [ ] Toast duration is appropriate (5 seconds)
+### Change Requests (`/admin/change-requests`)
+- [ ] Page loads with change requests
+- [ ] Status filter works
+- [ ] Change request detail shows before/after comparison
+- [ ] Approve with confirmation works
+- [ ] Reject requires reason
+- [ ] Admin inbox is shared across admins
 
-## Part 15: Documentation Updates
+## Part 17: Tutor Features
 
-### FRONTEND_DOCUMENTATION.md
-- [ ] Notification system is documented
-- [ ] Grading workflow is documented
-- [ ] Class schedule pages are documented
-- [ ] Change requests are documented
-- [ ] Google Meet integration is documented
-- [ ] New messaging rules are documented
-- [ ] Removed Zoom references
-- [ ] Updated tutor messaging restrictions
-- [ ] Updated parent messaging restrictions
+### Upcoming Classes (`/tutor/upcoming-classes`)
+- [ ] Shows only tutor's own students
+- [ ] Rows marked SCHEDULED or NEEDS_SESSION
+- [ ] Shows day, time, and timezone
+- [ ] "Create session" button works (prefilled)
+- [ ] Reminder highlight for classes within 24 hours
+- [ ] Session create works
+- [ ] Session reschedule works
+- [ ] Session delete works (only tutor-created, SCHEDULED)
+- [ ] Backend error messages shown for unauthorized actions
+- [ ] "Needs reschedule" badge shows when applicable
+- [ ] Google Meet link shown (not Zoom)
 
-### FRONTEND_PROGRESS.md
-- [ ] All completed items are ticked
-- [ ] No unticked priority items remain
-- [ ] Status is up to date
+### Scored Items (`/tutor/students/[id]`)
+- [ ] Scored items tab exists
+- [ ] Quiz attempts shown with auto and tutor-adjusted scores
+- [ ] Assignment submissions shown
+- [ ] Tests and participation items shown
+- [ ] Filters work (type, "not yet in a grade")
+- [ ] Score assignment submission action works
+- [ ] TEST item action works
+- [ ] PARTICIPATION item action works
+- [ ] Adjust score with comment works
+- [ ] Delete manual item works
+- [ ] Items read-only for PENDING_APPROVAL or APPROVED grades
 
-## Part 16: Vitest Tests
+### Grade Compile Wizard
+- [ ] Student, enrollment, period selection works
+- [ ] Item selection interface works
+- [ ] Weight setting per component works
+- [ ] Live weight total validation (must equal 100)
+- [ ] Save/submit button disabled when weight total != 100
+- [ ] Server-computed attendance rate shown
+- [ ] Preview endpoint called for computed score
+- [ ] Final score override with required reason works
+- [ ] Tutor comment field works
+- [ ] Attachments field works
+- [ ] Save draft action works
+- [ ] Submit to admin action works
+- [ ] Withdraw action works (when PENDING_APPROVAL)
+- [ ] Edit action works (only DRAFT or REJECTED)
+- [ ] Delete action works (only DRAFT or REJECTED)
+- [ ] Status chips display correctly
+- [ ] Admin reason banner for REJECTED grades
+- [ ] APPROVED grades read-only
 
-### Weight Total Validation
-- [ ] Test exists for weight total = 100 validation
-- [ ] Test passes with valid weights
-- [ ] Test fails with invalid weights
+### Tutor Messages
+- [ ] Tutor to Admin messaging only
+- [ ] No tutor to student messaging
+- [ ] No tutor to parent messaging
+- [ ] Note about contacting admin through Messages
 
-### Reject Reason Requirement
-- [ ] Test exists for reject reason minimum length validation
-- [ ] Test passes with valid reason
-- [ ] Test fails with empty/short reason
+## Part 18: Cleanup & Documentation
 
-### Badge Mapping
-- [ ] Test exists for notification badge mapping by category
-- [ ] Test verifies correct category to badge mapping
-- [ ] Test verifies 99+ cap
+### Documentation Updates
+- [ ] FRONTEND_DOCUMENTATION.md updated with notification system
+- [ ] FRONTEND_DOCUMENTATION.md updated with grading workflow
+- [ ] FRONTEND_DOCUMENTATION.md updated with class schedule pages
+- [ ] FRONTEND_DOCUMENTATION.md updated with change requests
+- [ ] FRONTEND_DOCUMENTATION.md updated with Google Meet
+- [ ] FRONTEND_DOCUMENTATION.md updated with new messaging rules
+- [ ] README updated with new features
 
-### Sound-on-Live-Only
-- [ ] Test exists for sound playing only on live notifications
-- [ ] Test verifies sound doesn't play on page load
-- [ ] Test verifies throttling (max once per 3 seconds)
+### Removed UI
+- [ ] Zoom wording removed from all pages
+- [ ] Student or tutor messaging removed
+- [ ] Parent to tutor messaging removed
+- [ ] Tutor complaints page removed
+- [ ] "File complaint" button removed for tutors
+- [ ] Admin pricing-tier screens removed (only subject price management)
 
-## Part 17: Build & Type Checking
+## Cross-Browser Testing
 
-### TypeScript
-- [ ] `npm run build` passes without errors
-- [ ] No TypeScript errors
-- [ ] All types are properly defined
+- [ ] Chrome (latest)
+- [ ] Firefox (latest)
+- [ ] Safari (latest)
+- [ ] Edge (latest)
 
-### Linting
-- [ ] `npm run lint` passes without errors
-- [ ] No linting warnings
+## Mobile Responsiveness
 
-### Production Build
-- [ ] Build completes successfully
-- [ ] All routes are generated
-- [ ] Static pages are pre-rendered correctly
+- [ ] iPhone SE (375px)
+- [ ] iPhone 12 Pro (390px)
+- [ ] iPad (768px)
+- [ ] Desktop (1920px)
+
+## Performance
+
+- [ ] Page load time < 3 seconds
+- [ ] Images optimized
+- [ ] No console errors
+- [ ] No memory leaks
+
+## Security
+
+- [ ] No sensitive data in console logs
+- [ ] No tokens in URLs
+- [ ] Proper authentication checks
+- [ ] Authorization enforced per role
