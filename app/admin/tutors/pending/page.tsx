@@ -78,7 +78,7 @@ export default function AdminPendingTutorsPage() {
             variant="ghost"
             size="sm"
             onClick={() => router.push('/admin')}
-            className="gap-2 text-muted-foreground hover:text-foreground"
+            className="gap-2 text-gray-300 hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Dashboard
@@ -89,8 +89,8 @@ export default function AdminPendingTutorsPage() {
               <UserCheck className="h-5 w-5 text-brand-gold" />
             </div>
             <div>
-              <h1 className="text-3xl font-serif font-bold text-foreground">Pending Tutors</h1>
-              <p className="text-sm text-muted-foreground">Review and approve tutor applications</p>
+              <h1 className="text-3xl font-serif font-bold text-white">Pending Tutors</h1>
+              <p className="text-sm text-gray-400">Review and approve tutor applications</p>
             </div>
           </div>
         </div>
@@ -115,8 +115,8 @@ export default function AdminPendingTutorsPage() {
         <Card className="bg-card border-brand-gold/30 text-center py-16">
           <CardContent>
             <Users className="h-12 w-12 text-gray-500 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-foreground mb-1">No Pending Tutors</h3>
-            <p className="text-sm text-muted-foreground">All tutor applications have been reviewed</p>
+            <h3 className="text-lg font-semibold text-white mb-1">No Pending Tutors</h3>
+            <p className="text-sm text-gray-400">All tutor applications have been reviewed</p>
           </CardContent>
         </Card>
       ) : (
@@ -126,8 +126,8 @@ export default function AdminPendingTutorsPage() {
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <CardTitle className="text-foreground">{tutor.fullName || tutor.user?.fullName || 'Tutor'}</CardTitle>
-                    <p className="text-sm text-muted-foreground mt-1">{tutor.email || tutor.user?.email || 'No email'}</p>
+                    <CardTitle className="text-white">{tutor.fullName || (tutor as any).user?.fullName || 'Tutor'}</CardTitle>
+                    <p className="text-sm text-gray-400 mt-1">{tutor.email || (tutor as any).user?.email || 'No email'}</p>
                   </div>
                   <StatusBadge status={tutor.tutorProfile?.vettingStatus || tutor.status} />
                 </div>
@@ -135,20 +135,20 @@ export default function AdminPendingTutorsPage() {
               <CardContent>
                 <div className="space-y-3">
                   <div>
-                    <p className="text-sm text-muted-foreground">Subjects</p>
-                    <p className="text-foreground">{tutor.tutorProfile?.subjects?.join(', ') || 'No subjects listed'}</p>
+                    <p className="text-sm text-gray-400">Subjects</p>
+                    <p className="text-white">{tutor.tutorProfile?.subjects?.join(', ') || 'No subjects listed'}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Bio</p>
-                    <p className="text-foreground text-sm">{tutor.tutorProfile?.bio || 'No bio provided'}</p>
+                    <p className="text-sm text-gray-400">Bio</p>
+                    <p className="text-white text-sm">{tutor.tutorProfile?.bio || 'No bio provided'}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Hourly Rate</p>
-                    <p className="text-foreground">${tutor.tutorProfile?.hourlyRate || 0}/hour</p>
+                    <p className="text-sm text-gray-400">Hourly Rate</p>
+                    <p className="text-white">${tutor.tutorProfile?.hourlyRate || 0}/hour</p>
                   </div>
                   {tutor.tutorProfile?.credentialsUrl && (
                     <div>
-                      <p className="text-sm text-muted-foreground">Credentials</p>
+                      <p className="text-sm text-gray-400">Credentials</p>
                       <a
                         href={tutor.tutorProfile.credentialsUrl}
                         target="_blank"
@@ -163,7 +163,7 @@ export default function AdminPendingTutorsPage() {
                     <Button
                       onClick={() => handleVetting(tutor.id || tutor.tutorProfile?.id || '', 'APPROVED')}
                       disabled={actionLoading === (tutor.id || tutor.tutorProfile?.id)}
-                      className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                      className="bg-brand-gold hover:bg-brand-goldLight text-brand-dark"
                     >
                       {actionLoading === (tutor.id || tutor.tutorProfile?.id) ? (
                         <LoadingSpinner size="sm" />

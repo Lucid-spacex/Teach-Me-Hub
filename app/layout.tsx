@@ -3,6 +3,7 @@ import './globals.css'
 import { Toaster } from '@/components/ui/toaster'
 import { ErrorBoundaryWrapper } from '@/components/shared/ErrorBoundaryWrapper'
 import { AuthProvider } from '@/components/shared/AuthProvider'
+import { NotificationProvider } from '@/components/shared/NotificationProvider'
 
 export const metadata: Metadata = {
   title: 'TeachMeNest — Confident learning starts here',
@@ -28,7 +29,9 @@ export default function RootLayout({
       <body className="min-h-screen bg-background text-foreground">
         <ErrorBoundaryWrapper>
           <AuthProvider>
-            {children}
+            <NotificationProvider>
+              {children}
+            </NotificationProvider>
           </AuthProvider>
         </ErrorBoundaryWrapper>
         <Toaster />

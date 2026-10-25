@@ -1,6 +1,6 @@
 // User types
 export type UserRole = 'PARENT' | 'TUTOR' | 'ADMIN' | 'STUDENT'
-export type UserStatus = 'UNVERIFIED' | 'ACTIVE' | 'PENDING_VETTING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED'
+export type UserStatus = 'UNVERIFIED' | 'ACTIVE' | 'PENDING' | 'PENDING_VETTING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED'
 
 export interface User {
   id: string
@@ -19,6 +19,7 @@ export interface RegisterRequest {
   firstName: string
   lastName: string
   middleName?: string
+  fullName?: string
   email: string
   phone: string
   password: string
@@ -262,8 +263,7 @@ export interface Session {
   enrollmentId: string
   scheduledAt: string
   durationMinutes: number
-  zoomLink: string | null
-  zoomMeetingId?: string | null
+  meetLink: string | null
   status: SessionStatus
   recordingStatus?: RecordingStatus
   recordingLink?: string | null
@@ -271,6 +271,7 @@ export interface Session {
   homeworkAssigned: string | null
   participants?: SessionParticipant[]
   createdBy?: 'TUTOR' | 'ADMIN'
+  needsReschedule?: boolean
   createdAt: string
   // Extended fields from admin API
   enrollment?: {
@@ -436,6 +437,8 @@ export interface TutorStudent {
 export interface PendingTutor {
   user?: Partial<User>
   tutorProfile: TutorProfile
+  profilePictureUrl?: string | null
+>>>>>>> c5247f6 (Tutor messaging updates and grade compile wizard attachments)
 }
 
 export interface TutorWithProfile {
@@ -466,6 +469,13 @@ export interface TutorWithProfile {
   howHeard?: string
   interests?: string
   documents?: string[]
+  // Fields from tutorProfile for convenience
+  subjects?: string[]
+  availabilityStatus?: TutorAvailabilityStatus
+  maxStudents?: number
+  currentStudents?: number
+  // For pending tutors
+  user?: User
 }
 
 export interface AdminStudent {
@@ -528,6 +538,7 @@ export interface AdminStudentDetail {
 
 export interface VettingRequest {
   vettingStatus: 'APPROVED' | 'REJECTED'
+  status?: 'APPROVED' | 'REJECTED'
   reason?: string
 }
 
@@ -668,6 +679,7 @@ export interface StudentAttendance {
 // Message types
 export interface MessageThread {
   id: string
+  threadId: string
   participants?: Array<{
     id: string
     fullName: string
@@ -675,7 +687,7 @@ export interface MessageThread {
     profilePictureUrl?: string | null
   }>
   otherParticipant?: {
-    id?: string
+    id: string
     recipientId?: string
     fullName: string
     role: UserRole
@@ -701,6 +713,7 @@ export interface Message {
   body?: string
   createdAt: string
   read: boolean
+  readAt?: string | null
 }
 
 // Complaint types
@@ -719,16 +732,30 @@ export interface Complaint {
 }
 
 // Notification types
-export type NotificationType = 'MESSAGE' | 'SESSION' | 'ASSIGNMENT' | 'PAYMENT' | 'PRICING_DRIFT_ALERT' | 'TUTOR_ASSIGNED' | 'GENERAL'
+export type NotificationType = 'MESSAGE' | 'SESSION' | 'ASSIGNMENT' | 'PAYMENT' | 'PRICING_DRIFT_ALERT' | 'TUTOR_ASSIGNED' | 'GENERAL' | 'GRADE_APPROVED' | 'GRADE_REJECTED' | 'SCHEDULE_CHANGE_APPROVED' | 'SCHEDULE_CHANGE_REJECTED' | 'COMPLAINT_RESOLVED' | 'ENROLLMENT_MATCHED' | 'RECORDING_AVAILABLE'
+export type NotificationCategory = 'USERS' | 'SESSIONS' | 'MESSAGES' | 'COMPLAINTS' | 'ENROLLMENTS' | 'PAYMENTS' | 'GRADES' | 'SCHEDULE' | 'ASSIGNMENTS'
 
 export interface Notification {
   id: string
   userId: string
   type: NotificationType
+  category: NotificationCategory
   title: string
   message: string
   read: boolean
+  entityType?: string
+  entityId?: string
   createdAt: string
+}
+
+export interface UnreadCountResponse {
+  total: number
+  byCategory: Record<NotificationCategory, number>
+}
+
+export interface StreamTicketResponse {
+  ticket: string
+  expiresAt: string
 }
 
 // Assignment types
@@ -915,6 +942,17 @@ export interface ParentDetailProfile {
     status: string
     createdAt: string
   }>
+  // For backward compatibility
+  id?: string
+  fullName?: string
+  email?: string
+  phone?: string
+  status?: UserStatus
+  timezone?: string
+  profilePicture?: string | null
+  createdAt?: string
+  updatedAt?: string
+  complaintCount?: number
 }
 
 // Transaction types
@@ -1051,6 +1089,193 @@ export interface AdminActionLog {
   targetId: string
   details: Record<string, any>
   createdAt: string
+}
+
+// Scored Item types
+export type ScoredItemType = 'QUIZ_ATTEMPT' | 'ASSIGNMENT_SUBMISSION' | 'TEST' | 'PARTICIPATION'
+
+export interface ScoredItem {
+  id: string
+  studentId: string
+  enrollmentId: string
+  type: ScoredItemType
+  title: string
+  autoScore?: number | null
+  tutorScore?: number | null
+  maxScore: number
+  comment?: string | null
+  gradedAt?: string | null
+  createdAt: string
+  attachedToGradeId?: string | null
+  // For quiz attempts
+  quizAttemptId?: string | null
+  // For assignment submissions
+  assignmentId?: string | null
+  submissionId?: string | null
+  // For test/participation
+  isManual: boolean
+}
+
+// Grade Compilation types
+export type GradeStatus = 'DRAFT' | 'PENDING_APPROVAL' | 'APPROVED' | 'REJECTED'
+export type GradeComponentType = 'QUIZ' | 'ASSIGNMENT' | 'TEST' | 'PARTICIPATION' | 'ATTENDANCE'
+
+export interface GradeComponent {
+  type: GradeComponentType
+  weight: number
+  itemCount: number
+  componentPercentage: number
+  items: ScoredItem[]
+}
+
+export interface CompiledGrade {
+  id: string
+  enrollmentId: string
+  studentId: string
+  tutorId: string
+  period: string
+  status: GradeStatus
+  components: GradeComponent[]
+  computedScore: number
+  finalScore?: number | null
+  overrideReason?: string | null
+  tutorComment?: string | null
+  attachments?: string[]
+  attendanceRate: number
+  frozenSnapshotItems: ScoredItem[]
+  submittedAt?: string | null
+  approvedAt?: string | null
+  rejectedAt?: string | null
+  rejectionReason?: string | null
+  approvedBy?: string | null
+  rejectedBy?: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface GradePreviewRequest {
+  enrollmentId: string
+  period: string
+  itemIds: string[]
+  componentWeights: Record<GradeComponentType, number>
+}
+
+export interface GradePreviewResponse {
+  components: GradeComponent[]
+  computedScore: number
+  attendanceRate: number
+}
+
+export interface CreateGradeRequest {
+  enrollmentId: string
+  period: string
+  itemIds: string[]
+  componentWeights: Record<GradeComponentType, number>
+  finalScore?: number | null
+  overrideReason?: string | null
+  tutorComment?: string | null
+  attachments?: string[]
+}
+
+export interface SubmitGradeRequest extends CreateGradeRequest {}
+
+// Class Schedule types
+export type ClassScheduleStatus = 'SCHEDULED' | 'UNSCHEDULED' | 'MISSED'
+
+export interface ClassScheduleItem {
+  studentId: string
+  studentName: string
+  studentCode?: string
+  enrollmentId: string
+  subjectName: string
+  tutorId: string
+  tutorName: string
+  nextClassDate?: string | null
+  nextClassTime?: string | null
+  timezone?: string | null
+  status: ClassScheduleStatus
+  unscheduledWithin24h: boolean
+}
+
+export interface ClassScheduleResponse {
+  data: ClassScheduleItem[]
+  unscheduledWithin24hCount: number
+  page: number
+  limit: number
+  total: number
+}
+
+// Enrollment Change Request types
+export type ChangeRequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED'
+
+export interface EnrollmentChangeRequest {
+  id: string
+  enrollmentId: string
+  studentId: string
+  studentName: string
+  subjectName: string
+  requestedBy: string // parent ID
+  requestedByName: string
+  status: ChangeRequestStatus
+  requestedAt: string
+  reviewedAt?: string | null
+  reviewedBy?: string | null
+  rejectionReason?: string | null
+  // Before values
+  before: {
+    startDate: string
+    endDate?: string | null
+    sessionFrequency: string
+    availableDays: string[]
+    preferredStartHour: number
+    preferredEndHour: number
+  }
+  // After values
+  after: {
+    startDate: string
+    endDate?: string | null
+    sessionFrequency: string
+    availableDays: string[]
+    preferredStartHour: number
+    preferredEndHour: number
+  }
+}
+
+export interface CreateChangeRequestRequest {
+  enrollmentId: string
+  startDate?: string
+  endDate?: string
+  sessionFrequency?: string
+  availableDays?: string[]
+  preferredStartHour?: number
+  preferredEndHour?: number
+}
+
+// Session Recording types
+export interface SessionRecording {
+  sessionId: string
+  recordingUrl: string
+  recordingStatus: RecordingStatus
+  createdAt: string
+}
+
+// Tutor Upcoming Classes types
+export interface UpcomingClass {
+  enrollmentId: string
+  studentId: string
+  studentName: string
+  subjectName: string
+  nextScheduledDate?: string | null
+  nextScheduledTime?: string | null
+  timezone?: string | null
+  status: ClassScheduleStatus
+  within24h: boolean
+  sessionData?: {
+    id: string
+    scheduledAt: string
+    durationMinutes: number
+    meetLink?: string | null
+  } | null
 }
 
 

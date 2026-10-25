@@ -6,8 +6,6 @@ import Link from 'next/link'
 import { getUser, getUserRole } from '@/lib/auth'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
 import { Modal } from '@/components/shared/Modal'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
 import { Avatar } from '@/components/shared/Avatar'
@@ -17,16 +15,11 @@ import { Enrollment, Session } from '@/lib/types'
 import {
   Users,
   Calendar,
-  MessageSquare,
   ArrowLeft,
   RefreshCw,
   Video,
   Clock,
-  BookOpen,
   GraduationCap,
-  ExternalLink,
-  Mail,
-  Send,
 } from 'lucide-react'
 
 interface TutorDisplay {
@@ -49,9 +42,6 @@ export default function StudentMyTutorsPage() {
   const [loading, setLoading] = useState(true)
   const [selectedTutor, setSelectedTutor] = useState<TutorDisplay | null>(null)
   const [sessionsModalOpen, setSessionsModalOpen] = useState(false)
-  const [composeModalOpen, setComposeModalOpen] = useState(false)
-  const [composeMessage, setComposeMessage] = useState('')
-  const [startingChatId, setStartingChatId] = useState<string | null>(null)
 
   useEffect(() => {
     const user = getUser()
@@ -142,36 +132,6 @@ export default function StudentMyTutorsPage() {
     setSessionsModalOpen(true)
   }
 
-  const handleMessageTutor = (tutor: TutorDisplay) => {
-    setSelectedTutor(tutor)
-    setComposeModalOpen(true)
-  }
-
-  const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!selectedTutor || !composeMessage.trim()) return
-
-    setStartingChatId(selectedTutor.userId)
-    try {
-      await api.startMessageThread([selectedTutor.userId], composeMessage.trim())
-      toast({
-        title: 'Message Sent',
-        description: `Your message to ${selectedTutor.fullName} has been sent.`,
-      })
-      setComposeModalOpen(false)
-      setComposeMessage('')
-      router.push('/student/messages')
-    } catch (err) {
-      toast({
-        title: 'Failed to Send',
-        description: err instanceof Error ? err.message : 'Could not send message',
-        variant: 'destructive',
-      })
-    } finally {
-      setStartingChatId(null)
-    }
-  }
-
   // Get tutor sessions for modal
   const tutorSessions = selectedTutor
     ? sessions.filter(s => s.enrollmentId === selectedTutor.enrollmentId)
@@ -199,7 +159,7 @@ export default function StudentMyTutorsPage() {
             <div>
               <h1 className="text-2xl font-bold text-foreground">My Tutors</h1>
               <p className="text-sm text-muted-foreground">
-                View your assigned subject instructors, their upcoming sessions, and send direct messages.
+                View your assigned subject instructors and their upcoming sessions.
               </p>
             </div>
           </div>
@@ -298,14 +258,14 @@ export default function StudentMyTutorsPage() {
                             minute: '2-digit',
                           })}
                         </p>
-                        {tutorUpcoming.zoomLink && (
+                        {tutorUpcoming.meetLink && (
                           <Button
                             size="sm"
                             variant="ghost"
                             asChild
                             className="h-7 text-xs text-brand-gold hover:bg-brand-gold/10 px-2"
                           >
-                            <a href={tutorUpcoming.zoomLink} target="_blank" rel="noopener noreferrer">
+                            <a href={tutorUpcoming.meetLink} target="_blank" rel="noopener noreferrer">
                               <Video className="w-3.5 h-3.5 mr-1" />
                               Join
                             </a>
@@ -318,24 +278,15 @@ export default function StudentMyTutorsPage() {
                   </div>
 
                   {/* Actions */}
-                  <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border/30">
+                  <div className="pt-2 border-t border-border/30">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => handleOpenSessions(tutor)}
-                      className="text-xs border-border hover:border-brand-gold/50 gap-1.5"
+                      className="w-full text-xs border-border hover:border-brand-gold/50 gap-1.5"
                     >
                       <Calendar className="w-3.5 h-3.5 text-brand-gold" />
                       View Sessions
-                    </Button>
-                    <Button
-                      size="sm"
-                      onClick={() => handleMessageTutor(tutor)}
-                      disabled={startingChatId === tutor.userId}
-                      className="text-xs bg-brand-gold hover:bg-brand-goldLight text-brand-dark font-semibold gap-1.5"
-                    >
-                      <MessageSquare className="w-3.5 h-3.5" />
-                      {startingChatId === tutor.userId ? 'Opening...' : 'Message'}
                     </Button>
                   </div>
                 </CardContent>
@@ -396,13 +347,13 @@ export default function StudentMyTutorsPage() {
                       {session.status}
                     </span>
 
-                    {session.zoomLink && session.status === 'SCHEDULED' && (
+                    {session.meetLink && session.status === 'SCHEDULED' && (
                       <Button
                         size="sm"
                         asChild
                         className="h-7 text-xs bg-brand-gold hover:bg-brand-goldLight text-brand-dark font-semibold px-2.5"
                       >
-                        <a href={session.zoomLink} target="_blank" rel="noopener noreferrer">
+                        <a href={session.meetLink} target="_blank" rel="noopener noreferrer">
                           <Video className="w-3.5 h-3.5 mr-1" />
                           Join
                         </a>
@@ -432,63 +383,6 @@ export default function StudentMyTutorsPage() {
             </Button>
           </div>
         </div>
-      </Modal>
-
-      {/* Compose Message Modal */}
-      <Modal
-        isOpen={composeModalOpen}
-        onClose={() => setComposeModalOpen(false)}
-        title={`Message ${selectedTutor?.fullName || 'Tutor'}`}
-      >
-        <form onSubmit={handleSendMessage} className="space-y-4 pt-2">
-          <p className="text-xs text-muted-foreground">
-            Send a message to {selectedTutor?.fullName} regarding {selectedTutor?.subjectName}.
-          </p>
-
-          <div className="space-y-2">
-            <Label htmlFor="message">Your Message *</Label>
-            <Textarea
-              id="message"
-              placeholder="Type your message here..."
-              rows={4}
-              value={composeMessage}
-              onChange={(e) => setComposeMessage(e.target.value)}
-              required
-              className="min-h-[100px]"
-            />
-            <p className="text-[11px] text-muted-foreground">
-              Please be respectful and professional in your communications.
-            </p>
-          </div>
-
-          <div className="flex items-center justify-end gap-3 pt-3 border-t border-border">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setComposeModalOpen(false)}
-              disabled={startingChatId !== null}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              disabled={!composeMessage.trim() || startingChatId !== null}
-              className="bg-brand-gold hover:bg-brand-goldLight text-brand-dark font-semibold"
-            >
-              {startingChatId ? (
-                <>
-                  <LoadingSpinner size="sm" className="mr-2" />
-                  Sending...
-                </>
-              ) : (
-                <>
-                  <Send className="w-3.5 h-3.5 mr-1" />
-                  Send Message
-                </>
-              )}
-            </Button>
-          </div>
-        </form>
       </Modal>
     </div>
   )

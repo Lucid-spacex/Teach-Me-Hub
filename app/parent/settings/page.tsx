@@ -8,16 +8,18 @@ import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/ui/password-input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Settings, Loader2, Clock, Lock } from 'lucide-react'
+import { Settings, Loader2, Clock, Lock, Volume2, VolumeX } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
 import { api } from '@/lib/api'
 import { User } from '@/lib/types'
 import { ProfilePictureUpload } from '@/components/shared/ProfilePictureUpload'
 import { AppearanceSettings } from '@/components/shared/AppearanceSettings'
+import { useNotifications } from '@/components/shared/NotificationProvider'
 
 export default function ParentSettingsPage() {
   const router = useRouter()
   const { toast } = useToast()
+  const { soundEnabled, setSoundEnabled } = useNotifications()
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [updating, setUpdating] = useState(false)
@@ -188,6 +190,39 @@ export default function ParentSettingsPage() {
 
           {/* Appearance */}
           <AppearanceSettings />
+
+          {/* Notification Settings */}
+          <Card className="bg-card border-brand-gold/30">
+            <CardHeader>
+              <CardTitle className="text-foreground flex items-center gap-2">
+                {soundEnabled ? <Volume2 className="h-5 w-5 text-brand-gold" /> : <VolumeX className="h-5 w-5 text-brand-gold" />}
+                Notification Sound
+              </CardTitle>
+              <CardDescription className="text-muted-foreground">
+                Play a sound when new notifications arrive
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-foreground">
+                    {soundEnabled ? 'Sound enabled' : 'Sound disabled'}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Sound plays when you receive new notifications
+                  </p>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSoundEnabled(!soundEnabled)}
+                  className="border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10"
+                >
+                  {soundEnabled ? 'Disable' : 'Enable'}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Timezone Settings */}
           <Card className="bg-card border-brand-gold/30">

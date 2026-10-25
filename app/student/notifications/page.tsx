@@ -7,16 +7,21 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
 import { useToast } from '@/components/ui/use-toast'
+import { useNotifications } from '@/components/shared/NotificationProvider'
 import { api } from '@/lib/api'
-import { Notification } from '@/lib/types'
+import { Notification, NotificationCategory } from '@/lib/types'
 import { Bell, Check, ArrowLeft, RefreshCw, Calendar, MessageSquare, BookOpen, Clock, GraduationCap } from 'lucide-react'
 
 export default function StudentNotificationsPage() {
   const router = useRouter()
   const { toast } = useToast()
+  const { unreadCount, byCategory, refreshNotifications, markAsRead, markAllAsRead } = useNotifications()
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<'ALL' | 'UNREAD'>('ALL')
+  const [categoryFilter, setCategoryFilter] = useState<NotificationCategory | 'ALL'>('ALL')
+  const [page, setPage] = useState(1)
+  const [total, setTotal] = useState(0)
   const [markingId, setMarkingId] = useState<string | null>(null)
 
   useEffect(() => {
@@ -27,13 +32,19 @@ export default function StudentNotificationsPage() {
     }
 
     loadNotifications()
-  }, [router])
+  }, [router, categoryFilter, page])
 
   const loadNotifications = async () => {
     setLoading(true)
     try {
-      const data = await api.getStudentNotifications()
-      setNotifications(Array.isArray(data) ? data : [])
+      const data = await api.getStudentNotificationsFiltered({
+        category: categoryFilter === 'ALL' ? undefined : categoryFilter,
+        unreadOnly: filter === 'UNREAD',
+        page,
+        limit: 20,
+      })
+      setNotifications(data.notifications)
+      setTotal(data.total)
     } catch (err) {
       console.error('Failed to load notifications:', err)
       toast({
@@ -49,7 +60,7 @@ export default function StudentNotificationsPage() {
   const handleMarkAsRead = async (id: string) => {
     setMarkingId(id)
     try {
-      await api.markNotificationRead(id)
+      await markAsRead(id)
       setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n))
       toast({
         title: 'Marked as Read',
@@ -63,6 +74,23 @@ export default function StudentNotificationsPage() {
       })
     } finally {
       setMarkingId(null)
+    }
+  }
+
+  const handleMarkAllAsRead = async () => {
+    try {
+      await markAllAsRead(categoryFilter === 'ALL' ? undefined : categoryFilter)
+      await loadNotifications()
+      toast({
+        title: 'Success',
+        description: 'All notifications marked as read.',
+      })
+    } catch (err) {
+      toast({
+        title: 'Action Failed',
+        description: 'Could not mark all as read',
+        variant: 'destructive',
+      })
     }
   }
 
@@ -82,7 +110,12 @@ export default function StudentNotificationsPage() {
   }
 
   const filtered = notifications.filter(n => filter === 'ALL' || !n.read)
-  const unreadCount = notifications.filter(n => !n.read).length
+  const categoryOptions: Array<{ value: NotificationCategory | 'ALL'; label: string }> = [
+    { value: 'ALL', label: 'All Categories' },
+    { value: 'SESSIONS', label: 'Schedule' },
+    { value: 'ASSIGNMENTS', label: 'Assignments' },
+    { value: 'GRADES', label: 'Grades' },
+  ]
 
   return (
     <div className="space-y-6 pb-12">
@@ -122,6 +155,17 @@ export default function StudentNotificationsPage() {
               <RefreshCw className="h-4 w-4 mr-1.5" />
               Refresh
             </Button>
+            {unreadCount > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleMarkAllAsRead}
+                className="border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10"
+              >
+                <Check className="h-4 w-4 mr-1.5" />
+                Mark All Read
+              </Button>
+            )}
             <div className="flex rounded-lg bg-card border border-brand-gold/20 p-1">
               <Button
                 variant={filter === 'ALL' ? 'default' : 'ghost'}
@@ -141,6 +185,32 @@ export default function StudentNotificationsPage() {
               </Button>
             </div>
           </div>
+        </div>
+
+        {/* Category Filter */}
+        <div className="flex flex-wrap gap-2">
+          {categoryOptions.map((option) => (
+            <Button
+              key={option.value}
+              variant={categoryFilter === option.value ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => {
+                setCategoryFilter(option.value)
+                setPage(1)
+              }}
+              className={categoryFilter === option.value 
+                ? 'bg-brand-gold text-brand-dark text-xs' 
+                : 'border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10 text-xs'
+              }
+            >
+              {option.label}
+              {option.value !== 'ALL' && byCategory[option.value] > 0 && (
+                <span className="ml-1.5 bg-primary/20 text-primary px-1.5 py-0.5 rounded-full text-xs">
+                  {byCategory[option.value]}
+                </span>
+              )}
+            </Button>
+          ))}
         </div>
 
         {/* Content */}
@@ -202,6 +272,33 @@ export default function StudentNotificationsPage() {
                 )}
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Pagination */}
+        {total > 20 && (
+          <div className="flex items-center justify-center gap-2 pt-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={page === 1}
+              className="border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10"
+            >
+              Previous
+            </Button>
+            <span className="text-sm text-gray-400">
+              Page {page} of {Math.ceil(total / 20)}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage(p => p + 1)}
+              disabled={page >= Math.ceil(total / 20)}
+              className="border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10"
+            >
+              Next
+            </Button>
           </div>
         )}
       </div>

@@ -19,6 +19,7 @@ import {
   GraduationCap,
   Calendar,
   BookOpen,
+  Key,
   Award,
   RefreshCw,
   Clock,
@@ -602,14 +603,14 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
                               </div>
                               <div className="flex items-center gap-2">
                                 <StatusBadge status={s.status} />
-                                {s.zoomLink && s.status === 'SCHEDULED' && (
+                                {s.meetLink && s.status === 'SCHEDULED' && (
                                   <a
-                                    href={s.zoomLink}
+                                    href={s.meetLink}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-brand-gold hover:text-brand-goldLight flex items-center gap-1 font-medium ml-2"
                                   >
-                                    Zoom Class <ExternalLink className="h-3 w-3" />
+                                    Google Meet <ExternalLink className="h-3 w-3" />
                                   </a>
                                 )}
                               </div>
@@ -676,15 +677,15 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
                     </div>
 
                     <div className="flex items-center gap-3">
-                      {session.zoomLink && session.status === 'SCHEDULED' && (
+                      {session.meetLink && session.status === 'SCHEDULED' && (
                         <a
-                          href={session.zoomLink}
+                          href={session.meetLink}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-gold/15 text-brand-gold border border-brand-gold/30 hover:bg-brand-gold/25 font-semibold text-xs transition-colors"
                         >
                           <Video className="h-3.5 w-3.5" />
-                          Join Zoom Meeting
+                          Join Google Meet
                         </a>
                       )}
                       {session.recordingLink && (

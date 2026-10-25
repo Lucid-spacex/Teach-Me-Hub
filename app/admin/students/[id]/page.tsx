@@ -12,7 +12,7 @@ import { Avatar } from '@/components/shared/Avatar'
 import { Modal } from '@/components/shared/Modal'
 import { useToast } from '@/components/ui/use-toast'
 import { api } from '@/lib/api'
-import { AdminStudentDetail, Enrollment, Session, Grade, Assignment, SuggestedTutor } from '@/lib/types'
+import { AdminStudentDetail, Enrollment, Session, Grade, Assignment, TutorWithProfile, SuggestedTutor } from '@/lib/types'
 import { ArrowLeft, RefreshCw, Users, Calendar, BookOpen, Award, BarChart3, FileText, TrendingUp, UserCheck, Mail, Phone, Clock, AlertCircle } from 'lucide-react'
 
 export default function AdminStudentDetailPage() {
@@ -124,7 +124,7 @@ export default function AdminStudentDetailPage() {
 
   if (!studentData) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
         <Navbar />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 pb-12">
           <div className="flex items-center gap-4 mb-6">
@@ -151,7 +151,7 @@ export default function AdminStudentDetailPage() {
   const { student, parent, tutors, enrollments, sessions, attendance, grades, assignments, progressReports, performance } = studentData
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
       <Navbar />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 pb-12">
         {/* Header */}
@@ -531,7 +531,7 @@ export default function AdminStudentDetailPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-white font-medium">{tutor.fullName}</p>
-                      <p className="text-xs text-gray-400">{tutor.subjects?.map(s => s.name).join(', ') || 'No subjects'}</p>
+                      <p className="text-xs text-gray-400">{tutor.subjects?.map((s: any) => s.name).join(', ') || 'No subjects'}</p>
                     </div>
                     <div className="text-right">
                       <p className="text-xs text-gray-400">{tutor.currentStudents}/{tutor.maxStudents} students</p>

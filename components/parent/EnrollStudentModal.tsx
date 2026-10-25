@@ -380,7 +380,8 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
 
   const totalPrice = {
     ngn: pricingQuote?.ngn ?? 0,
-    usd: pricingQuote?.usd ?? 0
+    usd: pricingQuote?.usd ?? 0,
+    hasPricing: !!pricingQuote
   }
 
   return (

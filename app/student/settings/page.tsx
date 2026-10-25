@@ -13,13 +13,15 @@ import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
 import { useToast } from '@/components/ui/use-toast'
 import { api } from '@/lib/api'
 import { StudentProfile } from '@/lib/types'
-import { Settings, Lock, Clock, ArrowLeft, Key, User, Check, Copy } from 'lucide-react'
+import { Settings, Lock, Clock, ArrowLeft, Key, User, Check, Copy, Volume2, VolumeX } from 'lucide-react'
 import { ProfilePictureUpload } from '@/components/shared/ProfilePictureUpload'
 import { AppearanceSettings } from '@/components/shared/AppearanceSettings'
+import { useNotifications } from '@/components/shared/NotificationProvider'
 
 export default function StudentSettingsPage() {
   const router = useRouter()
   const { toast } = useToast()
+  const { soundEnabled, setSoundEnabled } = useNotifications()
   const [profile, setProfile] = useState<StudentProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const [copiedCode, setCopiedCode] = useState(false)
@@ -204,6 +206,42 @@ export default function StudentSettingsPage() {
                 />
               </CardContent>
             </Card>
+
+            {/* Notification Settings */}
+            <Card className="bg-card border-brand-gold/30">
+              <CardHeader>
+                <CardTitle className="text-foreground text-lg flex items-center gap-2">
+                  {soundEnabled ? <Volume2 className="h-5 w-5 text-brand-gold" /> : <VolumeX className="h-5 w-5 text-brand-gold" />}
+                  Notification Sound
+                </CardTitle>
+                <CardDescription className="text-muted-foreground">
+                  Play a sound when new notifications arrive
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-foreground">
+                      {soundEnabled ? 'Sound enabled' : 'Sound disabled'}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Sound plays when you receive new notifications
+                    </p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSoundEnabled(!soundEnabled)}
+                    className="border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10"
+                  >
+                    {soundEnabled ? 'Disable' : 'Enable'}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Appearance Settings */}
+            <AppearanceSettings />
 
             {/* Student Code Card */}
             {profile && (

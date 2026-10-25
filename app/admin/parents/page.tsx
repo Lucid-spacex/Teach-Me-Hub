@@ -149,7 +149,7 @@ export default function AdminParentsPage() {
         ) || [],
         recentPayments: data.recentPayments || [],
       }
-      setSelectedParent(transformedData)
+      setSelectedParent(transformedData as ParentDetailProfile)
     } catch (err) {
       console.error('Failed to load parent details:', err)
       toast({
@@ -187,8 +187,8 @@ export default function AdminParentsPage() {
       })
       setPricingModalOpen(false)
       // Reload parent details to show updated pricing
-      if (selectedParent) {
-        await handleSelectParent(selectedParent.parent.id ?? '')
+      if (selectedParent?.parent?.id) {
+        await handleSelectParent(selectedParent.parent.id)
       }
     } catch (err) {
       console.error('Failed to update pricing:', err)
@@ -204,7 +204,7 @@ export default function AdminParentsPage() {
 
   if (selectedParent) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
         <Navbar />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 pb-12">
           <div className="flex items-center gap-4 mb-6">
@@ -220,7 +220,7 @@ export default function AdminParentsPage() {
           <div className="h-6 w-px bg-border" />
           <div>
             <h1 className="text-3xl font-serif font-bold text-white">Parent Profile</h1>
-            <p className="text-sm text-gray-400">{selectedParent.parent.fullName}</p>
+            <p className="text-sm text-gray-400">{selectedParent.parent?.fullName || selectedParent.fullName}</p>
           </div>
         </div>
 
@@ -237,7 +237,7 @@ export default function AdminParentsPage() {
                   <div className="flex items-center gap-3">
                     <Users className="h-5 w-5 text-brand-gold" />
                     <div>
-                      <p className="text-2xl font-bold text-white">{selectedParent.parent.childrenCount}</p>
+                      <p className="text-2xl font-bold text-white">{selectedParent.parent?.childrenCount || 0}</p>
                       <p className="text-xs text-gray-400">Children</p>
                     </div>
                   </div>
@@ -248,7 +248,7 @@ export default function AdminParentsPage() {
                   <div className="flex items-center gap-3">
                     <User className="h-5 w-5 text-brand-gold" />
                     <div>
-                      <p className="text-2xl font-bold text-white">{selectedParent.parent.activeEnrollments}</p>
+                      <p className="text-2xl font-bold text-white">{selectedParent.parent?.activeEnrollments || 0}</p>
                       <p className="text-xs text-gray-400">Active Enrollments</p>
                     </div>
                   </div>
@@ -259,7 +259,7 @@ export default function AdminParentsPage() {
                   <div className="flex items-center gap-3">
                     <DollarSign className="h-5 w-5 text-brand-gold" />
                     <div>
-                      <p className="text-2xl font-bold text-white">₦{(selectedParent.parent.totalPaidNGN ?? 0).toLocaleString()}</p>
+                      <p className="text-2xl font-bold text-white">₦{(selectedParent.parent?.totalPaidNGN || 0).toLocaleString()}</p>
                       <p className="text-xs text-gray-400">Total Paid (NGN)</p>
                     </div>
                   </div>
@@ -270,7 +270,7 @@ export default function AdminParentsPage() {
                   <div className="flex items-center gap-3">
                     <AlertCircle className="h-5 w-5 text-brand-gold" />
                     <div>
-                      <p className="text-2xl font-bold text-white">{selectedParent.parent.complaintCount}</p>
+                      <p className="text-2xl font-bold text-white">{selectedParent.parent?.complaintCount || 0}</p>
                       <p className="text-xs text-gray-400">Complaints</p>
                     </div>
                   </div>
@@ -301,27 +301,27 @@ export default function AdminParentsPage() {
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <p className="text-gray-400">Full Name</p>
-                    <p className="text-white">{selectedParent.parent.fullName}</p>
+                    <p className="text-white">{selectedParent.parent?.fullName || selectedParent.fullName || 'N/A'}</p>
                   </div>
                   <div>
                     <p className="text-gray-400">Email</p>
-                    <p className="text-white">{selectedParent.parent.email}</p>
+                    <p className="text-white">{selectedParent.parent?.email || selectedParent.email || 'N/A'}</p>
                   </div>
                   <div>
                     <p className="text-gray-400">Phone</p>
-                    <p className="text-white">{selectedParent.parent.phone || 'N/A'}</p>
+                    <p className="text-white">{selectedParent.parent?.phone || selectedParent.phone || 'N/A'}</p>
                   </div>
                   <div>
                     <p className="text-gray-400">Timezone</p>
-                    <p className="text-white">{selectedParent.parent.timezone || 'N/A'}</p>
+                    <p className="text-white">{selectedParent.parent?.timezone || selectedParent.timezone || 'N/A'}</p>
                   </div>
                   <div>
                     <p className="text-gray-400">Status</p>
-                    <StatusBadge status={selectedParent.parent.status as UserStatus} />
+                    <StatusBadge status={(selectedParent.parent?.status || selectedParent.status) as UserStatus} />
                   </div>
                   <div>
                     <p className="text-gray-400">Account Created</p>
-                    <p className="text-white">{new Date(selectedParent.parent.createdAt ?? '').toLocaleDateString()}</p>
+                    <p className="text-white">{new Date(selectedParent.parent?.createdAt || selectedParent.createdAt || '').toLocaleDateString()}</p>
                   </div>
                 </div>
               </CardContent>
@@ -575,7 +575,7 @@ export default function AdminParentsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
       <Navbar />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 pb-12">
         {/* Header */}

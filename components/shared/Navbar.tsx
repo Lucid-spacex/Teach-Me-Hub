@@ -6,6 +6,7 @@ import { getUser, clearUser } from '@/lib/auth'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/shared/ThemeToggle'
 import { Avatar } from '@/components/shared/Avatar'
+import { NotificationBell } from '@/components/shared/NotificationBell'
 import { LogOut, LayoutDashboard, GraduationCap, Shield } from 'lucide-react'
 
 export default function Navbar() {
@@ -71,6 +72,7 @@ export default function Navbar() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <NotificationBell />
             <ThemeToggle />
             <Button
               variant="ghost"

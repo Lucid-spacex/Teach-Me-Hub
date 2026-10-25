@@ -7,6 +7,8 @@ import { BrandHeader } from '@/components/shared/BrandHeader'
 import { getUser, clearUser } from '@/lib/auth'
 import { api } from '@/lib/api'
 import { useToast } from '@/components/ui/use-toast'
+import { useNotifications } from '@/components/shared/NotificationProvider'
+import { NotificationCategory } from '@/lib/types'
 import {
   LayoutDashboard,
   Users,
@@ -39,15 +41,16 @@ interface NavItem {
   href: string
   icon: React.ElementType
   badge?: string
+  category?: NotificationCategory
 }
 
 export function Sidebar({ role }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const { toast } = useToast()
+  const { byCategory } = useNotifications()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [user, setUserState] = useState<{ email?: string; name?: string; role?: string; status?: string } | null>(null)
-  const [unreadNotifications, setUnreadNotifications] = useState(0)
 
   useEffect(() => {
     const currentUser = getUser()
@@ -55,21 +58,7 @@ export function Sidebar({ role }: SidebarProps) {
 
     // Close mobile drawer on route change
     setMobileOpen(false)
-
-    // Fetch unread notifications count
-    const fetchUnread = async () => {
-      try {
-        const notifs = role === 'STUDENT' ? await api.getStudentNotifications() : await api.getNotifications()
-        if (Array.isArray(notifs)) {
-          const count = notifs.filter((n: any) => !n.read).length
-          setUnreadNotifications(count)
-        }
-      } catch {
-        // Silently ignore
-      }
-    }
-    fetchUnread()
-  }, [pathname, role])
+  }, [pathname])
 
   const handleLogout = async () => {
     try {
@@ -93,23 +82,23 @@ export function Sidebar({ role }: SidebarProps) {
   const parentNavItems: NavItem[] = [
     { label: 'Overview', href: '/parent', icon: LayoutDashboard },
     { label: 'My Children', href: '/parent/students', icon: Users },
-    { label: 'Enrollments', href: '/parent/enrollments', icon: BookOpen },
-    { label: 'Live Sessions', href: '/parent/sessions', icon: Calendar },
-    { label: 'Assignments', href: '/parent/assignments', icon: FileText },
-    { label: 'Grades & Reports', href: '/parent/grades', icon: BarChart3 },
-    { label: 'Payments & Fees', href: '/parent/payments', icon: CreditCard },
+    { label: 'Enrollments', href: '/parent/enrollments', icon: BookOpen, category: 'ENROLLMENTS' },
+    { label: 'Live Sessions', href: '/parent/sessions', icon: Calendar, category: 'SESSIONS' },
+    { label: 'Assignments', href: '/parent/assignments', icon: FileText, category: 'ASSIGNMENTS' },
+    { label: 'Grades & Reports', href: '/parent/grades', icon: BarChart3, category: 'GRADES' },
+    { label: 'Payments & Fees', href: '/parent/payments', icon: CreditCard, category: 'PAYMENTS' },
     { label: 'Pricing', href: '/parent/pricing', icon: DollarSign },
-    { label: 'Messages', href: '/parent/messages', icon: MessageSquare },
-    { label: 'Complaints', href: '/parent/complaints', icon: AlertCircle },
+    { label: 'Messages', href: '/parent/messages', icon: MessageSquare, category: 'MESSAGES' },
+    { label: 'Complaints', href: '/parent/complaints', icon: AlertCircle, category: 'COMPLAINTS' },
     { label: 'Settings', href: '/parent/settings', icon: Settings },
   ]
 
   const studentNavItems: NavItem[] = [
     { label: 'Dashboard', href: '/student', icon: LayoutDashboard },
-    { label: 'Class Schedule', href: '/student/schedule', icon: Calendar },
+    { label: 'Class Schedule', href: '/student/schedule', icon: Calendar, category: 'SCHEDULE' },
     { label: 'My Tutors', href: '/student/my-tutors', icon: Users },
-    { label: 'My Assignments', href: '/student/assignments', icon: FileText },
-    { label: 'Grades', href: '/student/grades', icon: BarChart3 },
+    { label: 'My Assignments', href: '/student/assignments', icon: FileText, category: 'ASSIGNMENTS' },
+    { label: 'Grades', href: '/student/grades', icon: BarChart3, category: 'GRADES' },
     { label: 'Performance', href: '/student/performance', icon: TrendingUp },
     { label: 'Progress Reports', href: '/student/progress-reports', icon: BookOpen },
     { label: 'Attendance', href: '/student/attendance', icon: UserCheck },
@@ -120,11 +109,13 @@ export function Sidebar({ role }: SidebarProps) {
   const tutorNavItems: NavItem[] = [
     { label: 'Application', href: '/tutor/application', icon: FileText },
     { label: 'Dashboard', href: '/tutor', icon: LayoutDashboard },
-    { label: 'Students', href: '/tutor/students', icon: Users },
-    { label: 'Sessions', href: '/tutor/sessions', icon: Calendar },
-    { label: 'Assignments', href: '/tutor/assignments', icon: FileText },
-    { label: 'Grades', href: '/tutor/grades', icon: BarChart3 },
+    { label: 'Students', href: '/tutor/students', icon: Users, category: 'USERS' },
+    { label: 'Sessions', href: '/tutor/sessions', icon: Calendar, category: 'SESSIONS' },
+    { label: 'Upcoming Classes', href: '/tutor/upcoming-classes', icon: UserCheck, category: 'SCHEDULE' },
+    { label: 'Assignments', href: '/tutor/assignments', icon: FileText, category: 'ASSIGNMENTS' },
+    { label: 'Grades', href: '/tutor/grades', icon: BarChart3, category: 'GRADES' },
     { label: 'Progress Reports', href: '/tutor/progress-reports', icon: BookOpen },
+    { label: 'Messages', href: '/tutor/messages', icon: MessageSquare, category: 'MESSAGES' },
     { label: 'Notifications', href: '/tutor/notifications', icon: Bell },
     { label: 'Settings', href: '/tutor/settings', icon: Settings },
   ]
@@ -132,16 +123,19 @@ export function Sidebar({ role }: SidebarProps) {
   const adminNavItems: NavItem[] = [
     { label: 'Overview', href: '/admin', icon: LayoutDashboard },
     { label: 'Pending Tutors', href: '/admin/tutors/pending', icon: UserCheck },
-    { label: 'All Tutors', href: '/admin/tutors', icon: Users },
-    { label: 'Unmatched Enrollments', href: '/admin/enrollments', icon: BookOpen },
-    { label: 'Sessions', href: '/admin/sessions', icon: Calendar },
-    { label: 'Subjects & Pricing', href: '/admin/subjects', icon: CreditCard },
-    { label: 'Parent Directory', href: '/admin/parents', icon: Users },
+    { label: 'All Tutors', href: '/admin/tutors', icon: Users, category: 'USERS' },
+    { label: 'Parent Directory', href: '/admin/parents', icon: Users, category: 'USERS' },
     { label: 'All Students', href: '/admin/students', icon: GraduationCap },
-    { label: 'Transactions', href: '/admin/transactions', icon: CreditCard },
+    { label: 'Unmatched Enrollments', href: '/admin/enrollments', icon: BookOpen, category: 'ENROLLMENTS' },
+    { label: 'Sessions', href: '/admin/sessions', icon: Calendar, category: 'SESSIONS' },
+    { label: 'Messages', href: '/admin/messages', icon: MessageSquare, category: 'MESSAGES' },
+    { label: 'Complaints', href: '/admin/complaints', icon: AlertCircle, category: 'COMPLAINTS' },
+    { label: 'Transactions', href: '/admin/transactions', icon: CreditCard, category: 'PAYMENTS' },
+    { label: 'Grade Review', href: '/admin/grades', icon: BarChart3, category: 'GRADES' },
+    { label: 'Class Schedule', href: '/admin/class-schedule', icon: Calendar, category: 'SCHEDULE' },
+    { label: 'Change Requests', href: '/admin/change-requests', icon: FileText },
+    { label: 'Subjects & Pricing', href: '/admin/subjects', icon: CreditCard },
     { label: 'Suspended Users', href: '/admin/suspended', icon: AlertCircle },
-    { label: 'Complaints', href: '/admin/complaints', icon: AlertCircle },
-    { label: 'Messages', href: '/admin/messages', icon: MessageSquare },
     { label: 'Notifications', href: '/admin/notifications', icon: Bell },
     { label: 'Settings', href: '/admin/settings', icon: Settings },
   ]
@@ -179,9 +173,6 @@ export function Sidebar({ role }: SidebarProps) {
           className="p-2 -mr-2 text-foreground/80 hover:text-primary transition-colors relative rounded-lg hover:bg-foreground/5"
         >
           <Bell className="w-5 h-5" />
-          {unreadNotifications > 0 && (
-            <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full ring-2 ring-background" />
-          )}
         </Link>
       </header>
 
@@ -252,6 +243,10 @@ export function Sidebar({ role }: SidebarProps) {
                 </div>
                 {active ? (
                   <ChevronRight className="w-4 h-4 text-sidebar-primary opacity-80" />
+                ) : item.category && byCategory[item.category] > 0 ? (
+                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-destructive text-destructive-foreground font-bold">
+                    {byCategory[item.category] > 99 ? '99+' : byCategory[item.category]}
+                  </span>
                 ) : item.badge ? (
                   <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-sidebar-accent text-sidebar-foreground">
                     {item.badge}

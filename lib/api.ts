@@ -8,17 +8,29 @@ import {
   Assignment,
   AssignmentType,
   AuthResponse,
+  ChangeRequestStatus,
+  ClassScheduleItem,
+  ClassScheduleResponse,
+  ClassScheduleStatus,
   Complaint,
   ComplaintAboutType,
+  CompiledGrade,
+  CreateChangeRequestRequest,
   CreateEnrollmentRequest,
+  CreateGradeRequest,
   CreateProgressReportRequest,
   CreateSingleEnrollmentRequest,
   CreateStudentRequest,
   CreateTutorProfileRequest,
   Enrollment,
+  EnrollmentChangeRequest,
   ExchangeRate,
   Grade,
   GradeBandTier,
+  GradeComponentType,
+  GradePreviewRequest,
+  GradePreviewResponse,
+  GradeStatus,
   HighestQualification,
   HowHeardSource,
   InitiatePaymentRequest,
@@ -27,6 +39,7 @@ import {
   Message,
   MessageThread,
   Notification,
+  NotificationCategory,
   ParentDetailProfile,
   ParentDirectoryEntry,
   Payment,
@@ -43,12 +56,16 @@ import {
   RegisterRequest,
   RegisterResponse,
   RegenerateStudentPasswordResponse,
+  ScoredItem,
+  ScoredItemType,
   Session,
+  SessionRecording,
   Student,
   StudentActivity,
   StudentAttendance,
   StudentLoginRequest,
   StudentProfile,
+  SubmitGradeRequest,
   Subject,
   SubjectPrice,
   SuggestedTutor,
@@ -59,12 +76,15 @@ import {
   TutorProfile,
   TutorStudent,
   TutorWithProfile,
+  UnreadCountResponse,
   UpdateSessionRequest,
   UpdateTutorProfileRequest,
+  UpcomingClass,
   User,
   VerifyRequest,
   VerifyResponse,
   VettingRequest,
+  StreamTicketResponse,
 } from './types'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://smart-tutor-9rjd.onrender.com/api'
@@ -123,24 +143,25 @@ class ApiClient {
         return this.request<T>(endpoint, options, retryCount + 1)
       }
 
-      // Max retries reached, show error
-      const resetTime = response.headers.get('X-RateLimit-Reset')
+      // Max retries reached, show error with countdown
+      const resetTime = response.headers.get('RateLimit-Reset') || response.headers.get('X-RateLimit-Reset')
       let errorMessage = 'Too many attempts. Please try again later.'
 
       if (resetTime) {
         const resetDate = new Date(parseInt(resetTime) * 1000)
         const now = new Date()
         const diffMs = resetDate.getTime() - now.getTime()
-        const diffMins = Math.ceil(diffMs / 60000)
+        const diffSecs = Math.ceil(diffMs / 1000)
 
-        if (diffMins <= 1) {
-          errorMessage = 'Too many attempts. Please try again in 1 minute.'
-        } else if (diffMins < 60) {
-          errorMessage = `Too many attempts. Please try again in ${diffMins} minutes.`
+        if (diffSecs <= 60) {
+          errorMessage = `Too many attempts. Please try again in ${diffSecs} second${diffSecs !== 1 ? 's' : ''}.`
+        } else if (diffSecs < 3600) {
+          const diffMins = Math.ceil(diffSecs / 60)
+          errorMessage = `Too many attempts. Please try again in ${diffMins} minute${diffMins !== 1 ? 's' : ''}.`
         } else {
-          const hours = Math.floor(diffMins / 60)
-          const mins = diffMins % 60
-          errorMessage = `Too many attempts. Please try again in ${hours} hour${hours > 1 ? 's' : ''}${mins > 0 ? ` ${mins} minute${mins > 1 ? 's' : ''}` : ''}.`
+          const hours = Math.floor(diffSecs / 3600)
+          const mins = Math.ceil((diffSecs % 3600) / 60)
+          errorMessage = `Too many attempts. Please try again in ${hours} hour${hours > 1 ? 's' : ''}${mins > 0 ? ` ${mins} minute${mins !== 1 ? 's' : ''}` : ''}.`
         }
       }
 
@@ -244,6 +265,17 @@ class ApiClient {
     if (!response.ok) {
       const errorData: ApiError = await response.json().catch(() => ({ error: 'Unknown error' }))
       console.error('API Error:', errorData)
+
+      // Handle TUTOR_NOT_APPROVED and APPLICATION_REJECTED codes
+      if (errorData.error === 'TUTOR_NOT_APPROVED' || errorData.error === 'APPLICATION_REJECTED') {
+        if (typeof window !== 'undefined') {
+          const userRole = localStorage.getItem('userRole')
+          if (userRole === 'TUTOR') {
+            window.location.href = '/tutor/application'
+          }
+        }
+      }
+
       throw new Error(errorData.error || errorData.message || 'Request failed')
     }
 
@@ -516,10 +548,85 @@ class ApiClient {
     return this.request<Notification[]>('/student/me/notifications')
   }
 
+  async getStudentNotificationsFiltered(filters?: {
+    category?: NotificationCategory
+    unreadOnly?: boolean
+    page?: number
+    limit?: number
+  }): Promise<{ notifications: Notification[]; total: number }> {
+    const params = new URLSearchParams()
+    if (filters?.category) params.append('category', filters.category)
+    if (filters?.unreadOnly !== undefined) params.append('unreadOnly', filters.unreadOnly.toString())
+    if (filters?.page) params.append('page', filters.page.toString())
+    if (filters?.limit) params.append('limit', filters.limit.toString())
+    const query = params.toString()
+    return this.request<{ notifications: Notification[]; total: number }>(
+      `/student/me/notifications${query ? `?${query}` : ''}`
+    )
+  }
+
+  async getStudentUnreadCount(): Promise<UnreadCountResponse> {
+    return this.request<UnreadCountResponse>('/student/me/notifications/unread-count')
+  }
+
   async markNotificationRead(notificationId: string): Promise<Notification> {
     return this.request<Notification>(`/notifications/${notificationId}/read`, {
       method: 'PATCH',
     })
+  }
+
+  async markAllNotificationsRead(category?: NotificationCategory): Promise<{ message: string }> {
+    const params = category ? `?category=${category}` : ''
+    return this.request<{ message: string }>(`/notifications/read-all${params}`, {
+      method: 'PATCH',
+    })
+  }
+
+  async markNotificationsReadByEntity(entityType: string, entityId: string): Promise<{ message: string }> {
+    return this.request<{ message: string }>(`/notifications/read-by-entity`, {
+      method: 'PATCH',
+      body: JSON.stringify({ entityType, entityId }),
+    })
+  }
+
+  async getStreamTicket(): Promise<StreamTicketResponse> {
+    return this.request<StreamTicketResponse>('/notifications/stream-ticket', {
+      method: 'POST',
+    })
+  }
+
+  // Generic notification endpoints (role-agnostic)
+  async getNotifications(filters?: {
+    category?: NotificationCategory
+    unreadOnly?: boolean
+    page?: number
+    limit?: number
+  }): Promise<{ notifications: Notification[]; total: number }> {
+    const params = new URLSearchParams()
+    if (filters?.category) params.append('category', filters.category)
+    if (filters?.unreadOnly !== undefined) params.append('unreadOnly', filters.unreadOnly.toString())
+    if (filters?.page) params.append('page', filters.page.toString())
+    if (filters?.limit) params.append('limit', filters.limit.toString())
+    const query = params.toString()
+    return this.request<{ notifications: Notification[]; total: number }>(
+      `/notifications${query ? `?${query}` : ''}`
+    )
+  }
+
+  async getUnreadCount(): Promise<UnreadCountResponse> {
+    return this.request<UnreadCountResponse>('/notifications/unread-count')
+  }
+
+  async getAdminUnreadCount(): Promise<UnreadCountResponse> {
+    return this.request<UnreadCountResponse>('/admin/notifications/unread-count')
+  }
+
+  async getTutorUnreadCount(): Promise<UnreadCountResponse> {
+    return this.request<UnreadCountResponse>('/tutor/notifications/unread-count')
+  }
+
+  async getParentUnreadCount(): Promise<UnreadCountResponse> {
+    return this.request<UnreadCountResponse>('/parent/notifications/unread-count')
   }
 
   // Subject endpoints (legacy, for backward compatibility)
@@ -595,6 +702,17 @@ class ApiClient {
 
   async updateTutorProfile(data: UpdateTutorProfileRequest): Promise<TutorProfile> {
     return this.request<TutorProfile>('/tutor-profile', {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async updateTutorAvailabilityStatus(data: {
+    availabilityStatus: TutorAvailabilityStatus
+    maxStudents: number
+    statusNote?: string
+  }): Promise<TutorProfile> {
+    return this.request<TutorProfile>('/tutor-profile/availability-status', {
       method: 'PATCH',
       body: JSON.stringify(data),
     })
@@ -1027,10 +1145,11 @@ class ApiClient {
     const data = await this.request<any[]>('/messages/threads')
     // Transform API response to match frontend expectations
     // API returns: { threadId, otherParticipant, lastMessage, unreadCount }
-    // Frontend expects: { id, participants/otherParticipant, lastMessage, lastMessageAt, unreadCount }
+    // Frontend expects: { id, threadId, participants/otherParticipant, lastMessage, lastMessageAt, unreadCount }
     console.log('getMessageThreads raw data:', data)
     return data.map(item => ({
       id: item.threadId,
+      threadId: item.threadId,
       otherParticipant: item.otherParticipant,
       participants: item.otherParticipant ? [item.otherParticipant] : item.participants,
       lastMessage: item.lastMessage,
@@ -1050,6 +1169,10 @@ class ApiClient {
       createdAt: m.createdAt,
       read: m.read ?? false,
     }))
+  }
+
+  async getThreadMessages(threadId: string): Promise<Message[]> {
+    return this.getMessages(threadId)
   }
 
   async sendMessage(
@@ -1136,10 +1259,7 @@ class ApiClient {
     })
   }
 
-  // Notification endpoints
-  async getNotifications(): Promise<Notification[]> {
-    return this.request<Notification[]>('/notifications')
-  }
+
 
   // Admin pricing endpoints
   async getPricingTiers(): Promise<PricingTier[]> {
@@ -1162,6 +1282,275 @@ class ApiClient {
 
   async getEnrollmentPricing(enrollmentId: string): Promise<{ yearlyPriceNGN: number; yearlyPriceUSD: number }> {
     return this.request<{ yearlyPriceNGN: number; yearlyPriceUSD: number }>(`/admin/enrollments/${enrollmentId}/pricing`)
+  }
+
+  // Scored Items endpoints
+  async getScoredItems(studentId: string, filters?: {
+    type?: ScoredItemType
+    notInGrade?: boolean
+    enrollmentId?: string
+  }): Promise<ScoredItem[]> {
+    const params = new URLSearchParams()
+    if (filters?.type) params.append('type', filters.type)
+    if (filters?.notInGrade !== undefined) params.append('notInGrade', filters.notInGrade.toString())
+    if (filters?.enrollmentId) params.append('enrollmentId', filters.enrollmentId)
+    const query = params.toString()
+    return this.request<ScoredItem[]>(`/tutor/students/${studentId}/scored-items${query ? `?${query}` : ''}`)
+  }
+
+  async createScoredItem(studentId: string, data: {
+    enrollmentId: string
+    type: ScoredItemType
+    title: string
+    maxScore: number
+    score?: number
+    comment?: string
+  }): Promise<ScoredItem> {
+    return this.request<ScoredItem>(`/tutor/students/${studentId}/scored-items`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async updateScoredItem(itemId: string, data: {
+    score?: number
+    comment?: string
+  }): Promise<ScoredItem> {
+    return this.request<ScoredItem>(`/tutor/scored-items/${itemId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async deleteScoredItem(itemId: string): Promise<{ message: string }> {
+    return this.request<{ message: string }>(`/tutor/scored-items/${itemId}`, {
+      method: 'DELETE',
+    })
+  }
+
+  // Grade Compilation endpoints
+  async previewCompiledGrade(data: GradePreviewRequest): Promise<GradePreviewResponse> {
+    return this.request<GradePreviewResponse>('/tutor/grades/preview', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async createCompiledGrade(data: CreateGradeRequest): Promise<CompiledGrade> {
+    return this.request<CompiledGrade>('/tutor/grades', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async submitCompiledGrade(gradeId: string): Promise<CompiledGrade> {
+    return this.request<CompiledGrade>(`/tutor/grades/${gradeId}/submit`, {
+      method: 'POST',
+    })
+  }
+
+  async withdrawCompiledGrade(gradeId: string): Promise<CompiledGrade> {
+    return this.request<CompiledGrade>(`/tutor/grades/${gradeId}/withdraw`, {
+      method: 'POST',
+    })
+  }
+
+  async updateCompiledGradeDraft(gradeId: string, data: Partial<CreateGradeRequest>): Promise<CompiledGrade> {
+    return this.request<CompiledGrade>(`/tutor/grades/${gradeId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async deleteCompiledGrade(gradeId: string): Promise<{ message: string }> {
+    return this.request<{ message: string }>(`/tutor/grades/${gradeId}`, {
+      method: 'DELETE',
+    })
+  }
+
+  async getTutorCompiledGrades(filters?: {
+    status?: GradeStatus
+    studentId?: string
+    enrollmentId?: string
+  }): Promise<CompiledGrade[]> {
+    const params = new URLSearchParams()
+    if (filters?.status) params.append('status', filters.status)
+    if (filters?.studentId) params.append('studentId', filters.studentId)
+    if (filters?.enrollmentId) params.append('enrollmentId', filters.enrollmentId)
+    const query = params.toString()
+    return this.request<CompiledGrade[]>(`/tutor/grades${query ? `?${query}` : ''}`)
+  }
+
+  async getCompiledGradeDetail(gradeId: string): Promise<CompiledGrade> {
+    return this.request<CompiledGrade>(`/tutor/grades/${gradeId}`)
+  }
+
+  // Admin Grade endpoints
+  async getAdminCompiledGrades(filters?: {
+    status?: GradeStatus
+    tutorId?: string
+    studentId?: string
+    subject?: string
+  }): Promise<{ data: CompiledGrade[]; page: number; limit: number; total: number }> {
+    const params = new URLSearchParams()
+    if (filters?.status) params.append('status', filters.status)
+    if (filters?.tutorId) params.append('tutorId', filters.tutorId)
+    if (filters?.studentId) params.append('studentId', filters.studentId)
+    if (filters?.subject) params.append('subject', filters.subject)
+    const query = params.toString()
+    return this.request<{ data: CompiledGrade[]; page: number; limit: number; total: number }>(
+      `/admin/grades${query ? `?${query}` : ''}`
+    )
+  }
+
+  async approveCompiledGrade(gradeId: string): Promise<CompiledGrade> {
+    return this.request<CompiledGrade>(`/admin/grades/${gradeId}/approve`, {
+      method: 'POST',
+    })
+  }
+
+  async rejectCompiledGrade(gradeId: string, reason: string): Promise<CompiledGrade> {
+    return this.request<CompiledGrade>(`/admin/grades/${gradeId}/reject`, {
+      method: 'POST',
+      body: JSON.stringify({ reason }),
+    })
+  }
+
+  async bulkApproveCompiledGrades(gradeIds: string[]): Promise<{ results: Array<{ gradeId: string; success: boolean; error?: string }> }> {
+    return this.request<{ results: Array<{ gradeId: string; success: boolean; error?: string }> }>('/admin/grades/bulk-approve', {
+      method: 'POST',
+      body: JSON.stringify({ gradeIds }),
+    })
+  }
+
+  // Class Schedule endpoints
+  async getTutorUpcomingClasses(): Promise<UpcomingClass[]> {
+    return this.request<UpcomingClass[]>('/tutor/upcoming-classes')
+  }
+
+  async getAdminClassSchedule(filters?: {
+    tutorId?: string
+    status?: ClassScheduleStatus
+    fromDate?: string
+    toDate?: string
+  }): Promise<ClassScheduleResponse> {
+    const params = new URLSearchParams()
+    if (filters?.tutorId) params.append('tutorId', filters.tutorId)
+    if (filters?.status) params.append('status', filters.status)
+    if (filters?.fromDate) params.append('fromDate', filters.fromDate)
+    if (filters?.toDate) params.append('toDate', filters.toDate)
+    const query = params.toString()
+    return this.request<ClassScheduleResponse>(`/admin/class-schedule${query ? `?${query}` : ''}`)
+  }
+
+  // Enrollment Change Request endpoints
+  async getParentChangeRequests(filters?: {
+    status?: ChangeRequestStatus
+    enrollmentId?: string
+  }): Promise<EnrollmentChangeRequest[]> {
+    const params = new URLSearchParams()
+    if (filters?.status) params.append('status', filters.status)
+    if (filters?.enrollmentId) params.append('enrollmentId', filters.enrollmentId)
+    const query = params.toString()
+    return this.request<EnrollmentChangeRequest[]>(`/parent/change-requests${query ? `?${query}` : ''}`)
+  }
+
+  async createChangeRequest(data: CreateChangeRequestRequest): Promise<EnrollmentChangeRequest> {
+    return this.request<EnrollmentChangeRequest>('/parent/change-requests', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async cancelChangeRequest(requestId: string): Promise<{ message: string }> {
+    return this.request<{ message: string }>(`/parent/change-requests/${requestId}/cancel`, {
+      method: 'POST',
+    })
+  }
+
+  async getAdminChangeRequests(filters?: {
+    status?: ChangeRequestStatus
+  }): Promise<{ data: EnrollmentChangeRequest[]; page: number; limit: number; total: number }> {
+    const params = new URLSearchParams()
+    if (filters?.status) params.append('status', filters.status)
+    const query = params.toString()
+    return this.request<{ data: EnrollmentChangeRequest[]; page: number; limit: number; total: number }>(
+      `/admin/change-requests${query ? `?${query}` : ''}`
+    )
+  }
+
+  async getAdminChangeRequestDetail(requestId: string): Promise<EnrollmentChangeRequest> {
+    return this.request<EnrollmentChangeRequest>(`/admin/change-requests/${requestId}`)
+  }
+
+  async approveChangeRequest(requestId: string): Promise<EnrollmentChangeRequest> {
+    return this.request<EnrollmentChangeRequest>(`/admin/change-requests/${requestId}/approve`, {
+      method: 'POST',
+    })
+  }
+
+  async rejectChangeRequest(requestId: string, reason: string): Promise<EnrollmentChangeRequest> {
+    return this.request<EnrollmentChangeRequest>(`/admin/change-requests/${requestId}/reject`, {
+      method: 'POST',
+      body: JSON.stringify({ reason }),
+    })
+  }
+
+  // Session Recording endpoint
+  async getSessionRecording(sessionId: string): Promise<SessionRecording> {
+    return this.request<SessionRecording>(`/sessions/${sessionId}/recording`)
+  }
+
+  // Extended notification endpoints for admin and tutor
+  async getAdminNotifications(filters?: {
+    category?: NotificationCategory
+    unreadOnly?: boolean
+    page?: number
+    limit?: number
+  }): Promise<{ notifications: Notification[]; total: number }> {
+    const params = new URLSearchParams()
+    if (filters?.category) params.append('category', filters.category)
+    if (filters?.unreadOnly !== undefined) params.append('unreadOnly', filters.unreadOnly.toString())
+    if (filters?.page) params.append('page', filters.page.toString())
+    if (filters?.limit) params.append('limit', filters.limit.toString())
+    const query = params.toString()
+    return this.request<{ notifications: Notification[]; total: number }>(
+      `/admin/notifications${query ? `?${query}` : ''}`
+    )
+  }
+
+  async getTutorNotifications(filters?: {
+    category?: NotificationCategory
+    unreadOnly?: boolean
+    page?: number
+    limit?: number
+  }): Promise<{ notifications: Notification[]; total: number }> {
+    const params = new URLSearchParams()
+    if (filters?.category) params.append('category', filters.category)
+    if (filters?.unreadOnly !== undefined) params.append('unreadOnly', filters.unreadOnly.toString())
+    if (filters?.page) params.append('page', filters.page.toString())
+    if (filters?.limit) params.append('limit', filters.limit.toString())
+    const query = params.toString()
+    return this.request<{ notifications: Notification[]; total: number }>(
+      `/tutor/notifications${query ? `?${query}` : ''}`
+    )
+  }
+
+  async getParentNotifications(filters?: {
+    category?: NotificationCategory
+    unreadOnly?: boolean
+    page?: number
+    limit?: number
+  }): Promise<{ notifications: Notification[]; total: number }> {
+    const params = new URLSearchParams()
+    if (filters?.category) params.append('category', filters.category)
+    if (filters?.unreadOnly !== undefined) params.append('unreadOnly', filters.unreadOnly.toString())
+    if (filters?.page) params.append('page', filters.page.toString())
+    if (filters?.limit) params.append('limit', filters.limit.toString())
+    const query = params.toString()
+    return this.request<{ notifications: Notification[]; total: number }>(
+      `/parent/notifications${query ? `?${query}` : ''}`
+    )
   }
 
   async updateEnrollmentPricing(enrollmentId: string, data: {
@@ -1197,7 +1586,7 @@ class ApiClient {
     participantEnrollmentIds: string[]
     scheduledAt: string
     durationMinutes: number
-    zoomLink?: string
+    meetLink?: string
     sharedSessionConfirmed?: boolean
   }): Promise<Session> {
     return this.request<Session>('/admin/sessions', {
@@ -1359,18 +1748,6 @@ class ApiClient {
     params.append('studentId', studentId)
     subjectIds.forEach(id => params.append('subjectIds', id))
     return this.request<PricingQuote>(`/pricing/quote?${params.toString()}`)
-  }
-
-  // Tutor availability endpoints
-  async updateTutorAvailabilityStatus(data: {
-    availabilityStatus: TutorAvailabilityStatus
-    maxStudents?: number
-    statusNote?: string
-  }): Promise<TutorProfile> {
-    return this.request<TutorProfile>('/tutor-profile/availability-status', {
-      method: 'PATCH',
-      body: JSON.stringify(data),
-    })
   }
 
   async getSuggestedTutors(enrollmentId: string): Promise<SuggestedTutor[]> {
@@ -1549,7 +1926,7 @@ class ApiClient {
   async updateAdminSession(sessionId: string, data: {
     scheduledAt?: string
     durationMinutes?: number
-    zoomLink?: string
+    meetLink?: string
     status?: string
     notes?: string
     homework?: string
@@ -1599,14 +1976,6 @@ class ApiClient {
     })
   }
 
-  async getTutorNotifications(): Promise<Notification[]> {
-    return this.request<Notification[]>('/tutor/me/notifications')
-  }
-
-  async getTutorUnreadCount(): Promise<{ count: number }> {
-    return this.request<{ count: number }>('/tutor/me/unread-count')
-  }
-
   async getTutorStudentDetail(studentId: string): Promise<any> {
     return this.request<any>(`/tutor/me/students/${studentId}`)
   }
@@ -1637,84 +2006,6 @@ class ApiClient {
       method: 'PATCH',
       body: JSON.stringify(data),
     })
-  }
-
-  async getParentNotifications(): Promise<Notification[]> {
-    return this.request<Notification[]>('/me/notifications')
-  }
-
-  async getParentUnreadCount(): Promise<{ count: number }> {
-    return this.request<{ count: number }>('/me/unread-count')
-  }
-
-  // Student detail endpoints
-  async getStudentDetailInfo(studentId: string): Promise<Student> {
-    return this.request<Student>(`/students/${studentId}`)
-  }
-
-  async updateStudentInfo(studentId: string, data: {
-    fullName?: string
-    actualGrade?: string
-    school?: string
-    notes?: string
-  }): Promise<Student> {
-    return this.request<Student>(`/students/${studentId}`, {
-      method: 'PATCH',
-      body: JSON.stringify(data),
-    })
-  }
-
-  async deleteStudentInfo(studentId: string): Promise<{ message: string }> {
-    return this.request<{ message: string }>(`/students/${studentId}`, {
-      method: 'DELETE',
-    })
-  }
-
-  async getStudentEnrollmentsList(studentId: string): Promise<Enrollment[]> {
-    return this.request<Enrollment[]>(`/students/${studentId}/enrollments`)
-  }
-
-  async getStudentSessionsList(studentId: string): Promise<Session[]> {
-    return this.request<Session[]>(`/students/${studentId}/sessions`)
-  }
-
-  async getStudentGradesList(studentId: string): Promise<Grade[]> {
-    return this.request<Grade[]>(`/students/${studentId}/grades`)
-  }
-
-  async getStudentAssignmentsList(studentId: string): Promise<Assignment[]> {
-    return this.request<Assignment[]>(`/students/${studentId}/assignments`)
-  }
-
-  async getStudentAttendanceList(studentId: string): Promise<StudentAttendance[]> {
-    return this.request<StudentAttendance[]>(`/students/${studentId}/attendance`)
-  }
-
-  async getStudentProgressReportsList(studentId: string): Promise<ProgressReport[]> {
-    return this.request<ProgressReport[]>(`/students/${studentId}/progress-reports`)
-  }
-
-  // Session recording endpoint
-  async getSessionRecording(sessionId: string): Promise<{ recordingUrl: string }> {
-    return this.request<{ recordingUrl: string }>(`/sessions/${sessionId}/recording`)
-  }
-
-  // Grade approve/reject endpoints
-  async approveGrade(gradeId: string): Promise<Grade> {
-    return this.request<Grade>(`/grades/${gradeId}/approve`, {
-      method: 'PATCH',
-    })
-  }
-
-  async rejectGrade(gradeId: string): Promise<Grade> {
-    return this.request<Grade>(`/grades/${gradeId}/reject`, {
-      method: 'PATCH',
-    })
-  }
-
-  // Message unread count endpoint
-  async getMessageUnreadCount(): Promise<{ count: number }> {
-    return this.request<{ count: number }>('/messages/unread-count')
   }
 }
 

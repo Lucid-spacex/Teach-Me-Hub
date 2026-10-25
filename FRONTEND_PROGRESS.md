@@ -151,7 +151,7 @@
 - [x] Call preview endpoint for computed score and breakdown
 - [x] Add final score override with required reason
 - [x] Add tutor comment field
-- [ ] Add attachments field
+- [x] Add attachments field
 - [x] Add Save draft action
 - [x] Add Submit to admin action
 - [x] Add Withdraw action (when PENDING_APPROVAL)
@@ -160,14 +160,14 @@
 - [x] Show status chips (DRAFT, PENDING_APPROVAL, APPROVED, REJECTED)
 - [x] Show admin reason banner for REJECTED grades
 - [x] Make APPROVED grades read-only
-- [ ] Create /tutor/messages page (tutor to Admin only)
-- [ ] Remove tutor to student messaging
-- [ ] Remove tutor to parent messaging
-- [ ] Remove tutor complaints page
-- [ ] Remove "file complaint" button for tutors
-- [ ] Add note that tutors contact admin through Messages
-- [ ] Keep quiz question builder
-- [ ] Show quiz attempts as scored items (not grades)
+- [x] Create /tutor/messages page (tutor to Admin only)
+- [x] Remove tutor to student messaging
+- [x] Remove tutor to parent messaging
+- [x] Remove tutor complaints page
+- [x] Remove "file complaint" button for tutors
+- [x] Add note that tutors contact admin through Messages
+- [x] Keep quiz question builder
+- [x] Show quiz attempts as scored items (not grades)
 - [x] Add availability status to profile settings (AVAILABLE, LIMITED, UNAVAILABLE)
 - [x] Add max students field
 - [x] Add note field

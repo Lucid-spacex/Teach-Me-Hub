@@ -175,13 +175,13 @@ export default function StudentSchedulePage() {
                       </div>
                     )}
 
-                    {session.status === 'SCHEDULED' && session.zoomLink ? (
+                    {session.status === 'SCHEDULED' && session.meetLink ? (
                       <Button
                         size="sm"
                         asChild
                         className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold mt-2"
                       >
-                        <a href={session.zoomLink} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2">
+                        <a href={session.meetLink} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2">
                           <Video className="h-4 w-4" />
                           Join Live Class
                         </a>

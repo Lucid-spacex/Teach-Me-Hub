@@ -206,11 +206,11 @@ export default function AdminMessagesPage() {
     }
     setSending(true)
     try {
-      const recipientId = 'recipientId' in otherParticipant ? otherParticipant.recipientId : otherParticipant.id
+      const recipientId = (otherParticipant as any).recipientId || otherParticipant.id
       if (!recipientId) {
         throw new Error('Recipient ID is missing')
       }
-      await api.sendMessage(recipientId, content)
+      await api.sendMessage({ recipientId, body: content })
       setNewMessage('')
       await loadMessages(selectedThread.id, true) // Force refresh
       const updatedThreads = await api.getMessageThreads().catch(() => threads)
@@ -245,7 +245,7 @@ export default function AdminMessagesPage() {
 
     setStartingNewThread(true)
     try {
-      await api.sendMessage(selectedUser.id, newMessageBody.trim())
+      await api.sendMessage({ recipientId: selectedUser.id, body: newMessageBody.trim() })
       toast({
         title: 'Message Sent',
         description: 'Your message has been sent successfully',
@@ -283,7 +283,7 @@ export default function AdminMessagesPage() {
         status: p.status,
       }))
 
-      const tutorUsers = (Array.isArray(tutors) ? tutors : []).map((t: any) => ({
+      const tutorUsers = (Array.isArray(tutors) ? tutors : tutors.data || []).map((t: any) => ({
         id: t.id,
         fullName: t.fullName,
         email: t.email,

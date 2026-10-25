@@ -162,7 +162,7 @@ export default function AdminSubjectsPage() {
 
   const handleUpdatePrice = async (subjectId: string, gradeBand: GradeBandTier, yearlyPriceNGN: number, yearlyPriceUSD: number) => {
     try {
-      await api.updateSubjectPricing(subjectId, { gradeBandTier: gradeBand, yearlyPriceNGN, yearlyPriceUSD })
+      await api.updateSubjectPricing(subjectId, { gradeBandTier: gradeBand, yearlyPriceNGN: Number(yearlyPriceNGN), yearlyPriceUSD: Number(yearlyPriceUSD) })
       toast({
         title: 'Price Updated',
         description: 'The price has been updated successfully',
@@ -200,7 +200,7 @@ export default function AdminSubjectsPage() {
     setEditingSubject(subject)
     setFormData({
       name: subject.name,
-      category: subject.category as 'CORE' | 'ENRICHMENT' | 'TEST_PREP',
+      category: (subject.category as 'CORE' | 'ENRICHMENT' | 'TEST_PREP'),
       prices: subject.prices || GRADE_BANDS.map(band => ({
         gradeBandTier: band.value,
         yearlyPriceNGN: 0,
@@ -215,8 +215,8 @@ export default function AdminSubjectsPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-serif font-bold text-foreground">Subjects & Pricing</h1>
-          <p className="text-sm text-muted-foreground">Manage subjects and their per-grade-band pricing</p>
+          <h1 className="text-3xl font-serif font-bold text-white">Subjects & Pricing</h1>
+          <p className="text-sm text-gray-400">Manage subjects and their per-grade-band pricing</p>
         </div>
         <Button onClick={openCreateModal} className="bg-brand-gold hover:bg-brand-goldLight text-brand-dark">
           <Plus className="h-4 w-4 mr-2" />
@@ -240,7 +240,7 @@ export default function AdminSubjectsPage() {
       ) : (
         <div className="space-y-4">
           {subjects.map((subject) => (
-            <Card key={subject.id} className="bg-card border-border">
+            <Card key={subject.id} className="bg-card border-brand-gold/30">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
@@ -283,11 +283,11 @@ export default function AdminSubjectsPage() {
                             <div className="flex items-center gap-2">
                               <Input
                                 type="number"
-                                value={Number(price?.yearlyPriceNGN) || 0}
+                                value={price?.yearlyPriceNGN || 0}
                                 onChange={(e) => handleUpdatePrice(
                                   subject.id,
                                   band.value,
-                                  parseInt(e.target.value) || 0,
+                                  Number(e.target.value) || 0,
                                   Number(price?.yearlyPriceUSD) || 0
                                 )}
                                 className="bg-background border-input text-white text-sm h-8"
@@ -298,12 +298,12 @@ export default function AdminSubjectsPage() {
                             <div className="flex items-center gap-2">
                               <Input
                                 type="number"
-                                value={Number(price?.yearlyPriceUSD) || 0}
+                                value={price?.yearlyPriceUSD || 0}
                                 onChange={(e) => handleUpdatePrice(
                                   subject.id,
                                   band.value,
                                   Number(price?.yearlyPriceNGN) || 0,
-                                  parseInt(e.target.value) || 0
+                                  Number(e.target.value) || 0
                                 )}
                                 className="bg-background border-input text-white text-sm h-8"
                                 placeholder="USD"

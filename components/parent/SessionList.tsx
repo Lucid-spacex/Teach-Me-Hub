@@ -79,9 +79,9 @@ export function SessionList({ enrollments, refreshTrigger }: SessionListProps) {
       header: 'Actions',
       cell: (session: Session) => (
         <div className="flex gap-2">
-          {session.zoomLink && session.status === 'SCHEDULED' && (
+          {session.meetLink && session.status === 'SCHEDULED' && (
             <Button variant="outline" size="sm" asChild className="border-brand-gold text-brand-gold hover:bg-brand-gold/10">
-              <a href={session.zoomLink} target="_blank" rel="noopener noreferrer" className="gap-2">
+              <a href={session.meetLink} target="_blank" rel="noopener noreferrer" className="gap-2">
                 <Video className="h-4 w-4" />
                 Join
               </a>

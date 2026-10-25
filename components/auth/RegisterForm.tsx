@@ -18,7 +18,6 @@ export default function RegisterForm() {
   const router = useRouter()
   const { toast } = useToast()
   const [formData, setFormData] = useState<RegisterRequest & { firstName?: string; lastName?: string; middleName?: string }>({
-    fullName: '',
     firstName: '',
     lastName: '',
     middleName: '',
@@ -212,7 +211,7 @@ export default function RegisterForm() {
                   required
                   value={formData.firstName || ''}
                   onChange={(e) => {
-                    setFormData({ ...formData, firstName: e.target.value, fullName: `${e.target.value} ${formData.lastName || ''}`.trim() })
+                    setFormData({ ...formData, firstName: e.target.value })
                   }}
                   placeholder="e.g. Sarah"
                   className="bg-muted border-border text-foreground placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11"
@@ -227,7 +226,7 @@ export default function RegisterForm() {
                   required
                   value={formData.lastName || ''}
                   onChange={(e) => {
-                    setFormData({ ...formData, lastName: e.target.value, fullName: `${formData.firstName || ''} ${e.target.value}`.trim() })
+                    setFormData({ ...formData, lastName: e.target.value })
                   }}
                   placeholder="e.g. Jenkins"
                   className="bg-muted border-border text-foreground placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11"

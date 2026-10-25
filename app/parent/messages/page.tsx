@@ -183,11 +183,11 @@ export default function ParentMessagesPage() {
           await loadMessages(adminThread.id, true) // Force refresh
         }
       } else {
-        const recipientId = 'recipientId' in otherParticipant ? otherParticipant.recipientId : otherParticipant.id
+        const recipientId = (otherParticipant as any).recipientId || otherParticipant.id
         if (!recipientId) {
           throw new Error('Recipient ID is missing')
         }
-        await api.sendMessage(recipientId, newMessage)
+        await api.sendMessage({ recipientId, body: newMessage })
         setNewMessage('')
         await loadMessages(selectedThread.id, true) // Force refresh
         await loadThreads(true) // Force refresh to update last message
@@ -237,6 +237,7 @@ export default function ParentMessagesPage() {
       // Set up for sending to admin
       setSelectedThread({
         id: 'admin',
+        threadId: 'admin',
         otherParticipant: {
           id: adminContact.recipientId,
           fullName: 'Admin',

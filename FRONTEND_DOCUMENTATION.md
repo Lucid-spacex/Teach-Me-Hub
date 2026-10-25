@@ -14,6 +14,8 @@ Teach-Me-Hub is a comprehensive tutoring platform frontend built with Next.js 16
 - **Authentication:** JWT-based with httpOnly cookies
 - **Payment Integration:** Paystack (inline popup + hosted checkout)
 - **API Communication:** Custom fetch wrapper with token refresh
+- **Theme System:** Custom theme provider with light/dark/system modes
+- **Form Handling:** React Hook Form with Zod validation
 
 ## Project Structure
 
@@ -31,7 +33,8 @@ teach-me-hub/
 │   │   ├── page.tsx             # Parent dashboard home
 │   │   ├── students/            # Student management
 │   │   │   ├── page.tsx         # Student list
-│   │   │   └── [id]/            # Individual student details
+│   │   │   ├── [id]/            # Individual student details
+│   │   │   └── [id]/performance/ # Student performance
 │   │   ├── enrollments/         # Enrollment management
 │   │   ├── payments/            # Payment history
 │   │   ├── sessions/            # Session schedule
@@ -39,6 +42,7 @@ teach-me-hub/
 │   │   ├── grades/              # Student grades
 │   │   ├── messages/            # Messaging system
 │   │   ├── complaints/          # Complaint management
+│   │   ├── pricing/             # View subject pricing
 │   │   ├── notifications/       # Notification center
 │   │   └── settings/            # Account settings
 │   ├── student/                 # Student dashboard routes
@@ -48,21 +52,41 @@ teach-me-hub/
 │   │   ├── grades/              # Grade viewing
 │   │   ├── attendance/          # Attendance records
 │   │   ├── progress-reports/    # Progress reports
-│   │   ├── messages/            # Messaging
+│   │   ├── messages/            # Messaging (info page - not functional)
+│   │   ├── my-tutors/           # View assigned tutors
+│   │   ├── performance/         # Performance overview
 │   │   ├── notifications/       # Notifications
 │   │   ├── profile/             # Student profile
 │   │   └── settings/            # Account settings
 │   ├── tutor/                   # Tutor dashboard routes
 │   │   ├── page.tsx             # Tutor dashboard home
+│   │   ├── application/        # Tutor application wizard
 │   │   ├── students/            # Assigned students
 │   │   ├── sessions/            # Session management
-│   │   └── progress-reports/    # Progress report submission
+│   │   ├── assignments/         # Assignment management
+│   │   ├── grades/              # Grade management
+│   │   ├── complaints/         # Complaint viewing
+│   │   ├── progress-reports/    # Progress report submission
+│   │   ├── notifications/       # Notifications
+│   │   └── settings/            # Account settings
 │   ├── admin/                   # Admin dashboard routes
 │   │   ├── page.tsx             # Admin dashboard home
 │   │   ├── students/            # All students management
+│   │   ├── students/[id]/       # Individual student details
+│   │   ├── students/[id]/performance/ # Student performance
 │   │   ├── tutors/              # Tutor management
+│   │   ├── tutors/[id]/         # Individual tutor details
+│   │   ├── tutors/pending/      # Pending tutor approvals
 │   │   ├── all-tutors/          # All tutors list
-│   │   └── enrollments/         # Enrollment matching
+│   │   ├── enrollments/         # Enrollment matching
+│   │   ├── parents/             # Parent directory
+│   │   ├── subjects/            # Subject & pricing management
+│   │   ├── sessions/            # Session management
+│   │   ├── transactions/        # Payment transactions
+│   │   ├── complaints/          # Complaint management
+│   │   ├── messages/            # Admin messaging
+│   │   ├── suspended/           # Suspended users
+│   │   └── settings/            # Admin settings
 │   ├── layout.tsx               # Root layout with providers
 │   └── globals.css              # Global styles
 ├── components/                   # React components
@@ -70,6 +94,7 @@ teach-me-hub/
 │   │   ├── LoginForm.tsx       # Login form with role selection
 │   │   ├── RegisterForm.tsx    # Registration form
 │   │   ├── StudentLoginForm.tsx # Student login (code + PIN)
+│   │   ├── TutorRegisterForm.tsx # Tutor-specific registration
 │   │   └── VerifyForm.tsx       # OTP verification form
 │   ├── parent/                  # Parent-specific components
 │   │   ├── AddStudentModal.tsx  # Add new student modal
@@ -83,7 +108,8 @@ teach-me-hub/
 │   │   ├── SessionList.tsx      # Session management
 │   │   ├── LogSessionModal.tsx  # Session logging modal
 │   │   ├── ProgressReportModal.tsx # Progress report creation
-│   │   └── TutorProfileModal.tsx # Profile completion
+│   │   ├── TutorProfileModal.tsx # Profile completion
+│   │   └── QuizQuestionsModal.tsx # Quiz question management
 │   ├── admin/                   # Admin-specific components
 │   │   ├── DashboardStats.tsx   # Platform statistics
 │   │   ├── PendingTutorsList.tsx # Tutor approval queue
@@ -91,6 +117,8 @@ teach-me-hub/
 │   │   ├── AllStudentsList.tsx  # All students management
 │   │   ├── UnmatchedEnrollmentsList.tsx # Enrollment matching
 │   │   └── FailedPaymentsList.tsx # Failed payments management
+│   ├── student/                 # Student-specific components
+│   │   └── QuizTakingModal.tsx  # Quiz taking interface
 │   ├── shared/                  # Shared/reusable components
 │   │   ├── BrandHeader.tsx      # Platform header with navigation
 │   │   ├── DashboardNav.tsx      # Dashboard navigation
@@ -100,12 +128,18 @@ teach-me-hub/
 │   │   ├── LoadingSpinner.tsx   # Loading indicator
 │   │   ├── EmptyState.tsx       # Empty state display
 │   │   ├── ErrorBoundary.tsx    # Error boundary component
+│   │   ├── ErrorBoundaryWrapper.tsx # Error boundary wrapper
 │   │   ├── DataTable.tsx        # Data table component
 │   │   ├── StatCard.tsx         # Statistics card
 │   │   ├── StatusBadge.tsx      # Status badges
 │   │   ├── SegmentedControl.tsx # Tab control
 │   │   ├── SkeletonLoader.tsx   # Skeleton loading states
-│   │   └── UUIDInput.tsx        # UUID input field
+│   │   ├── UUIDInput.tsx        # UUID input field
+│   │   ├── Avatar.tsx           # User avatar with initials
+│   │   ├── ProfilePictureUpload.tsx # Profile picture upload component
+│   │   ├── ThemeToggle.tsx      # Theme toggle button
+│   │   ├── AppearanceSettings.tsx # Theme settings panel
+│   │   └── AuthProvider.tsx     # Authentication provider with user sync
 │   └── ui/                      # Radix UI components
 │       ├── button.tsx           # Button component
 │       ├── card.tsx             # Card component
@@ -119,12 +153,15 @@ teach-me-hub/
 │       ├── badge.tsx            # Badge component
 │       ├── link.tsx             # Link component
 │       ├── toast.tsx            # Toast notification
-│       └── toaster.tsx          # Toast container
+│       ├── toaster.tsx          # Toast container
+│       └── password-input.tsx   # Password input with visibility toggle
 ├── lib/                         # Utility libraries
 │   ├── api.ts                   # Centralized API client
 │   ├── auth.ts                  # Authentication utilities
 │   ├── types.ts                 # TypeScript type definitions
 │   ├── paystack.ts              # Paystack integration
+│   ├── use-auth.ts              # Custom auth hook
+│   ├── theme-provider.tsx       # Theme management
 │   └── utils.ts                 # General utilities
 ├── public/                      # Static assets
 ├── .env.local                   # Environment variables
@@ -205,6 +242,32 @@ teach-me-hub/
 - Track attendance statistics
 - View student activity summaries
 
+#### Pricing Information
+- **Public pricing page:** View all available subjects and their pricing
+- **Grade band breakdown:**
+  - Preschool to Grade 1
+  - Grade 2 to Grade 4
+  - Grade 5 to Grade 8
+  - Grade 9 to Grade 12
+- **Currency display:** Both NGN and USD prices shown
+- **Subject categories:** Core, Enrichment, Test Preparation
+- **Active/inactive status:** Shows which subjects are currently available
+- **Yearly pricing:** Base prices before billing frequency application
+
+#### Complaint System
+- **File complaints:** Submit issues regarding tutors, students, or general platform matters
+- **Complaint categories:**
+  - TUTOR - Tutor-related concerns
+  - STUDENT - Student-related issues
+  - GENERAL - Billing/platform issues
+- **Complaint tracking:**
+  - View all filed complaints
+  - Status indicators (Open, Resolved)
+  - Admin reply display
+  - Resolution timestamps
+- **Modal interface:** Clean modal for filing new complaints
+- **Admin communication:** Admin can reply to complaints with resolution details
+
 ### 3. Student Dashboard
 
 #### Student Portal
@@ -220,12 +283,47 @@ teach-me-hub/
 - Track attendance records
 - Read progress reports
 
+#### Performance Overview
+- **Academic metrics dashboard:**
+  - Average grade percentage with trend
+  - Attendance rate with attendance/missed counts
+  - Assignment completion rate
+  - Quiz average percentage
+- **Subject-wise grades:** Breakdown by subject with visual progress bars
+- **Recent grades:** Latest graded assignments with dates
+- **Assignment status breakdown:**
+  - Total assignments
+  - Completed, pending, overdue, late submissions
+- **Period filtering:** Week, month, quarter, year, all time
+
+#### My Tutors
+- View all assigned tutors in card format
+- Tutor profiles with avatars and bios
+- Subject expertise display
+- Upcoming session information
+- Zoom meeting links for scheduled sessions
+- Direct messaging to tutors (starts conversation)
+- Session history by tutor
+
 #### Communication
-- Message tutors directly
-- Receive notifications
-- View academic announcements
+- **Messaging Restrictions:** As of October 12, 2026, students cannot send messages directly
+- View communication guidelines
+- Access assigned tutors to view their information
+- Parents can message tutors and admin on student's behalf
 
 ### 4. Tutor Dashboard
+
+#### Tutor Application Wizard
+- **Multi-step application process:**
+  - Step 1: About You (personal information, birthday, location)
+  - Step 2: Teaching Experience (qualifications, subjects, grade levels, experience)
+  - Step 3: Profile (bio, why teach, how heard about platform)
+  - Step 4: Documents (upload CV, certificates - max 5 files, 5MB each)
+  - Step 5: Review & Submit
+- **Auto-save functionality:** Changes are saved automatically as you progress
+- **Document validation:** PDF, DOC, DOCX, JPG, PNG accepted
+- **Status tracking:** PENDING, SUBMITTED, APPROVED, REJECTED
+- **Profile picture upload:** Separate from application documents
 
 #### Profile Management
 - Complete tutor profile with bio
@@ -250,6 +348,20 @@ teach-me-hub/
 - Provide feedback on student performance
 - Set goals and recommendations
 - Track report history
+
+#### Quiz Management
+- **Create Quiz Questions:**
+  - Add multiple-choice questions to assignments
+  - Set question text and 4 options
+  - Mark correct answer
+  - Assign points per question
+  - View existing questions
+- **Quiz Taking (Student):**
+  - Timed quiz interface (30 seconds per question)
+  - Immediate feedback on answers
+  - Progress tracking
+  - Automatic submission on timeout
+  - Points calculation and display
 
 ### 5. Admin Dashboard
 
@@ -282,6 +394,47 @@ teach-me-hub/
 - Monitor payment issues
 - Track transaction status
 - Resolve payment disputes
+
+#### Subject & Pricing Management
+- Create and manage subjects
+- Set pricing by grade band (NGN/USD)
+- Organize subjects by category (Core, Enrichment, Test Prep)
+- Update pricing in real-time
+- Delete inactive subjects
+
+#### Parent Directory
+- View all registered parents
+- Search and filter by status
+- Access detailed parent profiles
+- View children and enrollments
+- Update enrollment pricing
+- Manage parent accounts
+
+#### Transaction Management
+- View all payment transactions
+- Filter by status, currency, provider
+- Access payment details
+- Add admin notes to payments
+- Reverify pending payments with provider
+- View revenue summaries and success rates
+
+#### Complaint Management
+- View and resolve user complaints
+- Categorize complaints (Tutor, Student, General)
+- Provide resolution replies
+- Track complaint status (Open, Resolved)
+
+#### Suspended Users
+- View all suspended accounts
+- Reactivate suspended users
+- Monitor account status changes
+
+#### Admin Messaging
+- View message threads with parents/tutors
+- Send messages to users
+- Search and filter conversations
+- Monitor unread messages
+- Start new conversations
 
 ## API Integration
 
@@ -339,6 +492,58 @@ getPayments(): Promise<Payment[]>
 verifyPayment(reference: string): Promise<Payment>
 ```
 
+#### Complaint Endpoints
+```typescript
+getComplaints(): Promise<Complaint[]>
+fileComplaint(data: FileComplaintRequest): Promise<Complaint>
+resolveComplaint(complaintId: string, reply: string): Promise<Complaint>
+```
+
+#### Quiz Endpoints
+```typescript
+getQuizQuestions(assignmentId: string): Promise<QuizQuestion[]>
+createQuizQuestion(assignmentId: string, data: CreateQuizQuestionRequest): Promise<QuizQuestion>
+startQuiz(assignmentId: string): Promise<QuizAttempt>
+submitQuizAnswer(attemptId: string, data: SubmitAnswerRequest): Promise<{ isCorrect: boolean; pointsEarned: number }>
+completeQuiz(attemptId: string): Promise<QuizAttempt>
+```
+
+#### Tutor Application Endpoints
+```typescript
+getTutorApplication(): Promise<TutorApplication>
+updateTutorApplication(data: Partial<TutorApplication>): Promise<TutorApplication>
+submitTutorApplication(): Promise<TutorApplication>
+uploadTutorDocument(file: File): Promise<TutorDocument>
+getTutorDocuments(): Promise<TutorDocument[]>
+deleteTutorDocument(docId: string): Promise<{ message: string }>
+getPublicSubjects(): Promise<Subject[]>
+```
+
+#### Profile Picture Endpoints
+```typescript
+uploadProfilePicture(file: File): Promise<{ profilePictureUrl: string }>
+deleteProfilePicture(): Promise<{ message: string }>
+```
+
+#### Admin Endpoints
+```typescript
+getAdminSubjects(): Promise<Subject[]>
+createSubject(data: CreateSubjectRequest): Promise<Subject>
+updateSubject(subjectId: string, data: UpdateSubjectRequest): Promise<Subject>
+deleteSubject(subjectId: string): Promise<{ message: string }>
+updateSubjectPricing(subjectId: string, data: UpdatePricingRequest): Promise<SubjectPrice>
+getParentDirectory(filters?: ParentDirectoryFilters): Promise<ParentDirectoryResponse>
+getParentDetail(parentId: string): Promise<ParentDetailProfile>
+updateEnrollmentPricing(enrollmentId: string, data: UpdatePricingRequest): Promise<Enrollment>
+getTransactions(filters?: TransactionFilters): Promise<TransactionResponse>
+getTransactionDetail(transactionId: string): Promise<PaymentDetail>
+getTransactionSummary(): Promise<PaymentSummary>
+addPaymentNote(transactionId: string, note: string): Promise<PaymentDetail>
+reverifyPayment(transactionId: string): Promise<PaymentDetail>
+getSuspendedUsers(): Promise<User[]>
+reactivateUser(userId: string): Promise<{ message: string }>
+```
+
 #### Admin Endpoints
 ```typescript
 getPendingTutors(): Promise<PendingTutor[]>
@@ -376,6 +581,25 @@ interface PaystackCheckoutOptions {
 
 ## Component Architecture
 
+### Authentication & User Management
+
+#### AuthProvider (`components/shared/AuthProvider.tsx`)
+Global authentication provider that:
+- Wraps the entire application
+- Syncs user data with backend on mount
+- Listens for auth:user-changed custom events
+- Displays warning banners for SUSPENDED/REJECTED accounts
+- Dismissible notification system for status warnings
+- Automatic user state updates from localStorage
+
+#### useAuth Hook (`lib/use-auth.ts`)
+Custom hook for authentication management:
+- Returns user object, loading state, error state
+- Provides refreshUser() function for manual user sync
+- Exposes isSuspended and isRejected flags
+- Auto-refreshes user data on mount
+- Caches user data in localStorage for fast initial render
+
 ### Shared Components
 
 #### Modal Component
@@ -398,6 +622,43 @@ Visual status indicators with color coding.
 
 #### Stat Card
 Card component for displaying statistics with icons.
+
+#### Avatar
+User avatar component that:
+- Displays profile picture if available
+- Falls back to initials with color-coded background
+- Supports multiple sizes (sm, md, lg, xl)
+- Consistent color mapping based on name
+
+#### Profile Picture Upload
+Profile picture management component with:
+- Image preview before upload
+- Client-side validation (file type, size)
+- Automatic upload to server
+- Remove/reupload functionality
+- Loading states during upload
+
+#### Theme Toggle
+Theme switching button with:
+- Light/dark mode toggle
+- System preference support
+- Icon updates based on current theme
+- Smooth transitions
+
+#### Appearance Settings
+Theme settings panel with:
+- Light mode option
+- Dark mode option
+- System preference option
+- Visual preview of selected theme
+
+#### Auth Provider
+Authentication provider component that:
+- Syncs user data with server on app load
+- Listens for auth:user-changed events
+- Displays warning banners for suspended/rejected accounts
+- Dismissible notification system
+- Automatic user state management
 
 ### Role-Specific Components
 
@@ -451,6 +712,37 @@ module.exports = {
 - Consistent spacing and typography
 - Responsive design for mobile/desktop
 - Accessible color contrasts
+
+### Theme System
+
+The application includes a comprehensive theme system built with a custom theme provider:
+
+#### Theme Modes
+- **Light Mode:** Clean, bright interface for daytime use
+- **Dark Mode:** Dark interface for reduced eye strain (default)
+- **System Mode:** Automatically follows system preference
+
+#### Theme Provider (`lib/theme-provider.tsx`)
+- Client-side theme detection and management
+- localStorage persistence for theme preference
+- System preference detection with matchMedia
+- Automatic DOM class updates (light/dark)
+- mounted state to prevent hydration mismatch
+
+#### Theme Components
+- **ThemeToggle:** Quick toggle button in header
+- **AppearanceSettings:** Full theme panel in settings
+- Automatic theme-aware component styling
+- Smooth color transitions between themes
+
+#### Implementation
+```typescript
+const { theme, setTheme, effectiveTheme, mounted } = useTheme()
+// theme: 'light' | 'dark' | 'system'
+// setTheme: Function to change theme
+// effectiveTheme: The actual applied theme (resolves 'system')
+// mounted: Boolean to prevent hydration issues
+```
 
 ## Environment Configuration
 
@@ -526,6 +818,19 @@ NEXT_PUBLIC_API_URL=http://localhost:3000/api
 - Automatic token refresh
 - Rate limit handling
 - Error retry logic
+- localStorage caching for message data
+- Polling intervals for real-time updates
+
+### Image Optimization
+- Next.js Image component for optimized images
+- Responsive image loading
+- Blur placeholders during load
+
+### API Optimization
+- Request deduplication
+- Automatic token refresh
+- Rate limit handling
+- Error retry logic
 
 ## Security Features
 
@@ -534,6 +839,16 @@ NEXT_PUBLIC_API_URL=http://localhost:3000/api
 - httpOnly cookies for token storage
 - Automatic token refresh
 - Secure route protection
+- User status verification (SUSPENDED/REJECTED detection)
+- Warning banners for restricted accounts
+
+### Data Protection
+- Role-based access control
+- Input validation with Zod
+- XSS protection with React
+- CSRF protection
+- File upload validation (type, size)
+- Client-side image validation
 
 ### Data Protection
 - Role-based access control
@@ -546,6 +861,65 @@ NEXT_PUBLIC_API_URL=http://localhost:3000/api
 - Secure callback handling
 - Payment verification with backend
 - No sensitive data in frontend
+
+## Messaging System
+
+### Overview
+The platform includes a messaging system for communication between users:
+
+### Role-Based Messaging Access
+
+#### Parent Messaging
+- **Full access:** Can message admin and tutors
+- **Thread-based:** Conversations organized in threads
+- **Real-time updates:** Polling for new messages every 2 minutes
+- **Caching:** localStorage caching to reduce API calls
+- **Admin contact:** Special endpoint to contact administration
+- **Message threading:** View conversation history with participants
+
+#### Admin Messaging
+- **Multi-user support:** Can message parents and tutors
+- **Search & filter:** Find conversations by name
+- **Unread filtering:** View only unread messages
+- **New conversation:** Start new threads with any user
+- **User directory:** Load parents and tutors for new messages
+- **Read receipts:** Track message read status
+
+#### Student Messaging
+- **Restricted:** Students cannot send messages (as of October 12, 2026)
+- **Information page:** Displays guidelines for communication
+- **Parent coordination:** Directs students to use parents for communication
+- **Tutor viewing:** Can view assigned tutors but not message them
+
+#### Tutor Messaging
+- **Student contact:** Can message assigned students
+- **Thread-based:** Organized conversations
+- **Profile linking:** Linked to tutor profiles and student enrollments
+
+### Messaging Features
+
+#### Message Threads
+- Participant information display
+- Last message preview
+- Unread count badges
+- Thread search functionality
+- Timestamp tracking
+
+#### Message Display
+- Sent/received message styling
+- Timestamp display
+- Sender identification
+- Message content rendering
+- Scrollable message history
+
+#### Performance Optimizations
+- **Caching strategy:**
+  - Threads cached for 2 minutes
+  - Messages cached for 1 minute
+  - Fallback to cache on API errors
+- **Polling:** Auto-refresh every 2 minutes
+- **Force refresh:** Manual refresh buttons available
+- **Batch loading:** Load threads and messages in parallel where possible
 
 ## Browser Support
 
@@ -670,6 +1044,227 @@ For issues or questions:
 ## License
 
 ISC License - See LICENSE file for details
+
+## Recent Feature Additions
+
+### Theme System (Late 2026)
+- Implemented comprehensive theme provider with light/dark/system modes
+- Added ThemeToggle component for quick theme switching
+- Created AppearanceSettings panel in settings pages
+- Theme persistence in localStorage
+- System preference detection and automatic switching
+- Prevents hydration mismatch with mounted state
+
+### Tutor Application System (October 2026)
+- Complete multi-step tutor application wizard
+- 5-step process: About You, Teaching, Profile, Documents, Review
+- Auto-save functionality with debounced updates
+- Document upload system (max 5 files, 5MB each)
+- Profile picture upload separate from documents
+- Support for rejected tutors to view application status
+- File validation (PDF, DOC, DOCX, JPG, PNG, GIF, WebP)
+- Subject selection grouped by category
+- Grade level selection with predefined options
+- Years of experience tracking
+- Bio and motivation sections with word counts
+
+### Quiz System (October 2026)
+- **Tutor-side:**
+  - QuizQuestionsModal for creating quiz questions
+  - Add multiple-choice questions to assignments
+  - Set question text, 4 options, correct answer, points
+  - View existing questions in enrollment
+  - Mark correct answer with visual indicator
+- **Student-side:**
+  - QuizTakingModal for taking quizzes
+  - Timed interface (30 seconds per question)
+  - Immediate feedback on answer submission
+  - Progress bar showing quiz completion
+  - Points earned display per question
+  - Auto-submit on timeout
+  - Navigate between questions
+
+### Enhanced Admin Features (October 2026)
+- **Subjects & Pricing Management:**
+  - Create/edit/delete subjects
+  - Set pricing by grade band (4 bands)
+  - NGN and USD pricing
+  - Subject categories (Core, Enrichment, Test Prep)
+  - Active/inactive status toggle
+  - Real-time price updates
+- **Parent Directory:**
+  - Search and filter parents
+  - View detailed parent profiles
+  - Children list with enrollments
+  - Update enrollment pricing per enrollment
+  - Payment history tracking
+  - Complaint count tracking
+- **Transaction Management:**
+  - View all payment transactions
+  - Filter by status, currency, provider
+  - Payment detail view with enrollment info
+  - Add admin notes to payments
+  - Reverify pending payments with provider
+  - Revenue summary (NGN/USD)
+  - Success rate calculation
+  - Pagination support
+- **Complaint Management:**
+  - View all user complaints
+  - Categorize by type (Tutor, Student, General)
+  - Resolve with admin reply
+  - Status tracking (Open, Resolved)
+- **Suspended Users:**
+  - View all suspended accounts
+  - Reactivate users
+  - Filter by role
+- **Enhanced Messaging:**
+  - Thread-based conversation view
+  - Search by participant name
+  - Unread-only filter
+  - Start new conversations
+  - User directory for messaging
+  - Polling for new messages
+
+### Student Performance Dashboard (October 2026)
+- Comprehensive performance overview page
+- Key metrics with trend indicators:
+  - Average grade percentage
+  - Attendance rate
+  - Assignment completion rate
+  - Quiz average
+- Subject-wise grade breakdown
+- Recent grades list with dates
+- Assignment status breakdown (total, completed, pending, overdue, late)
+- Period filtering (week, month, quarter, year, all time)
+- Visual progress bars and icons
+
+### Student "My Tutors" Page (October 2026)
+- Card-based tutor display
+- Avatar with initials fallback
+- Tutor bio and subject expertise
+- Upcoming session information
+- Zoom meeting links for scheduled sessions
+- Direct messaging to tutors
+- Session history modal per tutor
+- Filter by enrollment
+
+### Parent Complaint System (October 2026)
+- File complaints regarding tutors, students, or platform
+- Modal interface for complaint submission
+- Category selection (Tutor, Student, General)
+- Description field for details
+- View all filed complaints
+- Status indicators (Open, Resolved)
+- Admin reply display with timestamps
+- Resolution notifications
+
+### Parent Pricing Page (October 2026)
+- Public pricing information for all subjects
+- Grade band breakdown with color coding
+- NGN and USD pricing display
+- Subject category grouping
+- Active/inactive status badges
+- Explanatory banner about pricing structure
+
+### Messaging System Updates (October 2026)
+- **Parent Messaging:**
+  - Full messaging with admin and tutors
+  - Thread-based conversations
+  - Caching strategy to reduce API calls
+  - Admin contact endpoint
+  - Auto-refresh every 2 minutes
+- **Admin Messaging:**
+  - Multi-user support (parents and tutors)
+  - Search and filter conversations
+  - Unread message filtering
+  - Start new conversations with any user
+  - User directory integration
+- **Student Messaging:**
+  - Restricted access (informational page only)
+  - Communication guidelines displayed
+  - Redirects to "My Tutors" page
+  - Explains parent coordination requirement
+- **Performance Optimizations:**
+  - localStorage caching (2min threads, 1min messages)
+  - Fallback to cache on API errors
+  - Polling intervals for real-time updates
+  - Force refresh buttons
+
+### Profile Picture System (October 2026)
+- ProfilePictureUpload component
+- Client-side validation (type, size)
+- Image preview before upload
+- Automatic upload to server
+- Remove/reupload functionality
+- Avatar component with initials fallback
+- Color-coded backgrounds based on name
+- Multiple size variants (sm, md, lg, xl)
+- Consistent avatar display across platform
+
+### UI Component Enhancements (October 2026)
+- **Password Input:**
+  - Show/hide password toggle
+  - Eye/EyeOff icons
+  - Integrated with existing Input component
+- **Error Boundary Wrapper:**
+  - Simplified wrapper for easy integration
+  - Catches React errors gracefully
+- **Enhanced Status Badges:**
+  - Additional status types
+  - Better visual feedback
+- **Improved Loading States:**
+  - Consistent LoadingSpinner usage
+  - Better loading messages
+
+### API Enhancements (October 2026)
+- **Profile Picture Endpoints:**
+  - uploadProfilePicture(file)
+  - deleteProfilePicture()
+- **Quiz Endpoints:**
+  - getQuizQuestions(assignmentId)
+  - createQuizQuestion(assignmentId, data)
+  - startQuiz(assignmentId)
+  - submitQuizAnswer(attemptId, data)
+  - completeQuiz(attemptId)
+- **Tutor Application Endpoints:**
+  - getTutorApplication()
+  - updateTutorApplication(data)
+  - submitTutorApplication()
+  - uploadTutorDocument(file)
+  - getTutorDocuments()
+  - deleteTutorDocument(docId)
+  - getPublicSubjects()
+- **Complaint Endpoints:**
+  - getComplaints()
+  - fileComplaint(data)
+  - resolveComplaint(complaintId, reply)
+- **Admin Endpoints:**
+  - getAdminSubjects()
+  - createSubject(data)
+  - updateSubject(subjectId, data)
+  - deleteSubject(subjectId)
+  - updateSubjectPricing(subjectId, data)
+  - getParentDirectory(filters)
+  - getParentDetail(parentId)
+  - updateEnrollmentPricing(enrollmentId, data)
+  - getTransactions(filters)
+  - getTransactionDetail(transactionId)
+  - getTransactionSummary()
+  - addPaymentNote(transactionId, note)
+  - reverifyPayment(transactionId)
+  - getSuspendedUsers()
+  - reactivateUser(userId)
+- **Performance Endpoints:**
+  - getStudentPerformance(period)
+
+### Authentication Improvements (October 2026)
+- AuthProvider with automatic user sync
+- useAuth hook for authentication state
+- Suspended/Rejected account detection
+- Warning banners for restricted accounts
+- Custom event system for user changes
+- Fast initial render from localStorage
+- Server reconciliation on mount
 
 ## Credits
 

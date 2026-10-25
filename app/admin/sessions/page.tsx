@@ -224,20 +224,14 @@ export default function AdminSessionsPage() {
                               </span>
                             </div>
                           )}
-                          {session.zoomMeetingId && (
-                            <div className="flex items-center gap-2 text-sm">
-                              <Video className="h-4 w-4 text-brand-gold" />
-                              <span className="text-white">Zoom Meeting: {session.zoomMeetingId}</span>
-                            </div>
-                          )}
-                          {session.zoomLink && (
+                          {session.meetLink && (
                             <a
-                              href={session.zoomLink}
+                              href={session.meetLink}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-sm text-brand-gold hover:underline"
                             >
-                              Open Zoom Link
+                              Open Google Meet Link
                             </a>
                           )}
                         </div>
