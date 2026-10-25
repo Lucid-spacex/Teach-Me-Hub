@@ -202,6 +202,7 @@
 - [x] Add recording button for completed sessions
 - [x] Call recording endpoint for completed sessions
 - [x] Handle 403/404 gracefully for recordings
+- [x] Remove all Zoom wording, use meetLink
 - [ ] Keep pricing page
 - [ ] Make "price updated" notifications link to pricing page
 - [ ] Ensure students never see prices
@@ -216,8 +217,8 @@
 - [x] Update grades page to show only APPROVED grades
 - [x] Show grade breakdown (components, weights, percentages)
 - [x] Never show overrideReason to students
-- [ ] Update schedule to use Google Meet
-- [ ] Update next class to use Google Meet
+- [x] Update schedule to use Google Meet
+- [x] Update next class to use Google Meet
 - [ ] Keep quiz taking with 30-second timer
 - [ ] Never show or request correct answers in quiz
 - [ ] Show "Quiz submitted. Your tutor will review it." after completion
@@ -230,6 +231,7 @@
 
 ## Part 7: Cleanup of Outdated UI and Docs
 - [x] Remove Zoom wording from pages (admin/sessions, parent/students/[id], student/my-tutors, student/schedule, tutor/students/[id])
+- [x] Remove all Zoom wording, use meetLink
 - [ ] Remove student or tutor messaging
 - [ ] Remove parent to tutor messaging
 - [ ] Remove tutor complaints

@@ -221,9 +221,9 @@ export default function StudentDashboard() {
               </p>
             </div>
 
-            {nextClass.session.zoomLink ? (
+            {nextClass.session.meetLink ? (
               <a
-                href={nextClass.session.zoomLink}
+                href={nextClass.session.meetLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-primary hover:bg-primary/90 text-brand-dark font-bold text-sm shadow-[0_4px_20px_rgba(212,160,23,0.3)] transition-all transform active:scale-95"
