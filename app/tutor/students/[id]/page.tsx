@@ -16,6 +16,8 @@ import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
 import { useToast } from '@/components/ui/use-toast'
 import { api } from '@/lib/api'
 import { TutorStudent, Session, ProgressReport, Grade, Enrollment } from '@/lib/types'
+import { ScoredItemsTab } from '@/components/tutor/ScoredItemsTab'
+import { SegmentedControl } from '@/components/shared/SegmentedControl'
 import {
   ArrowLeft,
   Calendar,
@@ -35,6 +37,7 @@ import {
   Trash2,
   Loader2,
   TrendingUp,
+  Star,
 } from 'lucide-react'
 
 interface PageProps {
@@ -53,6 +56,7 @@ export default function TutorStudentDetailPage({ params }: PageProps) {
   const [progressReports, setProgressReports] = useState<ProgressReport[]>([])
   const [grades, setGrades] = useState<Grade[]>([])
   const [loading, setLoading] = useState(true)
+  const [activeTab, setActiveTab] = useState('sessions')
 
   // Scheduling modal state
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false)
@@ -176,7 +180,7 @@ export default function TutorStudentDetailPage({ params }: PageProps) {
 
       toast({
         title: 'Session Scheduled',
-        description: 'New session scheduled successfully with Zoom meeting details.',
+        description: 'New session scheduled successfully with Google Meet link.',
       })
 
       setScheduleModalOpen(false)
@@ -452,176 +456,205 @@ export default function TutorStudentDetailPage({ params }: PageProps) {
           ))}
         </div>
 
-        {/* Upcoming Sessions Section with Reschedule */}
-        <Card className="bg-card border-brand-gold/30">
-          <CardHeader className="pb-3 border-b border-border/40">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-lg font-bold text-foreground flex items-center gap-2">
-                  <Calendar className="h-5 w-5 text-brand-gold" />
-                  Upcoming Sessions ({upcomingSessions.length})
-                </CardTitle>
-                <CardDescription>
-                  Sessions scheduled with Zoom meetings. You can reschedule or adjust timings anytime.
-                </CardDescription>
-              </div>
-              <Button
-                onClick={() => setScheduleModalOpen(true)}
-                size="sm"
-                className="bg-brand-gold hover:bg-brand-goldLight text-brand-dark font-bold text-xs gap-1.5"
-              >
-                <Plus className="h-3.5 w-3.5" />
-                New Session
-              </Button>
-            </div>
-          </CardHeader>
+        {/* Tabbed Interface */}
+        <div className="space-y-4">
+          <SegmentedControl
+            options={[
+              { value: 'sessions', label: 'Sessions' },
+              { value: 'scored-items', label: 'Scored Items' },
+            ]}
+            value={activeTab}
+            onChange={setActiveTab}
+            className="w-full sm:w-auto"
+          />
 
-          <CardContent className="pt-5">
-            {upcomingSessions.length === 0 ? (
-              <div className="py-12 text-center text-muted-foreground space-y-3">
-                <CalendarDays className="h-10 w-10 text-muted-foreground/40 mx-auto" />
-                <p className="text-sm font-medium">No upcoming sessions scheduled</p>
-                <Button
-                  onClick={() => setScheduleModalOpen(true)}
-                  variant="outline"
-                  size="sm"
-                  className="border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10"
-                >
-                  Schedule First Session
-                </Button>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {upcomingSessions.map(session => (
-                  <div
-                    key={session.id}
-                    className="p-4 rounded-xl border border-brand-gold/25 bg-brand-gold/[0.02] flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-                  >
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold text-foreground text-sm">
-                          {new Date(session.scheduledAt).toLocaleDateString(undefined, {
-                            weekday: 'short',
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric',
-                          })}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          at {new Date(session.scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </span>
-                        <StatusBadge status={session.status} />
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        Duration: {session.durationMinutes} minutes
-                        {session.homeworkAssigned && (
-                          <span className="ml-3 text-brand-gold font-medium">
-                            • Homework: {session.homeworkAssigned}
-                          </span>
-                        )}
-                      </p>
+          {activeTab === 'sessions' && (
+            <>
+              {/* Upcoming Sessions Section with Reschedule */}
+              <Card className="bg-card border-brand-gold/30">
+                <CardHeader className="pb-3 border-b border-border/40">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-lg font-bold text-foreground flex items-center gap-2">
+                        <Calendar className="h-5 w-5 text-brand-gold" />
+                        Upcoming Sessions ({upcomingSessions.length})
+                      </CardTitle>
+                      <CardDescription>
+                        Sessions scheduled with Google Meet. You can reschedule or adjust timings anytime.
+                      </CardDescription>
                     </div>
+                    <Button
+                      onClick={() => setScheduleModalOpen(true)}
+                      size="sm"
+                      className="bg-brand-gold hover:bg-brand-goldLight text-brand-dark font-bold text-xs gap-1.5"
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                      New Session
+                    </Button>
+                  </div>
+                </CardHeader>
 
-                    <div className="flex flex-wrap items-center gap-2">
-                      {session.zoomLink && (
-                        <a
-                          href={session.zoomLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-gold/15 text-brand-gold border border-brand-gold/30 hover:bg-brand-gold/25 font-semibold text-xs transition-colors"
-                        >
-                          <Video className="h-3.5 w-3.5" />
-                          Start Zoom
-                        </a>
-                      )}
+                <CardContent className="pt-5">
+                  {upcomingSessions.length === 0 ? (
+                    <div className="py-12 text-center text-muted-foreground space-y-3">
+                      <CalendarDays className="h-10 w-10 text-muted-foreground/40 mx-auto" />
+                      <p className="text-sm font-medium">No upcoming sessions scheduled</p>
                       <Button
+                        onClick={() => setScheduleModalOpen(true)}
                         variant="outline"
                         size="sm"
-                        onClick={() => openRescheduleModal(session)}
-                        className="text-xs h-8 border-border hover:bg-accent"
+                        className="border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10"
                       >
-                        <Clock className="h-3.5 w-3.5 mr-1 text-brand-gold" />
-                        Reschedule
+                        Schedule First Session
                       </Button>
-                      {/* Only show delete for tutor-created sessions */}
-                      {session.createdBy !== 'ADMIN' && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDeleteSession(session.id)}
-                          disabled={deletingSession === session.id}
-                          className="text-xs h-8 text-destructive hover:text-destructive hover:bg-destructive/10"
-                        >
-                          {deletingSession === session.id ? (
-                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                          ) : (
-                            <Trash2 className="h-3.5 w-3.5" />
-                          )}
-                        </Button>
-                      )}
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                  ) : (
+                    <div className="space-y-3">
+                      {upcomingSessions.map(session => (
+                        <div
+                          key={session.id}
+                          className="p-4 rounded-xl border border-brand-gold/25 bg-brand-gold/[0.02] flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                        >
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-2">
+                              <span className="font-semibold text-foreground text-sm">
+                                {new Date(session.scheduledAt).toLocaleDateString(undefined, {
+                                  weekday: 'short',
+                                  year: 'numeric',
+                                  month: 'short',
+                                  day: 'numeric',
+                                })}
+                              </span>
+                              <span className="text-xs text-muted-foreground">
+                                at {new Date(session.scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              </span>
+                              <StatusBadge status={session.status} />
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                              Duration: {session.durationMinutes} minutes
+                              {session.homeworkAssigned && (
+                                <span className="ml-3 text-brand-gold font-medium">
+                                  • Homework: {session.homeworkAssigned}
+                                </span>
+                              )}
+                            </p>
+                          </div>
 
-        {/* Past Sessions History */}
-        <Card className="bg-card border-border/40">
-          <CardHeader className="pb-3 border-b border-border/40">
-            <CardTitle className="text-lg font-bold text-foreground flex items-center gap-2">
-              <Clock className="h-5 w-5 text-muted-foreground" />
-              Past &amp; Completed Sessions ({pastSessions.length})
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-5">
-            {pastSessions.length === 0 ? (
-              <div className="py-8 text-center text-muted-foreground text-sm">
-                No past sessions recorded yet for this student.
-              </div>
+                          <div className="flex flex-wrap items-center gap-2">
+                            {session.meetLink && (
+                              <a
+                                href={session.meetLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-gold/15 text-brand-gold border border-brand-gold/30 hover:bg-brand-gold/25 font-semibold text-xs transition-colors"
+                              >
+                                <Video className="h-3.5 w-3.5" />
+                                Start Google Meet
+                              </a>
+                            )}
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => openRescheduleModal(session)}
+                              className="text-xs h-8 border-border hover:bg-accent"
+                            >
+                              <Clock className="h-3.5 w-3.5 mr-1 text-brand-gold" />
+                              Reschedule
+                            </Button>
+                            {/* Only show delete for tutor-created sessions */}
+                            {session.createdBy !== 'ADMIN' && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleDeleteSession(session.id)}
+                                disabled={deletingSession === session.id}
+                                className="text-xs h-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                              >
+                                {deletingSession === session.id ? (
+                                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                ) : (
+                                  <Trash2 className="h-3.5 w-3.5" />
+                                )}
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Past Sessions History */}
+              <Card className="bg-card border-border/40">
+                <CardHeader className="pb-3 border-b border-border/40">
+                  <CardTitle className="text-lg font-bold text-foreground flex items-center gap-2">
+                    <Clock className="h-5 w-5 text-muted-foreground" />
+                    Past &amp; Completed Sessions ({pastSessions.length})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-5">
+                  {pastSessions.length === 0 ? (
+                    <div className="py-8 text-center text-muted-foreground text-sm">
+                      No past sessions recorded yet for this student.
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {pastSessions.map(session => (
+                        <div
+                          key={session.id}
+                          className="p-3.5 rounded-lg border border-border/50 bg-card flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
+                        >
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-semibold text-foreground">
+                                {new Date(session.scheduledAt).toLocaleDateString()}
+                              </span>
+                              <span className="text-muted-foreground">
+                                {new Date(session.scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} ({session.durationMinutes} mins)
+                              </span>
+                              <StatusBadge status={session.status} />
+                            </div>
+                            {session.tutorNotes && (
+                              <p className="text-muted-foreground mt-1 italic">
+                                Notes: {session.tutorNotes}
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            {session.recordingLink && (
+                              <a
+                                href={session.recordingLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-xs text-brand-gold hover:underline"
+                              >
+                                <ExternalLink className="h-3 w-3" /> Recording
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </>
+          )}
+
+          {activeTab === 'scored-items' && (
+            allEnrollments.length > 0 ? (
+              <ScoredItemsTab studentId={studentId} enrollmentId={allEnrollments[0]?.id} />
             ) : (
-              <div className="space-y-3">
-                {pastSessions.map(session => (
-                  <div
-                    key={session.id}
-                    className="p-3.5 rounded-lg border border-border/50 bg-card flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold text-foreground">
-                          {new Date(session.scheduledAt).toLocaleDateString()}
-                        </span>
-                        <span className="text-muted-foreground">
-                          {new Date(session.scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} ({session.durationMinutes} mins)
-                        </span>
-                        <StatusBadge status={session.status} />
-                      </div>
-                      {session.tutorNotes && (
-                        <p className="text-muted-foreground mt-1 italic">
-                          Notes: {session.tutorNotes}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      {session.recordingLink && (
-                        <a
-                          href={session.recordingLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-xs text-brand-gold hover:underline"
-                        >
-                          <ExternalLink className="h-3 w-3" /> Recording
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+              <Card className="bg-card border-border/40">
+                <CardContent className="py-12 text-center text-muted-foreground">
+                  <p className="text-sm">No enrollments found for this student.</p>
+                </CardContent>
+              </Card>
+            )
+          )}
+        </div>
       </div>
 
       {/* Schedule New Session Modal */}
@@ -629,7 +662,7 @@ export default function TutorStudentDetailPage({ params }: PageProps) {
         open={scheduleModalOpen}
         onOpenChange={setScheduleModalOpen}
         title="Schedule New Session"
-        description="Select the subject and scheduled time. Zoom meeting link will be automatically generated."
+        description="Select the subject and scheduled time. Google Meet link will be automatically generated."
       >
         <form onSubmit={handleScheduleSession} className="space-y-4 pt-2">
           <div className="space-y-2">

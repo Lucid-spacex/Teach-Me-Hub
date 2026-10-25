@@ -17,9 +17,10 @@ interface LogSessionModalProps {
   onOpenChange: (open: boolean) => void
   session: Session | null
   onSuccess: () => void
+  initialReschedule?: boolean
 }
 
-export function LogSessionModal({ open, onOpenChange, session, onSuccess }: LogSessionModalProps) {
+export function LogSessionModal({ open, onOpenChange, session, onSuccess, initialReschedule = false }: LogSessionModalProps) {
   const { toast } = useToast()
   const [formData, setFormData] = useState<UpdateSessionRequest>({
     status: 'COMPLETED',
@@ -31,7 +32,7 @@ export function LogSessionModal({ open, onOpenChange, session, onSuccess }: LogS
     durationMinutes: 60,
   })
   const [loading, setLoading] = useState(false)
-  const [isRescheduling, setIsRescheduling] = useState(false)
+  const [isRescheduling, setIsRescheduling] = useState(initialReschedule)
 
   useEffect(() => {
     if (session) {
@@ -49,6 +50,10 @@ export function LogSessionModal({ open, onOpenChange, session, onSuccess }: LogS
     }
   }, [session])
 
+  useEffect(() => {
+    setIsRescheduling(initialReschedule)
+  }, [initialReschedule])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!session) return
@@ -57,6 +62,10 @@ export function LogSessionModal({ open, onOpenChange, session, onSuccess }: LogS
 
     try {
       if (isRescheduling) {
+        // Show backend error if not authorized
+        if (session.createdBy !== 'TUTOR') {
+          throw new Error('You can only reschedule sessions you created')
+        }
         await api.rescheduleTutorSession(session.id, {
           scheduledAt: new Date(rescheduleData.scheduledAt).toISOString(),
           durationMinutes: rescheduleData.durationMinutes,
@@ -165,44 +174,52 @@ export function LogSessionModal({ open, onOpenChange, session, onSuccess }: LogS
           </>
         ) : (
           <>
-            <div className="space-y-2">
-              <Label htmlFor="status">Status</Label>
-              <Select
-                value={formData.status}
-                onValueChange={(value) => setFormData({ ...formData, status: value as any })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="COMPLETED">Completed</SelectItem>
-                  <SelectItem value="MISSED">Missed</SelectItem>
-                  <SelectItem value="CANCELLED">Cancelled</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            {session?.status === 'COMPLETED' ? (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="status">Status</Label>
+                  <Select
+                    value={formData.status}
+                    onValueChange={(value) => setFormData({ ...formData, status: value as any })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="COMPLETED">Completed</SelectItem>
+                      <SelectItem value="MISSED">Missed</SelectItem>
+                      <SelectItem value="CANCELLED">Cancelled</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="tutorNotes">Tutor Notes</Label>
-              <Textarea
-                id="tutorNotes"
-                value={formData.tutorNotes}
-                onChange={(e) => setFormData({ ...formData, tutorNotes: e.target.value })}
-                placeholder="Notes about the session..."
-                rows={4}
-              />
-            </div>
+                <div className="space-y-2">
+                  <Label htmlFor="tutorNotes">Tutor Notes</Label>
+                  <Textarea
+                    id="tutorNotes"
+                    value={formData.tutorNotes}
+                    onChange={(e) => setFormData({ ...formData, tutorNotes: e.target.value })}
+                    placeholder="Notes about the session..."
+                    rows={4}
+                  />
+                </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="homework">Homework Assigned</Label>
-              <Textarea
-                id="homework"
-                value={formData.homeworkAssigned}
-                onChange={(e) => setFormData({ ...formData, homeworkAssigned: e.target.value })}
-                placeholder="Homework for the student..."
-                rows={3}
-              />
-            </div>
+                <div className="space-y-2">
+                  <Label htmlFor="homework">Homework Assigned</Label>
+                  <Textarea
+                    id="homework"
+                    value={formData.homeworkAssigned}
+                    onChange={(e) => setFormData({ ...formData, homeworkAssigned: e.target.value })}
+                    placeholder="Homework for the student..."
+                    rows={3}
+                  />
+                </div>
+              </>
+            ) : (
+              <div className="text-sm text-muted-foreground">
+                Attendance can only be marked for completed sessions. This session is currently {session?.status}.
+              </div>
+            )}
           </>
         )}
       </form>

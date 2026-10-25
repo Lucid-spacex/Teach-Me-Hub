@@ -1,32 +1,53 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { api } from '@/lib/api'
 import { Session } from '@/lib/types'
 import { DataTable } from '@/components/shared/DataTable'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { StatusBadge } from '@/components/shared/StatusBadge'
-import { Video, Edit, Clock, Calendar, Trash2, Loader2 } from 'lucide-react'
+import { Video, Edit, Clock, Calendar, Trash2, Loader2, Plus, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { LogSessionModal } from './LogSessionModal'
+import { CreateSessionModal } from './CreateSessionModal'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useToast } from '@/components/ui/use-toast'
+import { Badge } from '@/components/ui/badge'
 
 interface TutorSessionListProps {
   refreshTrigger?: number
 }
 
-export function TutorSessionList({ refreshTrigger }: TutorSessionListProps) {
+function TutorSessionListContent({ refreshTrigger }: TutorSessionListProps) {
+  const router = useRouter()
+  const searchParams = useSearchParams()
   const { toast } = useToast()
   const [sessions, setSessions] = useState<Session[]>([])
   const [loading, setLoading] = useState(true)
   const [logModalOpen, setLogModalOpen] = useState(false)
+  const [createModalOpen, setCreateModalOpen] = useState(false)
   const [selectedSession, setSelectedSession] = useState<Session | null>(null)
   const [deletingSession, setDeletingSession] = useState<string | null>(null)
+  const [prefillData, setPrefillData] = useState<any>(null)
 
   useEffect(() => {
     loadSessions()
-  }, [refreshTrigger])
+
+    // Check for prefill data from URL
+    const prefill = searchParams.get('prefill')
+    if (prefill) {
+      try {
+        const data = JSON.parse(prefill)
+        setPrefillData(data)
+        setCreateModalOpen(true)
+        // Clear URL params
+        router.replace('/tutor/sessions')
+      } catch (err) {
+        console.error('Failed to parse prefill data:', err)
+      }
+    }
+  }, [refreshTrigger, searchParams, router])
 
   const loadSessions = async () => {
     try {
@@ -39,9 +60,13 @@ export function TutorSessionList({ refreshTrigger }: TutorSessionListProps) {
     }
   }
 
-  const openLogModal = (session: Session) => {
+  const openLogModal = (session: Session, isReschedule = false) => {
     setSelectedSession(session)
     setLogModalOpen(true)
+    // We'll pass the reschedule mode through the modal state
+    if (isReschedule) {
+      // The modal will detect this and set isRescheduling state
+    }
   }
 
   const handleRefresh = () => {
@@ -100,7 +125,15 @@ export function TutorSessionList({ refreshTrigger }: TutorSessionListProps) {
       key: 'status',
       header: 'Status',
       cell: (session: Session) => (
-        <StatusBadge status={session.status} />
+        <div className="flex items-center gap-2">
+          <StatusBadge status={session.status} />
+          {session.needsReschedule && (
+            <Badge variant="destructive" className="text-xs">
+              <AlertTriangle className="h-3 w-3 mr-1" />
+              Needs Reschedule
+            </Badge>
+          )}
+        </div>
       ),
     },
     {
@@ -115,15 +148,15 @@ export function TutorSessionList({ refreshTrigger }: TutorSessionListProps) {
       header: 'Actions',
       cell: (session: Session) => (
         <div className="flex gap-2">
-          {session.zoomLink && session.status === 'SCHEDULED' && (
+          {session.meetLink && session.status === 'SCHEDULED' && (
             <Button variant="outline" size="sm" asChild className="border-brand-gold text-brand-gold hover:bg-brand-gold/10">
-              <a href={session.zoomLink} target="_blank" rel="noopener noreferrer" className="gap-2">
+              <a href={session.meetLink} target="_blank" rel="noopener noreferrer" className="gap-2">
                 <Video className="h-4 w-4" />
                 Join
               </a>
             </Button>
           )}
-          {session.status === 'SCHEDULED' && (
+          {session.status === 'COMPLETED' && (
             <Button
               variant="outline"
               size="sm"
@@ -131,24 +164,46 @@ export function TutorSessionList({ refreshTrigger }: TutorSessionListProps) {
               className="gap-2 border-brand-gold text-brand-gold hover:bg-brand-gold/10"
             >
               <Edit className="h-4 w-4" />
-              Log Session
+              Mark Attendance
             </Button>
           )}
           {session.createdBy === 'TUTOR' && session.status === 'SCHEDULED' && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handleDeleteSession(session.id)}
-              className="gap-2 text-destructive hover:text-destructive hover:bg-destructive/10"
-              disabled={deletingSession === session.id}
-            >
-              {deletingSession === session.id ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Trash2 className="h-4 w-4" />
-              )}
-              Delete
-            </Button>
+            <>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setSelectedSession(session)
+                  // Set a flag to indicate reschedule mode
+                  const updatedSession = { ...session, _rescheduleMode: true }
+                  setSelectedSession(updatedSession as any)
+                  setLogModalOpen(true)
+                }}
+                className="gap-2 text-brand-gold hover:bg-brand-gold/10"
+              >
+                <Edit className="h-4 w-4" />
+                Reschedule
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleDeleteSession(session.id)}
+                className="gap-2 text-destructive hover:text-destructive hover:bg-destructive/10"
+                disabled={deletingSession === session.id}
+              >
+                {deletingSession === session.id ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Trash2 className="h-4 w-4" />
+                )}
+                Delete
+              </Button>
+            </>
+          )}
+          {session.createdBy !== 'TUTOR' && session.status === 'SCHEDULED' && (
+            <span className="text-xs text-muted-foreground italic">
+              Session created by admin
+            </span>
           )}
         </div>
       ),
@@ -159,10 +214,20 @@ export function TutorSessionList({ refreshTrigger }: TutorSessionListProps) {
     <>
       <Card className="bg-card border-brand-gold/30">
         <CardHeader>
-          <CardTitle className="text-foreground flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-brand-gold" />
-            My Sessions
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-foreground flex items-center gap-2">
+              <Calendar className="h-5 w-5 text-brand-gold" />
+              My Sessions
+            </CardTitle>
+            <Button
+              size="sm"
+              onClick={() => setCreateModalOpen(true)}
+              className="bg-brand-gold hover:bg-brand-goldLight text-brand-dark gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              Create Session
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           {upcomingSessions.length > 0 && (
@@ -214,10 +279,28 @@ export function TutorSessionList({ refreshTrigger }: TutorSessionListProps) {
 
       <LogSessionModal
         open={logModalOpen}
-        onOpenChange={setLogModalOpen}
+        onOpenChange={(open) => {
+          setLogModalOpen(open)
+          if (!open) setSelectedSession(null)
+        }}
         session={selectedSession}
+        onSuccess={handleRefresh}
+        initialReschedule={false}
+      />
+      <CreateSessionModal
+        open={createModalOpen}
+        onOpenChange={setCreateModalOpen}
+        prefillData={prefillData}
         onSuccess={handleRefresh}
       />
     </>
+  )
+}
+
+export function TutorSessionList({ refreshTrigger }: TutorSessionListProps) {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-brand-gold" /></div>}>
+      <TutorSessionListContent refreshTrigger={refreshTrigger} />
+    </Suspense>
   )
 }

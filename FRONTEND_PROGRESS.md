@@ -1,0 +1,271 @@
+# Frontend Progress Checklist
+
+## Setup
+- [x] Create FRONTEND_PROGRESS.md checklist
+- [x] Set .env.local to NEXT_PUBLIC_API_URL=http://localhost:3001/api
+- [x] Fix TypeScript errors (types compatibility, optional chaining, type assertions)
+- [x] Verify build passes
+
+## Open Questions
+- **Notification endpoints:** No Swagger contract found for notifications (list, unread-count, mark-read, read-all, read-by-entity, stream-ticket). Will build with typed assumptions in lib/api.ts.
+- **Scored items endpoints:** No contract found. Will build with typed assumptions.
+- **Grade endpoints:** No contract found for compile, preview, submit, withdraw, admin approval endpoints. Will build with typed assumptions.
+- **Class schedule endpoints:** No contract found for tutor upcoming-classes and admin class-schedule. Will build with typed assumptions.
+- **Enrollment change request endpoints:** No contract found. Will build with typed assumptions.
+- **Session recording endpoint:** Need to verify exact endpoint path (assumed GET /sessions/:id/recording).
+- **Tutor availability status:** Endpoint exists in types but need to verify PATCH path (assumed /tutor-profile/availability-status).
+- **Tutor session endpoints:** Need to verify exact paths for create, reschedule, delete (assumed POST/PATCH/DELETE /sessions).
+- **Notification sound file:** Need to add a royalty-free notification sound file to /public/sounds/notification.mp3. Currently using Web Audio API as fallback.
+
+## Part 1: API Layer and Types
+- [x] Add notification endpoints to lib/api.ts (list, unread-count, mark-read, read-all, read-by-entity, stream-ticket)
+- [x] Add notification types to lib/types.ts
+- [x] Add scored items endpoints to lib/api.ts
+- [x] Add scored items types to lib/types.ts
+- [x] Add grade endpoints to lib/api.ts (compile, preview, submit, withdraw, admin list/detail/approve/reject/bulk-approve)
+- [x] Add grade types to lib/types.ts
+- [x] Add class schedule endpoints to lib/api.ts (tutor upcoming-classes, admin class-schedule)
+- [x] Add class schedule types to lib/types.ts
+- [x] Add enrollment change request endpoints to lib/api.ts (parent and admin)
+- [x] Add enrollment change request types to lib/types.ts
+- [x] Add session recording endpoint to lib/api.ts (GET /sessions/:id/recording)
+- [x] Add tutor availability status endpoint to lib/api.ts
+- [x] Add tutor session endpoints to lib/api.ts (create, reschedule, delete)
+- [x] Add session types to lib/types.ts for new fields
+- [x] Handle 429 responses with RateLimit-Reset header countdown
+- [x] Handle TUTOR_NOT_APPROVED code (redirect to application page)
+- [x] Handle APPLICATION_REJECTED code (redirect to status page)
+- [x] Remove all Zoom references, replace with Google Meet
+- [x] Update session types to use meetLink instead of zoomLink
+
+## Part 2: Notification System
+- [x] Create NotificationProvider component
+- [x] Add NotificationProvider to root layout (authenticated)
+- [x] Implement unread-count endpoint call
+- [x] Implement stream-ticket endpoint call
+- [x] Implement EventSource connection with ticket
+- [x] Implement SSE reconnection with backoff
+- [x] Implement Last-Event-ID support
+- [x] Implement SSE close on logout/revoked session
+- [x] Implement fallback polling (30 seconds) if SSE fails
+- [x] Prevent duplicate connections across tabs/re-renders
+- [x] Add bell icon to header with red badge (99+ cap)
+- [x] Add notification dropdown with latest items
+- [x] Add "View all" link to notifications page
+- [x] Create admin notifications page
+- [x] Create tutor notifications page
+- [x] Upgrade parent notifications page
+- [x] Upgrade student notifications page
+- [x] Add filters (category, unread only) to all notification pages
+- [x] Add pagination to all notification pages
+- [x] Add mark read action to notification pages
+- [x] Add mark all read action to notification pages
+- [x] Add mark all read per category to notification pages
+- [x] Add red badges to admin sidebar sections (USERS, Sessions, Messages, Complaints, Enrollments, PAYMENTS, GRADES, SCHEDULE, Change requests)
+- [x] Add red badges to tutor sidebar sections (Students, Sessions, Upcoming classes, Assignments, Grades, Messages)
+- [x] Add red badges to parent sidebar sections (Enrollments, Sessions, Grades, Messages, Complaints, Pricing)
+- [x] Add red badges to student sidebar sections (Schedule, Assignments, Grades)
+- [x] Add "NEW" pill to list items with unread notifications (match by entityType and entityId)
+- [x] Implement read-by-entity call when opening record detail
+- [x] Add sound play on NEW live notification (SSE only)
+- [x] Add "Enable sound" toggle in bell dropdown
+- [x] Add "Enable sound" toggle in Settings
+- [x] Store sound preference in localStorage (default off)
+- [x] Add mute switch
+- [x] Throttle sound to max one per 3 seconds
+- [x] Add bundled audio file to /public/sounds (README added, file to be added by user)
+- [x] Implement Web Audio fallback
+- [x] Add toast for each live notification
+- [x] Show unread count in browser tab title
+- [x] Implement toast/notification click navigation to correct page
+- [x] Ensure notification text is plain text only
+
+## Part 3: Admin
+- [x] Create grade review queue page at /admin/grades
+- [x] Add filters to grade review (tutor, student, subject)
+- [x] Create grade detail page with full breakdown
+- [x] Show component breakdown (each component, weight, item count, component percentage)
+- [x] Show frozen snapshot items
+- [x] Show computed vs final score
+- [x] Show override reason
+- [x] Show tutor comment
+- [x] Show attachments
+- [x] Add Approve button with confirm dialog
+- [x] Add Reject dialog with REQUIRED reason (minimum length validation)
+- [x] Add bulk-approve action with per-item result display
+- [x] Ensure studentCode never shows in admin screens
+- [x] Create class schedule page at /admin/class-schedule
+- [x] Show all students with next class
+- [x] Show tutor and status chips (SCHEDULED, UNSCHEDULED, MISSED)
+- [x] Add filters (tutor, status, date range)
+- [x] Add pagination to class schedule
+- [x] Add red badge using unscheduledWithin24hCount
+- [x] Create change requests page at /admin/change-requests
+- [x] Add status filter to change requests
+- [x] Create change request detail page
+- [x] Show before-and-after comparison of schedule fields
+- [x] Add Approve with confirm dialog (explains effect on future sessions)
+- [x] Add Reject with REQUIRED reason
+- [x] Remove/hide admin UI depending on pricing-tiers endpoints (no separate pricing-tier screens exist, only subject price management)
+- [x] Ensure admin inbox is shared (all admins see parent/tutor threads)
+- [x] Show unread state from shared inbox
+- [x] Remove admin to student messaging capability
+- [x] Add new sidebar entries and badges
+- [x] Verify admin student screens never display studentCode (need to check existing pages)
+- [x] Verify admin parent screens never display studentCode (need to check existing pages)
+
+## Part 4: Tutor
+- [x] Create upcoming classes page at /tutor/upcoming-classes
+- [x] Show only tutor's own students
+- [x] Mark rows SCHEDULED or NEEDS_SESSION
+- [x] Show day, time and timezone
+- [x] Add "Create session" button (prefilled from response)
+- [x] Add reminder-style highlight for classes within 24 hours
+- [x] Add session create functionality (single student)
+- [x] Add session reschedule functionality (scheduledAt, durationMinutes)
+- [x] Add session delete functionality
+- [x] Show delete only for sessions tutor created and SCHEDULED
+- [x] Show reschedule only for sessions tutor created and SCHEDULED
+- [x] Show backend error messages for unauthorized actions
+- [x] Add "Needs reschedule" badge on sessions with needsReschedule flag
+- [x] Show Google Meet link (not Zoom)
+- [x] Mark attendance only for COMPLETED sessions
+- [x] Add scored items tab to student detail page
+- [x] Show quiz attempts with auto score and tutor-adjusted score
+- [x] Show assignment submissions
+- [x] Show tests and participation items
+- [x] Add filters (type, "not yet in a grade")
+- [x] Add score assignment submission action
+- [x] Add TEST item action
+- [x] Add PARTICIPATION item action
+- [x] Add adjust score action with comment
+- [x] Add delete manual item action
+- [x] Make items attached to PENDING_APPROVAL or APPROVED grades read-only
+- [ ] Create grade compile wizard (new Grades page flow)
+- [ ] Add student, enrollment, period selection
+- [ ] Add item selection interface
+- [ ] Add weight setting per component (QUIZ, ASSIGNMENT, TEST, PARTICIPATION, ATTENDANCE)
+- [ ] Add live weight total validation (must equal 100)
+- [ ] Disable save/submit button when weight total != 100
+- [ ] Show server-computed attendance rate
+- [ ] Call preview endpoint for computed score and breakdown
+- [ ] Add final score override with required reason
+- [ ] Add tutor comment field
+- [ ] Add attachments field
+- [ ] Add Save draft action
+- [ ] Add Submit to admin action
+- [ ] Add Withdraw action (when PENDING_APPROVAL)
+- [ ] Add Edit action (only DRAFT or REJECTED)
+- [ ] Add Delete action (only DRAFT or REJECTED)
+- [ ] Show status chips (DRAFT, PENDING_APPROVAL, APPROVED, REJECTED)
+- [ ] Show admin reason banner for REJECTED grades
+- [ ] Make APPROVED grades read-only
+- [ ] Create /tutor/messages page (tutor to Admin only)
+- [ ] Remove tutor to student messaging
+- [ ] Remove tutor to parent messaging
+- [ ] Remove tutor complaints page
+- [ ] Remove "file complaint" button for tutors
+- [ ] Add note that tutors contact admin through Messages
+- [ ] Keep quiz question builder
+- [ ] Show quiz attempts as scored items (not grades)
+- [x] Add availability status to profile settings (AVAILABLE, LIMITED, UNAVAILABLE)
+- [x] Add max students field
+- [x] Add note field
+- [x] Implement PATCH /tutor-profile/availability-status
+- [ ] Warn if UNAVAILABLE with active students alerts admin
+- [ ] Keep pending tutors limited to application wizard, notifications, public subjects
+- [ ] Keep rejected tutors limited to application wizard, notifications, public subjects
+- [ ] Add clear status screen for pending/rejected tutors
+- [ ] Add new sidebar entries and badges
+
+## Part 5: Parent
+- [ ] Replace direct enrollment edit with "Request schedule change"
+- [ ] Add schedule change form (start date, end date or time, days, hours)
+- [ ] Show current values unchanged
+- [ ] Show "Change pending approval" banner while request is PENDING
+- [ ] Add Cancel request action
+- [ ] Show request history with APPROVED and REJECTED
+- [ ] Show admin reason for REJECTED requests
+- [ ] Keep direct editing for unpaid enrollments
+- [ ] Enforce one pending request per enrollment
+- [ ] Disable form while request is pending
+- [ ] Show server error clearly for request conflicts
+- [ ] Update grades page to show only APPROVED grades
+- [ ] Show grade breakdown (components, weights, percentages)
+- [ ] Never show overrideReason to parents
+- [ ] Remove drafts, pending, rejected grades from parent view
+- [ ] Keep parent to Admin messaging only
+- [ ] Remove parent to tutor messaging option
+- [ ] Keep admin-contact flow
+- [ ] Use notifications to refresh messages
+- [ ] Update sessions to show Google Meet link
+- [ ] Add recording button for completed sessions
+- [ ] Call recording endpoint for completed sessions
+- [ ] Handle 403/404 gracefully for recordings
+- [ ] Keep pricing page
+- [ ] Make "price updated" notifications link to pricing page
+- [ ] Ensure students never see prices
+- [ ] Keep complaints page
+- [ ] Make resolution notifications link to complaints
+- [ ] Add new sidebar entries and badges
+
+## Part 6: Student
+- [ ] Remove "message tutor" action from My Tutors
+- [ ] Remove "message tutor" action from anywhere else
+- [ ] Keep Messages as informational page
+- [ ] Update grades page to show only APPROVED grades
+- [ ] Show grade breakdown (components, weights, percentages)
+- [ ] Never show overrideReason to students
+- [ ] Update schedule to use Google Meet
+- [ ] Update next class to use Google Meet
+- [ ] Keep quiz taking with 30-second timer
+- [ ] Never show or request correct answers in quiz
+- [ ] Show "Quiz submitted. Your tutor will review it." after completion
+- [ ] Never present quiz result as official grade
+- [ ] Show per-answer correctness if API returns it (but not as grade)
+- [ ] Add student notification page
+- [ ] Add student notification bell
+- [ ] Ensure no prices anywhere in student UI
+- [ ] Add new sidebar entries and badges
+
+## Part 7: Cleanup of Outdated UI and Docs
+- [x] Remove Zoom wording from pages (admin/sessions, parent/students/[id], student/my-tutors, student/schedule, tutor/students/[id])
+- [ ] Remove student or tutor messaging
+- [ ] Remove parent to tutor messaging
+- [ ] Remove tutor complaints
+- [x] Remove admin pricing-tier screens (none exist, only subject price management)
+- [ ] Remove "Real-time notifications with WebSocket" from Future Enhancements
+- [ ] Update FRONTEND_DOCUMENTATION.md with notification system
+- [ ] Update FRONTEND_DOCUMENTATION.md with grading workflow
+- [ ] Update FRONTEND_DOCUMENTATION.md with class schedule pages
+- [ ] Update FRONTEND_DOCUMENTATION.md with change requests
+- [ ] Update FRONTEND_DOCUMENTATION.md with Google Meet
+- [ ] Update FRONTEND_DOCUMENTATION.md with new messaging rules
+- [ ] Update README with new features
+
+## Part 8: Quality
+- [ ] Add loading states to all new pages
+- [ ] Add empty states to all new pages
+- [ ] Add error states to all new pages
+- [ ] Use SkeletonLoader for loading states
+- [ ] Ensure mobile responsiveness for all new pages
+- [ ] Add aria labels to bell icon
+- [ ] Add aria labels to badges
+- [ ] Add aria labels to sound toggle
+- [ ] Ensure dialogs are keyboard-operable
+- [ ] Add route protection to all new pages
+- [ ] Create FRONTEND_QA.md with manual QA checklist
+- [ ] Add Vitest setup if not exists
+- [ ] Add test for weight total validation
+- [ ] Add test for reject-reason requirement
+- [ ] Add test for notification badge mapping
+- [ ] Add test for sound-on-live-only logic
+- [ ] Write final report with items done/not done
+- [ ] List new routes in final report
+- [ ] List new components in final report
+- [ ] List new env vars in final report
+- [ ] List open questions about API contract in final report
+- [ ] List unverified items in final report
+
+## Environment
+- [ ] Ensure .env.local has NEXT_PUBLIC_API_URL=http://localhost:3001/api
