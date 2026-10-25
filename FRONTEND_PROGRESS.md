@@ -190,10 +190,10 @@
 - [ ] Enforce one pending request per enrollment
 - [ ] Disable form while request is pending
 - [ ] Show server error clearly for request conflicts
-- [ ] Update grades page to show only APPROVED grades
-- [ ] Show grade breakdown (components, weights, percentages)
-- [ ] Never show overrideReason to parents
-- [ ] Remove drafts, pending, rejected grades from parent view
+- [x] Update grades page to show only APPROVED grades
+- [x] Show grade breakdown (components, weights, percentages)
+- [x] Never show overrideReason to parents
+- [x] Remove drafts, pending, rejected grades from parent view
 - [ ] Keep parent to Admin messaging only
 - [ ] Remove parent to tutor messaging option
 - [ ] Keep admin-contact flow
@@ -213,9 +213,9 @@
 - [ ] Remove "message tutor" action from My Tutors
 - [ ] Remove "message tutor" action from anywhere else
 - [ ] Keep Messages as informational page
-- [ ] Update grades page to show only APPROVED grades
-- [ ] Show grade breakdown (components, weights, percentages)
-- [ ] Never show overrideReason to students
+- [x] Update grades page to show only APPROVED grades
+- [x] Show grade breakdown (components, weights, percentages)
+- [x] Never show overrideReason to students
 - [ ] Update schedule to use Google Meet
 - [ ] Update next class to use Google Meet
 - [ ] Keep quiz taking with 30-second timer

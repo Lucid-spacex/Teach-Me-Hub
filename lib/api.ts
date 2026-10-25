@@ -1423,6 +1423,25 @@ class ApiClient {
     })
   }
 
+  // Parent Grade endpoints
+  async getParentCompiledGrades(studentId?: string): Promise<CompiledGrade[]> {
+    const params = studentId ? `?studentId=${studentId}` : ''
+    return this.request<CompiledGrade[]>(`/parent/grades${params}`)
+  }
+
+  async getParentCompiledGradeDetail(gradeId: string): Promise<CompiledGrade> {
+    return this.request<CompiledGrade>(`/parent/grades/${gradeId}`)
+  }
+
+  // Student Grade endpoints
+  async getStudentCompiledGrades(): Promise<CompiledGrade[]> {
+    return this.request<CompiledGrade[]>('/student/grades')
+  }
+
+  async getStudentCompiledGradeDetail(gradeId: string): Promise<CompiledGrade> {
+    return this.request<CompiledGrade>(`/student/grades/${gradeId}`)
+  }
+
   // Class Schedule endpoints
   async getTutorUpcomingClasses(): Promise<UpcomingClass[]> {
     return this.request<UpcomingClass[]>('/tutor/upcoming-classes')

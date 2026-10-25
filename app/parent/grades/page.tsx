@@ -8,17 +8,16 @@ import { Button } from '@/components/ui/button'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
 import { useToast } from '@/components/ui/use-toast'
 import { api } from '@/lib/api'
-import { Grade, Student, Enrollment, Assignment } from '@/lib/types'
+import { CompiledGrade, Student, Enrollment } from '@/lib/types'
 import { BarChart3, ArrowLeft, RefreshCw, Award, BookOpen } from 'lucide-react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 export default function ParentGradesPage() {
   const router = useRouter()
   const { toast } = useToast()
-  const [grades, setGrades] = useState<Grade[]>([])
+  const [grades, setGrades] = useState<CompiledGrade[]>([])
   const [students, setStudents] = useState<Student[]>([])
   const [enrollments, setEnrollments] = useState<Enrollment[]>([])
-  const [assignments, setAssignments] = useState<Assignment[]>([])
   const [loading, setLoading] = useState(true)
   const [studentFilter, setStudentFilter] = useState<string>('ALL')
 
@@ -35,22 +34,20 @@ export default function ParentGradesPage() {
   const loadData = async () => {
     setLoading(true)
     try {
-      const [gradesData, studentsData, enrollmentsData, assignmentsData] = await Promise.all([
-        api.getGrades().catch(() => []),
+      const [gradesData, studentsData, enrollmentsData] = await Promise.all([
+        api.getParentCompiledGrades().catch(() => []),
         api.getStudents().catch(() => []),
         api.getEnrollments().catch(() => []),
-        api.getAssignments().catch(() => []),
       ])
 
-      // Only display approved grades per backend policy
-      const approvedGrades = Array.isArray(gradesData) 
-        ? gradesData.filter(g => g.status === 'APPROVED') 
+      // Only display approved grades per specification
+      const approvedGrades = Array.isArray(gradesData)
+        ? gradesData.filter(g => g.status === 'APPROVED')
         : []
 
       setGrades(approvedGrades)
       setStudents(Array.isArray(studentsData) ? studentsData : [])
       setEnrollments(Array.isArray(enrollmentsData) ? enrollmentsData : [])
-      setAssignments(Array.isArray(assignmentsData) ? assignmentsData : [])
     } catch (err) {
       console.error('Failed to load grades:', err)
       toast({
@@ -63,22 +60,19 @@ export default function ParentGradesPage() {
     }
   }
 
-  const getGradeContext = (grade: Grade) => {
+  const getGradeContext = (grade: CompiledGrade) => {
     const enrollment = enrollments.find(e => e.id === grade.enrollmentId)
     const student = enrollment ? students.find(s => s.id === enrollment.studentId) : null
-    const assignment = assignments.find(a => a.id === grade.assignmentId)
     return {
       studentName: student?.fullName || 'Child',
       subjectName: enrollment?.subject?.name || 'Subject',
-      assignmentTitle: assignment?.title || 'Assignment Test',
-      assignmentType: assignment?.type || 'TEST',
+      period: grade.period,
     }
   }
 
   const filtered = grades.filter((g) => {
     if (studentFilter === 'ALL') return true
-    const enrollment = enrollments.find(e => e.id === g.enrollmentId)
-    return enrollment?.studentId === studentFilter
+    return g.studentId === studentFilter
   })
 
   return (
@@ -148,52 +142,66 @@ export default function ParentGradesPage() {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {filtered.map((item) => {
               const ctx = getGradeContext(item)
-              const percentage = Math.round((item.score / (item.maxScore || 100)) * 100)
+              const finalScore: number = item.finalScore !== null && item.finalScore !== undefined ? item.finalScore : item.computedScore
+              const percentage = Math.round(finalScore)
               return (
                 <Card key={item.id} className="bg-card border-brand-gold/25 hover:border-brand-gold/40 transition-colors flex flex-col justify-between">
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between gap-2 mb-2">
                       <span className="text-xs font-semibold px-2 py-0.5 rounded bg-brand-gold/15 text-brand-gold">
-                        {ctx.assignmentType}
+                        {ctx.period}
                       </span>
                       <span className="text-xs px-2.5 py-0.5 rounded-full font-medium bg-green-500/20 text-green-400">
                         Approved
                       </span>
                     </div>
                     <CardTitle className="text-lg text-white font-semibold line-clamp-1">
-                      {ctx.assignmentTitle}
+                      {ctx.subjectName}
                     </CardTitle>
                     <p className="text-xs text-gray-400">
-                      {ctx.studentName} • <span className="text-brand-gold font-medium">{ctx.subjectName}</span>
+                      {ctx.studentName}
                     </p>
                   </CardHeader>
                   <CardContent className="pt-0 space-y-3">
                     <div className="flex items-baseline justify-between p-3 rounded-lg bg-brand-dark/70 border border-brand-gold/15">
                       <div>
-                        <span className="text-xs text-gray-400">Score</span>
+                        <span className="text-xs text-gray-400">Final Score</span>
                         <div className="text-2xl font-bold text-white">
-                          {item.score} <span className="text-sm text-gray-400 font-normal">/ {item.maxScore}</span>
+                          {finalScore.toFixed(1)}%
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className="text-xs text-gray-400">Percentage</span>
+                        <span className="text-xs text-gray-400">Attendance</span>
                         <div className={`text-xl font-bold ${
-                          percentage >= 70 ? 'text-green-400' : percentage >= 50 ? 'text-brand-gold' : 'text-red-400'
+                          item.attendanceRate >= 80 ? 'text-green-400' : item.attendanceRate >= 60 ? 'text-brand-gold' : 'text-red-400'
                         }`}>
-                          {percentage}%
+                          {item.attendanceRate.toFixed(0)}%
                         </div>
                       </div>
                     </div>
 
-                    {item.feedback ? (
+                    {/* Grade Breakdown */}
+                    <div className="bg-brand-dark/40 p-2.5 rounded border border-brand-gold/10">
+                      <span className="text-brand-gold font-medium block mb-2 text-xs">Grade Breakdown:</span>
+                      <div className="space-y-1.5">
+                        {item.components.map((comp, idx) => (
+                          <div key={idx} className="flex items-center justify-between text-xs">
+                            <span className="text-gray-300">{comp.type} ({comp.weight}%)</span>
+                            <span className="text-white font-medium">{comp.componentPercentage.toFixed(1)}%</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {item.tutorComment ? (
                       <div className="text-xs text-gray-300 bg-brand-dark/40 p-2.5 rounded border border-brand-gold/10">
                         <span className="text-brand-gold font-medium block mb-0.5">Tutor Feedback:</span>
-                        <p className="italic">&quot;{item.feedback}&quot;</p>
+                        <p className="italic">"{item.tutorComment}"</p>
                       </div>
                     ) : null}
 
                     <div className="text-right text-xs text-gray-500">
-                      Graded on {new Date(item.createdAt).toLocaleDateString()}
+                      Approved on {item.approvedAt ? new Date(item.approvedAt).toLocaleDateString() : new Date(item.createdAt).toLocaleDateString()}
                     </div>
                   </CardContent>
                 </Card>
