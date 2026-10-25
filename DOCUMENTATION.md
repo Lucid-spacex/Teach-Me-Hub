@@ -457,7 +457,7 @@ The parent dashboard provides a comprehensive overview of all children's educati
 - Subject and tutor details
 - Scheduled date and time
 - Duration
-- Zoom meeting link
+- Google Meet meeting link
 - Session status (SCHEDULED/COMPLETED/MISSED/CANCELLED)
 - Recording availability
 
@@ -621,7 +621,7 @@ The tutor dashboard provides tools for managing students, sessions, and professi
 **Session Management**:
 - Schedule individual sessions
 - Set duration and timing
-- Provide Zoom meeting links
+- Provide Google Meet meeting links
 - Record session outcomes
 - Add homework assignments
 - Track student attendance
@@ -763,7 +763,7 @@ The student dashboard provides a personalized learning environment with schedule
 - Shows upcoming live session
 - Real-time countdown timer
 - Subject and tutor information
-- Direct Zoom meeting link
+- Direct Google Meet meeting link
 - Session duration and timing
 
 **Quick Stats**:
@@ -777,7 +777,7 @@ The student dashboard provides a personalized learning environment with schedule
 **Features**:
 - View complete class schedule
 - Filter by subject or status
-- Access Zoom meeting links
+- Access Google Meet meeting links
 - View session details
 - Check session status
 

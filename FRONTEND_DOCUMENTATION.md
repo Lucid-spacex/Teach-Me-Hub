@@ -232,7 +232,7 @@ teach-me-hub/
 
 #### Session Management
 - View upcoming sessions with countdown timers
-- Access Zoom meeting links
+- Access Google Meet meeting links
 - View session history and homework
 - Track attendance records
 
@@ -273,7 +273,7 @@ teach-me-hub/
 #### Student Portal
 - Login using student code + 6-digit PIN
 - Personalized dashboard with upcoming classes
-- Session schedule with Zoom integration
+- Session schedule with Google Meet integration
 - Assignment management
 
 #### Academic Features
@@ -301,15 +301,15 @@ teach-me-hub/
 - Tutor profiles with avatars and bios
 - Subject expertise display
 - Upcoming session information
-- Zoom meeting links for scheduled sessions
+- Google Meet meeting links for scheduled sessions
 - Direct messaging to tutors (starts conversation)
 - Session history by tutor
 
 #### Communication
-- **Messaging Restrictions:** As of October 12, 2026, students cannot send messages directly
+- **Messaging Restrictions:** As of October 12, 2026, students cannot send messages directly. Tutors can only message admin, not students or parents. Parents can only message admin, not tutors.
 - View communication guidelines
 - Access assigned tutors to view their information
-- Parents can message tutors and admin on student's behalf
+- Parents can message admin for support on student's behalf
 
 ### 4. Tutor Dashboard
 
@@ -430,11 +430,12 @@ teach-me-hub/
 - Monitor account status changes
 
 #### Admin Messaging
-- View message threads with parents/tutors
+- View message threads with parents and tutors
 - Send messages to users
 - Search and filter conversations
 - Monitor unread messages
 - Start new conversations
+- Note: Tutors can only message admin, not students or parents. Parents can only message admin, not tutors.
 
 ## API Integration
 
@@ -870,7 +871,7 @@ The platform includes a messaging system for communication between users:
 ### Role-Based Messaging Access
 
 #### Parent Messaging
-- **Full access:** Can message admin and tutors
+- **Admin only:** Can only message admin (as of October 12, 2026)
 - **Thread-based:** Conversations organized in threads
 - **Real-time updates:** Polling for new messages every 2 minutes
 - **Caching:** localStorage caching to reduce API calls
@@ -892,7 +893,7 @@ The platform includes a messaging system for communication between users:
 - **Tutor viewing:** Can view assigned tutors but not message them
 
 #### Tutor Messaging
-- **Student contact:** Can message assigned students
+- **Admin only:** Can only message admin (as of October 12, 2026)
 - **Thread-based:** Organized conversations
 - **Profile linking:** Linked to tutor profiles and student enrollments
 
@@ -1143,7 +1144,7 @@ ISC License - See LICENSE file for details
 - Avatar with initials fallback
 - Tutor bio and subject expertise
 - Upcoming session information
-- Zoom meeting links for scheduled sessions
+- Google Meet meeting links for scheduled sessions
 - Direct messaging to tutors
 - Session history modal per tutor
 - Filter by enrollment

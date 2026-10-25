@@ -103,6 +103,7 @@ export function Sidebar({ role }: SidebarProps) {
     { label: 'Progress Reports', href: '/student/progress-reports', icon: BookOpen },
     { label: 'Attendance', href: '/student/attendance', icon: UserCheck },
     { label: 'My Profile', href: '/student/profile', icon: GraduationCap },
+    { label: 'Notifications', href: '/student/notifications', icon: Bell },
     { label: 'Settings', href: '/student/settings', icon: Settings },
   ]
 

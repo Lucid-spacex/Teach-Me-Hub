@@ -213,18 +213,32 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     if (!notification.read) {
       playSound()
       
-      // Show toast
+      // Show toast with navigation on click
+      const handleClick = () => {
+        // Navigate based on notification type
+        if (notification.category === 'PAYMENTS' && user?.role === 'PARENT') {
+          window.location.href = '/parent/pricing'
+        } else if (notification.category === 'COMPLAINTS' && user?.role === 'PARENT') {
+          window.location.href = '/parent/complaints'
+        }
+      }
+      
       toast({
         title: notification.title,
         description: notification.message,
         duration: 5000,
+        action: notification.category === 'PAYMENTS' || notification.category === 'COMPLAINTS' ? (
+          <button onClick={handleClick} className="text-sm font-medium text-primary hover:underline">
+            View
+          </button>
+        ) : undefined,
       })
     }
     
     // Refresh counts and list
     refreshUnreadCount()
     refreshNotifications()
-  }, [playSound, refreshUnreadCount, refreshNotifications, toast])
+  }, [playSound, refreshUnreadCount, refreshNotifications, toast, user])
 
   // Setup SSE connection
   const setupSSE = useCallback(async () => {

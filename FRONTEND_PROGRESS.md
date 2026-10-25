@@ -232,18 +232,18 @@
 ## Part 7: Cleanup of Outdated UI and Docs
 - [x] Remove Zoom wording from pages (admin/sessions, parent/students/[id], student/my-tutors, student/schedule, tutor/students/[id])
 - [x] Remove all Zoom wording, use meetLink
-- [ ] Remove student or tutor messaging
-- [ ] Remove parent to tutor messaging
-- [ ] Remove tutor complaints
+- [x] Remove student or tutor messaging
+- [x] Remove parent to tutor messaging
+- [x] Remove tutor complaints
 - [x] Remove admin pricing-tier screens (none exist, only subject price management)
-- [ ] Remove "Real-time notifications with WebSocket" from Future Enhancements
-- [ ] Update FRONTEND_DOCUMENTATION.md with notification system
-- [ ] Update FRONTEND_DOCUMENTATION.md with grading workflow
-- [ ] Update FRONTEND_DOCUMENTATION.md with class schedule pages
-- [ ] Update FRONTEND_DOCUMENTATION.md with change requests
-- [ ] Update FRONTEND_DOCUMENTATION.md with Google Meet
-- [ ] Update FRONTEND_DOCUMENTATION.md with new messaging rules
-- [ ] Update README with new features
+- [x] Remove "Real-time notifications with WebSocket" from Future Enhancements
+- [x] Update FRONTEND_DOCUMENTATION.md with notification system
+- [x] Update FRONTEND_DOCUMENTATION.md with grading workflow
+- [x] Update FRONTEND_DOCUMENTATION.md with class schedule pages
+- [x] Update FRONTEND_DOCUMENTATION.md with change requests
+- [x] Update FRONTEND_DOCUMENTATION.md with Google Meet
+- [x] Update FRONTEND_DOCUMENTATION.md with new messaging rules
+- [x] Update README with new features
 
 ## Part 8: Quality
 - [ ] Add loading states to all new pages

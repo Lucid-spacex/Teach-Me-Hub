@@ -10,7 +10,7 @@ import { PasswordInput } from '@/components/ui/password-input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Loader2, Settings, Lock, ArrowLeft, UserCheck, AlertCircle, Volume2, VolumeX } from 'lucide-react'
+import { Loader2, Settings, Lock, ArrowLeft, UserCheck, AlertCircle, Volume2, VolumeX, RefreshCw } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
 import { api } from '@/lib/api'
 import { User, TutorAvailabilityStatus, TutorProfile } from '@/lib/types'
@@ -36,6 +36,8 @@ export default function TutorSettingsPage() {
   const [maxStudents, setMaxStudents] = useState<number>(10)
   const [statusNote, setStatusNote] = useState('')
   const [updatingAvailability, setUpdatingAvailability] = useState(false)
+  const [activeStudentCount, setActiveStudentCount] = useState<number>(0)
+  const [loadingStudents, setLoadingStudents] = useState(false)
 
   useEffect(() => {
     const user = getUser()
@@ -47,7 +49,11 @@ export default function TutorSettingsPage() {
     loadUserData()
   }, [router])
 
-  const loadUserData = () => {
+  const handleRefreshStudents = () => {
+    loadUserData()
+  }
+
+  const loadUserData = async () => {
     if (typeof window !== 'undefined') {
       const userData = localStorage.getItem('user')
       if (userData) {
@@ -55,6 +61,19 @@ export default function TutorSettingsPage() {
         setUser(parsedUser)
       }
     }
+
+    // Load active student count for UNAVAILABLE warning
+    setLoadingStudents(true)
+    try {
+      const students = await api.getTutorStudents()
+      const activeCount = students.filter(s => s.enrollment?.status === 'ACTIVE').length
+      setActiveStudentCount(activeCount)
+    } catch (err) {
+      console.error('Failed to load student count:', err)
+    } finally {
+      setLoadingStudents(false)
+    }
+
     setLoading(false)
   }
 
@@ -243,13 +262,26 @@ export default function TutorSettingsPage() {
           {/* Availability Status */}
           <Card className="bg-card border-brand-gold/30">
             <CardHeader>
-              <CardTitle className="text-foreground flex items-center gap-2">
-                <UserCheck className="h-5 w-5 text-brand-gold" />
-                Availability Status
-              </CardTitle>
-              <CardDescription className="text-muted-foreground">
-                Manage your availability for new student assignments
-              </CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-foreground flex items-center gap-2">
+                    <UserCheck className="h-5 w-5 text-brand-gold" />
+                    Availability Status
+                  </CardTitle>
+                  <CardDescription className="text-muted-foreground">
+                    Manage your availability for new student assignments
+                  </CardDescription>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleRefreshStudents}
+                  disabled={loadingStudents}
+                  title="Refresh student count"
+                >
+                  <RefreshCw className={`h-4 w-4 ${loadingStudents ? 'animate-spin' : ''}`} />
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleAvailabilityUpdate} className="space-y-4">
@@ -290,12 +322,21 @@ export default function TutorSettingsPage() {
                   />
                 </div>
                 {availabilityStatus === 'UNAVAILABLE' && (
-                  <div className="bg-yellow-500/10 border border-yellow-500/30 p-3 rounded-lg">
-                    <div className="flex items-center gap-2 text-sm text-yellow-400">
-                      <AlertCircle className="h-4 w-4" />
-                      <span>
-                        Setting your status to UNAVAILABLE will notify the admin team. They may contact you to discuss your availability.
-                      </span>
+                  <div className="bg-red-500/10 border border-red-500/30 p-3 rounded-lg">
+                    <div className="flex items-start gap-2 text-sm text-red-400">
+                      <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+                      <div className="space-y-1">
+                        <span className="font-medium">
+                          {activeStudentCount > 0
+                            ? `You have ${activeStudentCount} active student${activeStudentCount > 1 ? 's' : ''}. Setting your status to UNAVAILABLE will alert the admin team.`
+                            : 'Setting your status to UNAVAILABLE will notify the admin team. They may contact you to discuss your availability.'}
+                        </span>
+                        {activeStudentCount > 0 && (
+                          <span className="text-xs text-red-300/80">
+                            Admin will be notified that a tutor with active students has marked themselves as unavailable.
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 )}
