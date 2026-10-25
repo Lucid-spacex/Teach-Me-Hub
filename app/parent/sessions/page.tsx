@@ -83,20 +83,20 @@ export default function ParentSessionsPage() {
   return (
     <div className="space-y-6 pb-12">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-2xl border border-border bg-card p-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-6 rounded-2xl bg-gradient-to-r from-muted via-muted to-muted border border-border">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-primary/15 border border-primary/30 text-primary flex items-center justify-center shrink-0">
             <Calendar className="h-6 w-6" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold tracking-tight text-foreground">Live Tutoring Sessions</h1>
+              <h1 className="text-2xl font-bold text-white tracking-tight">Live Tutoring Sessions</h1>
               <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/15 text-secondary border border-primary/30 font-medium">
                 Live Classes
               </span>
             </div>
-            <p className="mt-0.5 text-xs text-muted-foreground">
-              View scheduled live classes, Zoom meeting links, and session attendance history
+            <p className="text-xs text-zinc-400 mt-0.5">
+              View scheduled live classes, Google Meet links, and session attendance history
             </p>
           </div>
         </div>
@@ -105,7 +105,7 @@ export default function ParentSessionsPage() {
           <Button
             onClick={handleRefresh}
             variant="ghost"
-            className="h-10 rounded-xl px-3 text-muted-foreground hover:bg-muted hover:text-foreground"
+            className="text-zinc-400 hover:text-white hover:bg-white/5 h-10 px-3 rounded-xl"
             title="Refresh Sessions"
           >
             <RefreshCw className="h-4 w-4" />

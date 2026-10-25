@@ -6,8 +6,9 @@ import { Session, Enrollment } from '@/lib/types'
 import { DataTable } from '@/components/shared/DataTable'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { StatusBadge } from '@/components/shared/StatusBadge'
-import { Video, Download, Calendar } from 'lucide-react'
+import { Video, Download, Calendar, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useToast } from '@/components/ui/use-toast'
 
 interface SessionListProps {
   enrollments: Enrollment[]
@@ -15,8 +16,10 @@ interface SessionListProps {
 }
 
 export function SessionList({ enrollments, refreshTrigger }: SessionListProps) {
+  const { toast } = useToast()
   const [sessions, setSessions] = useState<Session[]>([])
   const [loading, setLoading] = useState(true)
+  const [loadingRecording, setLoadingRecording] = useState<string | null>(null)
 
   useEffect(() => {
     loadSessions()
@@ -41,9 +44,52 @@ export function SessionList({ enrollments, refreshTrigger }: SessionListProps) {
     return enrollment ? `Subject: ${enrollment.subjectId}` : 'Unknown'
   }
 
+  const handleViewRecording = async (sessionId: string) => {
+    setLoadingRecording(sessionId)
+    try {
+      const recording = await api.getSessionRecording(sessionId)
+      if (recording.recordingUrl) {
+        window.open(recording.recordingUrl, '_blank')
+      } else {
+        toast({
+          title: 'Recording Not Available',
+          description: 'The recording is not yet available or has been removed.',
+          variant: 'destructive',
+        })
+      }
+    } catch (err: any) {
+      const status = err?.response?.status
+      if (status === 403) {
+        toast({
+          title: 'Access Denied',
+          description: 'You do not have permission to view this recording.',
+          variant: 'destructive',
+        })
+      } else if (status === 404) {
+        toast({
+          title: 'Recording Not Found',
+          description: 'This recording does not exist or has been removed.',
+          variant: 'destructive',
+        })
+      } else {
+        toast({
+          title: 'Failed to Load Recording',
+          description: err instanceof Error ? err.message : 'An error occurred while loading the recording.',
+          variant: 'destructive',
+        })
+      }
+    } finally {
+      setLoadingRecording(null)
+    }
+  }
+
   const upcomingSessions = sessions
     .filter(s => s.status === 'SCHEDULED')
     .sort((a, b) => new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime())
+
+  const completedSessions = sessions
+    .filter(s => s.status === 'COMPLETED')
+    .sort((a, b) => new Date(b.scheduledAt).getTime() - new Date(a.scheduledAt).getTime())
 
   const columns = [
     {
@@ -87,12 +133,25 @@ export function SessionList({ enrollments, refreshTrigger }: SessionListProps) {
               </a>
             </Button>
           )}
-          {session.recordingStatus === 'AVAILABLE' && session.recordingLink && (
-            <Button variant="outline" size="sm" asChild className="border-brand-gold text-brand-gold hover:bg-brand-gold/10">
-              <a href={session.recordingLink} target="_blank" rel="noopener noreferrer" className="gap-2">
-                <Download className="h-4 w-4" />
-                Recording
-              </a>
+          {session.status === 'COMPLETED' && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleViewRecording(session.id)}
+              disabled={loadingRecording === session.id}
+              className="border-brand-gold text-brand-gold hover:bg-brand-gold/10 gap-2"
+            >
+              {loadingRecording === session.id ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Loading...
+                </>
+              ) : (
+                <>
+                  <Download className="h-4 w-4" />
+                  Recording
+                </>
+              )}
             </Button>
           )}
         </div>
@@ -101,25 +160,48 @@ export function SessionList({ enrollments, refreshTrigger }: SessionListProps) {
   ]
 
   return (
-    <Card className="bg-card border-brand-gold/30">
-      <CardHeader>
-        <CardTitle className="text-white flex items-center gap-2">
-          <Calendar className="h-5 w-5 text-brand-gold" />
-          Upcoming Sessions
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <DataTable
-          data={upcomingSessions}
-          columns={columns}
-          loading={loading}
-          emptyState={{
-            icon: Calendar,
-            title: "No upcoming sessions",
-            description: "Your scheduled sessions will appear here",
-          }}
-        />
-      </CardContent>
-    </Card>
+    <div className="space-y-6">
+      <Card className="bg-card border-brand-gold/30">
+        <CardHeader>
+          <CardTitle className="text-white flex items-center gap-2">
+            <Calendar className="h-5 w-5 text-brand-gold" />
+            Upcoming Sessions
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <DataTable
+            data={upcomingSessions}
+            columns={columns}
+            loading={loading}
+            emptyState={{
+              icon: Calendar,
+              title: "No upcoming sessions",
+              description: "Your scheduled sessions will appear here",
+            }}
+          />
+        </CardContent>
+      </Card>
+
+      <Card className="bg-card border-brand-gold/30">
+        <CardHeader>
+          <CardTitle className="text-white flex items-center gap-2">
+            <Video className="h-5 w-5 text-brand-gold" />
+            Completed Sessions
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <DataTable
+            data={completedSessions}
+            columns={columns}
+            loading={loading}
+            emptyState={{
+              icon: Video,
+              title: "No completed sessions",
+              description: "Completed sessions with recordings will appear here",
+            }}
+          />
+        </CardContent>
+      </Card>
+    </div>
   )
 }

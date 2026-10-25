@@ -198,10 +198,10 @@
 - [ ] Remove parent to tutor messaging option
 - [ ] Keep admin-contact flow
 - [ ] Use notifications to refresh messages
-- [ ] Update sessions to show Google Meet link
-- [ ] Add recording button for completed sessions
-- [ ] Call recording endpoint for completed sessions
-- [ ] Handle 403/404 gracefully for recordings
+- [x] Update sessions to show Google Meet link
+- [x] Add recording button for completed sessions
+- [x] Call recording endpoint for completed sessions
+- [x] Handle 403/404 gracefully for recordings
 - [ ] Keep pricing page
 - [ ] Make "price updated" notifications link to pricing page
 - [ ] Ensure students never see prices
