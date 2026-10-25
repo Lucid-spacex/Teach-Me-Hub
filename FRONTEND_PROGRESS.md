@@ -141,25 +141,25 @@
 - [x] Add adjust score action with comment
 - [x] Add delete manual item action
 - [x] Make items attached to PENDING_APPROVAL or APPROVED grades read-only
-- [ ] Create grade compile wizard (new Grades page flow)
-- [ ] Add student, enrollment, period selection
-- [ ] Add item selection interface
-- [ ] Add weight setting per component (QUIZ, ASSIGNMENT, TEST, PARTICIPATION, ATTENDANCE)
-- [ ] Add live weight total validation (must equal 100)
-- [ ] Disable save/submit button when weight total != 100
-- [ ] Show server-computed attendance rate
-- [ ] Call preview endpoint for computed score and breakdown
-- [ ] Add final score override with required reason
-- [ ] Add tutor comment field
+- [x] Create grade compile wizard (new Grades page flow)
+- [x] Add student, enrollment, period selection
+- [x] Add item selection interface
+- [x] Add weight setting per component (QUIZ, ASSIGNMENT, TEST, PARTICIPATION, ATTENDANCE)
+- [x] Add live weight total validation (must equal 100)
+- [x] Disable save/submit button when weight total != 100
+- [x] Show server-computed attendance rate
+- [x] Call preview endpoint for computed score and breakdown
+- [x] Add final score override with required reason
+- [x] Add tutor comment field
 - [ ] Add attachments field
-- [ ] Add Save draft action
-- [ ] Add Submit to admin action
-- [ ] Add Withdraw action (when PENDING_APPROVAL)
-- [ ] Add Edit action (only DRAFT or REJECTED)
-- [ ] Add Delete action (only DRAFT or REJECTED)
-- [ ] Show status chips (DRAFT, PENDING_APPROVAL, APPROVED, REJECTED)
-- [ ] Show admin reason banner for REJECTED grades
-- [ ] Make APPROVED grades read-only
+- [x] Add Save draft action
+- [x] Add Submit to admin action
+- [x] Add Withdraw action (when PENDING_APPROVAL)
+- [x] Add Edit action (only DRAFT or REJECTED)
+- [x] Add Delete action (only DRAFT or REJECTED)
+- [x] Show status chips (DRAFT, PENDING_APPROVAL, APPROVED, REJECTED)
+- [x] Show admin reason banner for REJECTED grades
+- [x] Make APPROVED grades read-only
 - [ ] Create /tutor/messages page (tutor to Admin only)
 - [ ] Remove tutor to student messaging
 - [ ] Remove tutor to parent messaging
