@@ -119,7 +119,18 @@ export default function TutorApplicationPage() {
       return
     }
 
-    // Allow pending and rejected tutors to view application
+    // Redirect pending tutors to status screen
+    if (user.status === 'PENDING_VETTING') {
+      router.push('/tutor/pending')
+      return
+    }
+
+    // Redirect rejected tutors to status screen
+    if (user.status === 'REJECTED') {
+      router.push('/tutor/rejected')
+      return
+    }
+
     // Approved tutors go to dashboard
     if (user.status === 'APPROVED') {
       router.push('/tutor')
@@ -393,30 +404,6 @@ export default function TutorApplicationPage() {
   }
 
   const user = getUser()
-
-  // Show friendly message for rejected tutors
-  if (user?.status === 'REJECTED') {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="max-w-md w-full bg-card/95 backdrop-blur-xl border border-border">
-          <CardContent className="pt-8 pb-8 text-center space-y-4">
-            <div className="w-16 h-16 rounded-full bg-destructive/15 border border-destructive/40 flex items-center justify-center mx-auto">
-              <AlertCircle className="h-9 w-9 text-destructive" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold text-white font-serif">Application Not Approved</h2>
-              <p className="text-sm text-zinc-400 mt-2 max-w-xs mx-auto">
-                Your application wasn&apos;t approved. Please contact support for more information.
-              </p>
-            </div>
-            <div className="pt-4">
-              <p className="text-xs text-zinc-400">Support: support@teachmenest.com</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }
 
   const groupedSubjects = groupSubjectsByCategory()
   const missingFields = application?.missingFields || []

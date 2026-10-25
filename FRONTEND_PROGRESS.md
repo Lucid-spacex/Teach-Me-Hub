@@ -173,9 +173,9 @@
 - [x] Add note field
 - [x] Implement PATCH /tutor-profile/availability-status
 - [ ] Warn if UNAVAILABLE with active students alerts admin
-- [ ] Keep pending tutors limited to application wizard, notifications, public subjects
-- [ ] Keep rejected tutors limited to application wizard, notifications, public subjects
-- [ ] Add clear status screen for pending/rejected tutors
+- [x] Keep pending tutors limited to application wizard, notifications, public subjects
+- [x] Keep rejected tutors limited to application wizard, notifications, public subjects
+- [x] Add clear status screen for pending/rejected tutors
 - [ ] Add new sidebar entries and badges
 
 ## Part 5: Parent
