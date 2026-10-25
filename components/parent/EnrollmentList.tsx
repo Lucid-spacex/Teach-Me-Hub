@@ -7,7 +7,8 @@ import { DataTable } from '@/components/shared/DataTable'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { StatusBadge } from '@/components/shared/StatusBadge'
-import { GraduationCap, Layers, CreditCard, Loader2 } from 'lucide-react'
+import { ChangeRequestModal } from '@/components/parent/ChangeRequestModal'
+import { GraduationCap, Layers, CreditCard, Loader2, Calendar } from 'lucide-react'
 import { openPaystackCheckout } from '@/lib/paystack'
 import { useToast } from '@/components/ui/use-toast'
 
@@ -28,6 +29,8 @@ export function EnrollmentList({ students, onEnrollStudent, refreshTrigger }: En
   const [enrollments, setEnrollments] = useState<Enrollment[]>([])
   const [loading, setLoading] = useState(true)
   const [payingId, setPayingId] = useState<string | null>(null)
+  const [changeRequestEnrollment, setChangeRequestEnrollment] = useState<Enrollment | null>(null)
+  const [changeRequestModalOpen, setChangeRequestModalOpen] = useState(false)
 
   useEffect(() => {
     loadEnrollments()
@@ -191,7 +194,20 @@ export function EnrollmentList({ students, onEnrollStudent, refreshTrigger }: En
               </>
             )}
           </Button>
-        ) : null
+        ) : (
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              setChangeRequestEnrollment(enrollment)
+              setChangeRequestModalOpen(true)
+            }}
+            className="text-xs border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10"
+          >
+            <Calendar className="h-3 w-3 mr-1" />
+            Request Change
+          </Button>
+        )
       ),
     },
   ]
@@ -267,6 +283,16 @@ export function EnrollmentList({ students, onEnrollStudent, refreshTrigger }: En
           </div>
         )}
       </CardContent>
+
+      <ChangeRequestModal
+        open={changeRequestModalOpen}
+        onOpenChange={setChangeRequestModalOpen}
+        enrollment={changeRequestEnrollment}
+        onSuccess={() => {
+          loadEnrollments()
+          setChangeRequestEnrollment(null)
+        }}
+      />
     </Card>
   )
 }

@@ -179,17 +179,17 @@
 - [ ] Add new sidebar entries and badges
 
 ## Part 5: Parent
-- [ ] Replace direct enrollment edit with "Request schedule change"
-- [ ] Add schedule change form (start date, end date or time, days, hours)
-- [ ] Show current values unchanged
-- [ ] Show "Change pending approval" banner while request is PENDING
-- [ ] Add Cancel request action
-- [ ] Show request history with APPROVED and REJECTED
-- [ ] Show admin reason for REJECTED requests
-- [ ] Keep direct editing for unpaid enrollments
-- [ ] Enforce one pending request per enrollment
-- [ ] Disable form while request is pending
-- [ ] Show server error clearly for request conflicts
+- [x] Replace direct enrollment edit with "Request schedule change"
+- [x] Add schedule change form (start date, end date or time, days, hours)
+- [x] Show current values unchanged
+- [x] Show "Change pending approval" banner while request is PENDING
+- [x] Add Cancel request action
+- [x] Show request history with APPROVED and REJECTED
+- [x] Show admin reason for REJECTED requests
+- [x] Keep direct editing for unpaid enrollments
+- [x] Enforce one pending request per enrollment
+- [x] Disable form while request is pending
+- [x] Show server error clearly for request conflicts
 - [x] Update grades page to show only APPROVED grades
 - [x] Show grade breakdown (components, weights, percentages)
 - [x] Never show overrideReason to parents
