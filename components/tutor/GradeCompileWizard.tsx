@@ -39,7 +39,7 @@ const STEPS = ['Select Items', 'Set Weights', 'Preview', 'Review'] as const
 const COMPONENT_LABELS: Record<GradeComponentType, string> = {
   QUIZ: 'Quizzes',
   ASSIGNMENT: 'Assignments',
-  TEST: 'Tests',
+  EXAM: 'Tests',
   PARTICIPATION: 'Participation',
   ATTENDANCE: 'Attendance',
 }
@@ -47,7 +47,7 @@ const COMPONENT_LABELS: Record<GradeComponentType, string> = {
 const COMPONENT_ICONS: Record<GradeComponentType, any> = {
   QUIZ: Trophy,
   ASSIGNMENT: BookOpen,
-  TEST: Star,
+  EXAM: Star,
   PARTICIPATION: UserCheck,
   ATTENDANCE: Clock,
 }
@@ -68,7 +68,7 @@ export function GradeCompileWizard({ open, onOpenChange, onSuccess, editingGrade
     componentWeights: {
       QUIZ: 0,
       ASSIGNMENT: 0,
-      TEST: 0,
+      EXAM: 0,
       PARTICIPATION: 0,
       ATTENDANCE: 0,
     } as Record<GradeComponentType, number>,
@@ -127,7 +127,7 @@ export function GradeCompileWizard({ open, onOpenChange, onSuccess, editingGrade
     try {
       const enrollment = students.find(s => s.enrollment?.id === enrollmentId)
       if (enrollment?.student) {
-        const items = await api.getScoredItems(enrollment.student.id, { notInGrade: true, enrollmentId })
+        const items = await api.getScoredItems(enrollment.student.id, { unassigned: true, enrollmentId })
         setScoredItems(items)
       }
     } catch (err) {
@@ -150,7 +150,7 @@ export function GradeCompileWizard({ open, onOpenChange, onSuccess, editingGrade
       componentWeights: {
         QUIZ: 0,
         ASSIGNMENT: 0,
-        TEST: 0,
+        EXAM: 0,
         PARTICIPATION: 0,
         ATTENDANCE: 0,
       },
@@ -200,12 +200,18 @@ export function GradeCompileWizard({ open, onOpenChange, onSuccess, editingGrade
 
     setLoading(true)
     try {
-      const previewData = await api.previewCompiledGrade({
+      // First create a draft grade to get a gradeId for preview
+      const components = Object.entries(formData.componentWeights).map(([type, weight]) => ({
+        type: type as GradeComponentType,
+        weight,
+      }))
+      const draftGrade = await api.createCompiledGrade({
         enrollmentId: formData.enrollmentId,
-        period: formData.period,
-        itemIds: formData.selectedItemIds,
-        componentWeights: formData.componentWeights,
+        periodStart: formData.period, // Use period as start date for now
+        periodEnd: formData.period, // Will need to be updated
+        components,
       })
+      const previewData = await api.previewCompiledGrade(draftGrade.id)
       setPreview(previewData)
       setCurrentStep(2)
     } catch (err) {
@@ -241,16 +247,18 @@ export function GradeCompileWizard({ open, onOpenChange, onSuccess, editingGrade
 
     setLoading(true)
     try {
+      const components = Object.entries(formData.componentWeights).map(([type, weight]) => ({
+        type: type as GradeComponentType,
+        weight,
+      }))
+
       if (editingGrade) {
         await api.updateCompiledGradeDraft(editingGrade.id, {
           enrollmentId: formData.enrollmentId,
-          period: formData.period,
-          itemIds: formData.selectedItemIds,
-          componentWeights: formData.componentWeights,
-          finalScore: formData.finalScore,
-          overrideReason: formData.overrideReason || undefined,
+          periodStart: formData.period,
+          periodEnd: formData.period,
+          components,
           tutorComment: formData.tutorComment || undefined,
-          attachments: formData.attachments,
         })
         toast({
           title: 'Grade Updated',
@@ -259,15 +267,12 @@ export function GradeCompileWizard({ open, onOpenChange, onSuccess, editingGrade
       } else {
         const grade = await api.createCompiledGrade({
           enrollmentId: formData.enrollmentId,
-          period: formData.period,
-          itemIds: formData.selectedItemIds,
-          componentWeights: formData.componentWeights,
-          finalScore: formData.finalScore,
-          overrideReason: formData.overrideReason || undefined,
+          periodStart: formData.period,
+          periodEnd: formData.period,
+          components,
           tutorComment: formData.tutorComment || undefined,
-          attachments: formData.attachments,
         })
-        
+
         if (asDraft) {
           toast({
             title: 'Draft Saved',
@@ -306,7 +311,7 @@ export function GradeCompileWizard({ open, onOpenChange, onSuccess, editingGrade
     const typeMap: Record<string, GradeComponentType> = {
       'QUIZ_ATTEMPT': 'QUIZ',
       'ASSIGNMENT_SUBMISSION': 'ASSIGNMENT',
-      'TEST': 'TEST',
+      'TEST': 'EXAM',
       'PARTICIPATION': 'PARTICIPATION',
     }
     return getEnrollmentItems().filter(item => typeMap[item.type] === type)
@@ -544,7 +549,7 @@ export function GradeCompileWizard({ open, onOpenChange, onSuccess, editingGrade
                           <Badge variant="outline">{comp.weight}%</Badge>
                         </div>
                         <div className="text-sm text-muted-foreground">
-                          {comp.itemCount} items • {comp.componentPercentage.toFixed(1)}% contribution
+                          {comp.itemCount} items • {comp.componentPercentage?.toFixed(1) || 0}% contribution
                         </div>
                       </div>
                     ))}

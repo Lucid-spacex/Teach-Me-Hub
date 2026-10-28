@@ -191,9 +191,9 @@ export function ScoredItemsTab({ studentId, enrollmentId, refreshTrigger }: Scor
 
   const getItemIcon = (type: ScoredItemType) => {
     switch (type) {
-      case 'QUIZ_ATTEMPT':
+      case 'QUIZ':
         return <Trophy className="h-4 w-4" />
-      case 'ASSIGNMENT_SUBMISSION':
+      case 'ASSIGNMENT':
         return <FileText className="h-4 w-4" />
       case 'TEST':
         return <Star className="h-4 w-4" />
@@ -204,9 +204,9 @@ export function ScoredItemsTab({ studentId, enrollmentId, refreshTrigger }: Scor
 
   const getItemColor = (type: ScoredItemType) => {
     switch (type) {
-      case 'QUIZ_ATTEMPT':
+      case 'QUIZ':
         return 'bg-purple-500/10 text-purple-500 border-purple-500/30'
-      case 'ASSIGNMENT_SUBMISSION':
+      case 'ASSIGNMENT':
         return 'bg-blue-500/10 text-blue-500 border-blue-500/30'
       case 'TEST':
         return 'bg-orange-500/10 text-orange-500 border-orange-500/30'
@@ -333,9 +333,9 @@ export function ScoredItemsTab({ studentId, enrollmentId, refreshTrigger }: Scor
                           className="gap-1 text-xs h-8"
                         >
                           <Edit className="h-3 w-3" />
-                          {item.type === 'ASSIGNMENT_SUBMISSION' ? 'Score' : 'Adjust'}
+                          {item.type === 'ASSIGNMENT' ? 'Score' : 'Adjust'}
                         </Button>
-                        {item.type !== 'QUIZ_ATTEMPT' && item.type !== 'ASSIGNMENT_SUBMISSION' && (
+                        {item.type !== 'QUIZ' && item.type !== 'ASSIGNMENT' && (
                           <Button
                             variant="ghost"
                             size="sm"
@@ -446,7 +446,7 @@ export function ScoredItemsTab({ studentId, enrollmentId, refreshTrigger }: Scor
       <Modal
         open={editModalOpen}
         onOpenChange={setEditModalOpen}
-        title={selectedItem?.type === 'ASSIGNMENT_SUBMISSION' ? 'Score Assignment' : 'Adjust Score'}
+        title={selectedItem?.type === 'ASSIGNMENT' ? 'Score Assignment' : 'Adjust Score'}
         description="Update the tutor score and add comments"
         footer={
           <div className="flex gap-2 justify-end">

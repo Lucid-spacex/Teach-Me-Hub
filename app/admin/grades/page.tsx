@@ -41,12 +41,8 @@ export default function AdminGradesPage() {
   const loadGrades = async () => {
     setLoading(true)
     try {
-      const response = await api.getAdminCompiledGrades({
-        status: filters.status || undefined,
-        tutorId: filters.tutorId || undefined,
-        studentId: filters.studentId || undefined,
-      })
-      setGrades(response.data)
+      const response = await api.getAdminPendingGrades()
+      setGrades(response)
     } catch (error) {
       console.error('Failed to load grades:', error)
       toast({

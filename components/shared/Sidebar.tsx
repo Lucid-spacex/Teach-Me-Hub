@@ -82,7 +82,7 @@ export function Sidebar({ role }: SidebarProps) {
   const parentNavItems: NavItem[] = [
     { label: 'Overview', href: '/parent', icon: LayoutDashboard },
     { label: 'My Children', href: '/parent/students', icon: Users },
-    { label: 'Enrollments', href: '/parent/enrollments', icon: BookOpen, category: 'ENROLLMENTS' },
+    { label: 'Enrollments', href: '/parent/enrollments', icon: BookOpen, category: 'ENROLLMENT' },
     { label: 'Live Sessions', href: '/parent/sessions', icon: Calendar, category: 'SESSIONS' },
     { label: 'Assignments', href: '/parent/assignments', icon: FileText, category: 'ASSIGNMENTS' },
     { label: 'Grades & Reports', href: '/parent/grades', icon: BarChart3, category: 'GRADES' },
@@ -127,7 +127,7 @@ export function Sidebar({ role }: SidebarProps) {
     { label: 'All Tutors', href: '/admin/tutors', icon: Users, category: 'USERS' },
     { label: 'Parent Directory', href: '/admin/parents', icon: Users, category: 'USERS' },
     { label: 'All Students', href: '/admin/students', icon: GraduationCap },
-    { label: 'Unmatched Enrollments', href: '/admin/enrollments', icon: BookOpen, category: 'ENROLLMENTS' },
+    { label: 'Unmatched Enrollments', href: '/admin/enrollments', icon: BookOpen, category: 'ENROLLMENT' },
     { label: 'Sessions', href: '/admin/sessions', icon: Calendar, category: 'SESSIONS' },
     { label: 'Messages', href: '/admin/messages', icon: MessageSquare, category: 'MESSAGES' },
     { label: 'Complaints', href: '/admin/complaints', icon: AlertCircle, category: 'COMPLAINTS' },

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
 import { api } from '@/lib/api'
 import { StudentProfile } from '@/lib/types'
-import { User, GraduationCap, Key, Settings, ArrowLeft, Copy, Check, Clock, School } from 'lucide-react'
+import { User, GraduationCap, Key, Settings, ArrowLeft, Clock, School } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
 
 export default function StudentProfilePage() {
@@ -16,7 +16,6 @@ export default function StudentProfilePage() {
   const { toast } = useToast()
   const [profile, setProfile] = useState<StudentProfile | null>(null)
   const [loading, setLoading] = useState(true)
-  const [copiedCode, setCopiedCode] = useState(false)
 
   useEffect(() => {
     const user = getUser()
@@ -38,17 +37,6 @@ export default function StudentProfilePage() {
     } finally {
       setLoading(false)
     }
-  }
-
-  const handleCopyCode = () => {
-    if (!profile?.studentCode) return
-    navigator.clipboard.writeText(profile.studentCode)
-    setCopiedCode(true)
-    toast({
-      title: 'Copied to Clipboard',
-      description: `Student Code ${profile.studentCode} copied.`,
-    })
-    setTimeout(() => setCopiedCode(false), 2000)
   }
 
   return (
@@ -102,20 +90,10 @@ export default function StudentProfilePage() {
               <CardContent className="space-y-6">
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="p-4 rounded-lg bg-brand-dark/70 border border-brand-gold/20">
-                    <span className="text-xs text-gray-400 block mb-1">Student Login Code</span>
-                    <div className="flex items-center justify-between">
-                      <span className="text-2xl font-mono font-bold text-brand-gold tracking-wider">
-                        {profile.studentCode}
-                      </span>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={handleCopyCode}
-                        className="text-gray-300 hover:text-white"
-                      >
-                        {copiedCode ? <Check className="h-4 w-4 text-green-400" /> : <Copy className="h-4 w-4" />}
-                      </Button>
-                    </div>
+                    <span className="text-xs text-gray-400 block mb-1">Grade Level</span>
+                    <span className="text-xl font-semibold text-white">
+                      {profile.actualGrade}
+                    </span>
                   </div>
 
                   <div className="p-4 rounded-lg bg-brand-dark/70 border border-brand-gold/20">

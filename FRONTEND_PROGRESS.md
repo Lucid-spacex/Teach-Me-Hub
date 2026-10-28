@@ -21,6 +21,7 @@
 - [x] MISMATCH AUDIT - Compare lib/api.ts, lib/types.ts and every page/component against ENDPOINT.md (MISMATCH_TABLE.md created)
 - [x] AMBIGUITIES IN ENDPOINT.md - Document ambiguities behind adapter functions (BACKEND_GAPS.md created)
 - [x] Fix all identified API mismatches in lib/api.ts (added 29 missing endpoints, fixed 2 path issues)
+- [x] Implement adapter functions for ambiguous routes (TUTOR_ROUTE_PREFIX constant already added, scored item mapping in place)
 - [x] Add notification endpoints to lib/api.ts (list, unread-count, mark-read, read-all, read-by-entity, stream-ticket)
 - [x] Add notification types to lib/types.ts
 - [x] Add scored items endpoints to lib/api.ts
@@ -273,4 +274,4 @@
 - [x] List unverified items in final report
 
 ## Environment
-- [ ] Ensure .env.local has NEXT_PUBLIC_API_URL=http://localhost:3001/api
+- [x] Ensure .env.local has NEXT_PUBLIC_API_URL=https://smart-tutor-9rjd.onrender.com/api (or remove to use default)

@@ -318,10 +318,6 @@ export default function AdminChangeRequestDetailPage() {
                 </div>
               )}
               <div>
-                <span className="text-muted-foreground text-sm block mb-1">Session Frequency</span>
-                <p className="text-foreground font-medium">{request.before.sessionFrequency}</p>
-              </div>
-              <div>
                 <span className="text-muted-foreground text-sm block mb-1">Available Days</span>
                 <p className="text-foreground font-medium">{request.before.availableDays.join(', ')}</p>
               </div>
@@ -352,10 +348,6 @@ export default function AdminChangeRequestDetailPage() {
                   <p className="text-foreground font-medium">{new Date(request.after.endDate).toLocaleDateString()}</p>
                 </div>
               )}
-              <div>
-                <span className="text-muted-foreground text-sm block mb-1">Session Frequency</span>
-                <p className="text-foreground font-medium">{request.after.sessionFrequency}</p>
-              </div>
               <div>
                 <span className="text-muted-foreground text-sm block mb-1">Available Days</span>
                 <p className="text-foreground font-medium">{request.after.availableDays.join(', ')}</p>

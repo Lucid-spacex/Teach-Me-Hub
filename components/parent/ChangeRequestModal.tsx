@@ -53,7 +53,7 @@ export function ChangeRequestModal({ open, onOpenChange, enrollment, onSuccess }
   const loadChangeRequests = async () => {
     if (!enrollment) return
     try {
-      const data = await api.getParentChangeRequests({ enrollmentId: enrollment.id })
+      const data = await api.getParentChangeRequests(enrollment.id)
       setChangeRequests(data)
     } catch (err) {
       console.error('Failed to load change requests:', err)
@@ -68,11 +68,9 @@ export function ChangeRequestModal({ open, onOpenChange, enrollment, onSuccess }
 
     setLoading(true)
     try {
-      await api.createChangeRequest({
-        enrollmentId: enrollment.id,
+      await api.createChangeRequest(enrollment.id, {
         startDate: formData.startDate || undefined,
         endDate: formData.endDate || undefined,
-        sessionFrequency: formData.sessionFrequency || undefined,
         availableDays: formData.availableDays.length > 0 ? formData.availableDays : undefined,
         preferredStartHour: formData.preferredStartHour,
         preferredEndHour: formData.preferredEndHour,

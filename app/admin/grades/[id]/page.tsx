@@ -378,7 +378,7 @@ export default function AdminGradeDetailPage() {
                     </div>
                     <div>
                       <span className="text-muted-foreground">Component %</span>
-                      <p className="text-foreground font-medium">{component.componentPercentage.toFixed(1)}%</p>
+                      <p className="text-foreground font-medium">{component.componentPercentage?.toFixed(1) || 0}%</p>
                     </div>
                   </div>
                 </div>

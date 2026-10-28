@@ -187,12 +187,13 @@ export default function ParentGradesPage() {
                         {item.components.map((comp, idx) => (
                           <div key={idx} className="flex items-center justify-between text-xs">
                             <span className="text-gray-300">{comp.type} ({comp.weight}%)</span>
-                            <span className="text-white font-medium">{comp.componentPercentage.toFixed(1)}%</span>
+                            <span className="text-white font-medium">{comp.componentPercentage?.toFixed(1) || 0}%</span>
                           </div>
                         ))}
                       </div>
                     </div>
 
+                    {/* Note: overrideReason is never shown to parents per security rules */}
                     {item.tutorComment ? (
                       <div className="text-xs text-gray-300 bg-brand-dark/40 p-2.5 rounded border border-brand-gold/10">
                         <span className="text-brand-gold font-medium block mb-0.5">Tutor Feedback:</span>

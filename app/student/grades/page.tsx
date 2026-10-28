@@ -175,12 +175,13 @@ export default function StudentGradesPage() {
                         {item.components.map((comp, idx) => (
                           <div key={idx} className="flex items-center justify-between text-xs">
                             <span className="text-gray-300">{comp.type} ({comp.weight}%)</span>
-                            <span className="text-white font-medium">{comp.componentPercentage.toFixed(1)}%</span>
+                            <span className="text-white font-medium">{comp.componentPercentage?.toFixed(1) || 0}%</span>
                           </div>
                         ))}
                       </div>
                     </div>
 
+                    {/* Note: overrideReason and rejectionReason are never shown to students per security rules */}
                     {item.tutorComment ? (
                       <div className="text-xs text-gray-300 bg-brand-dark/40 p-3 rounded border border-brand-gold/10">
                         <span className="text-brand-gold font-medium block mb-1 flex items-center gap-1">

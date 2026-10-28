@@ -24,7 +24,6 @@ export default function StudentSettingsPage() {
   const { soundEnabled, setSoundEnabled } = useNotifications()
   const [profile, setProfile] = useState<StudentProfile | null>(null)
   const [loading, setLoading] = useState(true)
-  const [copiedCode, setCopiedCode] = useState(false)
 
   // Timezone state
   const [timezone, setTimezone] = useState('')
@@ -78,17 +77,6 @@ export default function StudentSettingsPage() {
     }
   }
 
-  const handleCopyCode = () => {
-    if (!profile?.studentCode) return
-    navigator.clipboard.writeText(profile.studentCode)
-    setCopiedCode(true)
-    toast({
-      title: 'Copied to Clipboard',
-      description: `Student Code ${profile.studentCode} copied.`,
-    })
-    setTimeout(() => setCopiedCode(false), 2000)
-  }
-
   const handleUpdateTimezone = async () => {
     setUpdatingTimezone(true)
     try {
@@ -131,10 +119,10 @@ export default function StudentSettingsPage() {
 
     setUpdatingPin(true)
     try {
-      // Use auth password/pin change endpoint
-      await api.changePassword({
-        currentPassword: currentPin,
-        newPassword: newPin,
+      // Use the correct PIN change endpoint for students
+      await api.changePin({
+        currentPin,
+        newPin,
       })
       toast({
         title: 'PIN Changed',
@@ -243,52 +231,23 @@ export default function StudentSettingsPage() {
             {/* Appearance Settings */}
             <AppearanceSettings />
 
-            {/* Student Code Card */}
+            {/* Student Info Card */}
             {profile && (
               <Card className="bg-card border-brand-gold/30">
                 <CardHeader>
                   <CardTitle className="text-foreground text-lg flex items-center gap-2">
                     <User className="h-5 w-5 text-brand-gold" />
-                    Student Credentials
+                    Student Information
                   </CardTitle>
                   <CardDescription className="text-muted-foreground">
-                    Your unique identifier required for student portal login
+                    Your profile information
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div className="p-4 rounded-lg bg-brand-dark/70 border border-brand-gold/20">
-                      <span className="text-xs text-muted-foreground block mb-1">Student Name</span>
-                      <p className="text-lg font-bold text-foreground">{profile.fullName}</p>
-                      <p className="text-xs text-brand-gold mt-1">Grade: {profile.actualGrade}</p>
-                    </div>
-
-                    <div className="p-4 rounded-lg bg-brand-dark/70 border border-brand-gold/20 flex flex-col justify-between">
-                      <div>
-                        <span className="text-xs text-muted-foreground block mb-1">Student Code</span>
-                        <p className="text-2xl font-mono font-extrabold text-brand-gold tracking-widest">
-                          {profile.studentCode}
-                        </p>
-                      </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleCopyCode}
-                        className="mt-3 border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10 self-start"
-                      >
-                        {copiedCode ? (
-                          <>
-                            <Check className="h-3.5 w-3.5 mr-1.5 text-green-400" />
-                            Copied
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="h-3.5 w-3.5 mr-1.5" />
-                            Copy Student Code
-                          </>
-                        )}
-                      </Button>
-                    </div>
+                  <div className="p-4 rounded-lg bg-brand-dark/70 border border-brand-gold/20">
+                    <span className="text-xs text-muted-foreground block mb-1">Student Name</span>
+                    <p className="text-lg font-bold text-foreground">{profile.fullName}</p>
+                    <p className="text-xs text-brand-gold mt-1">Grade: {profile.actualGrade}</p>
                   </div>
                 </CardContent>
               </Card>

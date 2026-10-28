@@ -39,7 +39,7 @@ export default function StudentNotificationsPage() {
     try {
       const data = await api.getStudentNotificationsFiltered({
         category: categoryFilter === 'ALL' ? undefined : categoryFilter,
-        unreadOnly: filter === 'UNREAD',
+        isRead: filter === 'UNREAD' ? false : undefined,
         page,
         limit: 20,
       })

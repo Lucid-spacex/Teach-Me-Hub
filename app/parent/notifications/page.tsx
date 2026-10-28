@@ -39,7 +39,7 @@ export default function ParentNotificationsPage() {
     try {
       const data = await api.getParentNotifications({
         category: categoryFilter === 'ALL' ? undefined : categoryFilter,
-        unreadOnly: filter === 'UNREAD',
+        isRead: filter === 'UNREAD' ? false : undefined,
         page,
         limit: 20,
       })
@@ -118,7 +118,7 @@ export default function ParentNotificationsPage() {
     { value: 'SESSIONS', label: 'Sessions' },
     { value: 'MESSAGES', label: 'Messages' },
     { value: 'COMPLAINTS', label: 'Complaints' },
-    { value: 'ENROLLMENTS', label: 'Enrollments' },
+    { value: 'ENROLLMENT', label: 'Enrollments' },
     { value: 'PAYMENTS', label: 'Payments' },
     { value: 'GRADES', label: 'Grades' },
     { value: 'SCHEDULE', label: 'Schedule' },
