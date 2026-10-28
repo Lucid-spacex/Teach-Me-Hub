@@ -55,34 +55,6 @@ export interface TutorRegistrationRequest extends RegisterRequest {
   documents?: File[]
 }
 
-export interface TutorRegistrationRequest extends RegisterRequest {
-  role: 'TUTOR'
-  firstName: string
-  lastName: string
-  middleName?: string
-  confirmPassword: string
-  // Note: firstName, lastName, middleName, confirmPassword are now in base RegisterRequest
-  // Step 2: About you
-  address?: string
-  birthday?: string
-  country?: string
-  city?: string
-  highestQualification?: string
-  // Step 3: Teaching
-  subjects?: string[]
-  testPreparation?: string[]
-  levels?: string[]
-  yearsOfExperience?: number
-  whyTeach?: string
-  howHeard?: string
-  // Step 4: Profile
-  bio?: string
-  interests?: string
-  profilePicture?: File
-  // Step 5: Documents
-  documents?: File[]
-}
-
 export interface VerifyRequest {
   email: string
   otp: string
@@ -201,13 +173,12 @@ export interface CreateStudentRequest {
 
 export interface RegenerateStudentPasswordResponse {
   message: string
-  studentCode: string
-  // Password is NEVER returned - only emailed to parent
+  // Password and studentCode are NEVER returned - only emailed to parent
 }
 
 // Enrollment types
 export type EnrollmentStatus = 'ACTIVE' | 'PAUSED' | 'COMPLETED' | 'CANCELLED' | 'PENDING_PAYMENT'
-export type SessionFrequency = 'TWICE_WEEKLY' | 'THRICE_WEEKLY' | 'FIVE_TIMES_WEEKLY'
+export type SessionFrequency = 'WEEKLY' | 'TWICE_WEEKLY' | 'THRICE_WEEKLY' | 'FIVE_TIMES_WEEKLY'
 export type BillingFrequency = 'WEEKLY' | 'MONTHLY' | 'YEARLY'
 
 export interface Enrollment {
@@ -263,10 +234,12 @@ export interface Session {
   enrollmentId: string
   scheduledAt: string
   durationMinutes: number
-  meetLink: string | null
+  googleMeetLink: string | null
+  meetLink?: string | null // Compatibility alias for googleMeetLink
   status: SessionStatus
   recordingStatus?: RecordingStatus
-  recordingLink?: string | null
+  recordingUrl?: string | null
+  recordingLink?: string | null // Compatibility alias for recordingUrl
   tutorNotes: string | null
   homeworkAssigned: string | null
   participants?: SessionParticipant[]
@@ -733,7 +706,7 @@ export interface Complaint {
 
 // Notification types
 export type NotificationType = 'MESSAGE' | 'SESSION' | 'ASSIGNMENT' | 'PAYMENT' | 'PRICING_DRIFT_ALERT' | 'TUTOR_ASSIGNED' | 'GENERAL' | 'GRADE_APPROVED' | 'GRADE_REJECTED' | 'SCHEDULE_CHANGE_APPROVED' | 'SCHEDULE_CHANGE_REJECTED' | 'COMPLAINT_RESOLVED' | 'ENROLLMENT_MATCHED' | 'RECORDING_AVAILABLE'
-export type NotificationCategory = 'USERS' | 'SESSIONS' | 'MESSAGES' | 'COMPLAINTS' | 'ENROLLMENTS' | 'PAYMENTS' | 'GRADES' | 'SCHEDULE' | 'ASSIGNMENTS'
+export type NotificationCategory = 'USERS' | 'SESSIONS' | 'MESSAGES' | 'COMPLAINTS' | 'ENROLLMENT' | 'PAYMENTS' | 'GRADES' | 'SCHEDULE' | 'ASSIGNMENTS' | 'PRICING' | 'QUIZZES'
 
 export interface Notification {
   id: string
@@ -742,7 +715,9 @@ export interface Notification {
   category: NotificationCategory
   title: string
   message: string
+  body?: string // Tolerant: some endpoints may use body instead of message
   read: boolean
+  isRead?: boolean // Tolerant: some endpoints may use isRead instead of read
   entityType?: string
   entityId?: string
   createdAt: string
@@ -806,7 +781,8 @@ export interface Grade {
   assignmentId: string
   score: number
   maxScore: number
-  feedback: string | null
+  comments: string | null
+  feedback?: string | null // Compatibility alias for comments
   status: 'PENDING_APPROVAL' | 'APPROVED' | 'REJECTED'
   createdAt: string
   assignment?: Assignment
@@ -819,9 +795,9 @@ export interface QuizQuestion {
   assignmentId: string
   questionText: string
   options: string[]
-  correctIndex: number
+  correctOptionIndex: number
   points: number
-  order: number
+  orderIndex: number
 }
 
 export interface QuizAttempt {
@@ -833,9 +809,10 @@ export interface QuizAttempt {
   score: number | null
   answers: Array<{
     questionId: string
-    selectedOption: number
+    selectedOptionIndex: number
     isCorrect: boolean
-    pointsEarned: number
+    pointsAwarded: number
+    pointsEarned?: number // Compatibility alias
   }>
 }
 
@@ -1092,7 +1069,10 @@ export interface AdminActionLog {
 }
 
 // Scored Item types
-export type ScoredItemType = 'QUIZ_ATTEMPT' | 'ASSIGNMENT_SUBMISSION' | 'TEST' | 'PARTICIPATION'
+// Note: ENDPOINT.md lists 'QUIZ', 'ASSIGNMENT', 'EXAM', 'PROJECT', 'PARTICIPATION', 'ATTENDANCE'
+// Using QUIZ, ASSIGNMENT, TEST, PARTICIPATION for UI as per instructions
+// TEST maps to EXAM in API calls
+export type ScoredItemType = 'QUIZ' | 'ASSIGNMENT' | 'TEST' | 'PARTICIPATION'
 
 export interface ScoredItem {
   id: string
@@ -1118,14 +1098,16 @@ export interface ScoredItem {
 
 // Grade Compilation types
 export type GradeStatus = 'DRAFT' | 'PENDING_APPROVAL' | 'APPROVED' | 'REJECTED'
-export type GradeComponentType = 'QUIZ' | 'ASSIGNMENT' | 'TEST' | 'PARTICIPATION' | 'ATTENDANCE'
+export type GradeComponentType = 'QUIZ' | 'ASSIGNMENT' | 'EXAM' | 'PARTICIPATION' | 'ATTENDANCE'
 
 export interface GradeComponent {
   type: GradeComponentType
   weight: number
-  itemCount: number
-  componentPercentage: number
-  items: ScoredItem[]
+  scoredItemId?: string
+  attendanceRate?: number
+  itemCount?: number
+  componentPercentage?: number | null
+  items?: ScoredItem[]
 }
 
 export interface CompiledGrade {
@@ -1156,8 +1138,7 @@ export interface CompiledGrade {
 export interface GradePreviewRequest {
   enrollmentId: string
   period: string
-  itemIds: string[]
-  componentWeights: Record<GradeComponentType, number>
+  components: GradeComponent[]
 }
 
 export interface GradePreviewResponse {
@@ -1168,13 +1149,10 @@ export interface GradePreviewResponse {
 
 export interface CreateGradeRequest {
   enrollmentId: string
-  period: string
-  itemIds: string[]
-  componentWeights: Record<GradeComponentType, number>
-  finalScore?: number | null
-  overrideReason?: string | null
-  tutorComment?: string | null
-  attachments?: string[]
+  periodStart: string
+  periodEnd: string
+  components: GradeComponent[]
+  tutorComment?: string
 }
 
 export interface SubmitGradeRequest extends CreateGradeRequest {}
@@ -1225,7 +1203,6 @@ export interface EnrollmentChangeRequest {
   before: {
     startDate: string
     endDate?: string | null
-    sessionFrequency: string
     availableDays: string[]
     preferredStartHour: number
     preferredEndHour: number
@@ -1234,7 +1211,6 @@ export interface EnrollmentChangeRequest {
   after: {
     startDate: string
     endDate?: string | null
-    sessionFrequency: string
     availableDays: string[]
     preferredStartHour: number
     preferredEndHour: number
@@ -1245,7 +1221,6 @@ export interface CreateChangeRequestRequest {
   enrollmentId: string
   startDate?: string
   endDate?: string
-  sessionFrequency?: string
   availableDays?: string[]
   preferredStartHour?: number
   preferredEndHour?: number
@@ -1253,10 +1228,8 @@ export interface CreateChangeRequestRequest {
 
 // Session Recording types
 export interface SessionRecording {
-  sessionId: string
   recordingUrl: string
   recordingStatus: RecordingStatus
-  createdAt: string
 }
 
 // Tutor Upcoming Classes types
