@@ -37,9 +37,9 @@ export default function ParentNotificationsPage() {
   const loadNotifications = async () => {
     setLoading(true)
     try {
-      const data = await api.getParentNotifications({
+      const data = await api.getNotifications({
         category: categoryFilter === 'ALL' ? undefined : categoryFilter,
-        isRead: filter === 'UNREAD' ? false : undefined,
+        unreadOnly: filter === 'UNREAD' ? true : undefined,
         page,
         limit: 20,
       })

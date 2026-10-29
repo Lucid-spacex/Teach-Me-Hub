@@ -37,9 +37,9 @@ export default function TutorNotificationsPage() {
   const loadNotifications = async () => {
     setLoading(true)
     try {
-      const data = await api.getTutorNotifications({
+      const data = await api.getNotifications({
         category: categoryFilter === 'ALL' ? undefined : categoryFilter,
-        isRead: filter === 'UNREAD' ? false : undefined,
+        unreadOnly: filter === 'UNREAD' ? true : undefined,
         page,
         limit: 20,
       })

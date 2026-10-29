@@ -19,7 +19,6 @@ import {
   GraduationCap,
   Calendar,
   BookOpen,
-  Key,
   Award,
   RefreshCw,
   Clock,

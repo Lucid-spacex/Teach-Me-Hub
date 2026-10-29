@@ -15,7 +15,6 @@ export interface User {
 
 // Auth types - Updated to match backend spec
 export interface RegisterRequest {
-  fullName?: string
   firstName: string
   lastName: string
   middleName?: string
@@ -411,7 +410,6 @@ export interface PendingTutor {
   user?: Partial<User>
   tutorProfile: TutorProfile
   profilePictureUrl?: string | null
->>>>>>> c5247f6 (Tutor messaging updates and grade compile wizard attachments)
 }
 
 export interface TutorWithProfile {
@@ -425,7 +423,7 @@ export interface TutorWithProfile {
   updatedAt: string
   profilePictureUrl?: string | null
   tutorProfile: TutorProfile | null
-  user?: { fullName?: string; email?: string }
+  user?: User
   // Extended fields from registration
   firstName?: string
   lastName?: string
@@ -447,8 +445,6 @@ export interface TutorWithProfile {
   availabilityStatus?: TutorAvailabilityStatus
   maxStudents?: number
   currentStudents?: number
-  // For pending tutors
-  user?: User
 }
 
 export interface AdminStudent {
@@ -919,17 +915,6 @@ export interface ParentDetailProfile {
     status: string
     createdAt: string
   }>
-  // For backward compatibility
-  id?: string
-  fullName?: string
-  email?: string
-  phone?: string
-  status?: UserStatus
-  timezone?: string
-  profilePicture?: string | null
-  createdAt?: string
-  updatedAt?: string
-  complaintCount?: number
 }
 
 // Transaction types
