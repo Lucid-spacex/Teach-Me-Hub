@@ -43,8 +43,12 @@ export default function AdminClassSchedulePage() {
   const loadSchedule = async () => {
     setLoading(true)
     try {
-      const dateStr = filters.fromDate || new Date().toISOString().split('T')[0]
-      const response = await api.getAdminClassSchedule(dateStr)
+      const response = await api.getAdminClassSchedule({
+        fromDate: filters.fromDate || new Date().toISOString().split('T')[0],
+        toDate: filters.toDate,
+        tutorId: filters.tutorId || undefined,
+        status: filters.status || undefined,
+      })
       setSchedule(response.data)
       setUnscheduledCount(response.unscheduledWithin24hCount)
     } catch (error) {

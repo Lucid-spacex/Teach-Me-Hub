@@ -46,7 +46,7 @@ export default function AdminStudentDetailPage() {
     setLoading(true)
     setDetailLoading(true)
     try {
-      const data = await api.getStudentDetail(studentId)
+      const data = await api.getAdminStudentDetail(studentId)
       setStudentData(data)
     } catch (err) {
       console.error('Failed to load student data:', err)

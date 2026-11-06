@@ -26,6 +26,7 @@ export default function ParentComplaintsPage() {
 
   // Form fields
   const [aboutType, setAboutType] = useState<ComplaintAboutType>('GENERAL')
+  const [subject, setSubject] = useState('')
   const [description, setDescription] = useState('')
 
   useEffect(() => {
@@ -57,10 +58,10 @@ export default function ParentComplaintsPage() {
 
   const handleFileComplaint = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!description.trim()) {
+    if (!subject.trim() || !description.trim()) {
       toast({
         title: 'Validation Error',
-        description: 'Please describe the issue in detail.',
+        description: 'Please provide a subject and describe the issue in detail.',
         variant: 'destructive',
       })
       return
@@ -70,6 +71,7 @@ export default function ParentComplaintsPage() {
     try {
       await api.fileComplaint({
         aboutType,
+        subject: subject.trim(),
         description: description.trim(),
       })
       toast({
@@ -77,6 +79,7 @@ export default function ParentComplaintsPage() {
         description: 'Your complaint has been submitted. Our admin team will review and reply shortly.',
       })
       setModalOpen(false)
+      setSubject('')
       setDescription('')
       setAboutType('GENERAL')
       loadComplaints()

@@ -430,3 +430,4 @@ This table documents all mismatches between the frontend API layer (lib/api.ts, 
 2. **Grade endpoints**: Doc says "Updated X" or "Created X" without field details - frontend reads existing types
 3. **Admin grade detail**: GET /admin/grades/:id doesn't exist in doc, only GET /grades/:id - need to verify breakdown fields
 4. **Notification item shape**: Undocumented - frontend tolerant of `isRead`/`read` and `body`/`message` differences
+

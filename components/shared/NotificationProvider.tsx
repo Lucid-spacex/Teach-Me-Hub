@@ -104,21 +104,9 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   // Refresh unread count
   const refreshUnreadCount = useCallback(async () => {
     if (!user) return
-    
+
     try {
-      let response: UnreadCountResponse
-      if (user.role === 'ADMIN') {
-        response = await api.getAdminUnreadCount()
-      } else if (user.role === 'TUTOR') {
-        response = await api.getTutorUnreadCount()
-      } else if (user.role === 'PARENT') {
-        response = await api.getParentUnreadCount()
-      } else if (user.role === 'STUDENT') {
-        response = await api.getStudentUnreadCount()
-      } else {
-        return
-      }
-      
+      const response = await api.getUnreadCount()
       setUnreadCount(response.total)
       setByCategory(response.byCategory)
     } catch (error) {

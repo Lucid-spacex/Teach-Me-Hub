@@ -18,7 +18,7 @@
 - **Notification sound file:** Need to add a royalty-free notification sound file to /public/sounds/notification.mp3. Currently using Web Audio API as fallback.
 
 ## Part 1: API Layer and Types
-- [x] MISMATCH AUDIT - Compare lib/api.ts, lib/types.ts and every page/component against ENDPOINT.md (MISMATCH_TABLE.md created)
+- [x] **MISMATCH AUDIT - Compare lib/api.ts, lib/types.ts and every page/component against ENDPOINT.md (MISMATCH_TABLE.md created, all mismatches fixed)**
 - [x] AMBIGUITIES IN ENDPOINT.md - Document ambiguities behind adapter functions (BACKEND_GAPS.md created)
 - [x] Fix all identified API mismatches in lib/api.ts (added 29 missing endpoints, fixed 2 path issues)
 - [x] Implement adapter functions for ambiguous routes (TUTOR_ROUTE_PREFIX constant already added, scored item mapping in place)

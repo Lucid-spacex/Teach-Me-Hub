@@ -127,7 +127,7 @@ export function GradeCompileWizard({ open, onOpenChange, onSuccess, editingGrade
     try {
       const enrollment = students.find(s => s.enrollment?.id === enrollmentId)
       if (enrollment?.student) {
-        const items = await api.getScoredItems(enrollment.student.id, { unassigned: true, enrollmentId })
+        const items = await api.getScoredItems(enrollment.student.id, { notInGrade: true, enrollmentId })
         setScoredItems(items)
       }
     } catch (err) {
@@ -211,7 +211,11 @@ export function GradeCompileWizard({ open, onOpenChange, onSuccess, editingGrade
         periodEnd: formData.period, // Will need to be updated
         components,
       })
-      const previewData = await api.previewCompiledGrade(draftGrade.id)
+      const previewData = await api.previewCompiledGrade({
+        enrollmentId: formData.enrollmentId,
+        period: formData.period,
+        components,
+      })
       setPreview(previewData)
       setCurrentStep(2)
     } catch (err) {

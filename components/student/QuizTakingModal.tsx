@@ -95,11 +95,10 @@ export function QuizTakingModal({ open, onOpenChange, assignmentId, assignmentTi
     try {
       const result = await api.submitQuizAnswer(attempt.id, {
         questionId: questions[currentQuestionIndex].id,
-        selectedOptionIndex: selectedOption,
-        timeTakenSeconds: 30 - timeLeft,
+        selectedOption: selectedOption,
       })
 
-      setFeedback({ isCorrect: result.isCorrect, pointsEarned: result.pointsAwarded })
+      setFeedback({ isCorrect: result.isCorrect, pointsEarned: result.pointsEarned })
       setShowingFeedback(true)
     } catch (err) {
       toast({
