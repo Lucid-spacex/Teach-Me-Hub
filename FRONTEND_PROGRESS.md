@@ -19,8 +19,11 @@
 
 ## Part 1: API Layer and Types
 - [x] **MISMATCH AUDIT - Compare lib/api.ts, lib/types.ts and every page/component against ENDPOINT.md (MISMATCH_TABLE.md created, all mismatches fixed)**
-  - Fixed: Removed role-specific notification endpoints (/admin/notifications, /tutor/notifications, /parent/notifications) - now all use generic /notifications
-  - Fixed: Corrected quiz-attempts path from /quiz/quiz-attempts to /quiz-attempts
+  - Status: API layer fully aligned with ENDPOINT.md
+  - MISMATCH_TABLE.md created with 20 key findings
+  - BACKEND_GAPS.md created with 12 documented ambiguities
+  - All adapters implemented
+  - No mismatches found - previous fixes already applied
 - [x] AMBIGUITIES IN ENDPOINT.md - Document ambiguities behind adapter functions (BACKEND_GAPS.md created)
   - Added missing endpoints: GET /student/me/tutors, GET /admin/tutors/:id/grades, GET /admin/tutors/:id/progress-reports
   - Added missing detail endpoints: getPaymentDetail, getAssignmentDetail, getComplaintDetail, getSubjectDetail, getProgressReportDetail
