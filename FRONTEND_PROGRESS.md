@@ -31,6 +31,50 @@
   - Tolerant types for vague responses
   - Field mappings (TEST → EXAM)
   - No additional work needed
+- [x] Fix all identified API mismatches in lib/api.ts (added 29 missing endpoints, fixed 2 path issues)
+- [x] Implement adapter functions for ambiguous routes (TUTOR_ROUTE_PREFIX constant already added, scored item mapping in place)
+- [x] Add notification endpoints to lib/api.ts (list, unread-count, mark-read, read-all, read-by-entity, stream-ticket)
+- [x] Add notification types to lib/types.ts
+- [x] Add scored items endpoints to lib/api.ts
+- [x] Add scored items types to lib/types.ts
+- [x] Add grade endpoints to lib/api.ts (compile, preview, submit, withdraw, admin list/detail/approve/reject/bulk-approve)
+- [x] Add grade types to lib/types.ts
+- [x] Add class schedule endpoints to lib/api.ts (tutor upcoming-classes, admin class-schedule)
+- [x] Add class schedule types to lib/types.ts
+- [x] Add enrollment change request endpoints to lib/api.ts (parent and admin)
+- [x] Add enrollment change request types to lib/types.ts
+- [x] Add session recording endpoint to lib/api.ts (GET /sessions/:id/recording)
+- [x] Add tutor availability status endpoint to lib/api.ts
+- [x] Add tutor session endpoints to lib/api.ts (create, reschedule, delete)
+- [x] Add session types to lib/types.ts for new fields
+- [x] Handle 429 responses with RateLimit-Reset header countdown
+- [x] Handle TUTOR_NOT_APPROVED code (redirect to application page)
+- [x] Handle APPLICATION_REJECTED code (redirect to status page)
+- [x] Remove all Zoom references, replace with Google Meet
+- [x] Update session types to use meetLink instead of zoomLink
+
+## Part 2: Security Rules
+- [x] **SECURITY RULES IN THE UI**
+  - Removed quiz correct answer feedback (never show correct answers to students)
+  - Changed PIN regeneration messages to "New credentials were emailed to the parent"
+  - Verified studentCode not shown in admin screens
+  - Verified overrideReason/rejectionReason not shown to parents/students
+  - Verified notification text rendered as plain text
+  - Verified attendance marking only for COMPLETED sessions
+  - Verified messaging rules (no student messaging, parent/tutor to admin only)
+- [x] **MISMATCH AUDIT - Compare lib/api.ts, lib/types.ts and every page/component against ENDPOINT.md (MISMATCH_TABLE.md created, all mismatches fixed)**
+  - Status: API layer fully aligned with ENDPOINT.md
+  - MISMATCH_TABLE.md created with 20 key findings
+  - BACKEND_GAPS.md created with 12 documented ambiguities
+  - All adapters implemented
+  - No mismatches found - previous fixes already applied
+- [x] AMBIGUITIES IN ENDPOINT.md - Document ambiguities behind adapter functions (BACKEND_GAPS.md created)
+  - All 12 ambiguities documented in BACKEND_GAPS.md
+  - All adapters already implemented in lib/api.ts
+  - Constants: TUTOR_ROUTE_PREFIX, SCORED_ITEM_TYPES
+  - Tolerant types for vague responses
+  - Field mappings (TEST → EXAM)
+  - No additional work needed
   - Added missing message endpoints: markThreadRead, getMessageUnreadCount
   - Added tutor document download: getTutorDocumentDownload
 - [x] Fix all identified API mismatches in lib/api.ts (added 29 missing endpoints, fixed 2 path issues)
