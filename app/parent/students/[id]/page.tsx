@@ -128,7 +128,7 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
       await api.regenerateStudentPin(student.id)
       toast({
         title: 'PIN Regenerated',
-        description: `A new student access PIN for ${student.fullName} has been sent to your email.`,
+        description: 'New credentials were emailed to the parent.',
       })
     } catch (err: any) {
       toast({

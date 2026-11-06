@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
 import { useToast } from '@/components/ui/use-toast'
-import { Clock, CheckCircle, XCircle, ChevronRight, ChevronLeft, AlertCircle } from 'lucide-react'
+import { Clock, ChevronRight, AlertCircle } from 'lucide-react'
 
 interface QuizTakingModalProps {
   open: boolean
@@ -25,8 +25,6 @@ export function QuizTakingModal({ open, onOpenChange, assignmentId, assignmentTi
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [attempt, setAttempt] = useState<QuizAttempt | null>(null)
   const [selectedOption, setSelectedOption] = useState<number | null>(null)
-  const [showingFeedback, setShowingFeedback] = useState(false)
-  const [feedback, setFeedback] = useState<{ isCorrect: boolean; pointsEarned: number } | null>(null)
   const [timeLeft, setTimeLeft] = useState(0)
   const [timerInterval, setTimerInterval] = useState<NodeJS.Timeout | null>(null)
 
@@ -56,8 +54,6 @@ export function QuizTakingModal({ open, onOpenChange, assignmentId, assignmentTi
 
       setCurrentQuestionIndex(0)
       setSelectedOption(null)
-      setShowingFeedback(false)
-      setFeedback(null)
     } catch (err) {
       console.error('Failed to start quiz:', err)
       toast({
@@ -93,13 +89,13 @@ export function QuizTakingModal({ open, onOpenChange, assignmentId, assignmentTi
     if (!attempt || selectedOption === null) return
 
     try {
-      const result = await api.submitQuizAnswer(attempt.id, {
+      await api.submitQuizAnswer(attempt.id, {
         questionId: questions[currentQuestionIndex].id,
         selectedOption: selectedOption,
       })
 
-      setFeedback({ isCorrect: result.isCorrect, pointsEarned: result.pointsEarned })
-      setShowingFeedback(true)
+      // Move to next question immediately without showing feedback
+      handleNextQuestion()
     } catch (err) {
       toast({
         title: 'Error',
@@ -110,8 +106,6 @@ export function QuizTakingModal({ open, onOpenChange, assignmentId, assignmentTi
   }
 
   const handleNextQuestion = () => {
-    setShowingFeedback(false)
-    setFeedback(null)
     setSelectedOption(null)
 
     if (currentQuestionIndex < questions.length - 1) {
@@ -192,20 +186,14 @@ export function QuizTakingModal({ open, onOpenChange, assignmentId, assignmentTi
             Progress: {Math.round(progress)}%
           </div>
           <div className="flex gap-2">
-            {showingFeedback ? (
-              <Button onClick={handleNextQuestion} className="bg-brand-gold hover:bg-brand-goldLight text-brand-dark">
-                {currentQuestionIndex < questions.length - 1 ? 'Next Question' : 'Finish Quiz'}
-                <ChevronRight className="h-4 w-4 ml-2" />
-              </Button>
-            ) : (
-              <Button
-                onClick={handleSubmitAnswer}
-                disabled={selectedOption === null}
-                className="bg-brand-gold hover:bg-brand-goldLight text-brand-dark"
-              >
-                Submit Answer
-              </Button>
-            )}
+            <Button
+              onClick={handleSubmitAnswer}
+              disabled={selectedOption === null}
+              className="bg-brand-gold hover:bg-brand-goldLight text-brand-dark"
+            >
+              {currentQuestionIndex < questions.length - 1 ? 'Next Question' : 'Finish Quiz'}
+              <ChevronRight className="h-4 w-4 ml-2" />
+            </Button>
           </div>
         </div>
       }
@@ -236,13 +224,12 @@ export function QuizTakingModal({ open, onOpenChange, assignmentId, assignmentTi
               {currentQuestion.options.map((option, index) => (
                 <button
                   key={index}
-                  onClick={() => !showingFeedback && setSelectedOption(index)}
-                  disabled={showingFeedback}
+                  onClick={() => setSelectedOption(index)}
                   className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
                     selectedOption === index
                       ? 'border-brand-gold bg-brand-gold/10'
                       : 'border-brand-border hover:border-brand-gold/50'
-                  } ${showingFeedback ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'}`}
+                  } cursor-pointer`}
                 >
                   <div className="flex items-center gap-3">
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
@@ -259,38 +246,6 @@ export function QuizTakingModal({ open, onOpenChange, assignmentId, assignmentTi
             </div>
           </CardContent>
         </Card>
-
-        {/* Feedback */}
-        {showingFeedback && feedback && (
-          <Card className={`border-2 ${
-            feedback.isCorrect
-              ? 'border-green-500/50 bg-green-500/10'
-              : 'border-red-500/50 bg-red-500/10'
-          }`}>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-3">
-                {feedback.isCorrect ? (
-                  <CheckCircle className="h-6 w-6 text-green-400" />
-                ) : (
-                  <XCircle className="h-6 w-6 text-red-400" />
-                )}
-                <div>
-                  <p className={`font-semibold ${
-                    feedback.isCorrect ? 'text-green-400' : 'text-red-400'
-                  }`}>
-                    {feedback.isCorrect ? 'Correct!' : 'Incorrect'}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {feedback.isCorrect
-                      ? `You earned ${feedback.pointsEarned} points`
-                      : 'Keep practicing!'
-                    }
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
       </div>
     </Modal>
   )

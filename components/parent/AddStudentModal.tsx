@@ -68,7 +68,7 @@ export function AddStudentModal({ open, onOpenChange, onSuccess }: AddStudentMod
       await api.createStudent(formData)
       toast({
         title: "Success",
-        description: "Student added successfully. Credentials have been sent to your email.",
+        description: "New credentials were emailed to the parent.",
       })
       setFormData({
         fullName: '',
