@@ -828,13 +828,8 @@ class ApiClient {
   }
 
   // Admin endpoints
-  async getPendingTutors(): Promise<TutorWithProfile[]> {
-    const response = await this.request<{ data: TutorWithProfile[]; page: number; limit: number; total: number }>('/admin/tutors?status=PENDING_VETTING&applicationStatus=SUBMITTED')
-    return response.data || []
-  }
-
-  async getTutors(status?: string): Promise<TutorWithProfile[]> {
-    const params = status ? `?status=${status}` : ''
+  async getTutors(queryParams?: string): Promise<TutorWithProfile[]> {
+    const params = queryParams ? `?${queryParams}` : ''
     const response = await this.request<{ data: TutorWithProfile[]; page: number; limit: number; total: number }>(`/admin/tutors${params}`)
     return response.data || []
   }

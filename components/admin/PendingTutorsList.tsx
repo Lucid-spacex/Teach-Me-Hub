@@ -28,7 +28,7 @@ export function PendingTutorsList({ onUpdate, refreshTrigger }: PendingTutorsLis
 
   const loadTutors = async () => {
     try {
-      const data = await api.getPendingTutors()
+      const data = await api.getTutors('status=PENDING_VETTING&applicationStatus=SUBMITTED')
       setTutors(Array.isArray(data) ? data : [])
     } catch (err) {
       console.error('Failed to load pending tutors:', err)

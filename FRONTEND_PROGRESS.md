@@ -340,5 +340,22 @@
 - [x] List open questions about API contract in final report
 - [x] List unverified items in final report
 
+## Part 9: Item 5 - Pending Tutors Page
+- [x] Update GET /admin/tutors call to use status=PENDING_VETTING with no applicationStatus filter by default
+- [x] Add applicationStatus field to TutorWithProfile type (DRAFT, SUBMITTED, NONE)
+- [x] Add submittedAt field to TutorWithProfile type
+- [x] Add applicationStatus filter dropdown to pending tutors page
+- [x] Show application status as label with SUBMITTED highlighted
+- [x] Sort SUBMITTED applications first
+- [x] Show submittedAt timestamp when available
+- [x] Enable Approve button only when application is SUBMITTED
+- [x] Keep Reject dialog with required reason
+- [x] Update lib/api.ts to use single getTutors method with query params
+- [x] Update PendingTutorsList component to use getTutors instead of getPendingTutors
+- [x] Fix duplicate ApplicationStatus type definition
+- [x] Fix rejectionReason parameter name to match API (reason)
+- [x] Run tsc --noEmit (no errors)
+- [x] Run npm run build (success)
+
 ## Environment
 - [x] Ensure .env.local has NEXT_PUBLIC_API_URL=https://smart-tutor-9rjd.onrender.com/api (or remove to use default)

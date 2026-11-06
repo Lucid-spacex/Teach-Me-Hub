@@ -445,6 +445,9 @@ export interface TutorWithProfile {
   availabilityStatus?: TutorAvailabilityStatus
   maxStudents?: number
   currentStudents?: number
+  // Application fields
+  applicationStatus?: 'DRAFT' | 'SUBMITTED' | 'NONE'
+  submittedAt?: string
 }
 
 export interface AdminStudent {

@@ -10,7 +10,19 @@ import { StatusBadge } from '@/components/shared/StatusBadge'
 import { useToast } from '@/components/ui/use-toast'
 import { api } from '@/lib/api'
 import { TutorWithProfile, VettingStatus } from '@/lib/types'
-import { UserCheck, ArrowLeft, RefreshCw, Users } from 'lucide-react'
+import { UserCheck, ArrowLeft, RefreshCw, Users, Filter } from 'lucide-react'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+
+type ApplicationStatus = 'DRAFT' | 'SUBMITTED' | 'NONE'
 
 export default function AdminPendingTutorsPage() {
   const router = useRouter()
@@ -18,6 +30,10 @@ export default function AdminPendingTutorsPage() {
   const [tutors, setTutors] = useState<TutorWithProfile[]>([])
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
+  const [applicationStatusFilter, setApplicationStatusFilter] = useState<ApplicationStatus | 'ALL'>('ALL')
+  const [rejectDialogOpen, setRejectDialogOpen] = useState(false)
+  const [rejectTutorId, setRejectTutorId] = useState<string | null>(null)
+  const [rejectionReason, setRejectionReason] = useState('')
 
   useEffect(() => {
     const user = getUser()
@@ -27,14 +43,31 @@ export default function AdminPendingTutorsPage() {
     }
 
     loadTutors()
-  }, [router])
+  }, [router, applicationStatusFilter])
 
   const loadTutors = async () => {
     setLoading(true)
     try {
-      const response = await api.getPendingTutors()
+      const params = new URLSearchParams()
+      params.append('status', 'PENDING_VETTING')
+      if (applicationStatusFilter !== 'ALL') {
+        params.append('applicationStatus', applicationStatusFilter)
+      }
+
+      const response = await api.getTutors(params.toString())
       const data = (response as any)?.data || response
-      setTutors(Array.isArray(data) ? data : [])
+      const tutorsArray = Array.isArray(data) ? data : []
+
+      // Sort SUBMITTED first, then others
+      const sortedTutors = tutorsArray.sort((a: any, b: any) => {
+        const aStatus = a.applicationStatus || 'NONE'
+        const bStatus = b.applicationStatus || 'NONE'
+        if (aStatus === 'SUBMITTED' && bStatus !== 'SUBMITTED') return -1
+        if (aStatus !== 'SUBMITTED' && bStatus === 'SUBMITTED') return 1
+        return 0
+      })
+
+      setTutors(sortedTutors)
     } catch (err) {
       console.error('Failed to load pending tutors:', err)
       setTutors([])
@@ -49,6 +82,12 @@ export default function AdminPendingTutorsPage() {
   }
 
   const handleVetting = async (tutorId: string, status: 'APPROVED' | 'REJECTED') => {
+    if (status === 'REJECTED') {
+      setRejectTutorId(tutorId)
+      setRejectDialogOpen(true)
+      return
+    }
+
     setActionLoading(tutorId)
     try {
       await api.updateTutorVetting(tutorId, { vettingStatus: status })
@@ -62,6 +101,39 @@ export default function AdminPendingTutorsPage() {
       toast({
         title: 'Error',
         description: err instanceof Error ? err.message : 'Failed to update vetting status',
+        variant: 'destructive',
+      })
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  const handleReject = async () => {
+    if (!rejectTutorId || !rejectionReason.trim()) {
+      toast({
+        title: 'Error',
+        description: 'Rejection reason is required',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    setActionLoading(rejectTutorId)
+    try {
+      await api.updateTutorVetting(rejectTutorId, { vettingStatus: 'REJECTED', reason: rejectionReason.trim() })
+      toast({
+        title: 'Success',
+        description: 'Tutor rejected successfully',
+      })
+      setRejectDialogOpen(false)
+      setRejectionReason('')
+      setRejectTutorId(null)
+      loadTutors()
+    } catch (err) {
+      console.error('Failed to reject tutor:', err)
+      toast({
+        title: 'Error',
+        description: err instanceof Error ? err.message : 'Failed to reject tutor',
         variant: 'destructive',
       })
     } finally {
@@ -106,6 +178,24 @@ export default function AdminPendingTutorsPage() {
         </Button>
       </div>
 
+      {/* Filters */}
+      <div className="flex items-center gap-4 mb-6">
+        <div className="flex items-center gap-2">
+          <Filter className="h-4 w-4 text-gray-400" />
+          <Select value={applicationStatusFilter} onValueChange={(value: ApplicationStatus | 'ALL') => setApplicationStatusFilter(value)}>
+            <SelectTrigger className="w-[180px] bg-card border-brand-gold/30 text-white">
+              <SelectValue placeholder="Application Status" />
+            </SelectTrigger>
+            <SelectContent className="bg-card border-brand-gold/30">
+              <SelectItem value="ALL">All Statuses</SelectItem>
+              <SelectItem value="SUBMITTED">Submitted</SelectItem>
+              <SelectItem value="DRAFT">Draft</SelectItem>
+              <SelectItem value="NONE">None</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
       {/* Tutors List */}
       {loading ? (
         <div className="flex justify-center py-12">
@@ -121,75 +211,145 @@ export default function AdminPendingTutorsPage() {
         </Card>
       ) : (
         <div className="space-y-4">
-          {tutors.map((tutor) => (
-            <Card key={tutor.id || tutor.tutorProfile?.id} className="bg-card border-brand-gold/30">
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <CardTitle className="text-white">{tutor.fullName || (tutor as any).user?.fullName || 'Tutor'}</CardTitle>
-                    <p className="text-sm text-gray-400 mt-1">{tutor.email || (tutor as any).user?.email || 'No email'}</p>
-                  </div>
-                  <StatusBadge status={tutor.tutorProfile?.vettingStatus || tutor.status} />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div>
-                    <p className="text-sm text-gray-400">Subjects</p>
-                    <p className="text-white">{tutor.tutorProfile?.subjects?.join(', ') || 'No subjects listed'}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-400">Bio</p>
-                    <p className="text-white text-sm">{tutor.tutorProfile?.bio || 'No bio provided'}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-400">Hourly Rate</p>
-                    <p className="text-white">${tutor.tutorProfile?.hourlyRate || 0}/hour</p>
-                  </div>
-                  {tutor.tutorProfile?.credentialsUrl && (
-                    <div>
-                      <p className="text-sm text-gray-400">Credentials</p>
-                      <a
-                        href={tutor.tutorProfile.credentialsUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-brand-gold hover:underline text-sm"
-                      >
-                        View credentials
-                      </a>
+          {tutors.map((tutor) => {
+            const applicationStatus = (tutor as any).applicationStatus || 'NONE'
+            const submittedAt = (tutor as any).submittedAt
+            const isSubmitted = applicationStatus === 'SUBMITTED'
+            const tutorId = tutor.id || tutor.tutorProfile?.id || ''
+
+            return (
+              <Card key={tutorId} className="bg-card border-brand-gold/30">
+                <CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <CardTitle className="text-white">{tutor.fullName || (tutor as any).user?.fullName || 'Tutor'}</CardTitle>
+                      <p className="text-sm text-gray-400 mt-1">{tutor.email || (tutor as any).user?.email || 'No email'}</p>
                     </div>
-                  )}
-                  <div className="flex gap-2 pt-4">
-                    <Button
-                      onClick={() => handleVetting(tutor.id || tutor.tutorProfile?.id || '', 'APPROVED')}
-                      disabled={actionLoading === (tutor.id || tutor.tutorProfile?.id)}
-                      className="bg-brand-gold hover:bg-brand-goldLight text-brand-dark"
-                    >
-                      {actionLoading === (tutor.id || tutor.tutorProfile?.id) ? (
-                        <LoadingSpinner size="sm" />
-                      ) : (
-                        'Approve'
-                      )}
-                    </Button>
-                    <Button
-                      onClick={() => handleVetting(tutor.id || tutor.tutorProfile?.id || '', 'REJECTED')}
-                      disabled={actionLoading === (tutor.id || tutor.tutorProfile?.id)}
-                      variant="outline"
-                      className="border-destructive/40 text-destructive hover:bg-destructive/10"
-                    >
-                      {actionLoading === (tutor.id || tutor.tutorProfile?.id) ? (
-                        <LoadingSpinner size="sm" />
-                      ) : (
-                        'Reject'
-                      )}
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`px-2 py-1 rounded text-xs font-medium ${
+                          isSubmitted
+                            ? 'bg-brand-gold/20 text-brand-gold border border-brand-gold/40'
+                            : 'bg-gray-700/50 text-gray-400 border border-gray-600/40'
+                        }`}
+                      >
+                        {applicationStatus}
+                      </span>
+                      <StatusBadge status={tutor.tutorProfile?.vettingStatus || tutor.status} />
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {submittedAt && (
+                      <div>
+                        <p className="text-sm text-gray-400">Submitted At</p>
+                        <p className="text-white text-sm">{new Date(submittedAt).toLocaleString()}</p>
+                      </div>
+                    )}
+                    <div>
+                      <p className="text-sm text-gray-400">Subjects</p>
+                      <p className="text-white">{tutor.tutorProfile?.subjects?.join(', ') || 'No subjects listed'}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-400">Bio</p>
+                      <p className="text-white text-sm">{tutor.tutorProfile?.bio || 'No bio provided'}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-400">Hourly Rate</p>
+                      <p className="text-white">${tutor.tutorProfile?.hourlyRate || 0}/hour</p>
+                    </div>
+                    {tutor.tutorProfile?.credentialsUrl && (
+                      <div>
+                        <p className="text-sm text-gray-400">Credentials</p>
+                        <a
+                          href={tutor.tutorProfile.credentialsUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-brand-gold hover:underline text-sm"
+                        >
+                          View credentials
+                        </a>
+                      </div>
+                    )}
+                    <div className="flex gap-2 pt-4">
+                      <Button
+                        onClick={() => handleVetting(tutorId, 'APPROVED')}
+                        disabled={actionLoading === tutorId || !isSubmitted}
+                        className="bg-brand-gold hover:bg-brand-goldLight text-brand-dark"
+                      >
+                        {actionLoading === tutorId ? (
+                          <LoadingSpinner size="sm" />
+                        ) : (
+                          'Approve'
+                        )}
+                      </Button>
+                      <Button
+                        onClick={() => handleVetting(tutorId, 'REJECTED')}
+                        disabled={actionLoading === tutorId}
+                        variant="outline"
+                        className="border-destructive/40 text-destructive hover:bg-destructive/10"
+                      >
+                        {actionLoading === tutorId ? (
+                          <LoadingSpinner size="sm" />
+                        ) : (
+                          'Reject'
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )
+          })}
         </div>
       )}
+
+      {/* Reject Dialog */}
+      <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
+        <DialogContent className="bg-card border-brand-gold/30 text-white">
+          <DialogHeader>
+            <DialogTitle>Reject Tutor Application</DialogTitle>
+            <DialogDescription className="text-gray-400">
+              Please provide a reason for rejecting this tutor application. This will be sent to the tutor.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <label htmlFor="rejectionReason" className="text-sm font-medium text-gray-300 mb-2 block">
+                Rejection Reason <span className="text-destructive">*</span>
+              </label>
+              <Input
+                id="rejectionReason"
+                value={rejectionReason}
+                onChange={(e) => setRejectionReason(e.target.value)}
+                placeholder="Enter the reason for rejection..."
+                className="bg-gray-800/50 border-brand-gold/30 text-white placeholder:text-gray-500"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setRejectDialogOpen(false)
+                setRejectionReason('')
+                setRejectTutorId(null)
+              }}
+              className="border-gray-600 text-white hover:bg-gray-800"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleReject}
+              disabled={actionLoading !== null || !rejectionReason.trim()}
+              className="bg-destructive hover:bg-destructive/90 text-white"
+            >
+              {actionLoading !== null ? <LoadingSpinner size="sm" /> : 'Reject Application'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
