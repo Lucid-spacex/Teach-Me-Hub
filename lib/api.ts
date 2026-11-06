@@ -491,6 +491,7 @@ class ApiClient {
     })
   }
 
+  // Student self-service: list assigned tutors
   async getStudentTutors(): Promise<Array<{
     tutorId: string
     fullName: string
@@ -688,70 +689,6 @@ class ApiClient {
 
   async getEnrollment(enrollmentId: string): Promise<Enrollment> {
     return this.request<Enrollment>(`/enrollments/${enrollmentId}`)
-  }
-
-  async getPaymentDetail(paymentId: string): Promise<PaymentDetail> {
-    return this.request<PaymentDetail>(`/payments/${paymentId}`)
-  }
-
-  async getAssignmentDetail(assignmentId: string): Promise<Assignment> {
-    return this.request<Assignment>(`/assignments/${assignmentId}`)
-  }
-
-  async getComplaintDetail(complaintId: string): Promise<Complaint> {
-    return this.request<Complaint>(`/complaints/${complaintId}`)
-  }
-
-  async getSubjectDetail(subjectId: string): Promise<Subject> {
-    return this.request<Subject>(`/subjects/${subjectId}`)
-  }
-
-  async getProgressReportDetail(reportId: string): Promise<ProgressReport> {
-    return this.request<ProgressReport>(`/progress-reports/${reportId}`)
-  }
-
-  async updateProgressReport(reportId: string, data: Partial<CreateProgressReportRequest>): Promise<ProgressReport> {
-    return this.request<ProgressReport>(`/progress-reports/${reportId}`, {
-      method: 'PATCH',
-      body: JSON.stringify(data),
-    })
-  }
-
-  async getAttendance(studentId?: string, enrollmentId?: string): Promise<StudentAttendance[]> {
-    const params = new URLSearchParams()
-    if (studentId) params.append('studentId', studentId)
-    if (enrollmentId) params.append('enrollmentId', enrollmentId)
-    const query = params.toString()
-    return this.request<StudentAttendance[]>(`/attendance${query ? `?${query}` : ''}`)
-  }
-
-  async getAttendanceDetail(attendanceId: string): Promise<StudentAttendance> {
-    return this.request<StudentAttendance>(`/attendance/${attendanceId}`)
-  }
-
-  async markAttendance(data: {
-    sessionId: string
-    enrollmentId: string
-    attended: boolean
-  }): Promise<StudentAttendance> {
-    return this.request<StudentAttendance>('/attendance', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    })
-  }
-
-  async markThreadRead(threadId: string): Promise<{ message: string }> {
-    return this.request<{ message: string }>(`/messages/${threadId}/read`, {
-      method: 'PATCH',
-    })
-  }
-
-  async getMessageUnreadCount(): Promise<{ unreadCount: number }> {
-    return this.request<{ unreadCount: number }>('/messages/unread-count')
-  }
-
-  async getTutorDocumentDownload(documentId: string): Promise<{ url: string; expiresAt: string }> {
-    return this.request<{ url: string; expiresAt: string }>(`/tutor-application/documents/${documentId}`)
   }
 
   // Legacy single-subject enrollment for backward compatibility
@@ -987,12 +924,77 @@ class ApiClient {
     return this.request<ProgressReport[]>(`/admin/students/${studentId}/progress-reports`)
   }
 
+  // Missing endpoints from ENDPOINT.md
   async getAdminTutorGrades(tutorId: string): Promise<Grade[]> {
     return this.request<Grade[]>(`/admin/tutors/${tutorId}/grades`)
   }
 
   async getAdminTutorProgressReports(tutorId: string): Promise<ProgressReport[]> {
     return this.request<ProgressReport[]>(`/admin/tutors/${tutorId}/progress-reports`)
+  }
+
+  async getPaymentDetail(paymentId: string): Promise<PaymentDetail> {
+    return this.request<PaymentDetail>(`/payments/${paymentId}`)
+  }
+
+  async getAssignmentDetail(assignmentId: string): Promise<Assignment> {
+    return this.request<Assignment>(`/assignments/${assignmentId}`)
+  }
+
+  async getComplaintDetail(complaintId: string): Promise<Complaint> {
+    return this.request<Complaint>(`/complaints/${complaintId}`)
+  }
+
+  async getSubjectDetail(subjectId: string): Promise<Subject> {
+    return this.request<Subject>(`/subjects/${subjectId}`)
+  }
+
+  async getProgressReportDetail(reportId: string): Promise<ProgressReport> {
+    return this.request<ProgressReport>(`/progress-reports/${reportId}`)
+  }
+
+  async updateProgressReport(reportId: string, data: Partial<CreateProgressReportRequest>): Promise<ProgressReport> {
+    return this.request<ProgressReport>(`/progress-reports/${reportId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async getAttendance(studentId?: string, enrollmentId?: string): Promise<StudentAttendance[]> {
+    const params = new URLSearchParams()
+    if (studentId) params.append('studentId', studentId)
+    if (enrollmentId) params.append('enrollmentId', enrollmentId)
+    const query = params.toString()
+    return this.request<StudentAttendance[]>(`/attendance${query ? `?${query}` : ''}`)
+  }
+
+  async getAttendanceDetail(attendanceId: string): Promise<StudentAttendance> {
+    return this.request<StudentAttendance>(`/attendance/${attendanceId}`)
+  }
+
+  async markAttendance(data: {
+    sessionId: string
+    enrollmentId: string
+    attended: boolean
+  }): Promise<StudentAttendance> {
+    return this.request<StudentAttendance>('/attendance', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async markThreadRead(threadId: string): Promise<{ message: string }> {
+    return this.request<{ message: string }>(`/messages/${threadId}/read`, {
+      method: 'PATCH',
+    })
+  }
+
+  async getMessageUnreadCount(): Promise<{ unreadCount: number }> {
+    return this.request<{ unreadCount: number }>('/messages/unread-count')
+  }
+
+  async getTutorDocumentDownload(documentId: string): Promise<{ url: string; expiresAt: string }> {
+    return this.request<{ url: string; expiresAt: string }>(`/tutor-application/documents/${documentId}`)
   }
 
   async updateTutorVetting(id: string, data: { vettingStatus: 'APPROVED' | 'REJECTED'; reason?: string }): Promise<TutorProfile> {

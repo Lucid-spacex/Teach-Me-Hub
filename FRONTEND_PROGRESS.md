@@ -22,6 +22,11 @@
   - Fixed: Removed role-specific notification endpoints (/admin/notifications, /tutor/notifications, /parent/notifications) - now all use generic /notifications
   - Fixed: Corrected quiz-attempts path from /quiz/quiz-attempts to /quiz-attempts
 - [x] AMBIGUITIES IN ENDPOINT.md - Document ambiguities behind adapter functions (BACKEND_GAPS.md created)
+  - Added missing endpoints: GET /student/me/tutors, GET /admin/tutors/:id/grades, GET /admin/tutors/:id/progress-reports
+  - Added missing detail endpoints: getPaymentDetail, getAssignmentDetail, getComplaintDetail, getSubjectDetail, getProgressReportDetail
+  - Added missing attendance endpoints: getAttendance, getAttendanceDetail, markAttendance
+  - Added missing message endpoints: markThreadRead, getMessageUnreadCount
+  - Added tutor document download: getTutorDocumentDownload
 - [x] Fix all identified API mismatches in lib/api.ts (added 29 missing endpoints, fixed 2 path issues)
 - [x] Implement adapter functions for ambiguous routes (TUTOR_ROUTE_PREFIX constant already added, scored item mapping in place)
 - [x] Add notification endpoints to lib/api.ts (list, unread-count, mark-read, read-all, read-by-entity, stream-ticket)
