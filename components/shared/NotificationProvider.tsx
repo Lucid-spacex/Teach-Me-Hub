@@ -120,16 +120,11 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     
     try {
       let response: { notifications: Notification[]; total: number }
-      if (user.role === 'ADMIN') {
-        response = await api.getAdminNotifications({ limit: 10 })
-      } else if (user.role === 'TUTOR') {
-        response = await api.getTutorNotifications({ limit: 10 })
-      } else if (user.role === 'PARENT') {
-        response = await api.getParentNotifications({ limit: 10 })
-      } else if (user.role === 'STUDENT') {
+      if (user.role === 'STUDENT') {
         response = await api.getStudentNotificationsFiltered({ limit: 10 })
       } else {
-        return
+        // ADMIN, TUTOR, PARENT all use the generic /notifications endpoint
+        response = await api.getNotifications({ limit: 10 })
       }
       
       setNotifications(response.notifications)

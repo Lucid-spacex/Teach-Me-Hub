@@ -1267,7 +1267,7 @@ class ApiClient {
     questionId: string
     selectedOption: number
   }): Promise<{ isCorrect: boolean; pointsEarned: number }> {
-    return this.request<{ isCorrect: boolean; pointsEarned: number }>(`/quiz/quiz-attempts/${attemptId}/answer`, {
+    return this.request<{ isCorrect: boolean; pointsEarned: number }>(`/quiz-attempts/${attemptId}/answer`, {
       method: 'POST',
       body: JSON.stringify(data),
     })
@@ -1667,57 +1667,7 @@ class ApiClient {
     return this.request<SessionRecording>(`/sessions/${sessionId}/recording`)
   }
 
-  // Extended notification endpoints for admin and tutor
-  async getAdminNotifications(filters?: {
-    category?: NotificationCategory
-    unreadOnly?: boolean
-    page?: number
-    limit?: number
-  }): Promise<{ notifications: Notification[]; total: number }> {
-    const params = new URLSearchParams()
-    if (filters?.category) params.append('category', filters.category)
-    if (filters?.unreadOnly !== undefined) params.append('unreadOnly', filters.unreadOnly.toString())
-    if (filters?.page) params.append('page', filters.page.toString())
-    if (filters?.limit) params.append('limit', filters.limit.toString())
-    const query = params.toString()
-    return this.request<{ notifications: Notification[]; total: number }>(
-      `/admin/notifications${query ? `?${query}` : ''}`
-    )
-  }
 
-  async getTutorNotifications(filters?: {
-    category?: NotificationCategory
-    unreadOnly?: boolean
-    page?: number
-    limit?: number
-  }): Promise<{ notifications: Notification[]; total: number }> {
-    const params = new URLSearchParams()
-    if (filters?.category) params.append('category', filters.category)
-    if (filters?.unreadOnly !== undefined) params.append('unreadOnly', filters.unreadOnly.toString())
-    if (filters?.page) params.append('page', filters.page.toString())
-    if (filters?.limit) params.append('limit', filters.limit.toString())
-    const query = params.toString()
-    return this.request<{ notifications: Notification[]; total: number }>(
-      `/tutor/notifications${query ? `?${query}` : ''}`
-    )
-  }
-
-  async getParentNotifications(filters?: {
-    category?: NotificationCategory
-    unreadOnly?: boolean
-    page?: number
-    limit?: number
-  }): Promise<{ notifications: Notification[]; total: number }> {
-    const params = new URLSearchParams()
-    if (filters?.category) params.append('category', filters.category)
-    if (filters?.unreadOnly !== undefined) params.append('unreadOnly', filters.unreadOnly.toString())
-    if (filters?.page) params.append('page', filters.page.toString())
-    if (filters?.limit) params.append('limit', filters.limit.toString())
-    const query = params.toString()
-    return this.request<{ notifications: Notification[]; total: number }>(
-      `/parent/notifications${query ? `?${query}` : ''}`
-    )
-  }
 
   async updateEnrollmentPricing(enrollmentId: string, data: {
     yearlyPriceNGN?: number

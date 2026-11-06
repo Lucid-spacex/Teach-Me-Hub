@@ -19,6 +19,8 @@
 
 ## Part 1: API Layer and Types
 - [x] **MISMATCH AUDIT - Compare lib/api.ts, lib/types.ts and every page/component against ENDPOINT.md (MISMATCH_TABLE.md created, all mismatches fixed)**
+  - Fixed: Removed role-specific notification endpoints (/admin/notifications, /tutor/notifications, /parent/notifications) - now all use generic /notifications
+  - Fixed: Corrected quiz-attempts path from /quiz/quiz-attempts to /quiz-attempts
 - [x] AMBIGUITIES IN ENDPOINT.md - Document ambiguities behind adapter functions (BACKEND_GAPS.md created)
 - [x] Fix all identified API mismatches in lib/api.ts (added 29 missing endpoints, fixed 2 path issues)
 - [x] Implement adapter functions for ambiguous routes (TUTOR_ROUTE_PREFIX constant already added, scored item mapping in place)

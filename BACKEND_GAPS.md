@@ -44,7 +44,7 @@ const TUTOR_ROUTE_PREFIX = '/tutor'
 ```
 
 ### Current Implementation
-Frontend already uses `/tutor/...` prefix for scored items. Need to audit and fix other tutor routes.
+✅ Done - TUTOR_ROUTE_PREFIX constant added to lib/api.ts. Frontend uses /tutor/... prefix for tutor-specific routes.
 
 ---
 
