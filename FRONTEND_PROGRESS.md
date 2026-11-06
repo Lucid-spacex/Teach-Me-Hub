@@ -374,5 +374,18 @@
 - [x] Run tsc --noEmit (no errors)
 - [x] Run npm run build (success)
 
+## Part 11: Item 7 - Complaints Form
+- [x] Add required Subject field (max 200 chars) next to category and description
+- [x] Always send subject with complaint
+- [x] Send aboutType, aboutId (when relevant), subject and description as documented
+- [x] Show backend field errors (details array) under matching input
+- [x] Add aboutId field to form state
+- [x] Add fieldErrors state to track backend validation errors
+- [x] Update handleFileComplaint to handle details array from backend
+- [x] Display field-level errors under inputs
+- [x] Clear form and errors on cancel
+- [x] Run tsc --noEmit (no errors)
+- [x] Run npm run build (success)
+
 ## Environment
 - [x] Ensure .env.local has NEXT_PUBLIC_API_URL=https://smart-tutor-9rjd.onrender.com/api (or remove to use default)

@@ -28,6 +28,8 @@ export default function ParentComplaintsPage() {
   const [aboutType, setAboutType] = useState<ComplaintAboutType>('GENERAL')
   const [subject, setSubject] = useState('')
   const [description, setDescription] = useState('')
+  const [aboutId, setAboutId] = useState<string | undefined>(undefined)
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
 
   useEffect(() => {
     const user = getUser()
@@ -58,6 +60,8 @@ export default function ParentComplaintsPage() {
 
   const handleFileComplaint = async (e: React.FormEvent) => {
     e.preventDefault()
+    setFieldErrors({})
+
     if (!subject.trim() || !description.trim()) {
       toast({
         title: 'Validation Error',
@@ -71,6 +75,7 @@ export default function ParentComplaintsPage() {
     try {
       await api.fileComplaint({
         aboutType,
+        aboutId,
         subject: subject.trim(),
         description: description.trim(),
       })
@@ -82,13 +87,34 @@ export default function ParentComplaintsPage() {
       setSubject('')
       setDescription('')
       setAboutType('GENERAL')
+      setAboutId(undefined)
+      setFieldErrors({})
       loadComplaints()
-    } catch (err) {
-      toast({
-        title: 'Submission Failed',
-        description: err instanceof Error ? err.message : 'Could not submit complaint',
-        variant: 'destructive',
-      })
+    } catch (error: any) {
+      console.error('Failed to submit complaint:', error)
+
+      // Show backend field errors from details array
+      if (error?.details && Array.isArray(error.details)) {
+        const errorDetails = error.details as Array<{ field?: string; message: string }>
+        const errors: Record<string, string> = {}
+        errorDetails.forEach((detail) => {
+          if (detail.field) {
+            errors[detail.field] = detail.message
+          }
+        })
+        setFieldErrors(errors)
+        toast({
+          title: 'Submission Failed',
+          description: errorDetails[0]?.message || 'Could not submit complaint',
+          variant: 'destructive',
+        })
+      } else {
+        toast({
+          title: 'Submission Failed',
+          description: error instanceof Error ? error.message : 'Could not submit complaint',
+          variant: 'destructive',
+        })
+      }
     } finally {
       setSubmitting(false)
     }
@@ -230,10 +256,25 @@ export default function ParentComplaintsPage() {
                 <SelectItem value="GENERAL">Billing / General Platform</SelectItem>
               </SelectContent>
             </Select>
+            {fieldErrors.aboutType && <p className="text-destructive text-sm">{fieldErrors.aboutType}</p>}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description" className="text-gray-300">Description</Label>
+            <Label htmlFor="subject" className="text-gray-300">Subject <span className="text-destructive">*</span></Label>
+            <Input
+              id="subject"
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+              placeholder="Brief summary of the issue (max 200 characters)"
+              maxLength={200}
+              className="bg-background border-input text-white"
+              required
+            />
+            {fieldErrors.subject && <p className="text-destructive text-sm">{fieldErrors.subject}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="description" className="text-gray-300">Description <span className="text-destructive">*</span></Label>
             <Textarea
               id="description"
               rows={4}
@@ -243,13 +284,21 @@ export default function ParentComplaintsPage() {
               className="bg-background border-input text-white resize-none"
               required
             />
+            {fieldErrors.description && <p className="text-destructive text-sm">{fieldErrors.description}</p>}
           </div>
 
           <div className="flex justify-end gap-2 pt-2">
             <Button
               type="button"
               variant="outline"
-              onClick={() => setModalOpen(false)}
+              onClick={() => {
+                setModalOpen(false)
+                setSubject('')
+                setDescription('')
+                setAboutType('GENERAL')
+                setAboutId(undefined)
+                setFieldErrors({})
+              }}
               className="border-gray-700 text-gray-300"
             >
               Cancel
