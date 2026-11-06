@@ -387,5 +387,22 @@
 - [x] Run tsc --noEmit (no errors)
 - [x] Run npm run build (success)
 
+## Part 12: Item 8 - Parent Payment History
+- [x] Build /parent/payments using GET /payments with pagination (page, limit)
+- [x] Add status filter to payments page
+- [x] Show table with date, student, subject, amount, currency, status chip, reference
+- [x] Status chips: PENDING amber, SUCCESS green, FAILED red, EXPIRED grey, REFUNDED blue
+- [x] Add detail drawer using GET /payments/:id with timeline
+- [x] Add empty, loading and error states
+- [x] No gateway secrets
+- [x] Payment callback sends access token when calling GET /payments/verify/:reference
+- [x] Handle both pay-by-enrollmentId and group case
+- [x] Add studentId and subject fields to Payment type
+- [x] Update getPayments to accept query params
+- [x] Add getPaymentDetail endpoint
+- [x] Add pagination controls
+- [x] Run tsc --noEmit (no errors)
+- [x] Run npm run build (success)
+
 ## Environment
 - [x] Ensure .env.local has NEXT_PUBLIC_API_URL=https://smart-tutor-9rjd.onrender.com/api (or remove to use default)

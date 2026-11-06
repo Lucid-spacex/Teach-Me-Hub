@@ -22,6 +22,13 @@ export default function PaymentsPage() {
   const [students, setStudents] = useState<Student[]>([])
   const [expandedPaymentId, setExpandedPaymentId] = useState<string | null>(null)
   const [payingId, setPayingId] = useState<string | null>(null)
+  const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(20)
+  const [total, setTotal] = useState(0)
+  const [statusFilter, setStatusFilter] = useState<string>('ALL')
+  const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null)
+  const [paymentDetail, setPaymentDetail] = useState<any>(null)
+  const [loadingDetail, setLoadingDetail] = useState(false)
 
   useEffect(() => {
     try {
@@ -36,20 +43,41 @@ export default function PaymentsPage() {
       console.error('Error in payments page useEffect:', err)
       setLoading(false)
     }
-  }, [router])
+  }, [router, page, statusFilter])
 
   const loadData = async () => {
     setLoading(true)
     try {
-      const [paymentsData, enrollmentsData, studentsData] = await Promise.all([
-        api.getPayments().catch(() => []),
+      const params = new URLSearchParams()
+      params.append('page', page.toString())
+      params.append('limit', limit.toString())
+      if (statusFilter !== 'ALL') {
+        params.append('status', statusFilter)
+      }
+
+      const [paymentsResponse, enrollmentsData, studentsData] = await Promise.all([
+        api.getPayments(params.toString()).catch(() => []),
         api.getEnrollments().catch(() => []),
         api.getStudents().catch(() => []),
       ])
-      setPayments(Array.isArray(paymentsData) ? paymentsData : [])
+
+      // Handle both paginated and non-paginated responses
+      let paymentsData: Payment[] = []
+      let totalCount = 0
+
+      if (Array.isArray(paymentsResponse)) {
+        paymentsData = paymentsResponse
+        totalCount = paymentsData.length
+      } else if (paymentsResponse && typeof paymentsResponse === 'object' && 'data' in paymentsResponse) {
+        paymentsData = paymentsResponse.data || []
+        totalCount = paymentsResponse.total || 0
+      }
+
+      setPayments(paymentsData)
+      setTotal(totalCount)
       setStudents(Array.isArray(studentsData) ? studentsData : [])
-      
-      const pending = Array.isArray(enrollmentsData) 
+
+      const pending = Array.isArray(enrollmentsData)
         ? enrollmentsData.filter(e => e.status === 'PENDING_PAYMENT')
         : []
       setPendingEnrollments(pending)
@@ -107,8 +135,34 @@ export default function PaymentsPage() {
     }
   }
 
-  const toggleExpand = (paymentId: string) => {
-    setExpandedPaymentId(expandedPaymentId === paymentId ? null : paymentId)
+  const toggleExpand = async (paymentId: string) => {
+    if (expandedPaymentId === paymentId) {
+      setExpandedPaymentId(null)
+      setSelectedPayment(null)
+      setPaymentDetail(null)
+    } else {
+      setExpandedPaymentId(paymentId)
+      const payment = payments.find(p => p.id === paymentId)
+      setSelectedPayment(payment || null)
+
+      // Load payment detail with timeline
+      if (payment) {
+        setLoadingDetail(true)
+        try {
+          const detail = await api.getPaymentDetail(payment.id)
+          setPaymentDetail(detail)
+        } catch (err) {
+          console.error('Failed to load payment detail:', err)
+          toast({
+            title: "Error",
+            description: "Failed to load payment details",
+            variant: "destructive",
+          })
+        } finally {
+          setLoadingDetail(false)
+        }
+      }
+    }
   }
 
   const formatDate = (dateString: string) => {
@@ -127,13 +181,16 @@ export default function PaymentsPage() {
 
   const getStatusColor = (status: string) => {
     switch (status.toUpperCase()) {
-      case 'SUCCESS':
-      case 'COMPLETED':
-        return 'text-foreground'
       case 'PENDING':
-        return 'text-brand-gold'
+        return 'text-amber-500'
+      case 'SUCCESS':
+        return 'text-green-500'
       case 'FAILED':
-        return 'text-destructive'
+        return 'text-red-500'
+      case 'EXPIRED':
+        return 'text-gray-500'
+      case 'REFUNDED':
+        return 'text-blue-500'
       default:
         return 'text-muted-foreground'
     }
@@ -145,13 +202,29 @@ export default function PaymentsPage() {
 
   const columns = [
     {
-      key: 'id',
-      header: 'Payment ID',
+      key: 'date',
+      header: 'Date',
       cell: (payment: Payment) => (
-        <code className="text-xs bg-brand-gold/10 text-brand-gold px-2 py-1 rounded">
-          {(payment.providerReference || payment.reference || payment.id).slice(0, 12)}...
-        </code>
+        <div className="text-muted-foreground">{formatDate(payment.createdAt)}</div>
       ),
+    },
+    {
+      key: 'student',
+      header: 'Student',
+      cell: (payment: Payment) => {
+        const studentName = payment.studentId ? getStudentName(payment.studentId) : 'N/A'
+        return <div className="text-foreground">{studentName}</div>
+      },
+    },
+    {
+      key: 'subject',
+      header: 'Subject',
+      cell: (payment: Payment) => {
+        const subjectName = payment.subjects && payment.subjects.length > 0
+          ? payment.subjects[0].name
+          : payment.subject?.name || 'N/A'
+        return <div className="text-foreground">{subjectName}</div>
+      },
     },
     {
       key: 'amount',
@@ -166,16 +239,18 @@ export default function PaymentsPage() {
       key: 'status',
       header: 'Status',
       cell: (payment: Payment) => (
-        <span className={`text-sm font-medium ${getStatusColor(payment.status)}`}>
+        <span className={`text-sm font-medium px-2 py-1 rounded ${getStatusColor(payment.status)}`}>
           {payment.status}
         </span>
       ),
     },
     {
-      key: 'date',
-      header: 'Date',
+      key: 'reference',
+      header: 'Reference',
       cell: (payment: Payment) => (
-        <div className="text-muted-foreground">{formatDate(payment.createdAt)}</div>
+        <code className="text-xs bg-brand-gold/10 text-brand-gold px-2 py-1 rounded">
+          {(payment.providerReference || payment.reference || payment.id).slice(0, 12)}...
+        </code>
       ),
     },
     {
@@ -218,16 +293,33 @@ export default function PaymentsPage() {
               <p className="text-sm text-muted-foreground">View payment history and pay for pending enrollments</p>
             </div>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={loadData}
-            disabled={loading}
-            className="border-primary/40 text-primary hover:bg-primary/10"
-          >
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Refresh
-          </Button>
+          <div className="flex gap-2">
+            <select
+              value={statusFilter}
+              onChange={(e) => {
+                setStatusFilter(e.target.value)
+                setPage(1)
+              }}
+              className="bg-background border border-input text-foreground px-3 py-2 rounded-md text-sm"
+            >
+              <option value="ALL">All Statuses</option>
+              <option value="PENDING">Pending</option>
+              <option value="SUCCESS">Success</option>
+              <option value="FAILED">Failed</option>
+              <option value="EXPIRED">Expired</option>
+              <option value="REFUNDED">Refunded</option>
+            </select>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={loadData}
+              disabled={loading}
+              className="border-primary/40 text-primary hover:bg-primary/10"
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Refresh
+            </Button>
+          </div>
         </div>
 
         {/* Pending Payments Section */}
@@ -307,38 +399,39 @@ export default function PaymentsPage() {
             
             {expandedPaymentId && (
               <div className="mt-4 p-4 bg-muted border border-brand-gold/30 rounded-xl">
-                {(() => {
-                  const payment = payments.find(p => p.id === expandedPaymentId)
-                  if (!payment) return null
-                  
-                  return (
+                {loadingDetail ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="h-6 w-6 animate-spin text-brand-gold" />
+                  </div>
+                ) : paymentDetail ? (
+                  <div className="space-y-4">
                     <div className="space-y-3">
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-muted-foreground">Payment ID / Ref:</span>
                         <code className="text-xs bg-brand-gold/10 text-brand-gold px-2 py-1 rounded">
-                          {payment.providerReference || payment.reference || payment.id}
+                          {paymentDetail.providerReference || paymentDetail.reference || paymentDetail.id}
                         </code>
                       </div>
-                      
-                      {payment.enrollmentGroupId && (
+
+                      {paymentDetail.enrollmentGroupId && (
                         <div className="flex justify-between items-center">
                           <span className="text-sm text-muted-foreground">Enrollment Group ID:</span>
-                          <code className="text-xs bg-brand-gold/10 text-brand-gold px-2 py-1 rounded">{payment.enrollmentGroupId}</code>
+                          <code className="text-xs bg-brand-gold/10 text-brand-gold px-2 py-1 rounded">{paymentDetail.enrollmentGroupId}</code>
                         </div>
                       )}
-                      
-                      {payment.enrollmentId && (
+
+                      {paymentDetail.enrollmentId && (
                         <div className="flex justify-between items-center">
                           <span className="text-sm text-muted-foreground">Enrollment ID:</span>
-                          <code className="text-xs bg-brand-gold/10 text-brand-gold px-2 py-1 rounded">{payment.enrollmentId}</code>
+                          <code className="text-xs bg-brand-gold/10 text-brand-gold px-2 py-1 rounded">{paymentDetail.enrollmentId}</code>
                         </div>
                       )}
-                      
-                      {payment.subjects && payment.subjects.length > 0 && (
+
+                      {paymentDetail.subjects && paymentDetail.subjects.length > 0 && (
                         <div className="pt-2 border-t border-border">
                           <span className="text-sm text-muted-foreground block mb-2">Covers:</span>
                           <div className="flex flex-wrap gap-2">
-                            {payment.subjects.map((subject, index) => (
+                            {paymentDetail.subjects.map((subject: any, index: number) => (
                               <span
                                 key={index}
                                 className="text-xs bg-brand-gold/20 text-brand-gold px-2 py-1 rounded"
@@ -349,28 +442,109 @@ export default function PaymentsPage() {
                           </div>
                         </div>
                       )}
-                      
+
                       <div className="flex justify-between items-center pt-2 border-t border-border">
                         <span className="text-sm text-muted-foreground">Amount:</span>
                         <span className="text-foreground font-bold">
-                          {formatAmount(payment.amount, payment.currency || 'NGN')}
+                          {formatAmount(paymentDetail.amount, paymentDetail.currency || 'NGN')}
                         </span>
                       </div>
-                      
+
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-muted-foreground">Status:</span>
-                        <span className={`text-sm font-medium ${getStatusColor(payment.status)}`}>
-                          {payment.status}
+                        <span className={`text-sm font-medium ${getStatusColor(paymentDetail.status)}`}>
+                          {paymentDetail.status}
                         </span>
                       </div>
-                      
+
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-muted-foreground">Date:</span>
-                        <span className="text-foreground">{formatDate(payment.createdAt)}</span>
+                        <span className="text-foreground">{formatDate(paymentDetail.createdAt)}</span>
                       </div>
                     </div>
-                  )
-                })()}
+
+                    {/* Timeline */}
+                    {paymentDetail.timeline && Array.isArray(paymentDetail.timeline) && paymentDetail.timeline.length > 0 && (
+                      <div className="pt-4 border-t border-border">
+                        <span className="text-sm text-muted-foreground block mb-3">Timeline</span>
+                        <div className="space-y-3">
+                          {paymentDetail.timeline.map((event: any, index: number) => (
+                            <div key={index} className="flex gap-3">
+                              <div className="flex flex-col items-center">
+                                <div className="w-2 h-2 rounded-full bg-brand-gold mt-2" />
+                                {index < paymentDetail.timeline.length - 1 && (
+                                  <div className="w-px h-full bg-border min-h-[2rem]" />
+                                )}
+                              </div>
+                              <div className="flex-1 pb-2">
+                                <p className="text-sm text-foreground">{event.status || event.event}</p>
+                                <p className="text-xs text-muted-foreground">{new Date(event.timestamp || event.createdAt).toLocaleString()}</p>
+                                {event.message && (
+                                  <p className="text-xs text-muted-foreground mt-1">{event.message}</p>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : selectedPayment ? (
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Payment ID / Ref:</span>
+                      <code className="text-xs bg-brand-gold/10 text-brand-gold px-2 py-1 rounded">
+                        {(selectedPayment.providerReference || selectedPayment.reference || selectedPayment.id).slice(0, 20)}...
+                      </code>
+                    </div>
+
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Amount:</span>
+                      <span className="text-foreground font-bold">
+                        {formatAmount(selectedPayment.amount, selectedPayment.currency || 'NGN')}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Status:</span>
+                      <span className={`text-sm font-medium ${getStatusColor(selectedPayment.status)}`}>
+                        {selectedPayment.status}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Date:</span>
+                      <span className="text-foreground">{formatDate(selectedPayment.createdAt)}</span>
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            )}
+
+            {/* Pagination */}
+            {total > limit && (
+              <div className="flex items-center justify-between pt-4 border-t border-border">
+                <div className="text-sm text-muted-foreground">
+                  Showing {((page - 1) * limit) + 1} to {Math.min(page * limit, total)} of {total} payments
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                  >
+                    Previous
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPage(p => p + 1)}
+                    disabled={page * limit >= total}
+                  >
+                    Next
+                  </Button>
+                </div>
               </div>
             )}
           </CardContent>

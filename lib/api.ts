@@ -928,10 +928,6 @@ class ApiClient {
     return this.request<ProgressReport[]>(`/admin/tutors/${tutorId}/progress-reports`)
   }
 
-  async getPaymentDetail(paymentId: string): Promise<PaymentDetail> {
-    return this.request<PaymentDetail>(`/payments/${paymentId}`)
-  }
-
   async getAssignmentDetail(assignmentId: string): Promise<Assignment> {
     return this.request<Assignment>(`/assignments/${assignmentId}`)
   }
@@ -1042,8 +1038,13 @@ class ApiClient {
     return response
   }
 
-  async getPayments(): Promise<Payment[]> {
-    return this.request<Payment[]>('/payments')
+  async getPayments(queryParams?: string): Promise<Payment[] | { data: Payment[]; total: number; page: number; limit: number }> {
+    const params = queryParams ? `?${queryParams}` : ''
+    return this.request<Payment[] | { data: Payment[]; total: number; page: number; limit: number }>(`/payments${params}`)
+  }
+
+  async getPaymentDetail(paymentId: string): Promise<any> {
+    return this.request<any>(`/payments/${paymentId}`)
   }
 
   async verifyPayment(reference: string): Promise<Payment> {

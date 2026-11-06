@@ -534,11 +534,13 @@ export interface Payment {
   id: string
   enrollmentId?: string
   enrollmentGroupId?: string
+  studentId?: string
   amount: number
   currency: string
   status: string
   createdAt: string
   subjects?: Array<{ id: string; name: string }>
+  subject?: { id: string; name: string }
   providerReference?: string
   reference?: string
   enrollment?: Enrollment
