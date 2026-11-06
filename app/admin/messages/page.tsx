@@ -204,23 +204,50 @@ export default function AdminMessagesPage() {
       })
       return
     }
+
+    const recipientId = (otherParticipant as any).recipientId || otherParticipant.id
+
+    // Validate recipientId before sending
+    if (!recipientId || typeof recipientId !== 'string' || recipientId.trim() === '') {
+      toast({
+        title: 'Error',
+        description: 'Recipient ID is invalid',
+        variant: 'destructive',
+      })
+      return
+    }
+
     setSending(true)
     try {
-      const recipientId = (otherParticipant as any).recipientId || otherParticipant.id
-      if (!recipientId) {
-        throw new Error('Recipient ID is missing')
-      }
       await api.sendMessage({ recipientId, body: content })
       setNewMessage('')
       await loadMessages(selectedThread.id, true) // Force refresh
       const updatedThreads = await api.getMessageThreads().catch(() => threads)
       setThreads(updatedThreads)
-    } catch (err) {
-      toast({
-        title: 'Error',
-        description: 'Failed to send message',
-        variant: 'destructive',
-      })
+    } catch (error: any) {
+      console.error('Failed to send message:', error)
+
+      // Show backend field errors from details array
+      if (error?.details && Array.isArray(error.details)) {
+        const errorDetails = error.details as Array<{ field?: string; message: string }>
+        errorDetails.forEach((detail) => {
+          if (detail.field) {
+            // Show field-level error under the matching input
+            console.error(`Field error for ${detail.field}:`, detail.message)
+          }
+        })
+        toast({
+          title: 'Error',
+          description: errorDetails[0]?.message || 'Failed to send message',
+          variant: 'destructive',
+        })
+      } else {
+        toast({
+          title: 'Error',
+          description: error instanceof Error ? error.message : 'Failed to send message',
+          variant: 'destructive',
+        })
+      }
     } finally {
       setSending(false)
     }
@@ -243,9 +270,21 @@ export default function AdminMessagesPage() {
       return
     }
 
+    const recipientId = selectedUser.id
+
+    // Validate recipientId before sending
+    if (!recipientId || typeof recipientId !== 'string' || recipientId.trim() === '') {
+      toast({
+        title: 'Error',
+        description: 'Recipient ID is invalid',
+        variant: 'destructive',
+      })
+      return
+    }
+
     setStartingNewThread(true)
     try {
-      await api.sendMessage({ recipientId: selectedUser.id, body: newMessageBody.trim() })
+      await api.sendMessage({ recipientId, body: newMessageBody.trim() })
       toast({
         title: 'Message Sent',
         description: 'Your message has been sent successfully',
@@ -256,12 +295,30 @@ export default function AdminMessagesPage() {
       setUserSearch('')
       // Reload threads to show the new conversation
       await loadThreads(true) // Force refresh
-    } catch (err) {
-      toast({
-        title: 'Error',
-        description: err instanceof Error ? err.message : 'Failed to send message',
-        variant: 'destructive',
-      })
+    } catch (error: any) {
+      console.error('Failed to send message:', error)
+
+      // Show backend field errors from details array
+      if (error?.details && Array.isArray(error.details)) {
+        const errorDetails = error.details as Array<{ field?: string; message: string }>
+        errorDetails.forEach((detail) => {
+          if (detail.field) {
+            // Show field-level error under the matching input
+            console.error(`Field error for ${detail.field}:`, detail.message)
+          }
+        })
+        toast({
+          title: 'Error',
+          description: errorDetails[0]?.message || 'Failed to send message',
+          variant: 'destructive',
+        })
+      } else {
+        toast({
+          title: 'Error',
+          description: error instanceof Error ? error.message : 'Failed to send message',
+          variant: 'destructive',
+        })
+      }
     } finally {
       setStartingNewThread(false)
     }

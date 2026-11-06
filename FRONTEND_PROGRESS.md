@@ -357,5 +357,22 @@
 - [x] Run tsc --noEmit (no errors)
 - [x] Run npm run build (success)
 
+## Part 10: Item 6 - Parent Messaging
+- [x] Call GET /messages/admin-contact and read admin id from response
+- [x] Check admin id is non-empty string before sending
+- [x] Send POST /messages with { recipientId, body }
+- [x] Show "Admin is unavailable, try again" if no id returned
+- [x] Never send undefined or object as recipientId
+- [x] Show backend field errors from details array under matching input
+- [x] Use GET /messages, GET /messages/:threadId and PATCH /messages/:threadId/read
+- [x] Use GET /messages/unread-count
+- [x] Remove fallback getUsers call from getAdminContact
+- [x] Update parent messages page to validate admin contact
+- [x] Update tutor messages page to add admin contact flow
+- [x] Update admin messages page to validate recipientId
+- [x] Add error handling for details array in all sendMessage calls
+- [x] Run tsc --noEmit (no errors)
+- [x] Run npm run build (success)
+
 ## Environment
 - [x] Ensure .env.local has NEXT_PUBLIC_API_URL=https://smart-tutor-9rjd.onrender.com/api (or remove to use default)

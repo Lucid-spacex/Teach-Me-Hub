@@ -1761,29 +1761,7 @@ class ApiClient {
 
   // Admin contact endpoint
   async getAdminContact(): Promise<{ recipientId: string }> {
-    const response = await this.request<{ recipientId: string }>('/messages/admin-contact')
-    console.log('getAdminContact response:', response)
-
-    // If the endpoint doesn't return a recipientId, try to get users and find admin
-    if (!response.recipientId) {
-      console.log('No recipientId from admin-contact, trying to get users...')
-      try {
-        const users = await this.getUsers()
-        const adminUser = users.find((u: any) => u.role === 'ADMIN')
-        if (adminUser) {
-          console.log('Found admin user:', adminUser.id)
-          return { recipientId: adminUser.id }
-        }
-      } catch (err) {
-        console.error('Failed to get users:', err)
-      }
-    }
-
-    return response
-  }
-
-  async getUsers(): Promise<any[]> {
-    return this.request<any[]>('/users')
+    return this.request<{ recipientId: string }>('/messages/admin-contact')
   }
 
   // Subject endpoints with per-grade pricing

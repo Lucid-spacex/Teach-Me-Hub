@@ -156,49 +156,62 @@ export default function ParentMessagesPage() {
         throw new Error('No recipient found')
       }
 
+      const recipientId = otherParticipant.id
+
+      // Validate recipientId before sending
+      if (!recipientId || typeof recipientId !== 'string' || recipientId.trim() === '') {
+        toast({
+          title: 'Error',
+          description: 'Admin is unavailable, try again',
+          variant: 'destructive',
+        })
+        return
+      }
+
       console.log('Sending message - Thread:', selectedThread)
-      console.log('Sending message - Other participant:', otherParticipant)
+      console.log('Sending message - Recipient ID:', recipientId)
       console.log('Sending message - Message text:', newMessage)
 
-      // Handle admin thread specially
-      if (selectedThread.id === 'admin') {
-        if (!otherParticipant.id) {
-          throw new Error('Admin recipient ID is missing')
-        }
-        console.log('Sending message to admin with ID:', otherParticipant.id)
-        await api.sendMessage({
-          recipientId: otherParticipant.id,
-          body: newMessage
-        })
-        setNewMessage('')
-        // Reload threads to get the actual admin thread
-        await loadThreads(true) // Force refresh
-        // Find and select the admin thread
-        const adminThread = threads.find(t => {
-          const participant = t.otherParticipant || t.participants?.[0]
-          return participant?.role === 'ADMIN'
-        })
-        if (adminThread) {
-          setSelectedThread(adminThread)
-          await loadMessages(adminThread.id, true) // Force refresh
-        }
-      } else {
-        const recipientId = (otherParticipant as any).recipientId || otherParticipant.id
-        if (!recipientId) {
-          throw new Error('Recipient ID is missing')
-        }
-        await api.sendMessage({ recipientId, body: newMessage })
-        setNewMessage('')
-        await loadMessages(selectedThread.id, true) // Force refresh
-        await loadThreads(true) // Force refresh to update last message
-      }
-    } catch (error) {
-      console.error('Failed to send message:', error)
-      toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to send message',
-        variant: 'destructive',
+      await api.sendMessage({
+        recipientId,
+        body: newMessage
       })
+      setNewMessage('')
+      // Reload threads to get the actual admin thread
+      await loadThreads(true) // Force refresh
+      // Find and select the admin thread
+      const adminThread = threads.find(t => {
+        const participant = t.otherParticipant || t.participants?.[0]
+        return participant?.role === 'ADMIN'
+      })
+      if (adminThread) {
+        setSelectedThread(adminThread)
+        await loadMessages(adminThread.id, true) // Force refresh
+      }
+    } catch (error: any) {
+      console.error('Failed to send message:', error)
+
+      // Show backend field errors from details array
+      if (error?.details && Array.isArray(error.details)) {
+        const errorDetails = error.details as Array<{ field?: string; message: string }>
+        errorDetails.forEach((detail) => {
+          if (detail.field) {
+            // Show field-level error under the matching input
+            console.error(`Field error for ${detail.field}:`, detail.message)
+          }
+        })
+        toast({
+          title: 'Error',
+          description: errorDetails[0]?.message || 'Failed to send message',
+          variant: 'destructive',
+        })
+      } else {
+        toast({
+          title: 'Error',
+          description: error instanceof Error ? error.message : 'Failed to send message',
+          variant: 'destructive',
+        })
+      }
     } finally {
       setSending(false)
     }
@@ -221,8 +234,14 @@ export default function ParentMessagesPage() {
       const adminContact = await api.getAdminContact()
       console.log('Admin contact response:', adminContact)
 
-      if (!adminContact.recipientId) {
-        throw new Error('Admin contact API did not return a recipientId')
+      // Check it is a non-empty string before sending
+      if (!adminContact.recipientId || typeof adminContact.recipientId !== 'string' || adminContact.recipientId.trim() === '') {
+        toast({
+          title: 'Admin Unavailable',
+          description: 'Admin is unavailable, try again',
+          variant: 'destructive',
+        })
+        return
       }
 
       setNewMessage('')
@@ -250,8 +269,8 @@ export default function ParentMessagesPage() {
     } catch (error) {
       console.error('Failed to get admin contact:', error)
       toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to start conversation with admin',
+        title: 'Admin Unavailable',
+        description: 'Admin is unavailable, try again',
         variant: 'destructive',
       })
     }

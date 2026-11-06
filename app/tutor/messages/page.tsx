@@ -30,6 +30,7 @@ export default function TutorMessagesPage() {
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
   const [newMessage, setNewMessage] = useState('')
+  const [isAdminThread, setIsAdminThread] = useState(false)
 
   useEffect(() => {
     const user = getUser()
@@ -74,29 +75,120 @@ export default function TutorMessagesPage() {
 
   const handleSelectThread = (thread: MessageThread) => {
     setSelectedThread(thread)
+    setIsAdminThread(thread.otherParticipant?.role === 'ADMIN')
     loadMessages(thread.id)
+  }
+
+  const handleStartAdminThread = async () => {
+    // Check if admin thread already exists
+    const adminThread = threads.find(t => t.otherParticipant?.role === 'ADMIN')
+    if (adminThread) {
+      handleSelectThread(adminThread)
+      return
+    }
+
+    // Get admin contact info
+    try {
+      const adminContact = await api.getAdminContact()
+
+      // Check it is a non-empty string before sending
+      if (!adminContact.recipientId || typeof adminContact.recipientId !== 'string' || adminContact.recipientId.trim() === '') {
+        toast({
+          title: 'Admin Unavailable',
+          description: 'Admin is unavailable, try again',
+          variant: 'destructive',
+        })
+        return
+      }
+
+      // Set up for sending to admin
+      setSelectedThread({
+        id: 'admin',
+        threadId: 'admin',
+        otherParticipant: {
+          id: adminContact.recipientId,
+          fullName: 'Admin',
+          role: 'ADMIN',
+        },
+        lastMessage: undefined,
+        lastMessageAt: new Date().toISOString(),
+        unreadCount: 0,
+      })
+      setIsAdminThread(true)
+      setMessages([])
+      toast({
+        title: 'Message Admin',
+        description: 'Type your message below to contact administration',
+      })
+    } catch (error) {
+      console.error('Failed to get admin contact:', error)
+      toast({
+        title: 'Admin Unavailable',
+        description: 'Admin is unavailable, try again',
+        variant: 'destructive',
+      })
+    }
   }
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!newMessage.trim() || !selectedThread?.otherParticipant?.id) return
 
+    const recipientId = selectedThread.otherParticipant.id
+
+    // Validate recipientId before sending
+    if (!recipientId || typeof recipientId !== 'string' || recipientId.trim() === '') {
+      toast({
+        title: 'Error',
+        description: 'Admin is unavailable, try again',
+        variant: 'destructive',
+      })
+      return
+    }
+
     setSending(true)
     try {
       await api.sendMessage({
-        recipientId: selectedThread.otherParticipant.id,
+        recipientId,
         body: newMessage.trim(),
       })
       setNewMessage('')
-      loadMessages(selectedThread.id)
-      loadThreads() // Refresh to update unread counts
-    } catch (err) {
-      console.error('Failed to send message:', err)
-      toast({
-        title: 'Error',
-        description: err instanceof Error ? err.message : 'Failed to send message',
-        variant: 'destructive',
-      })
+      if (isAdminThread) {
+        // Reload threads to get the actual admin thread
+        await loadThreads()
+        const adminThread = threads.find(t => t.otherParticipant?.role === 'ADMIN')
+        if (adminThread) {
+          setSelectedThread(adminThread)
+          loadMessages(adminThread.id)
+        }
+      } else {
+        loadMessages(selectedThread.id)
+        loadThreads() // Refresh to update unread counts
+      }
+    } catch (error: any) {
+      console.error('Failed to send message:', error)
+
+      // Show backend field errors from details array
+      if (error?.details && Array.isArray(error.details)) {
+        const errorDetails = error.details as Array<{ field?: string; message: string }>
+        errorDetails.forEach((detail) => {
+          if (detail.field) {
+            // Show field-level error under the matching input
+            console.error(`Field error for ${detail.field}:`, detail.message)
+          }
+        })
+        toast({
+          title: 'Error',
+          description: errorDetails[0]?.message || 'Failed to send message',
+          variant: 'destructive',
+        })
+      } else {
+        toast({
+          title: 'Error',
+          description: error instanceof Error ? error.message : 'Failed to send message',
+          variant: 'destructive',
+        })
+      }
     } finally {
       setSending(false)
     }
@@ -131,16 +223,27 @@ export default function TutorMessagesPage() {
             </div>
           </div>
 
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={loadThreads}
-            disabled={loading}
-            className="gap-2"
-          >
-            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-            Refresh
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleStartAdminThread}
+              className="gap-2"
+            >
+              <MessageSquare className="h-4 w-4" />
+              Message Admin
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={loadThreads}
+              disabled={loading}
+              className="gap-2"
+            >
+              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
