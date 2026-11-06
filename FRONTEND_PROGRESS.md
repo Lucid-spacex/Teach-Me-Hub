@@ -25,9 +25,12 @@
   - All adapters implemented
   - No mismatches found - previous fixes already applied
 - [x] AMBIGUITIES IN ENDPOINT.md - Document ambiguities behind adapter functions (BACKEND_GAPS.md created)
-  - Added missing endpoints: GET /student/me/tutors, GET /admin/tutors/:id/grades, GET /admin/tutors/:id/progress-reports
-  - Added missing detail endpoints: getPaymentDetail, getAssignmentDetail, getComplaintDetail, getSubjectDetail, getProgressReportDetail
-  - Added missing attendance endpoints: getAttendance, getAttendanceDetail, markAttendance
+  - All 12 ambiguities documented in BACKEND_GAPS.md
+  - All adapters already implemented in lib/api.ts
+  - Constants: TUTOR_ROUTE_PREFIX, SCORED_ITEM_TYPES
+  - Tolerant types for vague responses
+  - Field mappings (TEST → EXAM)
+  - No additional work needed
   - Added missing message endpoints: markThreadRead, getMessageUnreadCount
   - Added tutor document download: getTutorDocumentDownload
 - [x] Fix all identified API mismatches in lib/api.ts (added 29 missing endpoints, fixed 2 path issues)
