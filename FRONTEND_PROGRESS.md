@@ -62,6 +62,16 @@
   - Verified notification text rendered as plain text
   - Verified attendance marking only for COMPLETED sessions
   - Verified messaging rules (no student messaging, parent/tutor to admin only)
+
+## Part 3: Notification Paths
+- [x] **NOTIFICATION PATHS**
+  - All notification API calls use generic /notifications paths
+  - SSE connection uses /notifications/stream?ticket=...
+  - SSE failures handled quietly with backoff and 30-second polling fallback
+  - Notification item shape read tolerantly (isRead or read, body or message)
+  - Updated NotificationBell to use /notifications path for all roles
+  - Updated Sidebar to use /notifications path for all roles
+  - Updated TutorStatusScreen to use /notifications path
 - [x] **MISMATCH AUDIT - Compare lib/api.ts, lib/types.ts and every page/component against ENDPOINT.md (MISMATCH_TABLE.md created, all mismatches fixed)**
   - Status: API layer fully aligned with ENDPOINT.md
   - MISMATCH_TABLE.md created with 20 key findings

@@ -117,7 +117,7 @@ export function Sidebar({ role }: SidebarProps) {
     { label: 'Grades', href: '/tutor/grades', icon: BarChart3, category: 'GRADES' },
     { label: 'Progress Reports', href: '/tutor/progress-reports', icon: BookOpen },
     { label: 'Messages', href: '/tutor/messages', icon: MessageSquare, category: 'MESSAGES' },
-    { label: 'Notifications', href: '/tutor/notifications', icon: Bell },
+    { label: 'Notifications', href: '/notifications', icon: Bell },
     { label: 'Settings', href: '/tutor/settings', icon: Settings },
   ]
 
@@ -137,7 +137,7 @@ export function Sidebar({ role }: SidebarProps) {
     { label: 'Change Requests', href: '/admin/change-requests', icon: FileText },
     { label: 'Subjects & Pricing', href: '/admin/subjects', icon: CreditCard },
     { label: 'Suspended Users', href: '/admin/suspended', icon: AlertCircle },
-    { label: 'Notifications', href: '/admin/notifications', icon: Bell },
+    { label: 'Notifications', href: '/notifications', icon: Bell },
     { label: 'Settings', href: '/admin/settings', icon: Settings },
   ]
 

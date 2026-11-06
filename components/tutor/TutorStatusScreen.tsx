@@ -71,7 +71,7 @@ export function TutorStatusScreen({ status }: TutorStatusScreenProps) {
             </Button>
 
             <Button
-              onClick={() => router.push('/tutor/notifications')}
+              onClick={() => router.push('/notifications')}
               variant="outline"
               className="w-full border-brand-gold/30 text-brand-gold hover:bg-brand-gold/10 font-semibold h-12 rounded-xl flex items-center justify-center gap-2"
             >

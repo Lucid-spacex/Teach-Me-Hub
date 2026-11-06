@@ -18,18 +18,8 @@ export function NotificationBell() {
   if (!user) return null
 
   const getNotificationsPath = () => {
-    switch (user.role) {
-      case 'ADMIN':
-        return '/admin/notifications'
-      case 'TUTOR':
-        return '/tutor/notifications'
-      case 'PARENT':
-        return '/parent/notifications'
-      case 'STUDENT':
-        return '/student/notifications'
-      default:
-        return '/'
-    }
+    // All roles use generic /notifications path
+    return '/notifications'
   }
 
   const handleNotificationClick = async (notification: Notification) => {
