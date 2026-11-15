@@ -462,5 +462,13 @@
 - [x] Run tsc --noEmit (no errors)
 - [x] Run npm run build (success)
 
+## Part 16: Item 12 - Frontend Errors
+- [x] Run npx tsc --noEmit (no errors)
+- [x] Run npm run lint (ESLint not installed, documented in LINT_REMAINING.md)
+- [x] Run npm run build (success)
+- [x] Create LINT_REMAINING.md documenting lint issues
+- [x] No type or build errors found
+- [x] Lint errors documented for manual review
+
 ## Environment
 - [x] Ensure .env.local has NEXT_PUBLIC_API_URL=https://smart-tutor-9rjd.onrender.com/api (or remove to use default)
