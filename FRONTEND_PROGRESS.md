@@ -437,5 +437,30 @@
 - [x] Run tsc --noEmit (no errors)
 - [x] Run npm run build (success)
 
+## Part 15: Item 11 - Screens to Confirm
+- [x] Admin grade review queue (already exists at /admin/grades)
+- [x] Class schedule (already exists at /admin/class-schedule)
+- [x] Change requests with before and after and required reject reason (already exists at /admin/change-requests)
+- [x] Dashboard (already exists at /admin)
+- [x] Unmatched enrollments (already exists at /admin/enrollments)
+- [x] Failed payments (already exists at /admin/transactions)
+- [x] Suspended users with reactivate (already exists at /admin/suspended)
+- [x] Tutor upcoming classes (already exists at /tutor/upcoming-classes)
+- [x] Session create, reschedule and delete (already exists in tutor sessions)
+- [x] Scored items tab (already exists in tutor students)
+- [x] Grade compile wizard (already exists at /tutor/grades)
+- [x] Availability status (already exists in tutor settings)
+- [x] Parent change request flow (already exists in parent enrollments)
+- [x] Recording button (already exists in parent sessions)
+- [x] Grades with breakdown (already exists in parent grades)
+- [x] Student schedule (already exists at /student/schedule)
+- [x] Quiz taking (already exists in student assignments)
+- [x] Student grades (already exists at /student/grades)
+- [x] Forgot-password page (created at /forgot-password)
+- [x] Reset-password page (created at /reset-password)
+- [x] Add forgotPassword and resetPassword endpoints to lib/api.ts
+- [x] Run tsc --noEmit (no errors)
+- [x] Run npm run build (success)
+
 ## Environment
 - [x] Ensure .env.local has NEXT_PUBLIC_API_URL=https://smart-tutor-9rjd.onrender.com/api (or remove to use default)
