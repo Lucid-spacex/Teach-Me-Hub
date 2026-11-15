@@ -201,7 +201,7 @@ class ApiClient {
             if (freshUser && typeof window !== 'undefined') {
               localStorage.setItem('user', JSON.stringify(freshUser))
               localStorage.setItem('userRole', freshUser.role)
-              document.cookie = `userRole=${freshUser.role}; path=/; max-age=3600; SameSite=Strict`
+              document.cookie = `userRole=${freshUser.role}; path=/; max-age=86400; SameSite=Strict`
               window.dispatchEvent(new CustomEvent('auth:user-changed', { detail: freshUser }))
             }
           } catch (syncErr) {

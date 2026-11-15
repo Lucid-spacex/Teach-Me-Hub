@@ -18,6 +18,7 @@ interface NotificationContextType {
   soundEnabled: boolean
   setSoundEnabled: (enabled: boolean) => void
   hasUnreadForEntity: (entityType: string, entityId: string) => boolean
+  onNotificationReceived: () => void
 }
 
 const NotificationContext = React.createContext<NotificationContextType | undefined>(undefined)
@@ -31,7 +32,8 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   const [user, setUser] = useState<User | null>(() => {
     return typeof window !== 'undefined' ? getUser() : null
   })
-  
+  const [badgeRefreshTrigger, setBadgeRefreshTrigger] = useState(0)
+
   const eventSourceRef = useRef<EventSource | null>(null)
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const lastSoundTimeRef = useRef<number>(0)
@@ -181,21 +183,24 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   // Handle incoming SSE notification
   const handleNotification = useCallback((notification: Notification) => {
     const eventId = `${notification.id}-${notification.createdAt}`
-    
+
     // Skip if we've already processed this event
     if (processedEventIdsRef.current.has(eventId)) return
     processedEventIdsRef.current.add(eventId)
-    
+
     // Clean up old event IDs (keep last 1000)
     if (processedEventIdsRef.current.size > 1000) {
       const entries = Array.from(processedEventIdsRef.current)
       processedEventIdsRef.current = new Set(entries.slice(-500))
     }
-    
+
+    // Trigger badge refresh on live events
+    setBadgeRefreshTrigger(prev => prev + 1)
+
     // Play sound for new live notifications only
     if (!notification.read) {
       playSound()
-      
+
       // Show toast with navigation on click
       const handleClick = () => {
         // Navigate based on notification type
@@ -346,6 +351,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     soundEnabled,
     setSoundEnabled: handleSetSoundEnabled,
     hasUnreadForEntity,
+    onNotificationReceived: () => setBadgeRefreshTrigger(prev => prev + 1),
   }
 
   return (

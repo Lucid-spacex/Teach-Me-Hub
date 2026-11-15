@@ -404,5 +404,38 @@
 - [x] Run tsc --noEmit (no errors)
 - [x] Run npm run build (success)
 
+## Part 13: Item 9 - Badges Everywhere
+- [x] Create useBadgeCounts hook combining GET /notifications/unread-count with GET /admin/badge-counts for admins
+- [x] Refresh every 30 seconds, on every live SSE event, and on route changes
+- [x] Put red badge (count, 99+ cap, accessible label) on each sidebar item's text
+- [x] Add badges to parent dashboard cards where relevant
+- [x] Admin badges: Parents (unreadNewParents), Tutors (unreadNewTutors + pendingTutorApplications), Complaints (openComplaints), Messages (unreadMessages), Enrollments (unmatchedPaidEnrollments), Transactions (failedPayments + PAYMENTS unread), Grade review (pendingGrades), Change requests (pendingChangeRequests), Class schedule (unscheduledWithin24h), Sessions (SESSIONS)
+- [x] Parent badges: Enrollments (ENROLLMENT), Payments (PAYMENTS), Sessions (SESSIONS), Grades (GRADES), Messages (MESSAGES), Complaints (COMPLAINTS), Pricing (PRICING)
+- [x] Tutor badges: Students, Sessions and Upcoming classes (SESSIONS, SCHEDULE), Assignments (ASSIGNMENTS, QUIZZES), Grades (GRADES), Messages (MESSAGES)
+- [x] Student badges: Schedule (SESSIONS), Assignments (ASSIGNMENTS, QUIZZES), Grades (GRADES)
+- [x] Category names: ASSIGNMENTS, GRADES, SESSIONS, MESSAGES, USERS, ENROLLMENT, PAYMENTS, PRICING, COMPLAINTS, QUIZZES, SCHEDULE
+- [x] Keep NEW pill on unread list rows (matched by entityType and entityId)
+- [x] Cleared by read-by-entity when record is opened
+- [x] If GET /admin/badge-counts fails, fall back to notification counts alone and never show an error
+- [x] Add unreadMessages to BadgeCounts interface
+- [x] Update Sidebar to use useBadgeCounts hook
+- [x] Add adminBadgeKey to NavItem interface
+- [x] Add admin-specific badge keys to admin nav items
+- [x] Add PRICING category to parent nav items
+- [x] Update NotificationProvider to trigger badge refresh on SSE events
+- [x] Run tsc --noEmit (no errors)
+- [x] Run npm run build (success)
+
+## Part 14: Item 10 - Access Token
+- [x] Remove any assumption of 15-minute access token (no 15-minute assumptions found)
+- [x] Do not log users out on a timer (no logout timers found)
+- [x] Keep refresh on 401 working (already implemented in lib/api.ts)
+- [x] Handle 429 using RateLimit-Reset (already implemented in lib/api.ts)
+- [x] Handle TUTOR_NOT_APPROVED and APPLICATION_REJECTED with redirects to tutor status screens (already implemented in lib/api.ts)
+- [x] Fix userRole cookie max-age from 3600 (1 hour) to 86400 (1 day) to match access token lifetime in lib/auth.ts
+- [x] Fix userRole cookie max-age from 3600 (1 hour) to 86400 (1 day) to match access token lifetime in lib/api.ts
+- [x] Run tsc --noEmit (no errors)
+- [x] Run npm run build (success)
+
 ## Environment
 - [x] Ensure .env.local has NEXT_PUBLIC_API_URL=https://smart-tutor-9rjd.onrender.com/api (or remove to use default)

@@ -8,6 +8,7 @@ import { getUser, clearUser } from '@/lib/auth'
 import { api } from '@/lib/api'
 import { useToast } from '@/components/ui/use-toast'
 import { useNotifications } from '@/components/shared/NotificationProvider'
+import { useBadgeCounts, formatBadgeCount } from '@/hooks/useBadgeCounts'
 import { NotificationCategory } from '@/lib/types'
 import {
   LayoutDashboard,
@@ -42,6 +43,7 @@ interface NavItem {
   icon: React.ElementType
   badge?: string
   category?: NotificationCategory
+  adminBadgeKey?: keyof import('@/hooks/useBadgeCounts').BadgeCounts
 }
 
 export function Sidebar({ role }: SidebarProps) {
@@ -49,6 +51,7 @@ export function Sidebar({ role }: SidebarProps) {
   const router = useRouter()
   const { toast } = useToast()
   const { byCategory } = useNotifications()
+  const { counts: badgeCounts, refresh: refreshBadges } = useBadgeCounts()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [user, setUserState] = useState<{ email?: string; name?: string; role?: string; status?: string } | null>(null)
 
@@ -58,7 +61,10 @@ export function Sidebar({ role }: SidebarProps) {
 
     // Close mobile drawer on route change
     setMobileOpen(false)
-  }, [pathname])
+
+    // Refresh badges on route change
+    refreshBadges()
+  }, [pathname, refreshBadges])
 
   const handleLogout = async () => {
     try {
@@ -87,7 +93,7 @@ export function Sidebar({ role }: SidebarProps) {
     { label: 'Assignments', href: '/parent/assignments', icon: FileText, category: 'ASSIGNMENTS' },
     { label: 'Grades & Reports', href: '/parent/grades', icon: BarChart3, category: 'GRADES' },
     { label: 'Payments & Fees', href: '/parent/payments', icon: CreditCard, category: 'PAYMENTS' },
-    { label: 'Pricing', href: '/parent/pricing', icon: DollarSign },
+    { label: 'Pricing', href: '/parent/pricing', icon: DollarSign, category: 'PRICING' },
     { label: 'Messages', href: '/parent/messages', icon: MessageSquare, category: 'MESSAGES' },
     { label: 'Complaints', href: '/parent/complaints', icon: AlertCircle, category: 'COMPLAINTS' },
     { label: 'Settings', href: '/parent/settings', icon: Settings },
@@ -95,7 +101,7 @@ export function Sidebar({ role }: SidebarProps) {
 
   const studentNavItems: NavItem[] = [
     { label: 'Dashboard', href: '/student', icon: LayoutDashboard },
-    { label: 'Class Schedule', href: '/student/schedule', icon: Calendar, category: 'SCHEDULE' },
+    { label: 'Class Schedule', href: '/student/schedule', icon: Calendar, category: 'SESSIONS' },
     { label: 'My Tutors', href: '/student/my-tutors', icon: Users },
     { label: 'My Assignments', href: '/student/assignments', icon: FileText, category: 'ASSIGNMENTS' },
     { label: 'Grades', href: '/student/grades', icon: BarChart3, category: 'GRADES' },
@@ -123,18 +129,18 @@ export function Sidebar({ role }: SidebarProps) {
 
   const adminNavItems: NavItem[] = [
     { label: 'Overview', href: '/admin', icon: LayoutDashboard },
-    { label: 'Pending Tutors', href: '/admin/tutors/pending', icon: UserCheck },
-    { label: 'All Tutors', href: '/admin/tutors', icon: Users, category: 'USERS' },
-    { label: 'Parent Directory', href: '/admin/parents', icon: Users, category: 'USERS' },
+    { label: 'Pending Tutors', href: '/admin/tutors/pending', icon: UserCheck, adminBadgeKey: 'pendingTutorApplications' },
+    { label: 'All Tutors', href: '/admin/tutors', icon: Users, category: 'USERS', adminBadgeKey: 'unreadNewTutors' },
+    { label: 'Parent Directory', href: '/admin/parents', icon: Users, category: 'USERS', adminBadgeKey: 'unreadNewParents' },
     { label: 'All Students', href: '/admin/students', icon: GraduationCap },
-    { label: 'Unmatched Enrollments', href: '/admin/enrollments', icon: BookOpen, category: 'ENROLLMENT' },
+    { label: 'Unmatched Enrollments', href: '/admin/enrollments', icon: BookOpen, category: 'ENROLLMENT', adminBadgeKey: 'unmatchedPaidEnrollments' },
     { label: 'Sessions', href: '/admin/sessions', icon: Calendar, category: 'SESSIONS' },
-    { label: 'Messages', href: '/admin/messages', icon: MessageSquare, category: 'MESSAGES' },
-    { label: 'Complaints', href: '/admin/complaints', icon: AlertCircle, category: 'COMPLAINTS' },
-    { label: 'Transactions', href: '/admin/transactions', icon: CreditCard, category: 'PAYMENTS' },
-    { label: 'Grade Review', href: '/admin/grades', icon: BarChart3, category: 'GRADES' },
-    { label: 'Class Schedule', href: '/admin/class-schedule', icon: Calendar, category: 'SCHEDULE' },
-    { label: 'Change Requests', href: '/admin/change-requests', icon: FileText },
+    { label: 'Messages', href: '/admin/messages', icon: MessageSquare, category: 'MESSAGES', adminBadgeKey: 'unreadMessages' },
+    { label: 'Complaints', href: '/admin/complaints', icon: AlertCircle, category: 'COMPLAINTS', adminBadgeKey: 'openComplaints' },
+    { label: 'Transactions', href: '/admin/transactions', icon: CreditCard, category: 'PAYMENTS', adminBadgeKey: 'failedPayments' },
+    { label: 'Grade Review', href: '/admin/grades', icon: BarChart3, category: 'GRADES', adminBadgeKey: 'pendingGrades' },
+    { label: 'Class Schedule', href: '/admin/class-schedule', icon: Calendar, category: 'SCHEDULE', adminBadgeKey: 'unscheduledWithin24h' },
+    { label: 'Change Requests', href: '/admin/change-requests', icon: FileText, adminBadgeKey: 'pendingChangeRequests' },
     { label: 'Subjects & Pricing', href: '/admin/subjects', icon: CreditCard },
     { label: 'Suspended Users', href: '/admin/suspended', icon: AlertCircle },
     { label: 'Notifications', href: '/notifications', icon: Bell },
@@ -245,6 +251,10 @@ export function Sidebar({ role }: SidebarProps) {
                 </div>
                 {active ? (
                   <ChevronRight className="w-4 h-4 text-sidebar-primary opacity-80" />
+                ) : item.adminBadgeKey && badgeCounts[item.adminBadgeKey] !== undefined ? (
+                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-destructive text-destructive-foreground font-bold">
+                    {formatBadgeCount(badgeCounts[item.adminBadgeKey])}
+                  </span>
                 ) : item.category && byCategory[item.category] > 0 ? (
                   <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-destructive text-destructive-foreground font-bold">
                     {byCategory[item.category] > 99 ? '99+' : byCategory[item.category]}
