@@ -55,8 +55,8 @@ export default function ParentStudentPerformancePage() {
     }
   }
 
-  const getTrendIcon = (trend: number | null) => {
-    if (trend === null) return null
+  const getTrendIcon = (trend: number | null | undefined) => {
+    if (trend == null) return null
     const isPositive = trend >= 0
     return (
       <span className={`flex items-center text-xs ${isPositive ? 'text-green-400' : 'text-red-400'}`}>
@@ -139,7 +139,7 @@ export default function ParentStudentPerformancePage() {
                   <div>
                     <p className="text-xs text-gray-400 uppercase tracking-wider">Average Grade</p>
                     <p className="text-2xl font-bold text-white mt-1">
-                      {performance.averageGrade.percentage !== null
+                      {performance.averageGrade.percentage != null
                         ? `${performance.averageGrade.percentage.toFixed(1)}%`
                         : 'N/A'}
                     </p>
@@ -162,7 +162,7 @@ export default function ParentStudentPerformancePage() {
                   <div>
                     <p className="text-xs text-gray-400 uppercase tracking-wider">Attendance</p>
                     <p className="text-2xl font-bold text-white mt-1">
-                      {performance.attendance.rate.toFixed(1)}%
+                      {performance.attendance.rate != null ? performance.attendance.rate.toFixed(1) : "N/A"}%
                     </p>
                     <p className="text-xs text-gray-500 mt-1">
                       {performance.attendance.attended} attended / {performance.attendance.attended + performance.attendance.missed} total
@@ -183,7 +183,7 @@ export default function ParentStudentPerformancePage() {
                   <div>
                     <p className="text-xs text-gray-400 uppercase tracking-wider">Assignments</p>
                     <p className="text-2xl font-bold text-white mt-1">
-                      {performance.assignments.completionRate.toFixed(1)}%
+                      {performance.assignments.completionRate != null ? performance.assignments.completionRate.toFixed(1) : "N/A"}%
                     </p>
                     <p className="text-xs text-gray-500 mt-1">
                       {performance.assignments.completed} / {performance.assignments.total} completed
@@ -203,7 +203,7 @@ export default function ParentStudentPerformancePage() {
                   <div>
                     <p className="text-xs text-gray-400 uppercase tracking-wider">Quiz Average</p>
                     <p className="text-2xl font-bold text-white mt-1">
-                      {performance.quizzes.attempts > 0
+                      {performance.quizzes.attempts > 0 && performance.quizzes.averagePercentage != null
                         ? `${performance.quizzes.averagePercentage.toFixed(1)}%`
                         : 'N/A'}
                     </p>
@@ -238,7 +238,7 @@ export default function ParentStudentPerformancePage() {
                           />
                         </div>
                         <span className="text-sm font-medium text-white">
-                          {subject.averagePercentage.toFixed(1)}%
+                          {subject.averagePercentage != null ? subject.averagePercentage.toFixed(1) : "N/A"}%
                         </span>
                         <span className="text-xs text-gray-500">({subject.gradedCount})</span>
                       </div>
@@ -270,7 +270,7 @@ export default function ParentStudentPerformancePage() {
                         <p className="text-sm font-bold text-white">
                           {grade.score} / {grade.maxScore}
                         </p>
-                        <p className="text-xs text-gray-400">{grade.percentage.toFixed(1)}%</p>
+                        <p className="text-xs text-gray-400">{grade.percentage != null ? grade.percentage.toFixed(1) : "N/A"}%</p>
                       </div>
                       <div className="text-xs text-gray-500 flex items-center gap-1 ml-4">
                         <Calendar className="h-3 w-3" />

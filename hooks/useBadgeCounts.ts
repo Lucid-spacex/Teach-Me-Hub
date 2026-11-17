@@ -107,7 +107,7 @@ export function useBadgeCounts() {
 
 // Helper to format badge count with 99+ cap
 export function formatBadgeCount(count?: number): string {
-  if (!count || count === 0) return ''
+  if (count === undefined || count === null) return ''
   return count > 99 ? '99+' : count.toString()
 }
 

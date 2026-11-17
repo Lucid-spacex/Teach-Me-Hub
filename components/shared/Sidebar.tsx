@@ -255,7 +255,7 @@ export function Sidebar({ role }: SidebarProps) {
                   <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-destructive text-destructive-foreground font-bold">
                     {formatBadgeCount(badgeCounts[item.adminBadgeKey])}
                   </span>
-                ) : item.category && byCategory[item.category] > 0 ? (
+                ) : item.category && byCategory[item.category] !== undefined ? (
                   <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-destructive text-destructive-foreground font-bold">
                     {byCategory[item.category] > 99 ? '99+' : byCategory[item.category]}
                   </span>

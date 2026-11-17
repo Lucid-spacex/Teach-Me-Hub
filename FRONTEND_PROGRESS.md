@@ -472,3 +472,12 @@
 
 ## Environment
 - [x] Ensure .env.local has NEXT_PUBLIC_API_URL=https://smart-tutor-9rjd.onrender.com/api (or remove to use default)
+
+## Bug Fixes (post-review)
+- [x] Fix runtime crash in AdminStudentPerformancePage (undefined .toFixed)
+- [x] Fix same pattern in tutor/parent/student performance pages
+- [x] Fix badge count display: show numeric counts (0, 1, 2) not just "read" badge
+- [x] Fix formatBadgeCount to return '0' for count 0
+- [x] Fix category badge condition to show when count is defined (not just > 0)
+- [x] Run npx tsc --noEmit (no errors)
+- [x] Run npm run build (success)
