@@ -11,7 +11,7 @@ import { Payment } from '@/lib/types'
 function PaymentCallbackContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [status, setStatus] = useState<'loading' | 'success' | 'failed' | 'error'>('loading')
+  const [status, setStatus] = useState<'loading' | 'success' | 'failed' | 'error' | 'processing'>('loading')
   const [payment, setPayment] = useState<Payment | null>(null)
   const [errorMessage, setErrorMessage] = useState<string>('')
 
@@ -24,29 +24,63 @@ function PaymentCallbackContent() {
       return
     }
 
-    verifyPayment(reference)
+    verifyPayment(reference, 0)
   }, [searchParams])
 
-  const verifyPayment = async (reference: string) => {
+  // The verify endpoint response shape is not fully documented in ENDPOINT.md,
+  // so read the status tolerantly from possible locations and normalize it.
+  const extractStatus = (data: any): string | undefined => {
+    const raw =
+      data?.status ??
+      data?.data?.status ??
+      data?.payment?.status ??
+      data?.verification?.status
+    return typeof raw === 'string' ? raw.toUpperCase() : undefined
+  }
+
+  const normalizeStatus = (raw?: string): 'SUCCESS' | 'FAILED' | 'PENDING' | 'OTHER' => {
+    if (!raw) return 'OTHER'
+    if (raw === 'SUCCESS' || raw === 'SUCCESSFUL' || raw === 'COMPLETED') return 'SUCCESS'
+    if (raw === 'FAILED' || raw === 'ABANDONED' || raw === 'REVERSED') return 'FAILED'
+    if (raw === 'PENDING' || raw === 'ONGOING' || raw === 'QUEUED' || raw === 'PENDING_PAYMENT') return 'PENDING'
+    return 'OTHER'
+  }
+
+  const MAX_PENDING_POLLS = 15 // ~30 seconds at 2s intervals
+
+  const verifyPayment = async (reference: string, attempt: number) => {
     try {
       // Call backend to verify payment status using the reference
-      const payment = await api.verifyPayment(reference)
-      
-      if (payment.status === 'SUCCESS') {
+      const data = await api.verifyPayment(reference)
+      const normalized = normalizeStatus(extractStatus(data))
+
+      if (normalized === 'SUCCESS') {
         setStatus('success')
-        setPayment(payment)
-      } else if (payment.status === 'FAILED') {
+        setPayment(data as Payment)
+      } else if (normalized === 'FAILED') {
         setStatus('failed')
-      } else if (payment.status === 'PENDING') {
+        setPayment(data as Payment)
+      } else if (normalized === 'PENDING') {
+        if (attempt >= MAX_PENDING_POLLS) {
+          // Backend hasn't confirmed yet — don't spin forever.
+          setStatus('processing')
+          return
+        }
         // Payment is still pending, poll again after a delay
         await new Promise(resolve => setTimeout(resolve, 2000))
-        await verifyPayment(reference)
+        await verifyPayment(reference, attempt + 1)
       } else {
         setStatus('error')
-        setErrorMessage(`Unexpected payment status: ${payment.status}`)
+        setErrorMessage(`Unexpected payment status: ${extractStatus(data) ?? 'unknown'}`)
       }
     } catch (error) {
       console.error('Payment verification error:', error)
+      // A single transient failure shouldn't kill verification — retry a few times
+      if (attempt < 3) {
+        await new Promise(resolve => setTimeout(resolve, 2000))
+        await verifyPayment(reference, attempt + 1)
+        return
+      }
       setStatus('error')
       setErrorMessage(error instanceof Error ? error.message : 'Failed to verify payment status')
     }
@@ -138,6 +172,33 @@ function PaymentCallbackContent() {
               <button
                 onClick={handleReturnToDashboard}
                 className="w-full bg-brand-gold hover:bg-brand-goldLight text-brand-dark py-2 px-4 rounded-lg font-medium"
+              >
+                Return to Dashboard
+              </button>
+            </div>
+          )}
+
+          {status === 'processing' && (
+            <div className="flex flex-col items-center space-y-4 py-8">
+              <div className="bg-blue-500/20 p-4 rounded-full">
+                <AlertCircle className="h-12 w-12 text-blue-500" />
+              </div>
+              <div className="text-center space-y-2">
+                <h3 className="text-xl font-semibold text-white">Payment Processing</h3>
+                <p className="text-gray-400">
+                  Your payment was submitted and is being confirmed. This can take a short while —
+                  check your Payments page for the latest status.
+                </p>
+              </div>
+              <button
+                onClick={() => router.push('/parent/payments')}
+                className="w-full bg-brand-gold hover:bg-brand-goldLight text-brand-dark py-2 px-4 rounded-lg font-medium"
+              >
+                View Payments
+              </button>
+              <button
+                onClick={handleReturnToDashboard}
+                className="w-full text-sm text-gray-400 hover:text-white py-2"
               >
                 Return to Dashboard
               </button>

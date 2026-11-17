@@ -481,3 +481,4 @@
 - [x] Fix category badge condition to show when count is defined (not just > 0)
 - [x] Run npx tsc --noEmit (no errors)
 - [x] Run npm run build (success)
+- [x] Fix payment callback stuck on "Verifying your payment" — cap PENDING polling, tolerate undocumented verify response shape, normalize Paystack-style statuses, add "processing" state

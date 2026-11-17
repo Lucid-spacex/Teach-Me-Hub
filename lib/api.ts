@@ -1061,8 +1061,10 @@ class ApiClient {
     return this.request<any>(`/payments/${paymentId}`)
   }
 
-  async verifyPayment(reference: string): Promise<Payment> {
-    return this.request<Payment>(`/payments/verify/${reference}`)
+  // Response shape is not fully documented in ENDPOINT.md — callers must
+  // read the status tolerantly (see app/payment/callback/page.tsx).
+  async verifyPayment(reference: string): Promise<any> {
+    return this.request<any>(`/payments/verify/${reference}`)
   }
 
   // Assignment endpoints
