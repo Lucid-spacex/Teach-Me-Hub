@@ -24,6 +24,31 @@ import { Input } from '@/components/ui/input'
 
 type ApplicationStatus = 'DRAFT' | 'SUBMITTED' | 'NONE'
 
+// The tutor list response nests application data differently across
+// endpoints — check top-level and nested locations tolerantly.
+function getApplicationStatus(tutor: any): ApplicationStatus {
+  const raw =
+    tutor?.applicationStatus ??
+    tutor?.application?.applicationStatus ??
+    tutor?.application?.status ??
+    tutor?.tutorApplication?.applicationStatus ??
+    tutor?.tutorApplication?.status ??
+    tutor?.user?.applicationStatus ??
+    tutor?.user?.application?.status ??
+    'NONE'
+  return raw === 'DRAFT' || raw === 'SUBMITTED' ? raw : 'NONE'
+}
+
+function getSubmittedAt(tutor: any): string | undefined {
+  return (
+    tutor?.submittedAt ??
+    tutor?.application?.submittedAt ??
+    tutor?.tutorApplication?.submittedAt ??
+    tutor?.user?.application?.submittedAt ??
+    undefined
+  )
+}
+
 export default function AdminPendingTutorsPage() {
   const router = useRouter()
   const { toast } = useToast()
@@ -57,11 +82,14 @@ export default function AdminPendingTutorsPage() {
       const response = await api.getTutors(params.toString())
       const data = (response as any)?.data || response
       const tutorsArray = Array.isArray(data) ? data : []
+      if (tutorsArray.length > 0) {
+        console.log('Pending tutors raw row:', tutorsArray[0])
+      }
 
       // Sort SUBMITTED first, then others
       const sortedTutors = tutorsArray.sort((a: any, b: any) => {
-        const aStatus = a.applicationStatus || 'NONE'
-        const bStatus = b.applicationStatus || 'NONE'
+        const aStatus = getApplicationStatus(a)
+        const bStatus = getApplicationStatus(b)
         if (aStatus === 'SUBMITTED' && bStatus !== 'SUBMITTED') return -1
         if (aStatus !== 'SUBMITTED' && bStatus === 'SUBMITTED') return 1
         return 0
@@ -212,8 +240,8 @@ export default function AdminPendingTutorsPage() {
       ) : (
         <div className="space-y-4">
           {tutors.map((tutor) => {
-            const applicationStatus = (tutor as any).applicationStatus || 'NONE'
-            const submittedAt = (tutor as any).submittedAt
+            const applicationStatus = getApplicationStatus(tutor)
+            const submittedAt = getSubmittedAt(tutor)
             const isSubmitted = applicationStatus === 'SUBMITTED'
             const tutorId = tutor.id || tutor.tutorProfile?.id || ''
 

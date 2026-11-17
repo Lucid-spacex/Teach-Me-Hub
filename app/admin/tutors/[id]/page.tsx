@@ -205,7 +205,7 @@ export default function AdminTutorDetailPage() {
   }
 
   const { user, application, profile, metrics } = tutorData
-  const applicationStatus = application?.applicationStatus || 'DRAFT'
+  const applicationStatus = application?.applicationStatus || application?.status || 'DRAFT'
 
   return (
     <div className="min-h-screen bg-background">
