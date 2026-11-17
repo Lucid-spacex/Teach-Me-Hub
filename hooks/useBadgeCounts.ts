@@ -51,17 +51,25 @@ export function useBadgeCounts() {
           ...adminBadgeCounts.byCategory,
         }
 
-        // Map admin-specific fields from response (if available)
+        // Map admin-specific fields from response. The exact response shape
+        // is not documented in ENDPOINT.md, so check top-level, byCategory,
+        // and counts locations.
         const adminData = adminBadgeCounts as any
-        if (adminData.unreadNewParents !== undefined) merged.unreadNewParents = adminData.unreadNewParents
-        if (adminData.unreadNewTutors !== undefined) merged.unreadNewTutors = adminData.unreadNewTutors
-        if (adminData.pendingTutorApplications !== undefined) merged.pendingTutorApplications = adminData.pendingTutorApplications
-        if (adminData.openComplaints !== undefined) merged.openComplaints = adminData.openComplaints
-        if (adminData.unmatchedPaidEnrollments !== undefined) merged.unmatchedPaidEnrollments = adminData.unmatchedPaidEnrollments
-        if (adminData.failedPayments !== undefined) merged.failedPayments = adminData.failedPayments
-        if (adminData.pendingGrades !== undefined) merged.pendingGrades = adminData.pendingGrades
-        if (adminData.pendingChangeRequests !== undefined) merged.pendingChangeRequests = adminData.pendingChangeRequests
-        if (adminData.unscheduledWithin24h !== undefined) merged.unscheduledWithin24h = adminData.unscheduledWithin24h
+        const sources = [adminData, adminData?.byCategory, adminData?.counts, adminData?.data]
+        const adminKeys: (keyof BadgeCounts)[] = [
+          'unreadNewParents', 'unreadNewTutors', 'pendingTutorApplications',
+          'openComplaints', 'unreadMessages', 'unmatchedPaidEnrollments',
+          'failedPayments', 'pendingGrades', 'pendingChangeRequests',
+          'unscheduledWithin24h',
+        ]
+        for (const key of adminKeys) {
+          for (const src of sources) {
+            if (src && typeof src[key] === 'number') {
+              ;(merged as any)[key] = src[key]
+              break
+            }
+          }
+        }
 
         setCounts(merged)
       } else {

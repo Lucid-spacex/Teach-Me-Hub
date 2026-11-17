@@ -203,10 +203,10 @@ a `details` array from error responses. Please confirm:
 
 ## Tracking
 
-| # | Issue | Status | Backend response |
-|---|-------|--------|------------------|
-| 1 | Payment verify stuck at PENDING | ⬜ Sent | |
-| 2 | `/admin/badge-counts` missing | ⬜ Sent | |
-| 3 | Performance `undefined` metrics | ⬜ Sent | |
-| 4 | Undocumented response shapes | ⬜ Sent | |
-| 5 | Field-error `details` format | ⬜ Sent | |
+| # | Issue | Backend Status | Action Needed |
+|---|-------|----------------|---------------|
+| 1 | Payment verify stuck at PENDING | Code correct | Backend env fix: FRONTEND_URL must point to localhost — no frontend change needed |
+| 2 | `/admin/badge-counts` missing | Exists & documented | Frontend: made response parsing tolerant (top-level / byCategory / counts / data) |
+| 3 | Performance `undefined` metrics | Returns null | Frontend: PerformanceOverview types updated to number | null, progress bars guarded |
+| 4 | Undocumented response shapes | Gaps in docs | Backend to update ENDPOINT.md with actual shapes |
+| 5 | Field-error `details` format | Consistent | Documented — no action |

@@ -992,22 +992,22 @@ export interface PerformanceOverview {
   }
   gradesBySubject: Array<{
     subjectName: string
-    averagePercentage: number
+    averagePercentage: number | null
     gradedCount: number
   }>
   gradeTimeline: Array<{
     period: string
-    averagePercentage: number
+    averagePercentage: number | null
     gradedCount: number
   }>
   attendance: {
-    rate: number
+    rate: number | null
     attended: number
     missed: number
     trend: number | null
     timeline: Array<{
       period: string
-      rate: number
+      rate: number | null
       attended: number
       missed: number
     }>
@@ -1018,11 +1018,11 @@ export interface PerformanceOverview {
     pending: number
     overdue: number
     submittedLate: number
-    completionRate: number
+    completionRate: number | null
   }
   quizzes: {
     attempts: number
-    averagePercentage: number
+    averagePercentage: number | null
   }
   recentGrades: Array<{
     id: string
@@ -1030,7 +1030,7 @@ export interface PerformanceOverview {
     subjectName: string
     score: number
     maxScore: number
-    percentage: number
+    percentage: number | null
     feedback: string | null
     createdAt: string
   }>

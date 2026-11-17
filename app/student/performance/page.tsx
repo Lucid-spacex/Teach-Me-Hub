@@ -223,7 +223,7 @@ export default function StudentPerformancePage() {
                         <div className="w-32 h-2 bg-brand-dark rounded-full overflow-hidden">
                           <div
                             className="h-full bg-brand-gold"
-                            style={{ width: `${subject.averagePercentage}%` }}
+                            style={{ width: `${subject.averagePercentage ?? 0}%` }}
                           />
                         </div>
                         <span className="text-sm font-medium text-white">
