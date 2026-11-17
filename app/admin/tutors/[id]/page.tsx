@@ -105,7 +105,7 @@ export default function AdminTutorDetailPage() {
 
     setActionLoading(true)
     try {
-      await api.updateTutorVetting(params.id as string, { vettingStatus: 'REJECTED', reason: rejectReason })
+      await api.updateTutorVetting(params.id as string, { vettingStatus: 'REJECTED', rejectionReason: rejectReason })
       toast({
         title: 'Tutor Rejected',
         description: 'The tutor has been rejected',
@@ -136,7 +136,7 @@ export default function AdminTutorDetailPage() {
 
     setActionLoading(true)
     try {
-      await api.updateTutorVetting(params.id as string, { vettingStatus: 'REJECTED', reason: unapproveReason })
+      await api.updateTutorVetting(params.id as string, { vettingStatus: 'REJECTED', rejectionReason: unapproveReason })
       toast({
         title: 'Tutor Unapproved',
         description: 'The tutor has been unapproved and can no longer take new students',

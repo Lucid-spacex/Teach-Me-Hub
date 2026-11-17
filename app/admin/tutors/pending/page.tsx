@@ -120,7 +120,7 @@ export default function AdminPendingTutorsPage() {
 
     setActionLoading(rejectTutorId)
     try {
-      await api.updateTutorVetting(rejectTutorId, { vettingStatus: 'REJECTED', reason: rejectionReason.trim() })
+      await api.updateTutorVetting(rejectTutorId, { vettingStatus: 'REJECTED', rejectionReason: rejectionReason.trim() })
       toast({
         title: 'Success',
         description: 'Tutor rejected successfully',

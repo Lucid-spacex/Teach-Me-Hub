@@ -1002,7 +1002,7 @@ class ApiClient {
     return this.request<{ url: string; expiresAt: string }>(`/tutor-application/documents/${documentId}`)
   }
 
-  async updateTutorVetting(id: string, data: { vettingStatus: 'APPROVED' | 'REJECTED'; reason?: string }): Promise<TutorProfile> {
+  async updateTutorVetting(id: string, data: { vettingStatus: 'APPROVED' | 'REJECTED'; rejectionReason?: string }): Promise<TutorProfile> {
     return this.request<TutorProfile>(`/admin/tutors/${id}/vetting`, {
       method: 'PATCH',
       body: JSON.stringify(data),
