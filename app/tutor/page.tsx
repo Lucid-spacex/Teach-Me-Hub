@@ -27,6 +27,7 @@ export default function TutorDashboard() {
   const [refreshTrigger, setRefreshTrigger] = useState(0)
 
   useEffect(() => {
+    const init = async () => {
     try {
       const user = getUser()
       if (!user || getUserRole() !== 'TUTOR') {
@@ -46,12 +47,28 @@ export default function TutorDashboard() {
         return
       }
 
+      // Tutors who haven't submitted an application go to the application wizard
+      try {
+        const app = await api.getTutorApplication().catch(() => null)
+        const appStatus = app?.applicationStatus || (app as any)?.status
+        if (!app || appStatus === 'DRAFT') {
+          router.push('/tutor/application')
+          return
+        }
+      } catch (appErr) {
+        console.warn('Could not check tutor application status:', appErr)
+        router.push('/tutor/application')
+        return
+      }
+
       loadInitialData()
     } catch (err) {
       console.error('Error in tutor dashboard useEffect:', err)
       setError('Failed to initialize dashboard')
       setLoading(false)
     }
+    }
+    init()
   }, [router])
 
   const loadInitialData = async () => {
