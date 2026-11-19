@@ -25,6 +25,7 @@ export default function VerifyForm() {
   const [loading, setLoading] = useState(false)
   const [resending, setResending] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [verifiedRole, setVerifiedRole] = useState<string | null>(null)
   const [isEmailAutoFilled, setIsEmailAutoFilled] = useState(false)
 
   useEffect(() => {
@@ -42,8 +43,19 @@ export default function VerifyForm() {
     setLoading(true)
 
     try {
-      await api.verify(formData)
+      const response = await api.verify(formData)
+      const role = response?.user?.role ?? null
+      setVerifiedRole(role)
       setSuccess(true)
+
+      if (role === 'TUTOR') {
+        toast({
+          title: 'Application Submitted',
+          description: 'Your application is pending admin approval.',
+        })
+        return
+      }
+
       toast({
         title: 'Verification Successful',
         description: 'Your account is now active! Please sign in.',
@@ -102,15 +114,28 @@ export default function VerifyForm() {
               <CheckCircle2 className="h-9 w-9 text-primary" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-foreground font-serif">Account Verified!</h2>
-              <p className="text-sm text-muted-foreground mt-2">
-                Your email is confirmed and your account is ready.
-              </p>
+              {verifiedRole === 'TUTOR' ? (
+                <>
+                  <h2 className="text-2xl font-bold text-foreground font-serif">Application Submitted!</h2>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Your tutor application is now pending admin approval. You will not be able to sign in until your application has been reviewed and approved after interview.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h2 className="text-2xl font-bold text-foreground font-serif">Account Verified!</h2>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Your email is confirmed and your account is ready.
+                  </p>
+                </>
+              )}
             </div>
-            <div className="flex items-center justify-center gap-2 text-xs text-primary font-medium pt-2">
-              <LoadingSpinner size="sm" className="text-primary" />
-              <span>Redirecting to login...</span>
-            </div>
+            {verifiedRole !== 'TUTOR' && (
+              <div className="flex items-center justify-center gap-2 text-xs text-primary font-medium pt-2">
+                <LoadingSpinner size="sm" className="text-primary" />
+                <span>Redirecting to login...</span>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

@@ -24,6 +24,18 @@ export interface RegisterRequest {
   password: string
   role: UserRole
   address?: string
+  // Tutor application fields — sent in the same request when role === 'TUTOR'
+  birthDay?: number
+  birthMonth?: number
+  country?: string
+  city?: string
+  highestQualification?: HighestQualification
+  subjects?: string[]
+  levels?: TutorLevel[]
+  yearsOfExperience?: number
+  whyTeach?: string
+  howHeard?: HowHeardSource
+  aboutYou?: string[]
 }
 
 export interface TutorRegistrationRequest extends RegisterRequest {
@@ -38,14 +50,14 @@ export interface TutorRegistrationRequest extends RegisterRequest {
   birthday?: string
   country?: string
   city?: string
-  highestQualification?: string
+  highestQualification?: HighestQualification
   // Step 3: Teaching
   subjects?: string[]
   testPreparation?: string[]
-  levels?: string[]
+  levels?: TutorLevel[]
   yearsOfExperience?: number
   whyTeach?: string
-  howHeard?: string
+  howHeard?: HowHeardSource
   // Step 4: Profile
   bio?: string
   interests?: string

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { getUser, getUserRole } from '@/lib/auth'
 import { api } from '@/lib/api'
 import { TutorApplication, TutorDocument, Subject, HighestQualification, TutorLevel, HowHeardSource, ApplicationStatus } from '@/lib/types'
-import { QUALIFICATIONS, LEVELS, HEARD_ABOUT, SUBJECT_CATEGORIES, readPendingTutorApplication, clearPendingTutorApplication, PendingTutorApplication } from '@/lib/tutorApplicationOptions'
+import { QUALIFICATIONS, LEVELS, HEARD_ABOUT, SUBJECT_CATEGORIES } from '@/lib/tutorApplicationOptions'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -107,16 +107,6 @@ export default function TutorApplicationPage() {
   const loadData = async () => {
     setLoading(true)
     try {
-      // Apply application data collected during registration, if any
-      const pending = readPendingTutorApplication()
-      if (pending) {
-        try {
-          await api.updateTutorApplication(pending as Partial<TutorApplication>)
-          clearPendingTutorApplication()
-        } catch (err) {
-          console.warn('Could not save pre-registration application data:', err)
-        }
-      }
 
       const [appData, subjectsData] = await Promise.all([
         api.getTutorApplication().catch(() => null),
@@ -143,7 +133,6 @@ export default function TutorApplicationPage() {
           whyTeach: appData.whyTeach || '',
           howHeard: appData.howHeard,
           aboutYou: Array.isArray(appData.aboutYou) ? appData.aboutYou.join('\n') : (appData.aboutYou || ''),
-          ...(pending || {}),
         })
 
         // Load uploaded documents

@@ -15,7 +15,7 @@ import { useToast } from '@/components/ui/use-toast'
 import { User, Mail, Phone, Lock, CheckCircle2, ArrowLeft, ArrowRight, ShieldCheck, GraduationCap, MapPin, Eye, EyeOff, BookOpen, Briefcase } from 'lucide-react'
 import { api } from '@/lib/api'
 import { RegisterRequest, Subject, HighestQualification, TutorLevel, HowHeardSource } from '@/lib/types'
-import { QUALIFICATIONS, LEVELS, HEARD_ABOUT, SUBJECT_CATEGORIES, PendingTutorApplication, writePendingTutorApplication } from '@/lib/tutorApplicationOptions'
+import { QUALIFICATIONS, LEVELS, HEARD_ABOUT, SUBJECT_CATEGORIES } from '@/lib/tutorApplicationOptions'
 
 type Step = 'account' | 'about' | 'teaching' | 'review'
 
@@ -26,12 +26,11 @@ const STEPS: { key: Step; label: string }[] = [
   { key: 'review', label: 'Review' },
 ]
 
-const MONTHS = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
-const DAYS = Array.from({ length: 31 }, (_, i) => (i + 1).toString().padStart(2, '0'))
+const ABOUT_YOU_MAX = 60
+const ABOUT_YOU_COUNT = 3
 
 interface ApplicationFormState {
-  birthMonth: string
-  birthDay: string
+  birthDate: string // YYYY-MM-DD from date picker; split into birthDay/birthMonth on submit
   country: string
   city: string
   highestQualification?: HighestQualification
@@ -40,12 +39,11 @@ interface ApplicationFormState {
   yearsOfExperience: number
   whyTeach: string
   howHeard?: HowHeardSource
-  aboutYou: string
+  aboutYou: string[]
 }
 
 const emptyApplication: ApplicationFormState = {
-  birthMonth: '',
-  birthDay: '',
+  birthDate: '',
   country: '',
   city: '',
   highestQualification: undefined,
@@ -54,7 +52,7 @@ const emptyApplication: ApplicationFormState = {
   yearsOfExperience: 0,
   whyTeach: '',
   howHeard: undefined,
-  aboutYou: '',
+  aboutYou: ['', '', ''],
 }
 
 export default function TutorRegisterForm() {
@@ -88,8 +86,18 @@ export default function TutorRegisterForm() {
     setAppData(prev => ({ ...prev, [key]: value }))
   }
 
+  const setAboutYouAt = (index: number, value: string) => {
+    setAppData(prev => {
+      const next = [...prev.aboutYou]
+      next[index] = value
+      return { ...prev, aboutYou: next }
+    })
+  }
+
   const toggleInArray = <T,>(list: T[], value: T): T[] =>
     list.includes(value) ? list.filter(v => v !== value) : [...list, value]
+
+  const filledAboutYou = () => appData.aboutYou.map(s => s.trim()).filter(Boolean)
 
   const validateStep = (s: Step): string | null => {
     if (s === 'account') {
@@ -105,7 +113,9 @@ export default function TutorRegisterForm() {
       return null
     }
     if (s === 'about') {
-      if (!appData.birthMonth || !appData.birthDay) return 'Please select your birthday (day and month)'
+      if (!appData.birthDate) return 'Please select your birthday'
+      const [y, m, d] = appData.birthDate.split('-').map(Number)
+      if (!y || !m || m < 1 || m > 12 || !d || d < 1 || d > 31) return 'Please select a valid birthday'
       if (!appData.country.trim()) return 'Country is required'
       if (!appData.city.trim()) return 'City is required'
       if (!appData.highestQualification) return 'Please select your highest qualification'
@@ -117,9 +127,10 @@ export default function TutorRegisterForm() {
       if (appData.yearsOfExperience < 0) return 'Years of experience cannot be negative'
       if (appData.whyTeach.trim().length < 10) return 'Please tell us why you want to teach (min 10 characters)'
       if (!appData.howHeard) return 'Please select how you heard about us'
-      if (!appData.aboutYou.trim()) return 'Please write a short "about you" (max 180 words)'
-      const words = appData.aboutYou.trim().split(/\s+/).filter(Boolean).length
-      if (words > 180) return '"About you" must be 180 words or fewer'
+      const aboutYou = filledAboutYou()
+      if (aboutYou.length === 0) return 'Please fill in at least one "about you" paragraph'
+      if (aboutYou.length > ABOUT_YOU_COUNT) return `"About you" allows up to ${ABOUT_YOU_COUNT} paragraphs`
+      if (aboutYou.some(p => p.length > ABOUT_YOU_MAX)) return `Each "about you" paragraph must be ${ABOUT_YOU_MAX} characters or fewer`
       return null
     }
     return null
@@ -143,18 +154,24 @@ export default function TutorRegisterForm() {
     if (idx > 0) setStep(STEPS[idx - 1].key)
   }
 
-  const buildApplicationPayload = (): PendingTutorApplication => ({
-    birthday: appData.birthMonth && appData.birthDay ? `1900-${appData.birthMonth}-${appData.birthDay}` : undefined,
-    country: appData.country.trim(),
-    city: appData.city.trim(),
-    highestQualification: appData.highestQualification,
-    subjects: appData.subjects,
-    levels: appData.levels,
-    yearsOfExperience: appData.yearsOfExperience,
-    whyTeach: appData.whyTeach.trim(),
-    howHeard: appData.howHeard,
-    aboutYou: appData.aboutYou.trim(),
-  })
+  const buildRegisterPayload = (): RegisterRequest => {
+    const [, birthMonth, birthDay] = appData.birthDate.split('-').map(Number)
+    return {
+      ...formData,
+      // Application fields — sent in the same register request per spec
+      birthDay,
+      birthMonth,
+      country: appData.country.trim(),
+      city: appData.city.trim(),
+      highestQualification: appData.highestQualification,
+      subjects: appData.subjects,
+      levels: appData.levels,
+      yearsOfExperience: appData.yearsOfExperience,
+      whyTeach: appData.whyTeach.trim(),
+      howHeard: appData.howHeard,
+      aboutYou: filledAboutYou(),
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -169,7 +186,7 @@ export default function TutorRegisterForm() {
 
     setLoading(true)
     try {
-      const response = await api.register(formData)
+      const response = await api.register(buildRegisterPayload())
 
       if (response.emailSent === false) {
         toast({
@@ -179,8 +196,6 @@ export default function TutorRegisterForm() {
         })
       }
 
-      // Stash application answers — submitted to /tutor-application after login
-      writePendingTutorApplication(buildApplicationPayload())
       sessionStorage.setItem('pendingVerificationEmail', formData.email)
       setSuccess(true)
       toast({
@@ -225,6 +240,10 @@ export default function TutorRegisterForm() {
     return grouped
   })()
 
+  const birthDisplay = appData.birthDate
+    ? new Date(appData.birthDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric' })
+    : ''
+
   if (success) {
     return (
       <div className="w-full max-w-md mx-auto relative z-10">
@@ -238,7 +257,7 @@ export default function TutorRegisterForm() {
               <div>
                 <h2 className="text-2xl font-bold text-foreground font-serif">Welcome to Teachmenest!</h2>
                 <p className="text-sm text-muted-foreground mt-2 max-w-xs mx-auto">
-                  Your tutor account has been created. After verification and sign-in, upload your documents to complete your application.
+                  Your tutor account and application have been submitted. Verify your email to complete registration.
                 </p>
               </div>
               <div className="flex items-center gap-2 text-xs text-primary font-medium pt-2">
@@ -296,7 +315,7 @@ export default function TutorRegisterForm() {
             {step === 'account' && 'Your login credentials and contact details.'}
             {step === 'about' && 'Tell us about yourself — this becomes part of your tutor application.'}
             {step === 'teaching' && 'Your subjects, levels and experience — reviewed by our team.'}
-            {step === 'review' && 'Check everything before creating your account.'}
+            {step === 'review' && 'Check everything before submitting your application.'}
           </CardDescription>
         </CardHeader>
 
@@ -379,28 +398,11 @@ export default function TutorRegisterForm() {
             {step === 'about' && (
               <>
                 <div className="space-y-2">
-                  <Label className="text-xs font-medium text-muted-foreground">Birthday (Day and Month) *</Label>
-                  <div className="grid grid-cols-2 gap-3">
-                    <Select value={appData.birthMonth} onValueChange={(v) => setApp('birthMonth', v)}>
-                      <SelectTrigger className="bg-muted border-border rounded-xl h-11">
-                        <SelectValue placeholder="Month" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {MONTHS.map(m => (
-                          <SelectItem key={m} value={m}>{new Date(2000, parseInt(m) - 1).toLocaleString('default', { month: 'long' })}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Select value={appData.birthDay} onValueChange={(v) => setApp('birthDay', v)}>
-                      <SelectTrigger className="bg-muted border-border rounded-xl h-11">
-                        <SelectValue placeholder="Day" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {DAYS.map(d => <SelectItem key={d} value={d}>{parseInt(d)}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <p className="text-xs text-muted-foreground">So we can celebrate you</p>
+                  <Label htmlFor="birthDate" className="text-xs font-medium text-muted-foreground">Birthday *</Label>
+                  <Input id="birthDate" type="date" required value={appData.birthDate}
+                    onChange={(e) => setApp('birthDate', e.target.value)}
+                    className="bg-muted border-border text-foreground focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11" />
+                  <p className="text-xs text-muted-foreground">Day and month are used for your profile</p>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
@@ -499,15 +501,19 @@ export default function TutorRegisterForm() {
                     placeholder="Tell us what motivates you to teach..." rows={3}
                     className="bg-muted border-border text-foreground placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" />
                 </div>
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   <Label className="text-xs font-medium text-muted-foreground">A Little About You *</Label>
-                  <p className="text-xs text-muted-foreground">Up to 180 words</p>
-                  <Textarea value={appData.aboutYou} onChange={(e) => setApp('aboutYou', e.target.value)}
-                    placeholder="Tell us about yourself..." rows={4}
-                    className="bg-muted border-border text-foreground placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" />
-                  <p className="text-xs text-muted-foreground">
-                    Word count: {appData.aboutYou.trim().split(/\s+/).filter(Boolean).length} / 180
-                  </p>
+                  <p className="text-xs text-muted-foreground">Up to {ABOUT_YOU_COUNT} short paragraphs, {ABOUT_YOU_MAX} characters each</p>
+                  {appData.aboutYou.map((paragraph, i) => (
+                    <div key={i} className="space-y-1">
+                      <Textarea value={paragraph} maxLength={ABOUT_YOU_MAX}
+                        onChange={(e) => setAboutYouAt(i, e.target.value)}
+                        placeholder={`Paragraph ${i + 1} (optional${i === 0 ? ' — at least one required' : ''})`}
+                        rows={2}
+                        className="bg-muted border-border text-foreground placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl" />
+                      <p className="text-xs text-muted-foreground text-right">{paragraph.length}/{ABOUT_YOU_MAX}</p>
+                    </div>
+                  ))}
                 </div>
               </>
             )}
@@ -518,15 +524,16 @@ export default function TutorRegisterForm() {
                   <p><span className="text-muted-foreground">Name:</span> {formData.firstName} {formData.middleName} {formData.lastName}</p>
                   <p><span className="text-muted-foreground">Email:</span> {formData.email}</p>
                   <p><span className="text-muted-foreground">Phone:</span> {formData.phone}</p>
-                  <p><span className="text-muted-foreground">Birthday:</span> {appData.birthDay}/{appData.birthMonth}</p>
+                  <p><span className="text-muted-foreground">Birthday:</span> {birthDisplay}</p>
                   <p><span className="text-muted-foreground">Location:</span> {appData.city}, {appData.country}</p>
                   <p><span className="text-muted-foreground">Qualification:</span> {QUALIFICATIONS.find(q => q.value === appData.highestQualification)?.label}</p>
                   <p><span className="text-muted-foreground">Subjects:</span> {appData.subjects.length} selected</p>
                   <p><span className="text-muted-foreground">Levels:</span> {appData.levels.map(l => LEVELS.find(lev => lev.value === l)?.label).join(', ')}</p>
                   <p><span className="text-muted-foreground">Experience:</span> {appData.yearsOfExperience} years</p>
+                  <p><span className="text-muted-foreground">About You:</span> {filledAboutYou().length} paragraph(s)</p>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  After creating your account and verifying your email, you&apos;ll sign in to upload your profile picture and documents to complete your application.
+                  Submitting sends your account and application together. After email verification, your application goes to our review team — you&apos;ll be notified once it&apos;s approved.
                 </p>
               </div>
             )}
@@ -553,9 +560,9 @@ export default function TutorRegisterForm() {
                   {loading ? (
                     <div className="flex items-center gap-2">
                       <LoadingSpinner size="sm" className="text-black" />
-                      <span>Creating Account...</span>
+                      <span>Submitting Application...</span>
                     </div>
-                  ) : 'Create Account'}
+                  ) : 'Submit Application'}
                 </Button>
               ) : (
                 <Button type="button" onClick={goNext}

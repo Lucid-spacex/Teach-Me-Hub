@@ -37,38 +37,3 @@ export const SUBJECT_CATEGORIES = {
   ENRICHMENT: 'Extracurricular',
   TEST_PREP: 'Test Preparation',
 }
-
-export const PENDING_TUTOR_APPLICATION_KEY = 'pendingTutorApplication'
-
-export interface PendingTutorApplication {
-  birthday?: string
-  country?: string
-  city?: string
-  highestQualification?: HighestQualification
-  subjects?: string[]
-  levels?: TutorLevel[]
-  yearsOfExperience?: number
-  whyTeach?: string
-  howHeard?: HowHeardSource
-  aboutYou?: string
-}
-
-export function readPendingTutorApplication(): PendingTutorApplication | null {
-  if (typeof window === 'undefined') return null
-  try {
-    const raw = sessionStorage.getItem(PENDING_TUTOR_APPLICATION_KEY)
-    return raw ? (JSON.parse(raw) as PendingTutorApplication) : null
-  } catch {
-    return null
-  }
-}
-
-export function clearPendingTutorApplication() {
-  if (typeof window === 'undefined') return
-  sessionStorage.removeItem(PENDING_TUTOR_APPLICATION_KEY)
-}
-
-export function writePendingTutorApplication(data: PendingTutorApplication) {
-  if (typeof window === 'undefined') return
-  sessionStorage.setItem(PENDING_TUTOR_APPLICATION_KEY, JSON.stringify(data))
-}

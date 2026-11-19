@@ -254,13 +254,13 @@ All known ambiguities are documented and resolved via:
 **Total adapters implemented:** 12
 **Status:** âœ… All resolved
 
-## Tutor registration cannot carry application data
+## Tutor registration submits application data in one request
 
-`POST /auth/register` accepts only account fields (name, email, phone, address, password, role). All `/tutor-application` endpoints require an authenticated TUTOR token, and `POST /auth/verify` returns no tokens — so application data cannot be submitted during registration.
+Per product spec, `/register/tutor` is a multi-step wizard that submits account + application fields together in a single `POST /auth/register` call: `birthDay`, `birthMonth` (numbers, split from a date picker), `country`, `city`, `highestQualification`, `subjects[]` (uuids), `levels[]`, `yearsOfExperience`, `whyTeach`, `howHeard`, `aboutYou[]` (1-3 strings, max 60 chars each).
 
-Frontend workaround: `/register/tutor` is now a multi-step wizard collecting all application fields; the payload is stored in `sessionStorage` (`pendingTutorApplication`) and auto-submitted via `PATCH /tutor-application` when the tutor first loads `/tutor/application` after login. Profile picture and documents still require post-login upload (auth-only multipart).
+ENDPOINT.md does not yet document these fields on `POST /auth/register` — backend must accept and persist them (creating the tutor application in SUBMITTED state). After `POST /auth/verify`, tutors see a pending-approval screen and cannot sign in until approved.
 
-If registration-time submission is required, the backend must either extend `POST /auth/register` for TUTOR with application fields or provide a public apply endpoint.
+Profile picture and documents are NOT part of registration; if still required for vetting, a post-approval upload path is needed.
 
 Related field mismatches observed (frontend tolerates both):
 - GET /tutor-application returns `birthDay`/`birthMonth` but frontend type uses `birthday`; frontend now derives `birthday` from birthDay/birthMonth when absent.
