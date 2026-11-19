@@ -26,6 +26,7 @@ export default function AdminStudentDetailPage() {
   const [assignModalOpen, setAssignModalOpen] = useState(false)
   const [selectedEnrollment, setSelectedEnrollment] = useState<Enrollment | null>(null)
   const [suggestedTutors, setSuggestedTutors] = useState<SuggestedTutor[]>([])
+  const [showingAllTutors, setShowingAllTutors] = useState(false)
   const [selectedTutor, setSelectedTutor] = useState<string>('')
   const [assigning, setAssigning] = useState(false)
   const [regeneratePinConfirm, setRegeneratePinConfirm] = useState(false)
@@ -89,9 +90,18 @@ export default function AdminStudentDetailPage() {
     setAssignModalOpen(true)
     try {
       const tutors = await api.getSuggestedTutors(enrollment.id)
-      setSuggestedTutors(tutors)
+      if (tutors.length > 0) {
+        setSuggestedTutors(tutors)
+        setShowingAllTutors(false)
+      } else {
+        // Ranking returned nobody — fall back to all approved tutors.
+        const approved = await api.getApprovedTutorsForAssignment()
+        setSuggestedTutors(approved)
+        setShowingAllTutors(approved.length > 0)
+      }
     } catch (err) {
       console.error('Failed to load suggested tutors:', err)
+      setShowingAllTutors(false)
     }
   }
 
@@ -514,6 +524,11 @@ export default function AdminStudentDetailPage() {
         }
       >
         <div className="space-y-4">
+          {showingAllTutors && (
+            <p className="text-xs text-yellow-400">
+              No subject/availability matches — showing all approved tutors.
+            </p>
+          )}
           {suggestedTutors.length === 0 ? (
             <p className="text-sm text-gray-400">No tutors available</p>
           ) : (
@@ -534,7 +549,7 @@ export default function AdminStudentDetailPage() {
                       <p className="text-xs text-gray-400">{tutor.subjects?.map((s: any) => s.name).join(', ') || 'No subjects'}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-xs text-gray-400">{tutor.currentStudents}/{tutor.maxStudents} students</p>
+                      <p className="text-xs text-gray-400">{tutor.maxStudents > 0 ? `${tutor.currentStudents}/${tutor.maxStudents}` : `${tutor.currentStudents} students`}</p>
                       <StatusBadge status={tutor.availabilityStatus || 'UNKNOWN'} />
                     </div>
                   </div>

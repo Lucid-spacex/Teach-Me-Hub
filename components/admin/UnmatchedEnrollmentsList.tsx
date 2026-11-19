@@ -30,6 +30,7 @@ export function UnmatchedEnrollmentsList({ onUpdate, refreshTrigger }: Unmatched
   const [suggestedTutors, setSuggestedTutors] = useState<SuggestedTutor[]>([])
   const [tutorsLoading, setTutorsLoading] = useState(false)
   const [forceAssignment, setForceAssignment] = useState(false)
+  const [showingAllTutors, setShowingAllTutors] = useState(false)
 
   const [includeUnpaid, setIncludeUnpaid] = useState(false)
 
@@ -59,10 +60,20 @@ export function UnmatchedEnrollmentsList({ onUpdate, refreshTrigger }: Unmatched
 
     try {
       const data = await api.getSuggestedTutors(enrollment.id)
-      setSuggestedTutors(Array.isArray(data) ? data : [])
+      if (data.length > 0) {
+        setSuggestedTutors(data)
+        setShowingAllTutors(false)
+      } else {
+        // Ranking returned nobody — fall back to all approved tutors so the
+        // admin can still assign (e.g. missing tutor profile data).
+        const approved = await api.getApprovedTutorsForAssignment()
+        setSuggestedTutors(approved)
+        setShowingAllTutors(approved.length > 0)
+      }
     } catch (err) {
       console.error('Failed to load suggested tutors:', err)
       setSuggestedTutors([])
+      setShowingAllTutors(false)
       toast({
         title: "Warning",
         description: "Could not load suggested tutors. All approved tutors will be shown.",
@@ -85,7 +96,7 @@ export function UnmatchedEnrollmentsList({ onUpdate, refreshTrigger }: Unmatched
 
     // Check if force assignment is needed
     const selectedTutor = suggestedTutors.find(t => t.id === tutorId)
-    if (!forceAssignment && selectedTutor && (selectedTutor.availabilityStatus === 'UNAVAILABLE' || selectedTutor.currentStudents >= selectedTutor.maxStudents)) {
+    if (!forceAssignment && selectedTutor && (selectedTutor.availabilityStatus === 'UNAVAILABLE' || selectedTutor.maxStudents > 0 && selectedTutor.currentStudents >= selectedTutor.maxStudents)) {
       toast({
         title: "Warning",
         description: "This tutor is at capacity or unavailable. Check 'Force assignment' to proceed anyway.",
@@ -261,6 +272,11 @@ export function UnmatchedEnrollmentsList({ onUpdate, refreshTrigger }: Unmatched
 
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-300">Suggested Tutors *</label>
+            {showingAllTutors && (
+              <p className="text-xs text-yellow-400">
+                No subject/availability matches — showing all approved tutors.
+              </p>
+            )}
             {tutorsLoading ? (
               <div className="flex items-center justify-center py-4">
                 <LoadingSpinner size="sm" />
@@ -271,7 +287,7 @@ export function UnmatchedEnrollmentsList({ onUpdate, refreshTrigger }: Unmatched
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {suggestedTutors.map((tutor) => {
                   const isUnavailable = tutor.availabilityStatus === 'UNAVAILABLE'
-                  const atCapacity = tutor.currentStudents >= tutor.maxStudents
+                  const atCapacity = tutor.maxStudents > 0 && tutor.currentStudents >= tutor.maxStudents
                   const needsWarning = isUnavailable || atCapacity
 
                   return (
@@ -294,7 +310,7 @@ export function UnmatchedEnrollmentsList({ onUpdate, refreshTrigger }: Unmatched
                           </p>
                           <div className="flex items-center gap-2 mt-2 text-xs">
                             <span className="text-gray-400">
-                              {tutor.currentStudents}/{tutor.maxStudents} students
+                              {tutor.maxStudents > 0 ? `${tutor.currentStudents}/${tutor.maxStudents}` : `${tutor.currentStudents} students`}
                             </span>
                             <span className="text-gray-500">•</span>
                             <span className={`${
@@ -320,7 +336,7 @@ export function UnmatchedEnrollmentsList({ onUpdate, refreshTrigger }: Unmatched
             )}
           </div>
 
-          {suggestedTutors.some(t => t.availabilityStatus === 'UNAVAILABLE' || t.currentStudents >= t.maxStudents) && (
+          {suggestedTutors.some(t => t.availabilityStatus === 'UNAVAILABLE' || (t.maxStudents > 0 && t.currentStudents >= t.maxStudents)) && (
             <div className="flex items-center gap-2 pt-2">
               <Checkbox
                 id="force"

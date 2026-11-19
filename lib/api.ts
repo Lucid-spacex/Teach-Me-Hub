@@ -1849,7 +1849,16 @@ class ApiClient {
   }
 
   async getSuggestedTutors(enrollmentId: string): Promise<SuggestedTutor[]> {
-    return this.request<SuggestedTutor[]>(`/admin/enrollments/${enrollmentId}/suggested-tutors`)
+    const res: any = await this.request(`/admin/enrollments/${enrollmentId}/suggested-tutors`)
+    const list = Array.isArray(res) ? res : res?.tutors ?? res?.data ?? res?.suggestedTutors ?? []
+    return Array.isArray(list) ? list : []
+  }
+
+  // Fallback for the assign-tutor modal: all APPROVED tutors when the
+  // suggested-tutors ranking returns nobody (e.g. missing profile data).
+  async getApprovedTutorsForAssignment(): Promise<SuggestedTutor[]> {
+    const tutors = await this.getTutors('status=APPROVED&limit=100')
+    return tutors.map(tutorToSuggestedTutor)
   }
 
   async assignTutorWithForce(enrollmentId: string, data: {
@@ -2100,6 +2109,23 @@ class ApiClient {
       method: 'PATCH',
       body: JSON.stringify(data),
     })
+  }
+}
+
+// Maps an admin tutor-list row (TutorWithProfile) into the SuggestedTutor
+// shape used by the assign-tutor modal.
+export function tutorToSuggestedTutor(tutor: TutorWithProfile): SuggestedTutor {
+  const profile = tutor.tutorProfile
+  const subjectNames = tutor.subjects ?? profile?.subjects ?? []
+  return {
+    id: tutor.id,
+    fullName: tutor.fullName,
+    email: tutor.email,
+    availabilityStatus: tutor.availabilityStatus ?? profile?.availabilityStatus ?? 'LIMITED',
+    maxStudents: tutor.maxStudents ?? profile?.maxStudents ?? 0,
+    currentStudents: tutor.currentStudents ?? 0,
+    subjects: subjectNames.map(s => ({ id: s, name: s })),
+    availability: profile?.availability ?? {},
   }
 }
 
