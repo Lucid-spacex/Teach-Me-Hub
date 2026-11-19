@@ -265,3 +265,14 @@ Profile picture and documents are NOT part of registration; if still required fo
 Related field mismatches observed (frontend tolerates both):
 - GET /tutor-application returns `birthDay`/`birthMonth` but frontend type uses `birthday`; frontend now derives `birthday` from birthDay/birthMonth when absent.
 - PATCH /tutor-application documents `aboutYou` as `string[]` (max 3 x 60 chars) but the UI collects a single text (up to 180 words); frontend sends a string.
+
+## Assignment submission status endpoint undocumented
+
+The frontend needs to know whether a student has submitted an assignment. ENDPOINT.md documents `POST /assignments/:id/submit` but no endpoint to READ a submission (no `GET /assignments/:id/submission`, and `GET /assignments/:id` schema is unspecified - it may or may not nest `submission`).
+
+Observed: `GET /assignments/:id/submission` returns an error (likely 404) on the deployed backend. Frontend now tolerates both shapes: tries `/assignments/:id/submission`, falls back to extracting `submission`/`submissions[0]` from `GET /assignments/:id`, and treats a submission record OR `status === SUBMITTED/GRADED` as submitted.
+
+Backend should clarify:
+1. Is there a documented GET endpoint for an assignment submission (for student/parent/tutor)?
+2. Does submitting update `assignment.status` to SUBMITTED, or does status only reflect grading?
+3. For multi-student assignment creation, does `POST /assignments` accept `enrollmentIds[]`, or must the frontend create one assignment per enrollment (current approach)?

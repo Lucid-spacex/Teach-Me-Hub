@@ -586,7 +586,12 @@ class ApiClient {
   }
 
   async getAssignmentSubmission(assignmentId: string): Promise<any> {
-    return this.request<any>(`/assignments/${assignmentId}/submission`)
+    // Some backends expose /assignments/:id/submission; others nest the
+    // submission on the assignment detail. Try both, return null if neither.
+    const direct = await this.request<any>(`/assignments/${assignmentId}/submission`).catch(() => null)
+    if (direct) return direct
+    const detail: any = await this.request<any>(`/assignments/${assignmentId}`).catch(() => null)
+    return detail?.submission ?? detail?.submissions?.[0] ?? null
   }
 
   async getStudentGrades(): Promise<Grade[]> {

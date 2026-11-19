@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Modal } from '@/components/shared/Modal'
 import { ArrowLeft, FileText, Plus, Clock, CheckCircle, AlertCircle, Edit, Trash2, Loader2, CheckCircle2 } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
@@ -42,6 +43,7 @@ export default function TutorAssignmentsPage() {
     type: 'ASSIGNMENT' as AssignmentType,
     dueDate: ''
   })
+  const [selectedEnrollmentIds, setSelectedEnrollmentIds] = useState<string[]>([])
 
   useEffect(() => {
     const user = getUser()
@@ -113,6 +115,7 @@ export default function TutorAssignmentsPage() {
       type: 'ASSIGNMENT',
       dueDate: ''
     })
+    setSelectedEnrollmentIds([])
     setAssignmentModalOpen(true)
   }
 
@@ -120,6 +123,7 @@ export default function TutorAssignmentsPage() {
     setEditingAssignment(assignment)
     setAttachmentFile(null)
     setUploadProgress(0)
+    setSelectedEnrollmentIds([])
     setFormData({
       enrollmentId: assignment.enrollmentId,
       title: assignment.title,
@@ -161,10 +165,13 @@ export default function TutorAssignmentsPage() {
 
   const handleSaveAssignment = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!formData.enrollmentId || !formData.title || !formData.description) {
+    const hasTarget = editingAssignment ? Boolean(formData.enrollmentId) : selectedEnrollmentIds.length > 0
+    if (!hasTarget || !formData.title || !formData.description) {
       toast({
         title: 'Missing fields',
-        description: 'Please fill in all required fields',
+        description: editingAssignment
+          ? 'Please fill in all required fields'
+          : 'Please select at least one student and fill in all required fields',
         variant: 'destructive',
       })
       return
@@ -186,20 +193,33 @@ export default function TutorAssignmentsPage() {
           description: 'Assignment has been updated successfully',
         })
       } else {
-        await api.createAssignment({
-          enrollmentId: formData.enrollmentId,
-          title: formData.title,
-          description: formData.description,
-          type: formData.type,
-          dueDate: formData.dueDate ? new Date(formData.dueDate).toISOString() : new Date().toISOString(),
-          attachment: attachmentFile || undefined,
-        })
+        const dueDateIso = formData.dueDate ? new Date(formData.dueDate).toISOString() : new Date().toISOString()
+        const results = await Promise.allSettled(
+          selectedEnrollmentIds.map(enrollmentId =>
+            api.createAssignment({
+              enrollmentId,
+              title: formData.title,
+              description: formData.description,
+              type: formData.type,
+              dueDate: dueDateIso,
+              attachment: attachmentFile || undefined,
+            })
+          )
+        )
+        const created = results.filter(r => r.status === 'fulfilled').length
+        const failed = results.length - created
+        if (created === 0) {
+          throw new Error('Failed to create assignment for the selected students')
+        }
         toast({
           title: 'Assignment created',
-          description: 'Assignment has been created successfully',
+          description: failed > 0
+            ? `Created for ${created} student${created === 1 ? '' : 's'}; ${failed} failed`
+            : `Assignment created for ${created} student${created === 1 ? '' : 's'}`,
         })
       }
       setAssignmentModalOpen(false)
+      setSelectedEnrollmentIds([])
       setAttachmentFile(null)
       loadData()
     } catch (error) {
@@ -302,6 +322,7 @@ export default function TutorAssignmentsPage() {
               const enrollment = enrollments.find(e => e.id === assignment.enrollmentId)
               const student = enrollment?.student
               const submission = submissions[assignment.id]
+              const hasSubmission = Boolean(submission) || assignment.status === 'SUBMITTED' || assignment.status === 'GRADED'
 
               return (
                 <Card key={assignment.id} className="bg-card border-brand-gold/30">
@@ -325,6 +346,14 @@ export default function TutorAssignmentsPage() {
                             <span>Student: {student.fullName}</span>
                           )}
                         </div>
+                        {hasSubmission && !submission && (
+                          <div className="mt-3 flex items-center gap-2 text-xs">
+                            <CheckCircle2 className="h-3 w-3 text-brand-gold" />
+                            <span className="text-brand-gold font-medium">
+                              Student has submitted this assignment
+                            </span>
+                          </div>
+                        )}
                         {submission && (
                           <div className="mt-3 space-y-2">
                             <div className="flex items-center gap-2 text-xs">
@@ -411,23 +440,61 @@ export default function TutorAssignmentsPage() {
         >
           <form onSubmit={handleSaveAssignment} className="space-y-4 pt-2">
             <div className="space-y-2">
-              <Label htmlFor="enrollmentId">Student/Enrollment *</Label>
-              <Select
-                value={formData.enrollmentId}
-                onValueChange={(value) => setFormData({ ...formData, enrollmentId: value })}
-                required
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select student" />
-                </SelectTrigger>
-                <SelectContent>
-                  {enrollments.map((enrollment) => (
-                    <SelectItem key={enrollment.id} value={enrollment.id}>
-                      {enrollment.student?.fullName || 'Unknown'} - {enrollment.subject?.name || 'Unknown Subject'}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Label>{editingAssignment ? 'Student/Enrollment *' : 'Students/Enrollments *'}</Label>
+              {editingAssignment ? (
+                <Select
+                  value={formData.enrollmentId}
+                  onValueChange={(value) => setFormData({ ...formData, enrollmentId: value })}
+                  required
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select student" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {enrollments.map((enrollment) => (
+                      <SelectItem key={enrollment.id} value={enrollment.id}>
+                        {enrollment.student?.fullName || 'Unknown'} - {enrollment.subject?.name || 'Unknown Subject'}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <div className="border border-border rounded-md max-h-52 overflow-y-auto divide-y divide-border/50">
+                  {enrollments.length === 0 ? (
+                    <p className="text-sm text-muted-foreground p-3">No enrollments found</p>
+                  ) : (
+                    enrollments.map((enrollment) => {
+                      const checked = selectedEnrollmentIds.includes(enrollment.id)
+                      return (
+                        <label
+                          key={enrollment.id}
+                          className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-brand-gold/5"
+                        >
+                          <Checkbox
+                            checked={checked}
+                            onCheckedChange={(value) => {
+                              setSelectedEnrollmentIds(prev =>
+                                value === true
+                                  ? [...prev, enrollment.id]
+                                  : prev.filter(id => id !== enrollment.id)
+                              )
+                            }}
+                          />
+                          <span className="text-sm text-foreground">
+                            {enrollment.student?.fullName || 'Unknown'}
+                            <span className="text-muted-foreground"> — {enrollment.subject?.name || 'Unknown Subject'}</span>
+                          </span>
+                        </label>
+                      )
+                    })
+                  )}
+                </div>
+              )}
+              {!editingAssignment && selectedEnrollmentIds.length > 0 && (
+                <p className="text-xs text-muted-foreground">
+                  {selectedEnrollmentIds.length} student{selectedEnrollmentIds.length === 1 ? '' : 's'} selected
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">

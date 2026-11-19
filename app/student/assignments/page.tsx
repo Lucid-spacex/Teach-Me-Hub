@@ -145,7 +145,24 @@ export default function StudentAssignmentsPage() {
       setSubmissionModalOpen(false)
       setSubmissionText('')
       setSubmissionFile(null)
-      loadAssignments()
+      // Mark as submitted locally — the assignment status may lag behind
+      // the submission record on the backend.
+      const submittedAt = new Date().toISOString()
+      setAssignments(prev => prev.map(a =>
+        a.id === selectedAssignment.id ? { ...a, status: 'SUBMITTED' } : a
+      ))
+      setSubmissions(prev => ({
+        ...prev,
+        [selectedAssignment.id]: {
+          id: '',
+          assignmentId: selectedAssignment.id,
+          studentId: '',
+          status: 'SUBMITTED',
+          textAnswer: submissionText.trim() || undefined,
+          submittedAt,
+          createdAt: submittedAt,
+        },
+      }))
     } catch (error) {
       console.error('Failed to submit assignment:', error)
       toast({
@@ -158,8 +175,18 @@ export default function StudentAssignmentsPage() {
     }
   }
 
+  // Effective status: a submission record counts as submitted even if the
+  // backend hasn't flipped assignment.status yet.
+  const getEffectiveStatus = (item: Assignment): 'PENDING' | 'SUBMITTED' | 'GRADED' => {
+    if (item.status === 'GRADED') return 'GRADED'
+    if (item.status === 'SUBMITTED' || submissions[item.id] || (item as any).submission || (item as any).hasSubmission) {
+      return 'SUBMITTED'
+    }
+    return 'PENDING'
+  }
+
   const filtered = assignments.filter((item) => {
-    if (statusFilter !== 'ALL' && item.status !== statusFilter) return false
+    if (statusFilter !== 'ALL' && getEffectiveStatus(item) !== statusFilter) return false
     return true
   })
 
@@ -231,7 +258,8 @@ export default function StudentAssignmentsPage() {
             {filtered.map((item) => {
               const isTest = item.type === 'TEST'
               const submission = submissions[item.id]
-              const hasSubmitted = item.status === 'SUBMITTED' || item.status === 'GRADED'
+              const effectiveStatus = getEffectiveStatus(item)
+              const hasSubmitted = effectiveStatus !== 'PENDING'
               return (
                 <Card key={item.id} className="bg-card border-brand-gold/25 hover:border-brand-gold/40 transition-colors flex flex-col justify-between">
                   <CardHeader className="pb-3">
@@ -242,11 +270,11 @@ export default function StudentAssignmentsPage() {
                         {item.type}
                       </span>
                       <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${
-                        item.status === 'PENDING' ? 'bg-brand-gold/20 text-brand-gold' :
-                        item.status === 'SUBMITTED' ? 'bg-muted text-foreground' :
+                        effectiveStatus === 'PENDING' ? 'bg-brand-gold/20 text-brand-gold' :
+                        effectiveStatus === 'SUBMITTED' ? 'bg-muted text-foreground' :
                         'bg-muted text-muted-foreground'
                       }`}>
-                        {item.status}
+                        {effectiveStatus}
                       </span>
                     </div>
                     <CardTitle className="text-lg text-foreground font-semibold line-clamp-1">
@@ -277,7 +305,7 @@ export default function StudentAssignmentsPage() {
                       </div>
                     )}
 
-                    {isTest && item.status === 'PENDING' ? (
+                    {isTest && effectiveStatus === 'PENDING' ? (
                       <Button
                         size="sm"
                         onClick={() => handleStartQuiz(item)}
