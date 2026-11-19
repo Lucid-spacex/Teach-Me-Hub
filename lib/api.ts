@@ -778,7 +778,9 @@ class ApiClient {
 
   // Tutor-specific endpoints
   async getTutorStudents(): Promise<TutorStudent[]> {
-    return this.request<TutorStudent[]>('/tutor/students')
+    const res: any = await this.request('/tutor/students')
+    const list = Array.isArray(res) ? res : res?.data ?? res?.students ?? []
+    return (Array.isArray(list) ? list : []).map(normalizeTutorStudentItem)
   }
 
   async getTutorSessions(): Promise<Session[]> {
@@ -2127,6 +2129,49 @@ export function tutorToSuggestedTutor(tutor: TutorWithProfile): SuggestedTutor {
     subjects: subjectNames.map(s => ({ id: s, name: s })),
     availability: profile?.availability ?? {},
   }
+}
+
+// Normalizes a /tutor/students row into the TutorStudent shape the UI expects.
+// The backend nests student/enrollment but field names vary — tolerate the
+// common alternates so missing joins don't render as blank/UUID fields.
+function normalizeTutorStudentItem(item: any): TutorStudent {
+  const student = item?.student ?? item?.enrollment?.student ?? item?.data?.student ?? {}
+  const enrollment = item?.enrollment ?? item?.data?.enrollment ?? {}
+
+  const fullName =
+    student.fullName ||
+    student.name ||
+    student.studentName ||
+    [student.firstName, student.lastName].filter(Boolean).join(' ').trim() ||
+    ''
+
+  const actualGrade =
+    student.actualGrade || student.grade || student.gradeLevel || student.currentGrade || undefined
+
+  const subject =
+    enrollment.subject ??
+    (enrollment.subjectName
+      ? { id: enrollment.subjectId, name: enrollment.subjectName }
+      : enrollment.subjectId
+        ? { id: enrollment.subjectId, name: enrollment.subjectId }
+        : undefined)
+
+  const normalizedEnrollment = {
+    ...enrollment,
+    subject,
+    sessionFrequency: enrollment.sessionFrequency ?? enrollment.frequency,
+  }
+
+  return {
+    student: {
+      ...student,
+      fullName,
+      actualGrade,
+      dateOfBirth: student.dateOfBirth ?? student.dob ?? student.birthDate,
+      school: student.school ?? student.schoolName,
+    },
+    enrollment: normalizedEnrollment,
+  } as TutorStudent
 }
 
 export const api = new ApiClient(API_URL)

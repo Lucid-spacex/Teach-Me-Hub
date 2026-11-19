@@ -357,12 +357,12 @@ export default function TutorStudentDetailPage({ params }: PageProps) {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div className="flex items-start sm:items-center gap-5">
                 <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-brand-gold/15 border border-brand-gold/40 text-brand-gold flex items-center justify-center text-2xl font-bold font-serif shrink-0">
-                  {student.fullName.charAt(0)}
+                  {(student.fullName || 'S').charAt(0)}
                 </div>
                 <div className="space-y-1.5">
                   <div className="flex flex-wrap items-center gap-2.5">
                     <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
-                      {student.fullName}
+                      {student.fullName || 'Student'}
                     </h1>
                     <Badge variant="outline" className="border-brand-gold/40 text-brand-gold bg-brand-gold/10">
                       {student.actualGrade?.replace('_', ' ')}
