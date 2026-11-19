@@ -417,6 +417,37 @@ export interface TutorStudent {
   enrollment: Enrollment
 }
 
+// GET /tutor/students/:studentId — per ENDPOINT.md (TUTOR, APPROVED).
+// Returns the full student profile plus the enrollment(s) with joined
+// subject and related sessions/assignments/grades/reports/attendance.
+export interface TutorStudentDetail {
+  student: {
+    id: string
+    fullName?: string
+    dateOfBirth?: string
+    gender?: Gender
+    actualGrade?: ActualGrade
+    gradeLevel?: string
+    gradeBandTier?: string
+    school?: string | null
+    notes?: string | null
+    profilePictureUrl?: string | null
+  }
+  enrollment?: Enrollment
+  enrollments?: Enrollment[]
+  upcomingSessions?: any[]
+  pastSessions?: any[]
+  assignments?: any[]
+  gradesGiven?: any[]
+  progressReports?: any[]
+  attendance?: {
+    totalSessions: number
+    attended: number
+    missed: number
+    percentage: number
+  }
+}
+
 // Admin types
 export interface PendingTutor {
   user?: Partial<User>

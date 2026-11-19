@@ -58,7 +58,7 @@ export default function TutorGradesPage() {
     try {
       const [gradesData, studentsData] = await Promise.all([
         api.getTutorCompiledGrades().catch(() => []),
-        api.getTutorStudents().catch(() => []),
+        api.getTutorStudentsDetailed().catch(() => []),
       ])
 
       setGrades(gradesData)

@@ -37,7 +37,7 @@ export default function TutorStudentPerformancePage() {
     try {
       const [perfData, studentsData] = await Promise.all([
         api.getTutorStudentPerformance(studentId, period),
-        api.getTutorStudents().catch(() => []),
+        api.getTutorStudentsDetailed().catch(() => []),
       ])
 
       setPerformance(perfData)

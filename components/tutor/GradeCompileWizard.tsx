@@ -107,7 +107,7 @@ export function GradeCompileWizard({ open, onOpenChange, onSuccess, editingGrade
     setLoading(true)
     try {
       const [studentsData] = await Promise.all([
-        api.getTutorStudents().catch(() => []),
+        api.getTutorStudentsDetailed().catch(() => []),
       ])
       setStudents(studentsData)
     } catch (err) {

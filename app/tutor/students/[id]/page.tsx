@@ -15,7 +15,7 @@ import { StatusBadge } from '@/components/shared/StatusBadge'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
 import { useToast } from '@/components/ui/use-toast'
 import { api } from '@/lib/api'
-import { TutorStudent, Session, ProgressReport, Grade, Enrollment } from '@/lib/types'
+import { TutorStudent, Session, ProgressReport, Grade, Enrollment, Student } from '@/lib/types'
 import { ScoredItemsTab } from '@/components/tutor/ScoredItemsTab'
 import { SegmentedControl } from '@/components/shared/SegmentedControl'
 import {
@@ -88,9 +88,22 @@ export default function TutorStudentDetailPage({ params }: PageProps) {
   const loadData = async () => {
     setLoading(true)
     try {
-      // 1. Get tutor's assigned students
-      const assigned = await api.getTutorStudents().catch(() => [])
-      const matches = assigned.filter(item => item.student?.id === studentId)
+      // 1. GET /tutor/students returns ID-only rows — fetch the full
+      // student profile + enrollments via GET /tutor/students/:studentId.
+      // Fall back to scanning the list if the detail endpoint fails.
+      const detail = await api.getTutorStudentDetail(studentId).catch(() => null)
+      let matches: TutorStudent[]
+
+      if (detail?.student) {
+        const detailEnrollments = detail.enrollments ?? (detail.enrollment ? [detail.enrollment] : [])
+        const student = { ...detail.student, id: studentId } as Student
+        matches = detailEnrollments.length
+          ? detailEnrollments.map(enrollment => ({ student, enrollment }))
+          : [{ student, enrollment: undefined as unknown as Enrollment }]
+      } else {
+        const assigned = await api.getTutorStudents().catch(() => [])
+        matches = assigned.filter(item => item.student?.id === studentId)
+      }
 
       if (matches.length === 0) {
         toast({
@@ -103,7 +116,7 @@ export default function TutorStudentDetailPage({ params }: PageProps) {
       }
 
       setTutorStudent(matches[0])
-      const enrollmentsList = matches.map(m => m.enrollment).filter(Boolean)
+      const enrollmentsList = matches.map(m => m.enrollment).filter((e): e is Enrollment => Boolean(e?.id))
       setAllEnrollments(enrollmentsList)
       if (enrollmentsList.length > 0 && !scheduleEnrollmentId) {
         setScheduleEnrollmentId(enrollmentsList[0].id)

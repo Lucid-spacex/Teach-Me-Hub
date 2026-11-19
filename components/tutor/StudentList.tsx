@@ -28,8 +28,10 @@ export function TutorStudentList({ refreshTrigger }: TutorStudentListProps) {
 
   const loadStudents = async () => {
     try {
-      const data = await api.getTutorStudents()
-      setStudents(Array.isArray(data) ? data : [])
+      // GET /tutor/students returns ID-only rows by design — the detailed
+      // variant hydrates each student via GET /tutor/students/:studentId.
+      const merged = await api.getTutorStudentsDetailed()
+      setStudents(merged)
     } catch (err) {
       console.error('Failed to load students:', err)
       setStudents([])

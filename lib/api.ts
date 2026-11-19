@@ -75,6 +75,7 @@ import {
   TutorLevel,
   TutorProfile,
   TutorStudent,
+  TutorStudentDetail,
   TutorWithProfile,
   UnreadCountResponse,
   UpdateSessionRequest,
@@ -783,6 +784,36 @@ class ApiClient {
     return (Array.isArray(list) ? list : []).map(normalizeTutorStudentItem)
   }
 
+  // GET /tutor/students returns ID-only rows by design (parent contact
+  // info excluded per ENDPOINT.md). This hydrates each row via
+  // GET /tutor/students/:studentId so the UI gets fullName, grade,
+  // school and the joined subject object.
+  async getTutorStudentsDetailed(): Promise<TutorStudent[]> {
+    const rows = await this.getTutorStudents()
+    const studentIds = [...new Set(rows.map(r => r.student?.id).filter(Boolean))] as string[]
+    const details = await Promise.all(
+      studentIds.map(id => this.getTutorStudentDetail(id).catch(() => null))
+    )
+    const detailMap = new Map(studentIds.map((id, i) => [id, details[i]]))
+
+    return rows.map(row => {
+      const detail = row.student?.id ? detailMap.get(row.student.id) : null
+      if (!detail?.student) return row
+
+      const detailEnrollments = detail.enrollments ?? (detail.enrollment ? [detail.enrollment] : [])
+      const matchedEnrollment =
+        detailEnrollments.find(e => e.id === row.enrollment?.id) ??
+        (detailEnrollments.length === 1 ? detailEnrollments[0] : undefined)
+
+      return {
+        student: { ...row.student, ...detail.student },
+        enrollment: matchedEnrollment
+          ? { ...row.enrollment, ...matchedEnrollment }
+          : row.enrollment,
+      } as TutorStudent
+    })
+  }
+
   async getTutorSessions(): Promise<Session[]> {
     return this.request<Session[]>('/tutor/sessions')
   }
@@ -1296,8 +1327,8 @@ class ApiClient {
   }
 
   // Tutor-specific student endpoints with /tutor prefix (adapter pattern)
-  async getTutorStudentDetail(studentId: string): Promise<any> {
-    return this.request<any>(`/tutor/students/${studentId}`)
+  async getTutorStudentDetail(studentId: string): Promise<TutorStudentDetail> {
+    return this.request<TutorStudentDetail>(`/tutor/students/${studentId}`)
   }
 
   async getTutorStudentPerformance(studentId: string, period?: PeriodFilter): Promise<PerformanceOverview> {

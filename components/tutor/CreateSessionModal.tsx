@@ -56,12 +56,8 @@ export function CreateSessionModal({ open, onOpenChange, prefillData, onSuccess 
   const loadEnrollments = async () => {
     setLoadingEnrollments(true)
     try {
-      const data = await api.getTutorStudents()
-      // Flatten enrollments from all students
-      const allEnrollments = data.flatMap((ts: any) =>
-        ts.enrollment ? [ts.enrollment] : []
-      )
-      setEnrollments(allEnrollments)
+      const data = await api.getTutorStudentsDetailed()
+      setEnrollments(data.filter(ts => ts.enrollment?.id))
     } catch (err) {
       console.error('Failed to load enrollments:', err)
       toast({
@@ -151,9 +147,9 @@ export function CreateSessionModal({ open, onOpenChange, prefillData, onSuccess 
                   <SelectValue placeholder="Select a student" />
                 </SelectTrigger>
                 <SelectContent>
-                  {enrollments.map((enrollment) => (
-                    <SelectItem key={enrollment.id} value={enrollment.id}>
-                      {enrollment.student?.fullName || 'Unknown'} - {enrollment.subject?.name || 'Unknown'}
+                  {enrollments.map((item: any) => (
+                    <SelectItem key={item.enrollment.id} value={item.enrollment.id}>
+                      {item.student?.fullName || 'Unknown'} - {item.enrollment.subject?.name || 'Unknown'}
                     </SelectItem>
                   ))}
                 </SelectContent>
