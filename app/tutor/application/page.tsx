@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { getUser, getUserRole } from '@/lib/auth'
 import { api } from '@/lib/api'
 import { TutorApplication, TutorDocument, Subject, HighestQualification, TutorLevel, HowHeardSource, ApplicationStatus } from '@/lib/types'
+import { QUALIFICATIONS, LEVELS, HEARD_ABOUT, SUBJECT_CATEGORIES, readPendingTutorApplication, clearPendingTutorApplication, PendingTutorApplication } from '@/lib/tutorApplicationOptions'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -41,43 +42,6 @@ import {
 
 type Step = 'about' | 'teaching' | 'profile' | 'documents' | 'review'
 
-const QUALIFICATIONS: { value: HighestQualification; label: string }[] = [
-  { value: 'SSCE_WAEC', label: 'SSCE / WAEC' },
-  { value: 'OND_NCE', label: 'OND / NCE' },
-  { value: 'HND', label: 'HND' },
-  { value: 'BACHELORS', label: "Bachelor's Degree" },
-  { value: 'BED_PGDE', label: 'B.Ed / PGDE' },
-  { value: 'MASTERS', label: "Master's Degree" },
-  { value: 'PHD', label: 'PhD' },
-  { value: 'OTHER', label: 'Other' },
-]
-
-const LEVELS: { value: TutorLevel; label: string }[] = [
-  { value: 'PRESCHOOL_TO_G1', label: 'Preschool to Grade 1' },
-  { value: 'G2_TO_G4', label: 'Grade 2 to Grade 4' },
-  { value: 'G5_TO_G8', label: 'Grade 5 to Grade 8' },
-  { value: 'G9_TO_G12', label: 'Grade 9 to Grade 12' },
-  { value: 'EXAM_LEVELS', label: 'Exam Levels' },
-]
-
-const HEARD_ABOUT: { value: HowHeardSource; label: string }[] = [
-  { value: 'TEACHMENEST_TUTOR_OR_STAFF', label: 'A current Teachmenest tutor or staff member' },
-  { value: 'PARENT_OR_FAMILY', label: 'A parent or family with Teachmenest' },
-  { value: 'FRIEND_OR_FAMILY', label: 'Friend or family' },
-  { value: 'INSTAGRAM', label: 'Instagram' },
-  { value: 'FACEBOOK', label: 'Facebook' },
-  { value: 'LINKEDIN', label: 'LinkedIn' },
-  { value: 'WHATSAPP_GROUP', label: 'WhatsApp group' },
-  { value: 'GOOGLE_SEARCH', label: 'Google search' },
-  { value: 'JOB_BOARD', label: 'Job board' },
-  { value: 'OTHER', label: 'Other' },
-]
-
-const SUBJECT_CATEGORIES = {
-  CORE: 'Academic',
-  ENRICHMENT: 'Extracurricular',
-  TEST_PREP: 'Test Preparation',
-}
 
 export default function TutorApplicationPage() {
   const router = useRouter()
@@ -143,6 +107,17 @@ export default function TutorApplicationPage() {
   const loadData = async () => {
     setLoading(true)
     try {
+      // Apply application data collected during registration, if any
+      const pending = readPendingTutorApplication()
+      if (pending) {
+        try {
+          await api.updateTutorApplication(pending as Partial<TutorApplication>)
+          clearPendingTutorApplication()
+        } catch (err) {
+          console.warn('Could not save pre-registration application data:', err)
+        }
+      }
+
       const [appData, subjectsData] = await Promise.all([
         api.getTutorApplication().catch(() => null),
         api.getPublicSubjects().catch(() => []),
@@ -155,7 +130,10 @@ export default function TutorApplicationPage() {
           lastName: appData.lastName || '',
           middleName: appData.middleName || '',
           phone: appData.phone || '',
-          birthday: appData.birthday || '',
+          birthday: (appData as any).birthday ||
+            (((appData as any).birthDay && (appData as any).birthMonth)
+              ? `1900-${String((appData as any).birthMonth).padStart(2, '0')}-${String((appData as any).birthDay).padStart(2, '0')}`
+              : ''),
           country: appData.country || '',
           city: appData.city || '',
           highestQualification: appData.highestQualification,
@@ -164,7 +142,8 @@ export default function TutorApplicationPage() {
           yearsOfExperience: appData.yearsOfExperience || 0,
           whyTeach: appData.whyTeach || '',
           howHeard: appData.howHeard,
-          aboutYou: appData.aboutYou || '',
+          aboutYou: Array.isArray(appData.aboutYou) ? appData.aboutYou.join('\n') : (appData.aboutYou || ''),
+          ...(pending || {}),
         })
 
         // Load uploaded documents

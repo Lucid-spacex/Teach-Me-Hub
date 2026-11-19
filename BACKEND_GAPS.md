@@ -253,3 +253,15 @@ All known ambiguities are documented and resolved via:
 **Total ambiguities documented:** 12
 **Total adapters implemented:** 12
 **Status:** âœ… All resolved
+
+## Tutor registration cannot carry application data
+
+`POST /auth/register` accepts only account fields (name, email, phone, address, password, role). All `/tutor-application` endpoints require an authenticated TUTOR token, and `POST /auth/verify` returns no tokens — so application data cannot be submitted during registration.
+
+Frontend workaround: `/register/tutor` is now a multi-step wizard collecting all application fields; the payload is stored in `sessionStorage` (`pendingTutorApplication`) and auto-submitted via `PATCH /tutor-application` when the tutor first loads `/tutor/application` after login. Profile picture and documents still require post-login upload (auth-only multipart).
+
+If registration-time submission is required, the backend must either extend `POST /auth/register` for TUTOR with application fields or provide a public apply endpoint.
+
+Related field mismatches observed (frontend tolerates both):
+- GET /tutor-application returns `birthDay`/`birthMonth` but frontend type uses `birthday`; frontend now derives `birthday` from birthDay/birthMonth when absent.
+- PATCH /tutor-application documents `aboutYou` as `string[]` (max 3 x 60 chars) but the UI collects a single text (up to 180 words); frontend sends a string.
