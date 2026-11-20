@@ -1514,11 +1514,14 @@ class ApiClient {
 
   async createScoredItem(studentId: string, data: {
     enrollmentId: string
-    type: ScoredItemType
+    type: ScoredItemType | 'ASSIGNMENT_SUBMISSION' | 'QUIZ_ATTEMPT'
     title: string
     maxScore: number
     score?: number
     comment?: string
+    assignmentId?: string
+    submissionId?: string
+    quizAttemptId?: string
   }): Promise<ScoredItem> {
     // Map TEST to EXAM for backend
     const backendData = {

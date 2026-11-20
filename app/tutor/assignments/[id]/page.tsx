@@ -6,6 +6,10 @@ import { getUser, getUserRole } from '@/lib/auth'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { Modal } from '@/components/shared/Modal'
 import { StatusBadge } from '@/components/shared/StatusBadge'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
 import { useToast } from '@/components/ui/use-toast'
@@ -25,6 +29,7 @@ import {
   MessageSquare,
   Paperclip,
   Calendar,
+  Star,
 } from 'lucide-react'
 
 interface PageProps {
@@ -43,6 +48,14 @@ export default function TutorAssignmentDetailPage({ params }: PageProps) {
   const [expandedSubmission, setExpandedSubmission] = useState<string | null>(null)
   const [submissionDetails, setSubmissionDetails] = useState<Record<string, any>>({})
   const [loadingDetail, setLoadingDetail] = useState<string | null>(null)
+
+  // "Add to grade pool" — manual scored item for submissions the backend
+  // didn't auto-convert (backend gap: submissions should create scored items)
+  const [gradePoolOpen, setGradePoolOpen] = useState(false)
+  const [gradePoolSubmission, setGradePoolSubmission] = useState<any>(null)
+  const [gradePoolForm, setGradePoolForm] = useState({ maxScore: 100, score: '', comment: '' })
+  const [creatingItem, setCreatingItem] = useState(false)
+  const [addedToPool, setAddedToPool] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     const user = getUser()
@@ -146,6 +159,53 @@ export default function TutorAssignmentDetailPage({ params }: PageProps) {
       if (v !== undefined && v !== null && v !== '') return v
     }
     return null
+  }
+
+  const studentIdForItem = student?.id
+  const enrollmentIdForItem = enrollment?.id
+
+  const openGradePool = (sub: any) => {
+    setGradePoolSubmission(sub)
+    setGradePoolForm({ maxScore: 100, score: '', comment: '' })
+    setGradePoolOpen(true)
+  }
+
+  const handleCreateScoredItem = async () => {
+    if (!studentIdForItem || !enrollmentIdForItem || !gradePoolSubmission?.id || !assignment) {
+      toast({ title: 'Missing data', description: 'Cannot create scored item — student or enrollment info unavailable', variant: 'destructive' })
+      return
+    }
+    if (gradePoolForm.maxScore <= 0) {
+      toast({ title: 'Validation Error', description: 'Max score must be greater than 0', variant: 'destructive' })
+      return
+    }
+    setCreatingItem(true)
+    try {
+      await api.createScoredItem(studentIdForItem, {
+        enrollmentId: enrollmentIdForItem,
+        type: 'ASSIGNMENT_SUBMISSION',
+        title: assignment.title,
+        maxScore: gradePoolForm.maxScore,
+        score: gradePoolForm.score !== '' ? Number(gradePoolForm.score) : undefined,
+        comment: gradePoolForm.comment || undefined,
+        assignmentId: assignment.id,
+        submissionId: gradePoolSubmission.id,
+      })
+      setAddedToPool(prev => new Set(prev).add(gradePoolSubmission.id))
+      toast({
+        title: 'Added to grade pool',
+        description: 'This submission can now be selected in Compile New Grade',
+      })
+      setGradePoolOpen(false)
+    } catch (err) {
+      toast({
+        title: 'Error',
+        description: err instanceof Error ? err.message : 'Failed to create scored item',
+        variant: 'destructive',
+      })
+    } finally {
+      setCreatingItem(false)
+    }
   }
 
   return (
@@ -314,6 +374,24 @@ export default function TutorAssignmentDetailPage({ params }: PageProps) {
                           </a>
                         )}
 
+                        {sub.id && studentIdForItem && enrollmentIdForItem && (
+                          addedToPool.has(sub.id) ? (
+                            <p className="text-xs text-green-500 flex items-center gap-1.5">
+                              <CheckCircle2 className="h-3 w-3" /> Added to grade pool
+                            </p>
+                          ) : (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => openGradePool(sub)}
+                              className="gap-1.5 text-xs border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10"
+                            >
+                              <Star className="h-3 w-3" />
+                              Add to Grade Pool
+                            </Button>
+                          )
+                        )}
+
                         {/* Expanded detail from GET /assignments/:id/submissions/:submissionId */}
                         {isExpanded && (
                           <div className="pt-2 border-t border-border/30">
@@ -341,6 +419,63 @@ export default function TutorAssignmentDetailPage({ params }: PageProps) {
           </CardContent>
         </Card>
       </div>
+
+      {/* Add to Grade Pool modal */}
+      <Modal
+        isOpen={gradePoolOpen}
+        onClose={() => setGradePoolOpen(false)}
+        title="Add Submission to Grade Pool"
+      >
+        <div className="space-y-4 pt-2">
+          <p className="text-sm text-muted-foreground">
+            Creates a scored item for <span className="font-medium text-foreground">{assignment.title}</span> so it can be selected in Compile New Grade.
+          </p>
+          <div className="space-y-2">
+            <Label htmlFor="gpMaxScore">Maximum Score *</Label>
+            <Input
+              id="gpMaxScore"
+              type="number"
+              min="1"
+              value={gradePoolForm.maxScore}
+              onChange={(e) => setGradePoolForm({ ...gradePoolForm, maxScore: Number(e.target.value) })}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="gpScore">Score (optional)</Label>
+            <Input
+              id="gpScore"
+              type="number"
+              min="0"
+              max={gradePoolForm.maxScore}
+              value={gradePoolForm.score}
+              onChange={(e) => setGradePoolForm({ ...gradePoolForm, score: e.target.value })}
+              placeholder={`0 - ${gradePoolForm.maxScore}`}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="gpComment">Comment (optional)</Label>
+            <Textarea
+              id="gpComment"
+              value={gradePoolForm.comment}
+              onChange={(e) => setGradePoolForm({ ...gradePoolForm, comment: e.target.value })}
+              rows={2}
+            />
+          </div>
+          <div className="flex justify-end gap-3 pt-2">
+            <Button variant="outline" onClick={() => setGradePoolOpen(false)} disabled={creatingItem}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleCreateScoredItem}
+              disabled={creatingItem}
+              className="bg-brand-gold hover:bg-brand-goldLight text-brand-dark"
+            >
+              {creatingItem ? <LoadingSpinner size="sm" className="mr-2" /> : null}
+              Add to Grade Pool
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   )
 }
