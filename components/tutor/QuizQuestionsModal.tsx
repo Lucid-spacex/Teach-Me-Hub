@@ -66,9 +66,9 @@ export function QuizQuestionsModal({ open, onOpenChange, assignmentId, assignmen
       const questionData = {
         questionText: newQuestion.questionText,
         options: newQuestion.options,
-        correctIndex: newQuestion.correctIndex,
+        correctOptionIndex: newQuestion.correctIndex,
         points: newQuestion.points,
-        order: questions.length,
+        orderIndex: questions.length,
       }
 
       await api.createQuizQuestion(assignmentId, questionData)
@@ -245,7 +245,9 @@ export function QuizQuestionsModal({ open, onOpenChange, assignmentId, assignmen
             </div>
           ) : (
             <div className="space-y-3">
-              {questions.map((question, index) => (
+              {questions.map((question, index) => {
+                const correctIdx = question.correctIndex ?? question.correctOptionIndex ?? -1
+                return (
                 <div key={question.id} className="bg-card border border-brand-border rounded-lg p-4">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-2">
@@ -271,29 +273,30 @@ export function QuizQuestionsModal({ open, onOpenChange, assignmentId, assignmen
                       <div
                         key={optIndex}
                         className={`flex items-center gap-2 p-2 rounded ${
-                          question.correctIndex === optIndex
+                          correctIdx === optIndex
                             ? 'bg-green-500/10 border border-green-500/30'
                             : 'bg-muted/50'
                         }`}
                       >
                         <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
-                          question.correctIndex === optIndex ? 'bg-green-500 text-white' : 'bg-muted text-muted-foreground'
+                          correctIdx === optIndex ? 'bg-green-500 text-white' : 'bg-muted text-muted-foreground'
                         }`}>
                           {String.fromCharCode(65 + optIndex)}
                         </div>
                         <span className={`text-sm ${
-                          question.correctIndex === optIndex ? 'text-green-400' : 'text-muted-foreground'
+                          correctIdx === optIndex ? 'text-green-400' : 'text-muted-foreground'
                         }`}>
                           {option}
                         </span>
-                        {question.correctIndex === optIndex && (
+                        {correctIdx === optIndex && (
                           <CheckCircle className="h-4 w-4 text-green-400 ml-auto" />
                         )}
                       </div>
                     ))}
                   </div>
                 </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </div>

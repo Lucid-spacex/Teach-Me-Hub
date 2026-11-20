@@ -1319,9 +1319,9 @@ class ApiClient {
   async createQuizQuestion(assignmentId: string, data: {
     questionText: string
     options: string[]
-    correctIndex: number
+    correctOptionIndex: number
     points: number
-    order: number
+    orderIndex: number
   }): Promise<QuizQuestion> {
     return this.request<QuizQuestion>(`/quiz/assignments/${assignmentId}/questions`, {
       method: 'POST',
@@ -1335,18 +1335,23 @@ class ApiClient {
     })
   }
 
+  async getQuizAttempt(attemptId: string): Promise<QuizAttempt> {
+    return this.request<QuizAttempt>(`/quiz/quiz-attempts/${attemptId}`)
+  }
+
   async submitQuizAnswer(attemptId: string, data: {
     questionId: string
-    selectedOption: number
-  }): Promise<{ isCorrect: boolean; pointsEarned: number }> {
-    return this.request<{ isCorrect: boolean; pointsEarned: number }>(`/quiz-attempts/${attemptId}/answer`, {
+    selectedOptionIndex: number
+    timeTakenSeconds: number
+  }): Promise<{ isCorrect: boolean; pointsAwarded: number }> {
+    return this.request<{ isCorrect: boolean; pointsAwarded: number }>(`/quiz/quiz-attempts/${attemptId}/answer`, {
       method: 'POST',
       body: JSON.stringify(data),
     })
   }
 
   async completeQuiz(attemptId: string): Promise<QuizAttempt> {
-    return this.request<QuizAttempt>(`/quiz-attempts/${attemptId}/complete`, {
+    return this.request<QuizAttempt>(`/quiz/quiz-attempts/${attemptId}/complete`, {
       method: 'PATCH',
     })
   }

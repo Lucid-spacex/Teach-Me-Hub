@@ -91,7 +91,8 @@ export function QuizTakingModal({ open, onOpenChange, assignmentId, assignmentTi
     try {
       await api.submitQuizAnswer(attempt.id, {
         questionId: questions[currentQuestionIndex].id,
-        selectedOption: selectedOption,
+        selectedOptionIndex: selectedOption,
+        timeTakenSeconds: Math.max(0, 30 - timeLeft),
       })
 
       // Move to next question immediately without showing feedback

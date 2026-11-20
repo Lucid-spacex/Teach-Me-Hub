@@ -839,9 +839,11 @@ export interface QuizQuestion {
   assignmentId: string
   questionText: string
   options: string[]
-  correctIndex: number
+  correctIndex?: number
+  correctOptionIndex?: number
   points: number
-  order: number
+  order?: number
+  orderIndex?: number
 }
 
 export interface QuizAttempt {
