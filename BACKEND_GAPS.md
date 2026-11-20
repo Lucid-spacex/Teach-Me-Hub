@@ -276,3 +276,14 @@ Backend should clarify:
 1. Is there a documented GET endpoint for an assignment submission (for student/parent/tutor)?
 2. Does submitting update `assignment.status` to SUBMITTED, or does status only reflect grading?
 3. For multi-student assignment creation, does `POST /assignments` accept `enrollmentIds[]`, or must the frontend create one assignment per enrollment (current approach)?
+
+## Assignment submissions API (RESOLVED by backend)
+
+Backend added the missing endpoints:
+- GET /assignments/:id/submissions - array of submissions (student, textAnswer, attachments, feedback)
+- GET /assignments/:id/submissions/:submissionId - full detail incl. gradedAt
+- GET /assignments/:id/schema - assignment + enrollment (subject, student)
+- POST /assignments accepts enrollmentId OR enrollmentIds[] (transactional, returns array)
+- assignment.status now flips to SUBMITTED on student submit; duplicate submit returns 400
+
+Frontend updated: api.getAssignmentSubmissions / getAssignmentSubmissionDetail / getAssignmentSchema, createAssignment supports enrollmentIds[], tutor+parent pages render all submissions, student page handles the already-submitted 400.

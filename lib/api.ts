@@ -585,13 +585,28 @@ class ApiClient {
     return response.json()
   }
 
-  async getAssignmentSubmission(assignmentId: string): Promise<any> {
-    // Some backends expose /assignments/:id/submission; others nest the
-    // submission on the assignment detail. Try both, return null if neither.
-    const direct = await this.request<any>(`/assignments/${assignmentId}/submission`).catch(() => null)
-    if (direct) return direct
-    const detail: any = await this.request<any>(`/assignments/${assignmentId}`).catch(() => null)
-    return detail?.submission ?? detail?.submissions?.[0] ?? null
+  // GET /assignments/:id/submissions — list all submissions for an
+  // assignment (student info, textAnswer, attachments, feedback).
+  async getAssignmentSubmissions(assignmentId: string): Promise<any[]> {
+    const res = await this.request<any>(`/assignments/${assignmentId}/submissions`).catch(() => null)
+    if (Array.isArray(res)) return res
+    if (res && typeof res === 'object') {
+      const nested = (res as any).submissions ?? (res as any).data
+      if (Array.isArray(nested)) return nested
+    }
+    return []
+  }
+
+  // GET /assignments/:id/submissions/:submissionId — full submission
+  // detail including feedback and gradedAt.
+  async getAssignmentSubmissionDetail(assignmentId: string, submissionId: string): Promise<any> {
+    return this.request<any>(`/assignments/${assignmentId}/submissions/${submissionId}`)
+  }
+
+  // GET /assignments/:id/schema — assignment fields plus enrollment
+  // (subject, student) context.
+  async getAssignmentSchema(assignmentId: string): Promise<any> {
+    return this.request<any>(`/assignments/${assignmentId}/schema`)
   }
 
   async getStudentGrades(): Promise<Grade[]> {
@@ -1112,17 +1127,19 @@ class ApiClient {
   }
 
   async createAssignment(data: {
-    enrollmentId: string
+    enrollmentId?: string
+    enrollmentIds?: string[]
     title: string
     description: string
     type: AssignmentType
     dueDate: string
     attachment?: File
-  }): Promise<Assignment> {
+  }): Promise<Assignment | Assignment[]> {
     if (data.attachment) {
       // Use multipart/form-data for file upload
       const formData = new FormData()
-      formData.append('enrollmentId', data.enrollmentId)
+      if (data.enrollmentId) formData.append('enrollmentId', data.enrollmentId)
+      data.enrollmentIds?.forEach(id => formData.append('enrollmentIds', id))
       formData.append('title', data.title)
       formData.append('description', data.description)
       formData.append('type', data.type)
@@ -1148,15 +1165,18 @@ class ApiClient {
       return response.json()
     }
 
-    return this.request<Assignment>('/assignments', {
+    const body: Record<string, any> = {
+      title: data.title,
+      description: data.description,
+      type: data.type,
+      dueDate: data.dueDate,
+    }
+    if (data.enrollmentId) body.enrollmentId = data.enrollmentId
+    if (data.enrollmentIds) body.enrollmentIds = data.enrollmentIds
+
+    return this.request<Assignment | Assignment[]>('/assignments', {
       method: 'POST',
-      body: JSON.stringify({
-        enrollmentId: data.enrollmentId,
-        title: data.title,
-        description: data.description,
-        type: data.type,
-        dueDate: data.dueDate,
-      }),
+      body: JSON.stringify(body),
     })
   }
 

@@ -18,7 +18,7 @@ export default function ParentAssignmentsPage() {
   const [assignments, setAssignments] = useState<Assignment[]>([])
   const [students, setStudents] = useState<Student[]>([])
   const [enrollments, setEnrollments] = useState<Enrollment[]>([])
-  const [submissions, setSubmissions] = useState<Record<string, AssignmentSubmission>>({})
+  const [submissions, setSubmissions] = useState<Record<string, AssignmentSubmission[]>>({})
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'PENDING' | 'SUBMITTED' | 'GRADED'>('ALL')
   const [studentFilter, setStudentFilter] = useState<string>('ALL')
@@ -45,21 +45,22 @@ export default function ParentAssignmentsPage() {
       setStudents(Array.isArray(studentsData) ? studentsData : [])
       setEnrollments(Array.isArray(enrollmentsData) ? enrollmentsData : [])
 
-      // Load submissions for each assignment
+      // Load all submissions for each assignment
+      // (GET /assignments/:id/submissions returns an array)
       const submissionPromises = assignmentsData.map(async (assignment: Assignment) => {
         try {
-          const submission = await api.getAssignmentSubmission(assignment.id)
-          return { assignmentId: assignment.id, submission }
+          const subs = await api.getAssignmentSubmissions(assignment.id)
+          return { assignmentId: assignment.id, submissions: Array.isArray(subs) ? subs : [] }
         } catch {
-          return { assignmentId: assignment.id, submission: null }
+          return { assignmentId: assignment.id, submissions: [] }
         }
       })
 
       const submissionResults = await Promise.all(submissionPromises)
-      const submissionsMap: Record<string, AssignmentSubmission> = {}
-      submissionResults.forEach(({ assignmentId, submission }) => {
-        if (submission) {
-          submissionsMap[assignmentId] = submission
+      const submissionsMap: Record<string, AssignmentSubmission[]> = {}
+      submissionResults.forEach(({ assignmentId, submissions: subs }) => {
+        if (subs.length > 0) {
+          submissionsMap[assignmentId] = subs
         }
       })
       setSubmissions(submissionsMap)
@@ -173,7 +174,7 @@ export default function ParentAssignmentsPage() {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {filtered.map((item) => {
               const info = getEnrollmentInfo(item.enrollmentId)
-              const submission = submissions[item.id]
+              const assignmentSubmissions = submissions[item.id] ?? []
               return (
                 <Card key={item.id} className="bg-card border-brand-gold/25 hover:border-brand-gold/40 transition-colors flex flex-col justify-between">
                   <CardHeader className="pb-3">
@@ -201,44 +202,52 @@ export default function ParentAssignmentsPage() {
                       {item.description || 'No instructions provided.'}
                     </p>
 
-                    {submission && (
-                      <div className="mb-4 space-y-2">
-                        <div className="flex items-center gap-2 text-xs">
-                          <CheckCircle2 className="h-3 w-3 text-brand-gold" />
-                          <span className="text-brand-gold font-medium">
-                            Submitted on {new Date(submission.submittedAt || submission.createdAt).toLocaleDateString()}
-                          </span>
+                    {assignmentSubmissions.map((submission: any, idx: number) => {
+                      const submitterName = submission.student?.fullName ?? submission.studentName ?? info.studentName
+                      const feedback = submission.tutorFeedback ?? submission.feedback
+                      const feedbackAttachment = submission.tutorFeedbackAttachmentUrl ?? submission.feedbackAttachmentUrl
+                      const attachmentUrl = submission.attachmentUrl ?? submission.attachments?.[0]?.url ?? submission.attachments?.[0]
+                      const submittedAt = submission.submittedAt ?? submission.gradedAt ?? submission.createdAt
+                      return (
+                        <div key={submission.id ?? idx} className="mb-4 space-y-2">
+                          <div className="flex items-center gap-2 text-xs">
+                            <CheckCircle2 className="h-3 w-3 text-brand-gold" />
+                            <span className="text-brand-gold font-medium">
+                              {submitterName} submitted
+                              {submittedAt ? ` on ${new Date(submittedAt).toLocaleDateString()}` : ''}
+                            </span>
+                          </div>
+                          {submission.textAnswer && (
+                            <div className="bg-card/80 p-2 rounded-lg border border-border/30">
+                              <p className="text-xs font-medium text-gray-400 mb-1">Student Answer:</p>
+                              <p className="text-xs text-white line-clamp-2">{submission.textAnswer}</p>
+                            </div>
+                          )}
+                          {attachmentUrl && (
+                            <div className="flex items-center gap-2 text-xs text-brand-gold">
+                              <FileText className="h-3 w-3" />
+                              <a href={attachmentUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                                View attachment
+                              </a>
+                            </div>
+                          )}
+                          {feedback && (
+                            <div className="bg-brand-gold/10 p-2 rounded-lg border border-brand-gold/30">
+                              <p className="text-xs font-medium text-brand-gold mb-1">Tutor Feedback:</p>
+                              <p className="text-xs text-gray-300 italic">{feedback}</p>
+                            </div>
+                          )}
+                          {feedbackAttachment && (
+                            <div className="flex items-center gap-2 text-xs text-brand-gold">
+                              <Download className="h-3 w-3" />
+                              <a href={feedbackAttachment} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                                View feedback attachment
+                              </a>
+                            </div>
+                          )}
                         </div>
-                        {submission.textAnswer && (
-                          <div className="bg-card/80 p-2 rounded-lg border border-border/30">
-                            <p className="text-xs font-medium text-gray-400 mb-1">Student Answer:</p>
-                            <p className="text-xs text-white line-clamp-2">{submission.textAnswer}</p>
-                          </div>
-                        )}
-                        {submission.attachmentUrl && (
-                          <div className="flex items-center gap-2 text-xs text-brand-gold">
-                            <FileText className="h-3 w-3" />
-                            <a href={submission.attachmentUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                              View attachment
-                            </a>
-                          </div>
-                        )}
-                        {submission.tutorFeedback && (
-                          <div className="bg-brand-gold/10 p-2 rounded-lg border border-brand-gold/30">
-                            <p className="text-xs font-medium text-brand-gold mb-1">Tutor Feedback:</p>
-                            <p className="text-xs text-gray-300 italic">{submission.tutorFeedback}</p>
-                          </div>
-                        )}
-                        {submission.tutorFeedbackAttachmentUrl && (
-                          <div className="flex items-center gap-2 text-xs text-brand-gold">
-                            <Download className="h-3 w-3" />
-                            <a href={submission.tutorFeedbackAttachmentUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                              View feedback attachment
-                            </a>
-                          </div>
-                        )}
-                      </div>
-                    )}
+                      )
+                    })}
 
                     <div className="pt-3 border-t border-brand-gold/10 flex items-center justify-between text-xs text-gray-400">
                       <span className="flex items-center gap-1.5">

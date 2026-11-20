@@ -24,7 +24,7 @@ export default function TutorAssignmentsPage() {
   const { toast } = useToast()
   const [assignments, setAssignments] = useState<Assignment[]>([])
   const [enrollments, setEnrollments] = useState<Enrollment[]>([])
-  const [submissions, setSubmissions] = useState<Record<string, AssignmentSubmission>>({})
+  const [submissions, setSubmissions] = useState<Record<string, AssignmentSubmission[]>>({})
   const [loading, setLoading] = useState(true)
   const [quizModalOpen, setQuizModalOpen] = useState(false)
   const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null)
@@ -69,21 +69,22 @@ export default function TutorAssignmentsPage() {
       setAssignments(tutorAssignments)
       setEnrollments(tutorEnrollments)
 
-      // Load submissions for each assignment
+      // Load all submissions for each assignment
+      // (GET /assignments/:id/submissions returns an array)
       const submissionPromises = tutorAssignments.map(async (assignment: Assignment) => {
         try {
-          const submission = await api.getAssignmentSubmission(assignment.id)
-          return { assignmentId: assignment.id, submission }
+          const submissions = await api.getAssignmentSubmissions(assignment.id)
+          return { assignmentId: assignment.id, submissions: Array.isArray(submissions) ? submissions : [] }
         } catch {
-          return { assignmentId: assignment.id, submission: null }
+          return { assignmentId: assignment.id, submissions: [] }
         }
       })
 
       const submissionResults = await Promise.all(submissionPromises)
-      const submissionsMap: Record<string, AssignmentSubmission> = {}
-      submissionResults.forEach(({ assignmentId, submission }) => {
-        if (submission) {
-          submissionsMap[assignmentId] = submission
+      const submissionsMap: Record<string, AssignmentSubmission[]> = {}
+      submissionResults.forEach(({ assignmentId, submissions }) => {
+        if (submissions.length > 0) {
+          submissionsMap[assignmentId] = submissions
         }
       })
       setSubmissions(submissionsMap)
@@ -193,29 +194,20 @@ export default function TutorAssignmentsPage() {
           description: 'Assignment has been updated successfully',
         })
       } else {
-        const dueDateIso = formData.dueDate ? new Date(formData.dueDate).toISOString() : new Date().toISOString()
-        const results = await Promise.allSettled(
-          selectedEnrollmentIds.map(enrollmentId =>
-            api.createAssignment({
-              enrollmentId,
-              title: formData.title,
-              description: formData.description,
-              type: formData.type,
-              dueDate: dueDateIso,
-              attachment: attachmentFile || undefined,
-            })
-          )
-        )
-        const created = results.filter(r => r.status === 'fulfilled').length
-        const failed = results.length - created
-        if (created === 0) {
-          throw new Error('Failed to create assignment for the selected students')
-        }
+        // POST /assignments accepts enrollmentIds[] - backend creates one
+        // assignment per enrollment in a transaction and notifies everyone.
+        const result = await api.createAssignment({
+          enrollmentIds: selectedEnrollmentIds,
+          title: formData.title,
+          description: formData.description,
+          type: formData.type,
+          dueDate: formData.dueDate ? new Date(formData.dueDate).toISOString() : new Date().toISOString(),
+          attachment: attachmentFile || undefined,
+        })
+        const createdCount = Array.isArray(result) ? result.length : selectedEnrollmentIds.length
         toast({
           title: 'Assignment created',
-          description: failed > 0
-            ? `Created for ${created} student${created === 1 ? '' : 's'}; ${failed} failed`
-            : `Assignment created for ${created} student${created === 1 ? '' : 's'}`,
+          description: `Assignment created for ${createdCount} student${createdCount === 1 ? '' : 's'}`,
         })
       }
       setAssignmentModalOpen(false)
@@ -321,8 +313,8 @@ export default function TutorAssignmentsPage() {
             assignments.map((assignment) => {
               const enrollment = enrollments.find(e => e.id === assignment.enrollmentId)
               const student = enrollment?.student
-              const submission = submissions[assignment.id]
-              const hasSubmission = Boolean(submission) || assignment.status === 'SUBMITTED' || assignment.status === 'GRADED'
+              const assignmentSubmissions = submissions[assignment.id] ?? []
+              const hasSubmission = assignmentSubmissions.length > 0 || assignment.status === 'SUBMITTED' || assignment.status === 'GRADED'
 
               return (
                 <Card key={assignment.id} className="bg-card border-brand-gold/30">
@@ -346,7 +338,7 @@ export default function TutorAssignmentsPage() {
                             <span>Student: {student.fullName}</span>
                           )}
                         </div>
-                        {hasSubmission && !submission && (
+                        {hasSubmission && assignmentSubmissions.length === 0 && (
                           <div className="mt-3 flex items-center gap-2 text-xs">
                             <CheckCircle2 className="h-3 w-3 text-brand-gold" />
                             <span className="text-brand-gold font-medium">
@@ -354,30 +346,52 @@ export default function TutorAssignmentsPage() {
                             </span>
                           </div>
                         )}
-                        {submission && (
-                          <div className="mt-3 space-y-2">
-                            <div className="flex items-center gap-2 text-xs">
-                              <CheckCircle2 className="h-3 w-3 text-brand-gold" />
-                              <span className="text-brand-gold font-medium">
-                                Submitted on {new Date(submission.submittedAt || submission.createdAt).toLocaleDateString()}
-                              </span>
+                        {assignmentSubmissions.map((submission: any, idx: number) => {
+                          const submitterName = submission.student?.fullName ?? submission.studentName ?? student?.fullName
+                          const feedback = submission.tutorFeedback ?? submission.feedback
+                          const feedbackAttachment = submission.tutorFeedbackAttachmentUrl ?? submission.feedbackAttachmentUrl
+                          const attachmentUrl = submission.attachmentUrl ?? submission.attachments?.[0]?.url ?? submission.attachments?.[0]
+                          const submittedAt = submission.submittedAt ?? submission.gradedAt ?? submission.createdAt
+                          return (
+                            <div key={submission.id ?? idx} className="mt-3 space-y-2">
+                              <div className="flex items-center gap-2 text-xs">
+                                <CheckCircle2 className="h-3 w-3 text-brand-gold" />
+                                <span className="text-brand-gold font-medium">
+                                  {submitterName ? `${submitterName} submitted` : 'Submitted'}
+                                  {submittedAt ? ` on ${new Date(submittedAt).toLocaleDateString()}` : ''}
+                                </span>
+                              </div>
+                              {submission.textAnswer && (
+                                <div className="bg-card/80 p-2 rounded-lg border border-border/30">
+                                  <p className="text-xs font-medium text-muted-foreground mb-1">Student Answer:</p>
+                                  <p className="text-xs text-foreground line-clamp-2">{submission.textAnswer}</p>
+                                </div>
+                              )}
+                              {attachmentUrl && (
+                                <div className="flex items-center gap-2 text-xs text-brand-gold">
+                                  <FileText className="h-3 w-3" />
+                                  <a href={attachmentUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                                    View student attachment
+                                  </a>
+                                </div>
+                              )}
+                              {feedback && (
+                                <div className="bg-brand-gold/10 p-2 rounded-lg border border-brand-gold/30">
+                                  <p className="text-xs font-medium text-brand-gold mb-1">Your Feedback:</p>
+                                  <p className="text-xs text-foreground italic">{feedback}</p>
+                                </div>
+                              )}
+                              {feedbackAttachment && (
+                                <div className="flex items-center gap-2 text-xs text-brand-gold">
+                                  <FileText className="h-3 w-3" />
+                                  <a href={feedbackAttachment} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                                    View feedback attachment
+                                  </a>
+                                </div>
+                              )}
                             </div>
-                            {submission.textAnswer && (
-                              <div className="bg-card/80 p-2 rounded-lg border border-border/30">
-                                <p className="text-xs font-medium text-muted-foreground mb-1">Student Answer:</p>
-                                <p className="text-xs text-foreground line-clamp-2">{submission.textAnswer}</p>
-                              </div>
-                            )}
-                            {submission.attachmentUrl && (
-                              <div className="flex items-center gap-2 text-xs text-brand-gold">
-                                <FileText className="h-3 w-3" />
-                                <a href={submission.attachmentUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                                  View student attachment
-                                </a>
-                              </div>
-                            )}
-                          </div>
-                        )}
+                          )
+                        })}
                       </div>
                       <div className="flex items-center gap-2">
                         {assignment.type === 'TEST' && (

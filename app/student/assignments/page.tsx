@@ -50,10 +50,12 @@ export default function StudentAssignmentsPage() {
       const data = await api.getStudentAssignments()
       setAssignments(Array.isArray(data) ? data : [])
       
-      // Load submissions for each assignment
+      // Load submissions for each assignment (GET /assignments/:id/submissions)
       const submissionPromises = data.map(async (assignment: Assignment) => {
         try {
-          const submission = await api.getAssignmentSubmission(assignment.id)
+          const submissions = await api.getAssignmentSubmissions(assignment.id)
+          // Students only see their own submission(s); take the first
+          const submission = Array.isArray(submissions) && submissions.length > 0 ? submissions[0] : null
           return { assignmentId: assignment.id, submission }
         } catch {
           return { assignmentId: assignment.id, submission: null }
@@ -165,11 +167,31 @@ export default function StudentAssignmentsPage() {
       }))
     } catch (error) {
       console.error('Failed to submit assignment:', error)
+      const message = error instanceof Error ? error.message : 'Failed to submit assignment'
       toast({
-        title: 'Submission failed',
-        description: error instanceof Error ? error.message : 'Failed to submit assignment',
+        title: message.toLowerCase().includes('already submitted') ? 'Already submitted' : 'Submission failed',
+        description: message,
         variant: 'destructive',
       })
+      // If the backend says it's already submitted, reflect that locally
+      if (message.toLowerCase().includes('already submitted') && selectedAssignment) {
+        const submittedAt = new Date().toISOString()
+        setAssignments(prev => prev.map(a =>
+          a.id === selectedAssignment.id ? { ...a, status: 'SUBMITTED' } : a
+        ))
+        setSubmissions(prev => ({
+          ...prev,
+          [selectedAssignment.id]: {
+            id: '',
+            assignmentId: selectedAssignment.id,
+            studentId: '',
+            status: 'SUBMITTED',
+            submittedAt,
+            createdAt: submittedAt,
+          },
+        }))
+        setSubmissionModalOpen(false)
+      }
     } finally {
       setSubmitting(false)
     }
