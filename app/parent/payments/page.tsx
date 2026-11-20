@@ -1,20 +1,21 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useState, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { getUser, getUserRole } from '@/lib/auth'
 import { api } from '@/lib/api'
 import { Payment, Enrollment, Student } from '@/lib/types'
 import { DataTable } from '@/components/shared/DataTable'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
-import { CreditCard, ChevronDown, ChevronUp, AlertCircle, ArrowLeft, RefreshCw, Loader2, CheckCircle } from 'lucide-react'
+import { CreditCard, ChevronDown, ChevronUp, AlertCircle, ArrowLeft, RefreshCw, Loader2, CheckCircle, Download, FileText, DollarSign } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
 import { openPaystackCheckout } from '@/lib/paystack'
 
-export default function PaymentsPage() {
+function PaymentsContent() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { toast } = useToast()
   const [loading, setLoading] = useState(true)
   const [payments, setPayments] = useState<Payment[]>([])
@@ -29,6 +30,8 @@ export default function PaymentsPage() {
   const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null)
   const [paymentDetail, setPaymentDetail] = useState<any>(null)
   const [loadingDetail, setLoadingDetail] = useState(false)
+  const [paymentSummary, setPaymentSummary] = useState<{ totalPaidPerCurrency: { USD: number; NGN: number } } | null>(null)
+  const [downloadingReceipt, setDownloadingReceipt] = useState<string | null>(null)
 
   useEffect(() => {
     try {
@@ -39,11 +42,19 @@ export default function PaymentsPage() {
       }
 
       loadData()
+
+      // Handle paymentId from notification click
+      const paymentIdFromUrl = searchParams.get('paymentId')
+      if (paymentIdFromUrl) {
+        toggleExpand(paymentIdFromUrl)
+        // Clear the URL parameter
+        router.replace('/parent/payments', { scroll: false })
+      }
     } catch (err) {
       console.error('Error in payments page useEffect:', err)
       setLoading(false)
     }
-  }, [router, page, statusFilter])
+  }, [router, page, statusFilter, searchParams])
 
   const loadData = async () => {
     setLoading(true)
@@ -64,6 +75,7 @@ export default function PaymentsPage() {
       // Handle both paginated and non-paginated responses
       let paymentsData: Payment[] = []
       let totalCount = 0
+      let summary = null
 
       if (Array.isArray(paymentsResponse)) {
         paymentsData = paymentsResponse
@@ -71,10 +83,12 @@ export default function PaymentsPage() {
       } else if (paymentsResponse && typeof paymentsResponse === 'object' && 'data' in paymentsResponse) {
         paymentsData = paymentsResponse.data || []
         totalCount = paymentsResponse.total || 0
+        summary = (paymentsResponse as any).summary || null
       }
 
       setPayments(paymentsData)
       setTotal(totalCount)
+      setPaymentSummary(summary)
       setStudents(Array.isArray(studentsData) ? studentsData : [])
 
       const pending = Array.isArray(enrollmentsData)
@@ -200,6 +214,59 @@ export default function PaymentsPage() {
     return students.find(s => s.id === studentId)?.fullName || 'Student'
   }
 
+  const handleDownloadReceiptPDF = async (paymentId: string) => {
+    setDownloadingReceipt(paymentId)
+    try {
+      const blob = await api.downloadPaymentReceiptPDF(paymentId)
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `receipt-${paymentId}.pdf`
+      document.body.appendChild(a)
+      a.click()
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(a)
+      toast({
+        title: "Receipt Downloaded",
+        description: "Your receipt has been downloaded successfully.",
+      })
+    } catch (err) {
+      console.error('Failed to download receipt:', err)
+      toast({
+        title: "Error",
+        description: err instanceof Error ? err.message : "Failed to download receipt",
+        variant: "destructive",
+      })
+    } finally {
+      setDownloadingReceipt(null)
+    }
+  }
+
+  const handleViewReceiptJSON = async (paymentId: string) => {
+    try {
+      const receipt = await api.getPaymentReceipt(paymentId)
+      // Display receipt in a modal or new tab
+      const receiptWindow = window.open('', '_blank')
+      if (receiptWindow) {
+        receiptWindow.document.write(`
+          <html>
+            <head><title>Receipt - ${receipt.receiptNumber}</title></head>
+            <body>
+              <pre>${JSON.stringify(receipt, null, 2)}</pre>
+            </body>
+          </html>
+        `)
+      }
+    } catch (err) {
+      console.error('Failed to view receipt:', err)
+      toast({
+        title: "Error",
+        description: err instanceof Error ? err.message : "Failed to view receipt",
+        variant: "destructive",
+      })
+    }
+  }
+
   const columns = [
     {
       key: 'date',
@@ -243,6 +310,22 @@ export default function PaymentsPage() {
           {payment.status}
         </span>
       ),
+    },
+    {
+      key: 'receiptNumber',
+      header: 'Receipt #',
+      cell: (payment: Payment) => {
+        // receiptNumber is only present for SUCCESS payments
+        const receiptNumber = (payment as any).receiptNumber
+        if (payment.status === 'SUCCESS' && receiptNumber) {
+          return (
+            <code className="text-xs bg-brand-gold/10 text-brand-gold px-2 py-1 rounded">
+              {receiptNumber}
+            </code>
+          )
+        }
+        return <span className="text-xs text-muted-foreground">N/A</span>
+      },
     },
     {
       key: 'reference',
@@ -377,6 +460,34 @@ export default function PaymentsPage() {
           </Card>
         )}
 
+        {/* Payment Summary Card */}
+        {paymentSummary && (
+          <Card className="bg-card border-brand-gold/30">
+            <CardHeader>
+              <CardTitle className="text-foreground flex items-center gap-2">
+                <DollarSign className="h-5 w-5 text-brand-gold" />
+                Payment Summary
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-4 bg-muted rounded-lg">
+                  <p className="text-sm text-muted-foreground">Total Paid (NGN)</p>
+                  <p className="text-2xl font-bold text-foreground mt-1">
+                    ₦{paymentSummary.totalPaidPerCurrency.NGN.toLocaleString()}
+                  </p>
+                </div>
+                <div className="p-4 bg-muted rounded-lg">
+                  <p className="text-sm text-muted-foreground">Total Paid (USD)</p>
+                  <p className="text-2xl font-bold text-foreground mt-1">
+                    ${paymentSummary.totalPaidPerCurrency.USD.toLocaleString()}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Payment History Card */}
         <Card className="bg-card border-brand-gold/30">
           <CardHeader>
@@ -461,7 +572,54 @@ export default function PaymentsPage() {
                         <span className="text-sm text-muted-foreground">Date:</span>
                         <span className="text-foreground">{formatDate(paymentDetail.createdAt)}</span>
                       </div>
+
+                      {/* Receipt Number */}
+                      {paymentDetail.receiptNumber && (
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-muted-foreground">Receipt #:</span>
+                          <code className="text-xs bg-brand-gold/10 text-brand-gold px-2 py-1 rounded">
+                            {paymentDetail.receiptNumber}
+                          </code>
+                        </div>
+                      )}
                     </div>
+
+                    {/* Receipt Download Buttons - Only for SUCCESS payments */}
+                    {paymentDetail.status === 'SUCCESS' && (
+                      <div className="pt-4 border-t border-border">
+                        <span className="text-sm text-muted-foreground block mb-3">Download Receipt</span>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDownloadReceiptPDF(paymentDetail.id)}
+                            disabled={downloadingReceipt === paymentDetail.id}
+                            className="border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10"
+                          >
+                            {downloadingReceipt === paymentDetail.id ? (
+                              <>
+                                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                Downloading...
+                              </>
+                            ) : (
+                              <>
+                                <Download className="h-4 w-4 mr-2" />
+                                Download PDF
+                              </>
+                            )}
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleViewReceiptJSON(paymentDetail.id)}
+                            className="border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10"
+                          >
+                            <FileText className="h-4 w-4 mr-2" />
+                            View JSON
+                          </Button>
+                        </div>
+                      </div>
+                    )}
 
                     {/* Timeline */}
                     {paymentDetail.timeline && Array.isArray(paymentDetail.timeline) && paymentDetail.timeline.length > 0 && (
@@ -550,5 +708,13 @@ export default function PaymentsPage() {
           </CardContent>
         </Card>
       </div>
+  )
+}
+
+export default function PaymentsPage() {
+  return (
+    <Suspense fallback={<div className="flex justify-center py-12"><LoadingSpinner size="lg" className="text-brand-gold" /></div>}>
+      <PaymentsContent />
+    </Suspense>
   )
 }

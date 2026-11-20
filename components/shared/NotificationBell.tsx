@@ -72,7 +72,8 @@ export function NotificationBell() {
       case 'ENROLLMENT':
         return `/admin/enrollments`
       case 'PAYMENT':
-        return `/admin/transactions`
+        // Link to payment detail - the admin page will handle opening the detail drawer
+        return `/admin/transactions?paymentId=${entityId}`
       case 'GRADE':
         return `/admin/grades/${entityId}`
       case 'CHANGE_REQUEST':
@@ -113,6 +114,9 @@ export function NotificationBell() {
         return `/parent/messages`
       case 'PRICING':
         return `/parent/pricing`
+      case 'PAYMENT':
+        // Link to payments page with payment ID - will open receipt/detail view
+        return `/parent/payments?paymentId=${entityId}`
       default:
         return null
     }

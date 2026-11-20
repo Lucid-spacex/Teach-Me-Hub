@@ -789,6 +789,7 @@ export interface Assignment {
   dueDate: string
   status: 'PENDING' | 'SUBMITTED' | 'GRADED'
   attachmentUrl?: string | null
+  timeLimitMinutes?: number | null
   createdAt: string
 }
 
@@ -996,6 +997,157 @@ export interface PaymentDetail {
   }
   ngnEquivalent?: number
   adminNote?: string | null
+  receiptNumber?: string
+  exchangeRateUsed?: number
+  chargedAmountNGN?: number
+  failureReason?: string | null
+  hasAdminNote?: boolean
+  timeline?: PaymentTimelineEvent[]
+  auditLogs?: AdminActionLog[]
+  parent?: {
+    id: string
+    fullName: string
+    email: string
+  }
+  student?: {
+    id: string
+    fullName: string
+  }
+  subjects?: string[]
+}
+
+export interface PaymentTimelineEvent {
+  status: string
+  timestamp: string
+  message?: string
+}
+
+// Payment Receipt types
+export interface PaymentReceipt {
+  receiptNumber: string
+  paidAt: string
+  amount: number
+  currency: string
+  reference: string
+  parentName: string
+  parentEmail: string
+  studentNames: string[]
+  subjectNames: string[]
+  billingFrequency?: string
+  enrollmentGroupId?: string
+  platformName: string
+}
+
+// Enhanced Parent Payment History with Summary
+export interface PaymentHistoryWithSummary {
+  data: Payment[]
+  total: number
+  page: number
+  limit: number
+  summary: {
+    totalPaidPerCurrency: {
+      USD: number
+      NGN: number
+    }
+  }
+}
+
+// Admin Payment Summary types
+export interface AdminPaymentSummary {
+  byCurrency: Record<string, {
+    collectedTotal: number
+    pendingTotal: number
+    failedTotal: number
+    count: number
+    successCount: number
+    successRate: number
+    averagePayment: number
+  }>
+  totalCollectedNGNEquivalent: number
+  changePercent: number
+  dailySeries: Array<{
+    date: string
+    collected: Record<string, number>
+  }>
+  monthlySeries?: Array<{
+    date: string
+    collected: Record<string, number>
+  }>
+  bySubject: Array<{
+    subjectName: string
+    collected: number
+    count: number
+  }>
+  byStatus: Array<{
+    status: string
+    count: number
+  }>
+}
+
+// Outstanding Payments types
+export interface OutstandingEnrollment {
+  enrollmentGroupId: string
+  parent: {
+    name: string
+    email: string
+    phone: string
+  }
+  student: {
+    id: string
+    fullName: string
+  }
+  subjects: string[]
+  expectedAmount: number
+  expectedCurrency: string
+  createdAt: string
+  daysWaiting: number
+  latestPaymentStatus: string | null
+}
+
+export interface OutstandingPaymentsResponse {
+  data: OutstandingEnrollment[]
+  page: number
+  limit: number
+  total: number
+}
+
+// Enhanced Admin Payment types
+export interface AdminPaymentListItem {
+  id: string
+  reference: string
+  receiptNumber?: string
+  amount: number
+  currency: string
+  status: PaymentStatus
+  createdAt: string
+  paidAt?: string
+  parent: {
+    id: string
+    fullName: string
+    email: string
+  }
+  student?: {
+    id: string
+    fullName: string
+  }
+  subjects: string[]
+  enrollmentGroupId?: string
+  hasAdminNote: boolean
+  failureReason?: string | null
+  chargedAmountNGN: number
+}
+
+// Enhanced Parent Profile with Payment Summary
+export interface ParentProfileWithPaymentSummary extends ParentDetailProfile {
+  totalPaidNGN?: number
+  totalPaidUSD?: number
+  pendingPaymentCount?: number
+}
+
+// Enhanced Badge Counts
+export interface EnhancedBadgeCounts extends UnreadCountResponse {
+  failedPayments?: number
+  outstandingEnrollments?: number
 }
 
 export interface PaymentSummary {

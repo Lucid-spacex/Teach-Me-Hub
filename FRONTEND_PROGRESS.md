@@ -407,6 +407,19 @@
 ## Part 13: Item 9 - Badges Everywhere
 - [x] Create useBadgeCounts hook combining GET /notifications/unread-count with GET /admin/badge-counts for admins
 - [x] Refresh every 30 seconds, on every live SSE event, and on route changes
+
+## Part 14: Payment Receipts & Admin Payment Features
+- [x] Add typed methods in lib/api.ts: GET /admin/payments (filters), GET /admin/payments/summary, GET /admin/payments/outstanding, GET /admin/payments/:id, PATCH /admin/payments/:id/note, POST /admin/payments/:id/reverify, GET /admin/payments/export.csv, GET /payments (paginated), GET /payments/:id, GET /payments/:id/receipt, GET /payments/:id/receipt.pdf
+- [x] Add types in lib/types.ts: PaymentReceipt, PaymentHistoryWithSummary, AdminPaymentSummary, OutstandingEnrollment, OutstandingPaymentsResponse, AdminPaymentListItem, ParentProfileWithPaymentSummary, EnhancedBadgeCounts, PaymentTimelineEvent
+- [x] Upgrade /admin/transactions page with tabs (Overview, All payments, Outstanding, Failed)
+- [x] Overview tab: date range picker, currency selector, revenue cards per currency, success rate, line/bar charts, by-subject bar chart, status breakdown
+- [x] All payments tab: table with filters (status, currency, provider, search), pagination, sorting, Export CSV button, detail drawer with timeline, NGN equivalent, parent contact, admin note, audit log, Reverify action
+- [x] Outstanding tab: enrollments waiting for payment with parent contact, subjects, expected amount, days waiting highlight, Message parent shortcut
+- [x] Failed tab: FAILED and EXPIRED payments with failure reason and Reverify action
+- [x] Parent payments page: summary strip with total paid per currency, receipt number display, receipt download (JSON/PDF) for SUCCESS rows, detail drawer with timeline
+- [x] Link payment notifications to receipt/detail views via NotificationBell and parent payments page
+- [x] Run tsc --noEmit (no errors)
+- [x] Run npm run build (success)
 - [x] Put red badge (count, 99+ cap, accessible label) on each sidebar item's text
 - [x] Add badges to parent dashboard cards where relevant
 - [x] Admin badges: Parents (unreadNewParents), Tutors (unreadNewTutors + pendingTutorApplications), Complaints (openComplaints), Messages (unreadMessages), Enrollments (unmatchedPaidEnrollments), Transactions (failedPayments + PAYMENTS unread), Grade review (pendingGrades), Change requests (pendingChangeRequests), Class schedule (unscheduledWithin24h), Sessions (SESSIONS)

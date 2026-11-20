@@ -1,6 +1,8 @@
 import {
   AdminActionLog,
   AdminOverview,
+  AdminPaymentListItem,
+  AdminPaymentSummary,
   AdminStudent,
   AdminStudentDetail,
   ApiError,
@@ -24,6 +26,7 @@ import {
   CreateTutorProfileRequest,
   Enrollment,
   EnrollmentChangeRequest,
+  EnhancedBadgeCounts,
   ExchangeRate,
   Grade,
   GradeBandTier,
@@ -40,11 +43,16 @@ import {
   MessageThread,
   Notification,
   NotificationCategory,
+  OutstandingEnrollment,
+  OutstandingPaymentsResponse,
   ParentDetailProfile,
   ParentDirectoryEntry,
+  ParentProfileWithPaymentSummary,
   Payment,
   PaymentDetail,
+  PaymentHistoryWithSummary,
   PaymentNote,
+  PaymentReceipt,
   PaymentSummary,
   PeriodFilter,
   PerformanceOverview,
@@ -694,8 +702,8 @@ class ApiClient {
     return this.request<UnreadCountResponse>('/notifications/unread-count')
   }
 
-  async getAdminBadgeCounts(): Promise<UnreadCountResponse> {
-    return this.request<UnreadCountResponse>('/admin/badge-counts')
+  async getAdminBadgeCounts(): Promise<EnhancedBadgeCounts> {
+    return this.request<EnhancedBadgeCounts>('/admin/badge-counts')
   }
 
 
@@ -1120,6 +1128,62 @@ class ApiClient {
     return this.request<any>(`/payments/verify/${reference}`)
   }
 
+  // Payment Receipt endpoints
+  async getPaymentReceipt(paymentId: string): Promise<PaymentReceipt> {
+    return this.request<PaymentReceipt>(`/payments/${paymentId}/receipt`)
+  }
+
+  async downloadPaymentReceiptPDF(paymentId: string): Promise<Blob> {
+    const token = this.getToken()
+    const url = `${this.baseUrl}/payments/${paymentId}/receipt.pdf`
+
+    const response = await fetch(url, {
+      headers: {
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+      },
+    })
+
+    if (!response.ok) {
+      const errorData: ApiError = await response.json().catch(() => ({ error: 'Unknown error' }))
+      throw new Error(errorData.error || errorData.message || 'Failed to download receipt')
+    }
+
+    return response.blob()
+  }
+
+  // Admin Payment Summary
+  async getAdminPaymentSummary(filters?: {
+    from?: string
+    to?: string
+    currency?: string
+  }): Promise<AdminPaymentSummary> {
+    const params = new URLSearchParams()
+    if (filters?.from) params.append('from', filters.from)
+    if (filters?.to) params.append('to', filters.to)
+    if (filters?.currency) params.append('currency', filters.currency)
+    const query = params.toString()
+    return this.request<AdminPaymentSummary>(`/admin/payments/summary${query ? `?${query}` : ''}`)
+  }
+
+  // Outstanding Payments
+  async getOutstandingPayments(filters?: {
+    page?: number
+    limit?: number
+    sort?: string
+  }): Promise<OutstandingPaymentsResponse> {
+    const params = new URLSearchParams()
+    if (filters?.page) params.append('page', filters.page.toString())
+    if (filters?.limit) params.append('limit', filters.limit.toString())
+    if (filters?.sort) params.append('sort', filters.sort)
+    const query = params.toString()
+    return this.request<OutstandingPaymentsResponse>(`/admin/payments/outstanding${query ? `?${query}` : ''}`)
+  }
+
+  // Enhanced Parent Profile
+  async getParentDetail(parentId: string): Promise<ParentDetailProfile> {
+    return this.request<ParentDetailProfile>(`/admin/parents/${parentId}`)
+  }
+
   // Assignment endpoints
   async getAssignments(enrollmentId?: string): Promise<Assignment[]> {
     const params = enrollmentId ? `?enrollmentId=${enrollmentId}` : ''
@@ -1134,6 +1198,7 @@ class ApiClient {
     type: AssignmentType
     dueDate: string
     attachment?: File
+    timeLimitMinutes?: number
   }): Promise<Assignment | Assignment[]> {
     if (data.attachment) {
       // Use multipart/form-data for file upload
@@ -1145,6 +1210,7 @@ class ApiClient {
       formData.append('type', data.type)
       formData.append('dueDate', data.dueDate)
       formData.append('attachment', data.attachment)
+      if (data.timeLimitMinutes) formData.append('timeLimitMinutes', data.timeLimitMinutes.toString())
 
       const token = this.getToken()
       const url = `${this.baseUrl}/assignments`
@@ -1173,6 +1239,7 @@ class ApiClient {
     }
     if (data.enrollmentId) body.enrollmentId = data.enrollmentId
     if (data.enrollmentIds) body.enrollmentIds = data.enrollmentIds
+    if (data.timeLimitMinutes) body.timeLimitMinutes = data.timeLimitMinutes
 
     return this.request<Assignment | Assignment[]>('/assignments', {
       method: 'POST',
@@ -1193,6 +1260,7 @@ class ApiClient {
     type?: AssignmentType
     dueDate?: string
     attachment?: File
+    timeLimitMinutes?: number
   }): Promise<Assignment> {
     if (data.attachment) {
       // Use multipart/form-data for file upload
@@ -1202,6 +1270,7 @@ class ApiClient {
       if (data.type) formData.append('type', data.type)
       if (data.dueDate) formData.append('dueDate', data.dueDate)
       formData.append('attachment', data.attachment)
+      if (data.timeLimitMinutes) formData.append('timeLimitMinutes', data.timeLimitMinutes.toString())
 
       const token = this.getToken()
       const url = `${this.baseUrl}/assignments/${assignmentId}`
@@ -1229,6 +1298,7 @@ class ApiClient {
         description: data.description,
         type: data.type,
         dueDate: data.dueDate,
+        timeLimitMinutes: data.timeLimitMinutes,
       }),
     })
   }
@@ -1955,32 +2025,34 @@ class ApiClient {
     )
   }
 
-  async getParentDetail(parentId: string): Promise<ParentDetailProfile> {
-    return this.request<ParentDetailProfile>(`/admin/parents/${parentId}`)
-  }
-
-  // Transaction endpoints
+  // Transaction endpoints (legacy aliases for backward compatibility)
   async getTransactions(params?: {
     status?: string
     currency?: string
     provider?: string
     parentId?: string
+    studentId?: string
+    subjectId?: string
     from?: string
     to?: string
     search?: string
     page?: number
     limit?: number
+    sort?: string
   }): Promise<{ payments: PaymentDetail[]; total: number; page: number; limit: number }> {
     const queryParams = new URLSearchParams()
     if (params?.status) queryParams.append('status', params.status)
     if (params?.currency) queryParams.append('currency', params.currency)
     if (params?.provider) queryParams.append('provider', params.provider)
     if (params?.parentId) queryParams.append('parentId', params.parentId)
+    if (params?.studentId) queryParams.append('studentId', params.studentId)
+    if (params?.subjectId) queryParams.append('subjectId', params.subjectId)
     if (params?.from) queryParams.append('from', params.from)
     if (params?.to) queryParams.append('to', params.to)
     if (params?.search) queryParams.append('search', params.search)
     if (params?.page) queryParams.append('page', params.page.toString())
     if (params?.limit) queryParams.append('limit', params.limit.toString())
+    if (params?.sort) queryParams.append('sort', params.sort)
     const queryString = queryParams.toString()
     return this.request<{ payments: PaymentDetail[]; total: number; page: number; limit: number }>(
       `/admin/payments${queryString ? `?${queryString}` : ''}`
@@ -1994,12 +2066,66 @@ class ApiClient {
   async getTransactionSummary(params?: {
     from?: string
     to?: string
-  }): Promise<PaymentSummary> {
+    currency?: string
+  }): Promise<AdminPaymentSummary> {
     const queryParams = new URLSearchParams()
     if (params?.from) queryParams.append('from', params.from)
     if (params?.to) queryParams.append('to', params.to)
+    if (params?.currency) queryParams.append('currency', params.currency)
     const queryString = queryParams.toString()
-    return this.request<PaymentSummary>(`/admin/reports/payments/summary${queryString ? `?${queryString}` : ''}`)
+    return this.request<AdminPaymentSummary>(`/admin/payments/summary${queryString ? `?${queryString}` : ''}`)
+  }
+
+  async addPaymentNote(paymentId: string, note: string): Promise<PaymentDetail> {
+    return this.request<PaymentDetail>(`/admin/payments/${paymentId}/note`, {
+      method: 'PATCH',
+      body: JSON.stringify({ note }),
+    })
+  }
+
+  async reverifyPayment(paymentId: string): Promise<PaymentDetail> {
+    return this.request<PaymentDetail>(`/admin/payments/${paymentId}/reverify`, {
+      method: 'POST',
+    })
+  }
+
+  async exportPaymentsCSV(filters?: {
+    status?: string
+    currency?: string
+    provider?: string
+    parentId?: string
+    studentId?: string
+    subjectId?: string
+    from?: string
+    to?: string
+    search?: string
+  }): Promise<Blob> {
+    const token = this.getToken()
+    const params = new URLSearchParams()
+    if (filters?.status) params.append('status', filters.status)
+    if (filters?.currency) params.append('currency', filters.currency)
+    if (filters?.provider) params.append('provider', filters.provider)
+    if (filters?.parentId) params.append('parentId', filters.parentId)
+    if (filters?.studentId) params.append('studentId', filters.studentId)
+    if (filters?.subjectId) params.append('subjectId', filters.subjectId)
+    if (filters?.from) params.append('from', filters.from)
+    if (filters?.to) params.append('to', filters.to)
+    if (filters?.search) params.append('search', filters.search)
+    const queryString = params.toString()
+    const url = `${this.baseUrl}/admin/payments/export.csv${queryString ? `?${queryString}` : ''}`
+
+    const response = await fetch(url, {
+      headers: {
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+      },
+    })
+
+    if (!response.ok) {
+      const errorData: ApiError = await response.json().catch(() => ({ error: 'Unknown error' }))
+      throw new Error(errorData.error || errorData.message || 'Failed to export payments')
+    }
+
+    return response.blob()
   }
 
   // Student password regeneration
@@ -2032,20 +2158,6 @@ class ApiClient {
     if (includePending) queryParams.append('includePending', 'true')
     const queryString = queryParams.toString()
     return this.request<PerformanceOverview>(`/admin/students/${studentId}/performance${queryString ? `?${queryString}` : ''}`)
-  }
-
-  // Admin payment action endpoints
-  async addPaymentNote(paymentId: string, note: string): Promise<{ message: string }> {
-    return this.request<{ message: string }>(`/admin/payments/${paymentId}/note`, {
-      method: 'PATCH',
-      body: JSON.stringify({ note }),
-    })
-  }
-
-  async reverifyPayment(paymentId: string): Promise<PaymentDetail> {
-    return this.request<PaymentDetail>(`/admin/payments/${paymentId}/reverify`, {
-      method: 'POST',
-    })
   }
 
   // Admin suspend endpoints
