@@ -381,8 +381,25 @@ export function GradeCompileWizard({ open, onOpenChange, onSuccess, editingGrade
             ) : (
               <Button
                 onClick={() => {
-                  if (currentStep === 1) handlePreview()
-                  else setCurrentStep(currentStep + 1)
+                  if (currentStep === 0) {
+                    if (!formData.enrollmentId) {
+                      toast({ title: 'Validation Error', description: 'Please select an enrollment', variant: 'destructive' })
+                      return
+                    }
+                    if (!formData.period.trim()) {
+                      toast({ title: 'Validation Error', description: 'Please enter a grading period', variant: 'destructive' })
+                      return
+                    }
+                    if (formData.selectedItemIds.length === 0) {
+                      toast({ title: 'Validation Error', description: 'Please select at least one scored item', variant: 'destructive' })
+                      return
+                    }
+                    setCurrentStep(1)
+                  } else if (currentStep === 1) {
+                    handlePreview()
+                  } else {
+                    setCurrentStep(currentStep + 1)
+                  }
                 }}
                 disabled={loading || (currentStep === 1 && totalWeight !== 100)}
               >

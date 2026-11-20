@@ -394,6 +394,15 @@ export default function TutorAssignmentsPage() {
                         })}
                       </div>
                       <div className="flex items-center gap-2">
+                        <Button
+                          onClick={() => router.push(`/tutor/assignments/${assignment.id}`)}
+                          variant="outline"
+                          size="sm"
+                          className="gap-1.5"
+                        >
+                          <FileText className="h-3.5 w-3.5" />
+                          View
+                        </Button>
                         {assignment.type === 'TEST' && (
                           <Button
                             onClick={() => handleOpenQuizModal(assignment)}
