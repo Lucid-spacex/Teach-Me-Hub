@@ -421,7 +421,7 @@ export default function TutorStudentDetailPage({ params }: PageProps) {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => router.push('/tutor/grades')}
+                  onClick={() => router.push('/grades')}
                   className="gap-1.5 text-xs h-9"
                 >
                   <Award className="h-3.5 w-3.5" />
@@ -450,23 +450,79 @@ export default function TutorStudentDetailPage({ params }: PageProps) {
 
         {/* Enrolled Subjects with this Tutor */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {allEnrollments.map(enrollment => (
-            <Card key={enrollment.id} className="bg-card border-brand-gold/20">
-              <CardContent className="p-4 space-y-2">
-                <div className="flex items-center justify-between">
-                  <h4 className="font-semibold text-foreground text-sm flex items-center gap-1.5">
-                    <BookOpen className="h-4 w-4 text-brand-gold" />
-                    {enrollment.subject?.name || 'Assigned Subject'}
-                  </h4>
-                  <StatusBadge status={enrollment.status} />
-                </div>
-                <div className="text-xs text-muted-foreground space-y-1">
-                  <p>Frequency: <span className="text-foreground">{enrollment.sessionFrequency}</span></p>
-                  <p>Started: <span className="text-foreground">{new Date(enrollment.startDate).toLocaleDateString()}</span></p>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+          {allEnrollments.map(enrollment => {
+            const startDate = enrollment.startDate ? new Date(enrollment.startDate) : null
+            const now = new Date()
+            const daysUntilStart = startDate ? Math.ceil((startDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)) : null
+            const isSelectedForSchedule = scheduleEnrollmentId === enrollment.id
+
+            return (
+              <Card key={enrollment.id} className={`bg-card border-brand-gold/20 ${isSelectedForSchedule ? 'ring-2 ring-brand-gold' : ''}`}>
+                <CardContent className="p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-semibold text-foreground text-sm flex items-center gap-1.5">
+                      <BookOpen className="h-4 w-4 text-brand-gold" />
+                      {enrollment.subject?.name || 'Assigned Subject'}
+                    </h4>
+                    <StatusBadge status={enrollment.status} />
+                  </div>
+                  <div className="text-xs text-muted-foreground space-y-1">
+                    <p>Frequency: <span className="text-foreground">{enrollment.sessionFrequency}</span></p>
+                    <p>Started: <span className="text-foreground">
+                      {startDate ? startDate.toLocaleDateString() : 'N/A'}
+                      {daysUntilStart !== null && daysUntilStart > 0 && (
+                        <span className="ml-2 text-brand-gold">(starts in {daysUntilStart} day{daysUntilStart !== 1 ? 's' : ''})</span>
+                      )}
+                    </span></p>
+                  </div>
+
+                  {/* Schedule Card */}
+                  {(enrollment.availableDays || enrollment.preferredStartHour !== undefined || enrollment.nextExpectedClass) && (
+                    <div className="mt-2 p-2 rounded-lg bg-background border border-brand-gold/10">
+                      <p className="text-xs font-medium text-foreground mb-1.5">Schedule</p>
+                      <div className="space-y-1 text-xs">
+                        {enrollment.availableDays && enrollment.availableDays.length > 0 && (
+                          <div className="flex flex-wrap gap-1">
+                            {enrollment.availableDays.map((day) => (
+                              <span key={day} className="px-1.5 py-0.5 rounded bg-brand-gold/10 text-brand-gold">
+                                {day}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                        {enrollment.preferredStartHour !== undefined && enrollment.preferredEndHour !== undefined && (
+                          <p className="text-muted-foreground">
+                            {enrollment.preferredStartHour}:00 - {enrollment.preferredEndHour}:00
+                            {enrollment.scheduleTimezone && (
+                              <span className="ml-1">({enrollment.scheduleTimezone})</span>
+                            )}
+                          </p>
+                        )}
+                        {enrollment.nextExpectedClass?.scheduledAt && (
+                          <p className="text-foreground">
+                            Next: {new Date(enrollment.nextExpectedClass.scheduledAt).toLocaleString()}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  <Button
+                    size="sm"
+                    variant={isSelectedForSchedule ? "default" : "outline"}
+                    onClick={() => {
+                      setScheduleEnrollmentId(enrollment.id)
+                      setScheduleModalOpen(true)
+                    }}
+                    className="w-full text-xs"
+                  >
+                    <Plus className="h-3 w-3 mr-1" />
+                    {isSelectedForSchedule ? 'Schedule Session' : 'Schedule Session'}
+                  </Button>
+                </CardContent>
+              </Card>
+            )
+          })}
         </div>
 
         {/* Tabbed Interface */}

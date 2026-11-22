@@ -13,6 +13,7 @@ import { Modal } from '@/components/shared/Modal'
 import { useToast } from '@/components/ui/use-toast'
 import { api } from '@/lib/api'
 import { AdminStudentDetail, Enrollment, Session, Grade, Assignment, TutorWithProfile, SuggestedTutor } from '@/lib/types'
+import { toNumber, formatPercentage } from '@/lib/utils'
 import { ArrowLeft, RefreshCw, Users, Calendar, BookOpen, Award, BarChart3, FileText, TrendingUp, UserCheck, Mail, Phone, Clock, AlertCircle } from 'lucide-react'
 
 export default function AdminStudentDetailPage() {
@@ -481,17 +482,13 @@ export default function AdminStudentDetailPage() {
                     <div className="p-4 bg-brand-dark/30 rounded-lg">
                       <p className="text-gray-400 text-sm">Average Grade</p>
                       <p className="text-2xl font-bold text-white">
-                        {performance.averageGrade && performance.averageGrade.percentage !== null && performance.averageGrade.percentage !== undefined
-                          ? `${performance.averageGrade.percentage.toFixed(1)}%`
-                          : 'N/A'}
+                        {performance.averageGrade ? formatPercentage(performance.averageGrade.percentage) : 'N/A'}
                       </p>
                     </div>
                     <div className="p-4 bg-brand-dark/30 rounded-lg">
                       <p className="text-gray-400 text-sm">Attendance Rate</p>
                       <p className="text-2xl font-bold text-white">
-                        {performance.attendance && performance.attendance.rate !== null && performance.attendance.rate !== undefined
-                          ? `${performance.attendance.rate.toFixed(1)}%`
-                          : 'N/A'}
+                        {performance.attendance ? formatPercentage(performance.attendance.rate) : 'N/A'}
                       </p>
                     </div>
                   </div>

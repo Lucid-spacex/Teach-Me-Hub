@@ -15,10 +15,11 @@ interface QuizTakingModalProps {
   onOpenChange: (open: boolean) => void
   assignmentId: string
   assignmentTitle: string
+  timeLimitMinutes?: number | null
   onSuccess: () => void
 }
 
-export function QuizTakingModal({ open, onOpenChange, assignmentId, assignmentTitle, onSuccess }: QuizTakingModalProps) {
+export function QuizTakingModal({ open, onOpenChange, assignmentId, assignmentTitle, timeLimitMinutes, onSuccess }: QuizTakingModalProps) {
   const { toast } = useToast()
   const [loading, setLoading] = useState(true)
   const [questions, setQuestions] = useState<QuizQuestion[]>([])
@@ -48,8 +49,9 @@ export function QuizTakingModal({ open, onOpenChange, assignmentId, assignmentTi
       const questionsData = await api.getQuizQuestions(assignmentId)
       setQuestions(Array.isArray(questionsData) ? questionsData : [])
 
-      // Set timer (30 seconds per question as default)
-      setTimeLeft(30)
+      // Set timer (use assignment's time limit or default to 30 seconds)
+      const timePerQuestion = timeLimitMinutes || 30
+      setTimeLeft(timePerQuestion)
       startTimer()
 
       setCurrentQuestionIndex(0)
@@ -89,10 +91,11 @@ export function QuizTakingModal({ open, onOpenChange, assignmentId, assignmentTi
     if (!attempt || selectedOption === null) return
 
     try {
+      const timePerQuestion = timeLimitMinutes || 30
       await api.submitQuizAnswer(attempt.id, {
         questionId: questions[currentQuestionIndex].id,
         selectedOptionIndex: selectedOption,
-        timeTakenSeconds: Math.max(0, 30 - timeLeft),
+        timeTakenSeconds: Math.max(0, timePerQuestion - timeLeft),
       })
 
       // Move to next question immediately without showing feedback
@@ -111,7 +114,8 @@ export function QuizTakingModal({ open, onOpenChange, assignmentId, assignmentTi
 
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(prev => prev + 1)
-      setTimeLeft(30)
+      const timePerQuestion = timeLimitMinutes || 30
+      setTimeLeft(timePerQuestion)
       startTimer()
     } else {
       // Complete the quiz

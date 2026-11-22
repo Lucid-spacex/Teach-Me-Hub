@@ -27,7 +27,6 @@ export function TutorProfileModal({ open, onOpenChange, existingProfile, onSucce
     subjects: [],
     bio: '',
     credentialsUrl: '',
-    hourlyRate: 0,
     availability: {},
   })
   const [availabilityText, setAvailabilityText] = useState('')
@@ -43,7 +42,6 @@ export function TutorProfileModal({ open, onOpenChange, existingProfile, onSucce
         subjects: subjects,
         bio: existingProfile.bio || '',
         credentialsUrl: existingProfile.credentialsUrl || '',
-        hourlyRate: existingProfile.hourlyRate || 0,
         availability: existingProfile.availability || {},
       })
       setSubjectsText(subjects.join(', '))
@@ -54,7 +52,6 @@ export function TutorProfileModal({ open, onOpenChange, existingProfile, onSucce
         subjects: [],
         bio: '',
         credentialsUrl: '',
-        hourlyRate: 0,
         availability: {},
       })
       setSubjectsText('')
@@ -137,8 +134,8 @@ export function TutorProfileModal({ open, onOpenChange, existingProfile, onSucce
       open={open}
       onOpenChange={onOpenChange}
       title={isEditMode ? 'Edit Availability' : 'Create Tutor Profile'}
-      description={isEditMode 
-        ? 'Update your availability. Note: Subjects, bio, and rate cannot be edited after profile creation.'
+      description={isEditMode
+        ? 'Update your availability. Note: Subjects, bio, and salary cannot be edited after profile creation.'
         : 'Set up your tutor profile to start receiving students'
       }
       footer={
@@ -200,18 +197,6 @@ export function TutorProfileModal({ open, onOpenChange, existingProfile, onSucce
                 value={formData.credentialsUrl}
                 onChange={(e) => setFormData({ ...formData, credentialsUrl: e.target.value })}
                 placeholder="https://..."
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="hourlyRate">Hourly Rate ($) *</Label>
-              <Input
-                id="hourlyRate"
-                type="number"
-                step="0.01"
-                value={formData.hourlyRate}
-                onChange={(e) => setFormData({ ...formData, hourlyRate: parseFloat(e.target.value) || 0 })}
-                placeholder="50.00"
               />
             </div>
           </>

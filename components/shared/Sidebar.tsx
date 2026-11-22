@@ -74,14 +74,28 @@ export function Sidebar({ role }: SidebarProps) {
         title: 'Logged Out',
         description: 'You have been safely signed out.',
       })
+      // Redirect to the matching login page
       if (role === 'STUDENT') {
         router.push('/student-login')
+      } else if (role === 'TUTOR') {
+        router.push('/tutor/login')
+      } else if (role === 'ADMIN') {
+        router.push('/admin/login')
       } else {
         router.push('/login')
       }
     } catch {
       clearUser()
-      router.push(role === 'STUDENT' ? '/student-login' : '/login')
+      // Redirect to the matching login page
+      if (role === 'STUDENT') {
+        router.push('/student-login')
+      } else if (role === 'TUTOR') {
+        router.push('/tutor/login')
+      } else if (role === 'ADMIN') {
+        router.push('/admin/login')
+      } else {
+        router.push('/login')
+      }
     }
   }
 
@@ -120,7 +134,7 @@ export function Sidebar({ role }: SidebarProps) {
     { label: 'Sessions', href: '/tutor/sessions', icon: Calendar, category: 'SESSIONS' },
     { label: 'Upcoming Classes', href: '/tutor/upcoming-classes', icon: UserCheck, category: 'SCHEDULE' },
     { label: 'Assignments', href: '/tutor/assignments', icon: FileText, category: 'ASSIGNMENTS' },
-    { label: 'Grades', href: '/tutor/grades', icon: BarChart3, category: 'GRADES' },
+    { label: 'Grades', href: '/grades', icon: BarChart3, category: 'GRADES' },
     { label: 'Progress Reports', href: '/tutor/progress-reports', icon: BookOpen },
     { label: 'Messages', href: '/tutor/messages', icon: MessageSquare, category: 'MESSAGES' },
     { label: 'Notifications', href: '/notifications', icon: Bell },

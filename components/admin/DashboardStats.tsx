@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Users, GraduationCap, Wallet, ClipboardList, Clock, UserCheck, AlertCircle, DollarSign, TrendingUp, ArrowUp, ArrowDown } from 'lucide-react'
 import { api } from '@/lib/api'
 import { AdminPaymentSummary } from '@/lib/types'
+import { toNumber } from '@/lib/utils'
 
 interface DashboardStatsProps {
   overview: AdminOverview | null
@@ -60,12 +61,12 @@ export function DashboardStats({ overview }: DashboardStatsProps) {
                 <DollarSign className="h-6 w-6 text-brand-gold" />
               </div>
             </div>
-            {paymentSummary?.changePercent !== undefined && (
+            {toNumber(paymentSummary?.changePercent) !== null && (
               <div className={`flex items-center gap-1 mt-2 text-sm ${
-                paymentSummary.changePercent >= 0 ? 'text-green-400' : 'text-red-400'
+                toNumber(paymentSummary?.changePercent)! >= 0 ? 'text-green-400' : 'text-red-400'
               }`}>
-                {paymentSummary.changePercent >= 0 ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
-                {Math.abs(paymentSummary.changePercent).toFixed(1)}% vs last month
+                {toNumber(paymentSummary?.changePercent)! >= 0 ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
+                {Math.abs(toNumber(paymentSummary?.changePercent)!).toFixed(1)}% vs last month
               </div>
             )}
           </CardContent>

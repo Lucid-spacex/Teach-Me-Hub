@@ -10,21 +10,25 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
 import { useToast } from '@/components/ui/use-toast'
-import { Plus, Trash2, CheckCircle, XCircle, Clock } from 'lucide-react'
+import { Plus, Trash2, CheckCircle, XCircle, Clock, Edit } from 'lucide-react'
 
 interface QuizQuestionsModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   assignmentId: string
   assignmentTitle: string
+  timeLimitMinutes?: number | null
   onSuccess: () => void
 }
 
-export function QuizQuestionsModal({ open, onOpenChange, assignmentId, assignmentTitle, onSuccess }: QuizQuestionsModalProps) {
+export function QuizQuestionsModal({ open, onOpenChange, assignmentId, assignmentTitle, timeLimitMinutes, onSuccess }: QuizQuestionsModalProps) {
   const { toast } = useToast()
   const [questions, setQuestions] = useState<QuizQuestion[]>([])
   const [loading, setLoading] = useState(true)
   const [addingQuestion, setAddingQuestion] = useState(false)
+  const [editingTimer, setEditingTimer] = useState(false)
+  const [timerValue, setTimerValue] = useState(timeLimitMinutes?.toString() || '30')
+  const [savingTimer, setSavingTimer] = useState(false)
 
   // New question form state
   const [newQuestion, setNewQuestion] = useState({
@@ -38,8 +42,9 @@ export function QuizQuestionsModal({ open, onOpenChange, assignmentId, assignmen
   useEffect(() => {
     if (open && assignmentId) {
       loadQuestions()
+      setTimerValue(timeLimitMinutes?.toString() || '30')
     }
-  }, [open, assignmentId])
+  }, [open, assignmentId, timeLimitMinutes])
 
   const loadQuestions = async () => {
     setLoading(true)
@@ -118,6 +123,29 @@ export function QuizQuestionsModal({ open, onOpenChange, assignmentId, assignmen
     }
   }
 
+  const handleSaveTimer = async () => {
+    setSavingTimer(true)
+    try {
+      await api.updateAssignment(assignmentId, {
+        timeLimitMinutes: parseInt(timerValue) || 30,
+      })
+      toast({
+        title: 'Timer Updated',
+        description: 'Quiz timer has been updated successfully',
+      })
+      setEditingTimer(false)
+      onSuccess()
+    } catch (err) {
+      toast({
+        title: 'Error',
+        description: err instanceof Error ? err.message : 'Failed to update timer',
+        variant: 'destructive',
+      })
+    } finally {
+      setSavingTimer(false)
+    }
+  }
+
   return (
     <Modal
       open={open}
@@ -137,6 +165,69 @@ export function QuizQuestionsModal({ open, onOpenChange, assignmentId, assignmen
       }
     >
       <div className="space-y-6">
+        {/* Timer Settings */}
+        <div className="bg-brand-subtle/50 border border-brand-border rounded-lg p-4">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-semibold text-foreground flex items-center gap-2">
+              <Clock className="h-4 w-4 text-brand-gold" />
+              Timer Settings
+            </h3>
+            {!editingTimer && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setEditingTimer(true)}
+                className="text-brand-gold hover:text-brand-goldLight"
+              >
+                <Edit className="h-4 w-4 mr-1" />
+                Edit
+              </Button>
+            )}
+          </div>
+          {editingTimer ? (
+            <div className="flex items-center gap-3">
+              <div className="flex-1">
+                <Label htmlFor="timerInput">Time per Question (seconds)</Label>
+                <Input
+                  id="timerInput"
+                  type="number"
+                  min="10"
+                  max="300"
+                  value={timerValue}
+                  onChange={(e) => setTimerValue(e.target.value)}
+                  className="mt-1"
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setEditingTimer(false)
+                    setTimerValue(timeLimitMinutes?.toString() || '30')
+                  }}
+                  disabled={savingTimer}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="button"
+                  onClick={handleSaveTimer}
+                  disabled={savingTimer}
+                  className="bg-brand-gold hover:bg-brand-goldLight text-brand-dark"
+                >
+                  {savingTimer ? 'Saving...' : 'Save'}
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              Time per question: <span className="font-semibold text-foreground">{timeLimitMinutes || 30} seconds</span>
+            </p>
+          )}
+        </div>
+
         {/* Add Question Form */}
         <div className="bg-brand-subtle/50 border border-brand-border rounded-lg p-4">
           <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">

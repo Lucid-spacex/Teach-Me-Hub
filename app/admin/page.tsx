@@ -3,11 +3,11 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { getUser, getUserRole } from '@/lib/auth'
-import { DashboardStats } from '@/components/admin/DashboardStats'
+import { AdminDashboardCharts } from '@/components/admin/AdminDashboardCharts'
 import { UnmatchedEnrollmentsList } from '@/components/admin/UnmatchedEnrollmentsList'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { RefreshCw, Shield, Users, GraduationCap, CreditCard, AlertCircle, Sparkles, ArrowUpRight } from 'lucide-react'
+import { RefreshCw, Users, GraduationCap, CreditCard, AlertCircle, Sparkles, ArrowUpRight } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
 import { api } from '@/lib/api'
@@ -138,29 +138,6 @@ export default function AdminDashboard() {
     )
   }
 
-  const quickStats = [
-    {
-      label: 'Total Users',
-      value: overview?.totalUsers || 0,
-      icon: Users,
-    },
-    {
-      label: 'Total Students',
-      value: overview?.totalStudents || 0,
-      icon: GraduationCap,
-    },
-    {
-      label: 'Total Tutors',
-      value: overview?.totalTutors || 0,
-      icon: Shield,
-    },
-    {
-      label: 'Pending Vetting',
-      value: overview?.pendingTutors || 0,
-      icon: AlertCircle,
-    },
-  ]
-
   const adminActions = [
     {
       label: 'Pending Tutors',
@@ -222,31 +199,6 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Quick Stats Grid */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {quickStats.map((stat) => {
-          const Icon = stat.icon
-          return (
-            <Card key={stat.label} className="group border border-border hover:border-primary/50 rounded-2xl transition-all duration-200 hover:shadow-sm hover:-translate-y-0.5 overflow-hidden">
-              <CardHeader className="pb-2 pt-5 px-5 flex flex-row items-center justify-between space-y-0">
-                <span className="text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors">
-                  {stat.label}
-                </span>
-                <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/20 text-primary flex items-center justify-center group-hover:bg-primary/20 group-hover:border-primary/40 transition-colors">
-                  <Icon className="h-4 w-4" />
-                </div>
-              </CardHeader>
-              <CardContent className="px-5 pb-5 pt-1">
-                <div className="flex items-baseline justify-between">
-                  <p className="text-3xl font-bold text-foreground tracking-tight">{stat.value}</p>
-                  <ArrowUpRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                </div>
-              </CardContent>
-            </Card>
-          )
-        })}
-      </div>
-
       {/* Quick Actions */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {adminActions.map((action) => (
@@ -273,7 +225,7 @@ export default function AdminDashboard() {
 
       {/* Main Content */}
       <div className="space-y-8">
-        <DashboardStats overview={overview} />
+        <AdminDashboardCharts overview={overview} />
 
         <div className="grid gap-8 lg:grid-cols-2">
           <UnmatchedEnrollmentsList onUpdate={handleRefresh} refreshTrigger={refreshTrigger} />

@@ -83,11 +83,11 @@ export function AllTutorsList({ refreshTrigger }: AllTutorsListProps) {
       },
     },
     {
-      key: 'hourlyRate',
-      header: 'Hourly Rate',
+      key: 'monthlySalaryNGN',
+      header: 'Monthly Salary (NGN)',
       cell: (tutor: TutorWithProfile) => {
         if (!tutor.tutorProfile) return <span className="text-muted-foreground">N/A</span>
-        return `$${tutor.tutorProfile.hourlyRate || 0}/hr`
+        return tutor.tutorProfile.monthlySalaryNGN ? `₦${tutor.tutorProfile.monthlySalaryNGN.toLocaleString()}` : 'Not set'
       },
     },
     {

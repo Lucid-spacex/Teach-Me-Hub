@@ -361,6 +361,90 @@
 - [x] Call GET /messages/admin-contact and read admin id from response
 - [x] Check admin id is non-empty string before sending
 - [x] Send POST /messages with { recipientId, body }
+
+## API Updates Implementation (2026-11-22)
+
+### Item 1: Separate Portals
+- [x] Added /admin/login to middleware public routes
+- [x] Created /tutors page (tutor landing page) with benefits, how it works, and CTA
+- [x] Updated HomeSections.tsx Roles section to include "Become a Tutor" button
+- [x] LoginForm already supports portal prop with PARENT, TUTOR, ADMIN
+- [x] Admin login page already exists with minimal design
+- [x] Middleware route guards already redirect unauthenticated users to correct login pages
+- [x] Sidebar logout already redirects to matching login page
+- [x] LoginRequest type already includes optional portal field
+- [x] Removed monthlySalaryNGN from CreateTutorProfileRequest (salary is now admin-only)
+
+**Files Changed:**
+- middleware.ts - added /admin/login to public routes
+- app/tutors/page.tsx - new server component
+- app/tutors/TutorsContent.tsx - new client component with tutor landing page
+- components/home/HomeSections.tsx - added "Become a Tutor" button in Roles section
+- components/tutor/TutorProfileModal.tsx - removed monthlySalaryNGN from form state
+
+### Item 2: Salary (Remove hourly rate, add monthly salary)
+- [x] No hourlyRate references found in frontend code
+- [x] Tutor type monthlySalaryNGN made nullable (number | null)
+- [x] TutorProfile already has monthlySalaryNGN field
+- [x] Tutor settings page shows salary as read-only with "Only admin can change" note
+- [x] Admin tutor detail page has salary edit modal with positive value validation
+- [x] Admin tutor detail page has salary history list
+- [x] Admin tutor detail page shows "Salary not set" warning when null
+- [x] Tutor registration form has expectedMonthlySalaryNGN field (required, 10000-5000000 range)
+- [x] Tutor registration review step shows expected salary
+- [x] Parents and students have no salary references
+- [x] Removed monthlySalaryNGN from CreateTutorProfileRequest (tutors cannot set their own salary)
+
+**Files Changed:**
+- lib/types.ts - made Tutor.monthlySalaryNGN nullable (number | null)
+- components/tutor/TutorProfileModal.tsx - removed monthlySalaryNGN from form state (done in item 1)
+
+**Note:** Most salary functionality was already implemented. Only type changes needed.
+
+### Item 3: Schedule Visibility
+- [x] Tutor students list already shows schedule card with: start date, days of week, time window with timezone, next expected class, sessions scheduled count
+- [x] Admin class-schedule page already has "Student Schedules" tab (mode=enrollments) with table showing student, tutor, subject, start date, days, time window, next class, status, filters (tutor, subject, status, date range, search), pagination
+- [x] Schedule info already displayed on tutor student detail page
+- [x] No changes needed - functionality already complete
+
+**Files Changed:**
+- None (already implemented)
+
+### Item 4: Submissions and Scoring
+- [x] Tutor assignment detail page already has "Submissions" view with GET /assignments/:id/submissions
+- [x] Shows student, status (SUBMITTED/GRADED), text answer, attachment, submittedAt
+- [x] Score modal already implemented with score, max score, comment fields
+- [x] POST /tutor/assignments/:id/submissions/:submissionId/score already in api.ts
+- [x] Graded submissions show scored item details
+- [x] "Add to Grade Pool" action for manual scored items
+- [x] No changes needed - functionality already complete
+
+**Files Changed:**
+- None (already implemented)
+
+### Item 5: Attendance UX
+- [x] LogSessionModal already has attendance marking prompt for COMPLETED sessions
+- [x] Shows student list with present/absent checkboxes
+- [x] Added isAttendanceOnly flag to handle attendance-only mode for already completed sessions
+- [x] Added badge on sessions page showing count of sessions with unmarked attendance
+- [x] "Mark Attendance" button on COMPLETED sessions opens attendance-only modal
+- [x] Attendance data persisted when updating session
+
+**Files Changed:**
+- components/tutor/LogSessionModal.tsx - added isAttendanceOnly state, attendance-only mode handling
+- components/tutor/SessionList.tsx - added attendance-only mode, unmarked attendance badge
+
+### Item 6: Badges Per User
+- [x] useBadgeCounts already calls GET /badge-counts for all roles
+- [x] Calls GET /admin/badge-counts only when user is ADMIN
+- [x] Maps role-specific badge counts (tutor: sessionsNeedingScheduling, classesWithin24h, draftOrRejectedGrades, unmarkedAttendance, submissionsToScore; parent: unpaid enrollments, upcoming within 24h, unread messages, unread by category; student: pending assignments, classes within 24h, unread by category; admin: existing admin counts plus attendanceUnmarkedSessions)
+- [x] NotificationProvider clears all badge state, SSE connection, and cached data on logout or user change
+- [x] Clear localStorage: badgeCounts, lastBadgeFetch, notificationSoundEnabled
+- [x] No caching counts across logins
+
+**Files Changed:**
+- components/shared/NotificationProvider.tsx - added cleanup on auth:user-changed event
+- hooks/useBadgeCounts.ts - already implemented (no changes needed)
 - [x] Show "Admin is unavailable, try again" if no id returned
 - [x] Never send undefined or object as recipientId
 - [x] Show backend field errors from details array under matching input

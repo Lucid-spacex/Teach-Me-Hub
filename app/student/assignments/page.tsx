@@ -364,6 +364,7 @@ export default function StudentAssignmentsPage() {
           onOpenChange={setQuizModalOpen}
           assignmentId={selectedAssignment.id}
           assignmentTitle={selectedAssignment.title}
+          timeLimitMinutes={selectedAssignment.timeLimitMinutes}
           onSuccess={loadAssignments}
         />
       )}

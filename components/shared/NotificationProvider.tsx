@@ -330,14 +330,41 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   useEffect(() => {
     const handleUserChanged = () => {
       const freshUser = getUser()
+      
+      // Clear all badge state, SSE connection, and cached data on logout or user change
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close()
+        eventSourceRef.current = null
+      }
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current)
+        pollingIntervalRef.current = null
+      }
+      
+      // Clear cached data
+      localStorage.removeItem('badgeCounts')
+      localStorage.removeItem('lastBadgeFetch')
+      
+      // Reset state
+      setUnreadCount(0)
+      setByCategory({} as Record<NotificationCategory, number>)
+      setNotifications([])
+      processedEventIdsRef.current = new Set()
+      
       setUser(freshUser)
+      
+      // If user is null (logged out), don't reload data
+      if (freshUser) {
+        refreshUnreadCount()
+        refreshNotifications()
+      }
     }
     
     window.addEventListener('auth:user-changed', handleUserChanged)
     return () => {
       window.removeEventListener('auth:user-changed', handleUserChanged)
     }
-  }, [])
+  }, [refreshUnreadCount, refreshNotifications])
 
   const contextValue: NotificationContextType = {
     unreadCount,

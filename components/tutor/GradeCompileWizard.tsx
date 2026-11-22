@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { api } from '@/lib/api'
 import { CompiledGrade, ScoredItem, TutorStudent, GradeComponentType, GradePreviewResponse } from '@/lib/types'
+import { toNumber, formatPercentage } from '@/lib/utils'
 import { Modal } from '@/components/shared/Modal'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -86,11 +87,11 @@ export function GradeCompileWizard({ open, onOpenChange, onSuccess, editingGrade
         setFormData({
           enrollmentId: editingGrade.enrollmentId,
           period: editingGrade.period,
-          selectedItemIds: editingGrade.frozenSnapshotItems.map(item => item.id),
-          componentWeights: editingGrade.components.reduce((acc, comp) => {
+          selectedItemIds: Array.isArray(editingGrade.frozenSnapshotItems) ? editingGrade.frozenSnapshotItems.map(item => item.id) : [],
+          componentWeights: Array.isArray(editingGrade.components) ? editingGrade.components.reduce((acc, comp) => {
             acc[comp.type] = comp.weight
             return acc
-          }, {} as Record<GradeComponentType, number>),
+          }, {} as Record<GradeComponentType, number>) : {} as Record<GradeComponentType, number>,
           finalScore: editingGrade.finalScore ?? null,
           overrideReason: editingGrade.overrideReason || '',
           tutorComment: editingGrade.tutorComment || '',
@@ -211,11 +212,7 @@ export function GradeCompileWizard({ open, onOpenChange, onSuccess, editingGrade
         periodEnd: formData.period, // Will need to be updated
         components,
       })
-      const previewData = await api.previewCompiledGrade({
-        enrollmentId: formData.enrollmentId,
-        period: formData.period,
-        components,
-      })
+      const previewData = await api.previewCompiledGrade(draftGrade.id)
       setPreview(previewData)
       setCurrentStep(2)
     } catch (err) {
@@ -432,7 +429,7 @@ export function GradeCompileWizard({ open, onOpenChange, onSuccess, editingGrade
                       <SelectValue placeholder="Select enrollment" />
                     </SelectTrigger>
                     <SelectContent>
-                      {students.map(s => (
+                      {Array.isArray(students) && students.map(s => (
                         <SelectItem key={s.enrollment?.id} value={s.enrollment?.id || ''}>
                           {s.student.fullName} - {s.enrollment?.subject?.name}
                         </SelectItem>
@@ -461,7 +458,7 @@ export function GradeCompileWizard({ open, onOpenChange, onSuccess, editingGrade
                     </div>
                   ) : (
                     <div className="space-y-2 max-h-64 overflow-y-auto">
-                      {scoredItems.map(item => (
+                      {Array.isArray(scoredItems) && scoredItems.map(item => (
                         <div
                           key={item.id}
                           className="flex items-center gap-3 p-3 rounded-lg border border-border/50 hover:bg-accent/50"
@@ -553,24 +550,24 @@ export function GradeCompileWizard({ open, onOpenChange, onSuccess, editingGrade
                   <div className="grid grid-cols-2 gap-4">
                     <div className="p-4 rounded-lg bg-muted/50">
                       <p className="text-sm text-muted-foreground">Computed Score</p>
-                      <p className="text-3xl font-bold text-foreground">{preview.computedScore.toFixed(1)}%</p>
+                      <p className="text-3xl font-bold text-foreground">{formatPercentage(preview.computedScore)}</p>
                     </div>
                     <div className="p-4 rounded-lg bg-muted/50">
                       <p className="text-sm text-muted-foreground">Attendance Rate</p>
-                      <p className="text-3xl font-bold text-foreground">{preview.attendanceRate.toFixed(1)}%</p>
+                      <p className="text-3xl font-bold text-foreground">{formatPercentage(preview.attendanceRate)}</p>
                     </div>
                   </div>
 
                   <div className="space-y-3">
                     <Label>Component Breakdown</Label>
-                    {preview.components.map(comp => (
+                    {Array.isArray(preview?.components) && preview.components.map(comp => (
                       <div key={comp.type} className="p-3 rounded-lg border border-border/50">
                         <div className="flex items-center justify-between mb-2">
                           <span className="font-medium">{COMPONENT_LABELS[comp.type]}</span>
                           <Badge variant="outline">{comp.weight}%</Badge>
                         </div>
                         <div className="text-sm text-muted-foreground">
-                          {comp.itemCount} items • {comp.componentPercentage?.toFixed(1) || 0}% contribution
+                          {comp.itemCount} items • {formatPercentage(comp.componentPercentage, 1)} contribution
                         </div>
                       </div>
                     ))}
@@ -640,7 +637,7 @@ export function GradeCompileWizard({ open, onOpenChange, onSuccess, editingGrade
               {preview && (
                 <div className="p-4 rounded-lg bg-brand-gold/10 border border-brand-gold/30">
                   <p className="text-sm">
-                    <span className="font-medium">Computed Score:</span> {preview.computedScore.toFixed(1)}%
+                    <span className="font-medium">Computed Score:</span> {preview.computedScore != null && typeof preview.computedScore === 'number' ? `${preview.computedScore.toFixed(1)}%` : 'N/A'}
                     {formData.finalScore !== null && (
                       <span className="ml-2">
                         → <span className="font-medium">Final Score:</span> {formData.finalScore}%

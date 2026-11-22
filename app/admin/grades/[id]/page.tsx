@@ -10,6 +10,7 @@ import { Loader2, CheckCircle, XCircle, ArrowLeft, FileText, User, Calendar, Ale
 import { useToast } from '@/components/ui/use-toast'
 import { api } from '@/lib/api'
 import { CompiledGrade, GradeStatus, GradeComponent } from '@/lib/types'
+import { toNumber, formatPercentage } from '@/lib/utils'
 import { CardSkeleton } from '@/components/shared/SkeletonLoader'
 import { useEntityNotification } from '@/hooks/useEntityNotification'
 
@@ -281,7 +282,7 @@ export default function AdminGradeDetailPage() {
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Attendance Rate</span>
-                <span className="text-foreground font-medium">{grade.attendanceRate.toFixed(1)}%</span>
+                <span className="text-foreground font-medium">{formatPercentage(grade.attendanceRate)}</span>
               </div>
             </CardContent>
           </Card>
@@ -296,12 +297,12 @@ export default function AdminGradeDetailPage() {
             <CardContent className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Computed Score</span>
-                <span className="text-foreground font-bold text-lg">{grade.computedScore.toFixed(1)}%</span>
+                <span className="text-foreground font-bold text-lg">{formatPercentage(grade.computedScore)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Final Score</span>
                 <span className="text-foreground font-bold text-lg">
-                  {grade.finalScore ? grade.finalScore.toFixed(1) + '%' : 'N/A'}
+                  {formatPercentage(grade.finalScore)}
                 </span>
               </div>
               {grade.overrideReason && (
@@ -378,7 +379,7 @@ export default function AdminGradeDetailPage() {
                     </div>
                     <div>
                       <span className="text-muted-foreground">Component %</span>
-                      <p className="text-foreground font-medium">{component.componentPercentage?.toFixed(1) || 0}%</p>
+                      <p className="text-foreground font-medium">{formatPercentage(component.componentPercentage, 1)}</p>
                     </div>
                   </div>
                 </div>

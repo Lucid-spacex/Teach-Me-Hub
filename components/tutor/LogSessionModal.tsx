@@ -18,9 +18,10 @@ interface LogSessionModalProps {
   session: Session | null
   onSuccess: () => void
   initialReschedule?: boolean
+  initialAttendanceOnly?: boolean
 }
 
-export function LogSessionModal({ open, onOpenChange, session, onSuccess, initialReschedule = false }: LogSessionModalProps) {
+export function LogSessionModal({ open, onOpenChange, session, onSuccess, initialReschedule = false, initialAttendanceOnly = false }: LogSessionModalProps) {
   const { toast } = useToast()
   const [formData, setFormData] = useState<UpdateSessionRequest>({
     status: 'COMPLETED',
@@ -33,6 +34,9 @@ export function LogSessionModal({ open, onOpenChange, session, onSuccess, initia
   })
   const [loading, setLoading] = useState(false)
   const [isRescheduling, setIsRescheduling] = useState(initialReschedule)
+  const [showAttendancePrompt, setShowAttendancePrompt] = useState(false)
+  const [attendanceData, setAttendanceData] = useState<Record<string, boolean>>({})
+  const [isAttendanceOnly, setIsAttendanceOnly] = useState(false)
 
   useEffect(() => {
     if (session) {
@@ -47,16 +51,41 @@ export function LogSessionModal({ open, onOpenChange, session, onSuccess, initia
         scheduledAt: date.toISOString().slice(0, 16),
         durationMinutes: session.durationMinutes,
       })
+      
+      // If session is already COMPLETED and we're opening for attendance only
+      if (session.status === 'COMPLETED' && session.participants && session.participants.length > 0) {
+        setIsAttendanceOnly(true)
+        setShowAttendancePrompt(true)
+        // Initialize attendance data from existing session data
+        const initialAttendance: Record<string, boolean> = {}
+        session.participants.forEach((p: any) => {
+          initialAttendance[p.enrollmentId] = p.attended ?? true
+        })
+        setAttendanceData(initialAttendance)
+      }
     }
   }, [session])
 
   useEffect(() => {
     setIsRescheduling(initialReschedule)
-  }, [initialReschedule])
+    setIsAttendanceOnly(initialAttendanceOnly)
+  }, [initialReschedule, initialAttendanceOnly])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!session) return
+
+    // Show attendance prompt when completing a session with participants
+    if (!isRescheduling && !isAttendanceOnly && formData.status === 'COMPLETED' && session.participants && session.participants.length > 0 && !showAttendancePrompt) {
+      setShowAttendancePrompt(true)
+      // Initialize attendance data (all present by default)
+      const initialAttendance: Record<string, boolean> = {}
+      session.participants.forEach((p: any) => {
+        initialAttendance[p.enrollmentId] = true
+      })
+      setAttendanceData(initialAttendance)
+      return
+    }
 
     setLoading(true)
 
@@ -74,8 +103,31 @@ export function LogSessionModal({ open, onOpenChange, session, onSuccess, initia
           title: "Success",
           description: "Session rescheduled successfully",
         })
+      } else if (isAttendanceOnly) {
+        // Update attendance only for already completed sessions
+        const updateData: UpdateSessionRequest = {
+          status: session.status,
+          tutorNotes: session.tutorNotes || '',
+          homeworkAssigned: session.homeworkAssigned || '',
+          participants: session.participants?.map((p: any) => ({
+            enrollmentId: p.enrollmentId,
+            attended: attendanceData[p.enrollmentId] ?? true,
+          })),
+        }
+        await api.updateSession(session.id, updateData)
+        toast({
+          title: "Success",
+          description: "Attendance marked successfully",
+        })
       } else {
-        await api.updateSession(session.id, formData)
+        const updateData: UpdateSessionRequest = {
+          ...formData,
+          participants: session.participants?.map((p: any) => ({
+            enrollmentId: p.enrollmentId,
+            attended: attendanceData[p.enrollmentId] ?? true,
+          })),
+        }
+        await api.updateSession(session.id, updateData)
         toast({
           title: "Success",
           description: "Session logged successfully",
@@ -97,9 +149,16 @@ export function LogSessionModal({ open, onOpenChange, session, onSuccess, initia
   return (
     <Modal
       open={open}
-      onOpenChange={onOpenChange}
-      title={isRescheduling ? "Reschedule Session" : "Log Session"}
-      description={isRescheduling ? "Change the date, time, and duration of this session" : "Record session details and homework"}
+      onOpenChange={(newOpen) => {
+        onOpenChange(newOpen)
+        if (!newOpen) {
+          setIsRescheduling(false)
+          setShowAttendancePrompt(false)
+          setIsAttendanceOnly(false)
+        }
+      }}
+      title={isRescheduling ? "Reschedule Session" : (showAttendancePrompt ? "Mark Attendance" : "Log Session")}
+      description={isRescheduling ? "Change the date, time, and duration of this session" : (showAttendancePrompt ? "Mark attendance for each student in this session" : "Record session details and homework")}
       footer={
         <div className="flex gap-2 justify-end">
           <Button
@@ -108,6 +167,8 @@ export function LogSessionModal({ open, onOpenChange, session, onSuccess, initia
             onClick={() => {
               onOpenChange(false)
               setIsRescheduling(false)
+              setShowAttendancePrompt(false)
+              setIsAttendanceOnly(false)
             }}
             disabled={loading}
           >
@@ -115,13 +176,13 @@ export function LogSessionModal({ open, onOpenChange, session, onSuccess, initia
           </Button>
           <Button type="submit" form="log-session-form" disabled={loading}>
             {loading ? <LoadingSpinner size="sm" className="mr-2" /> : null}
-            {isRescheduling ? 'Reschedule Session' : 'Log Session'}
+            {isRescheduling ? 'Reschedule Session' : (showAttendancePrompt ? 'Save Attendance' : 'Log Session')}
           </Button>
         </div>
       }
     >
       <form id="log-session-form" onSubmit={handleSubmit} className="space-y-4">
-        {session?.createdBy === 'TUTOR' && session.status === 'SCHEDULED' && (
+        {session?.createdBy === 'TUTOR' && session.status === 'SCHEDULED' && !isAttendanceOnly && (
           <div className="flex items-center gap-2">
             <Button
               type="button"
@@ -144,7 +205,30 @@ export function LogSessionModal({ open, onOpenChange, session, onSuccess, initia
           </div>
         )}
 
-        {isRescheduling ? (
+        {showAttendancePrompt && session?.participants && session.participants.length > 0 ? (
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground">Mark each student as present or absent:</p>
+            {session.participants.map((p: any) => (
+              <div key={p.enrollmentId} className="flex items-center justify-between p-3 rounded-lg bg-background border border-border">
+                <div>
+                  <p className="font-medium text-foreground">{p.student?.fullName || p.studentName || 'Student'}</p>
+                  <p className="text-xs text-muted-foreground">{p.subject?.name || p.subjectName || 'Subject'}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={attendanceData[p.enrollmentId] ?? true}
+                      onChange={(e) => setAttendanceData({ ...attendanceData, [p.enrollmentId]: e.target.checked })}
+                      className="w-4 h-4"
+                    />
+                    <span className="text-sm">Present</span>
+                  </label>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : isRescheduling ? (
           <>
             <div className="space-y-2">
               <Label htmlFor="scheduledAt">Date & Time *</Label>
@@ -174,13 +258,14 @@ export function LogSessionModal({ open, onOpenChange, session, onSuccess, initia
           </>
         ) : (
           <>
-            {session?.status === 'COMPLETED' ? (
+            {session?.status === 'COMPLETED' || session?.status === 'SCHEDULED' ? (
               <>
                 <div className="space-y-2">
                   <Label htmlFor="status">Status</Label>
                   <Select
                     value={formData.status}
                     onValueChange={(value) => setFormData({ ...formData, status: value as any })}
+                    disabled={isAttendanceOnly}
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -201,6 +286,7 @@ export function LogSessionModal({ open, onOpenChange, session, onSuccess, initia
                     onChange={(e) => setFormData({ ...formData, tutorNotes: e.target.value })}
                     placeholder="Notes about the session..."
                     rows={4}
+                    disabled={isAttendanceOnly}
                   />
                 </div>
 
@@ -212,12 +298,13 @@ export function LogSessionModal({ open, onOpenChange, session, onSuccess, initia
                     onChange={(e) => setFormData({ ...formData, homeworkAssigned: e.target.value })}
                     placeholder="Homework for the student..."
                     rows={3}
+                    disabled={isAttendanceOnly}
                   />
                 </div>
               </>
             ) : (
               <div className="text-sm text-muted-foreground">
-                Attendance can only be marked for completed sessions. This session is currently {session?.status}.
+                {isAttendanceOnly ? 'Attendance can only be marked for sessions with participants.' : 'Attendance can only be marked for completed sessions. This session is currently ' + session?.status + '.'}
               </div>
             )}
           </>

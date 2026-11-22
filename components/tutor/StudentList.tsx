@@ -167,6 +167,11 @@ export function TutorStudentList({ refreshTrigger }: TutorStudentListProps) {
           const studentId = item.student?.id
           if (!studentId || !expandedRows.has(studentId)) return null
 
+          const enrollment = item.enrollment
+          const startDate = enrollment?.startDate ? new Date(enrollment.startDate) : null
+          const now = new Date()
+          const daysUntilStart = startDate ? Math.ceil((startDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)) : null
+
           return (
             <div key={studentId} className="border border-brand-gold/20 rounded-lg p-4 mt-2 bg-brand-subtle/50">
               <div className="grid md:grid-cols-2 gap-4">
@@ -183,14 +188,66 @@ export function TutorStudentList({ refreshTrigger }: TutorStudentListProps) {
                 <div>
                   <h4 className="font-medium text-foreground mb-2">Enrollment Details</h4>
                   <div className="space-y-1 text-sm">
-                    <p><span className="text-muted-foreground">Enrollment ID:</span> <code className="text-xs text-brand-gold">{item.enrollment?.id || 'N/A'}</code></p>
-                    <p><span className="text-muted-foreground">Start Date:</span> <span className="text-muted-foreground">{item.enrollment?.startDate ? new Date(item.enrollment.startDate).toLocaleDateString() : 'N/A'}</span></p>
-                    {item.enrollment?.endDate && (
-                      <p><span className="text-muted-foreground">End Date:</span> <span className="text-muted-foreground">{new Date(item.enrollment.endDate).toLocaleDateString()}</span></p>
+                    <p><span className="text-muted-foreground">Enrollment ID:</span> <code className="text-xs text-brand-gold">{enrollment?.id || 'N/A'}</code></p>
+                    <p><span className="text-muted-foreground">Start Date:</span> <span className="text-muted-foreground">
+                      {startDate ? startDate.toLocaleDateString() : 'N/A'}
+                      {daysUntilStart !== null && daysUntilStart > 0 && (
+                        <span className="ml-2 text-xs text-brand-gold">(starts in {daysUntilStart} day{daysUntilStart !== 1 ? 's' : ''})</span>
+                      )}
+                    </span></p>
+                    {enrollment?.endDate && (
+                      <p><span className="text-muted-foreground">End Date:</span> <span className="text-muted-foreground">{new Date(enrollment.endDate).toLocaleDateString()}</span></p>
                     )}
                   </div>
                 </div>
               </div>
+
+              {/* Schedule Card */}
+              {enrollment && (
+                <div className="mt-4 p-3 rounded-lg bg-background border border-brand-gold/20">
+                  <h4 className="font-medium text-foreground mb-2 text-sm">Schedule</h4>
+                  <div className="grid md:grid-cols-2 gap-3 text-sm">
+                    <div>
+                      <p className="text-muted-foreground text-xs">Days of Week</p>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {enrollment.availableDays && enrollment.availableDays.length > 0 ? (
+                          enrollment.availableDays.map((day) => (
+                            <span key={day} className="px-2 py-0.5 rounded bg-brand-gold/10 text-brand-gold text-xs">
+                              {day}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-muted-foreground">Not set</span>
+                        )}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground text-xs">Time Window</p>
+                      <p className="text-foreground">
+                        {enrollment.preferredStartHour !== undefined && enrollment.preferredEndHour !== undefined
+                          ? `${enrollment.preferredStartHour}:00 - ${enrollment.preferredEndHour}:00`
+                          : 'Not set'}
+                        {enrollment.scheduleTimezone && (
+                          <span className="text-muted-foreground text-xs ml-1">({enrollment.scheduleTimezone})</span>
+                        )}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground text-xs">Next Expected Class</p>
+                      <p className="text-foreground">
+                        {enrollment.nextExpectedClass?.scheduledAt
+                          ? new Date(enrollment.nextExpectedClass.scheduledAt).toLocaleString()
+                          : 'Not scheduled'}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground text-xs">Sessions Scheduled</p>
+                      <p className="text-foreground">{enrollment.sessionsScheduledCount || 0}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div className="mt-4 pt-3 border-t border-brand-gold/15 flex justify-end">
                 <Button
                   size="sm"

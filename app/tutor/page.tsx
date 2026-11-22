@@ -92,7 +92,7 @@ export default function TutorDashboard() {
             bio: '',
             credentialsUrl: null,
             vettingStatus: 'PENDING',
-            hourlyRate: 0,
+            monthlySalaryNGN: 0,
             availability: {},
             createdAt: new Date().toISOString()
           })

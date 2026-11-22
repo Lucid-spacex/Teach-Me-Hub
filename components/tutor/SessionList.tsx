@@ -30,6 +30,7 @@ function TutorSessionListContent({ refreshTrigger }: TutorSessionListProps) {
   const [selectedSession, setSelectedSession] = useState<Session | null>(null)
   const [deletingSession, setDeletingSession] = useState<string | null>(null)
   const [prefillData, setPrefillData] = useState<any>(null)
+  const [isAttendanceOnly, setIsAttendanceOnly] = useState(false)
 
   useEffect(() => {
     loadSessions()
@@ -60,8 +61,9 @@ function TutorSessionListContent({ refreshTrigger }: TutorSessionListProps) {
     }
   }
 
-  const openLogModal = (session: Session, isReschedule = false) => {
+  const openLogModal = (session: Session, isReschedule = false, attendanceOnly = false) => {
     setSelectedSession(session)
+    setIsAttendanceOnly(attendanceOnly)
     setLogModalOpen(true)
     // We'll pass the reschedule mode through the modal state
     if (isReschedule) {
@@ -105,6 +107,12 @@ function TutorSessionListContent({ refreshTrigger }: TutorSessionListProps) {
   const pastSessions = sessions
     .filter(s => s.status !== 'SCHEDULED')
     .sort((a, b) => new Date(b.scheduledAt).getTime() - new Date(a.scheduledAt).getTime())
+
+  const sessionsWithUnmarkedAttendance = sessions.filter(s => 
+    s.status === 'COMPLETED' && 
+    s.participants && 
+    s.participants.some((p: any) => p.attended === undefined || p.attended === null)
+  )
 
   const columns = [
     {
@@ -160,7 +168,7 @@ function TutorSessionListContent({ refreshTrigger }: TutorSessionListProps) {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => openLogModal(session)}
+              onClick={() => openLogModal(session, false, true)}
               className="gap-2 border-brand-gold text-brand-gold hover:bg-brand-gold/10"
             >
               <Edit className="h-4 w-4" />
@@ -215,10 +223,18 @@ function TutorSessionListContent({ refreshTrigger }: TutorSessionListProps) {
       <Card className="bg-card border-brand-gold/30">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-foreground flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-brand-gold" />
-              My Sessions
-            </CardTitle>
+            <div className="flex items-center gap-3">
+              <CardTitle className="text-foreground flex items-center gap-2">
+                <Calendar className="h-5 w-5 text-brand-gold" />
+                My Sessions
+              </CardTitle>
+              {sessionsWithUnmarkedAttendance.length > 0 && (
+                <Badge variant="destructive" className="text-sm">
+                  <AlertTriangle className="h-3 w-3 mr-1" />
+                  {sessionsWithUnmarkedAttendance.length} unmarked attendance
+                </Badge>
+              )}
+            </div>
             <Button
               size="sm"
               onClick={() => setCreateModalOpen(true)}
@@ -281,11 +297,15 @@ function TutorSessionListContent({ refreshTrigger }: TutorSessionListProps) {
         open={logModalOpen}
         onOpenChange={(open) => {
           setLogModalOpen(open)
-          if (!open) setSelectedSession(null)
+          if (!open) {
+            setSelectedSession(null)
+            setIsAttendanceOnly(false)
+          }
         }}
         session={selectedSession}
         onSuccess={handleRefresh}
         initialReschedule={false}
+        initialAttendanceOnly={isAttendanceOnly}
       />
       <CreateSessionModal
         open={createModalOpen}

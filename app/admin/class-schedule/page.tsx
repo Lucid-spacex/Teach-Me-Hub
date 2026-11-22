@@ -23,11 +23,16 @@ export default function AdminClassSchedulePage() {
   const [schedule, setSchedule] = useState<ClassScheduleItem[]>([])
   const [unscheduledCount, setUnscheduledCount] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [mode, setMode] = useState<'sessions' | 'enrollments'>('sessions')
+  const [enrollments, setEnrollments] = useState<any[]>([])
+  const [pagination, setPagination] = useState({ page: 1, limit: 20, total: 0 })
   const [filters, setFilters] = useState({
     tutorId: '',
+    subjectId: '',
     status: '' as ClassScheduleStatus | '',
     fromDate: '',
     toDate: '',
+    search: '',
   })
 
   useEffect(() => {
@@ -43,14 +48,36 @@ export default function AdminClassSchedulePage() {
   const loadSchedule = async () => {
     setLoading(true)
     try {
-      const response = await api.getAdminClassSchedule({
-        fromDate: filters.fromDate || new Date().toISOString().split('T')[0],
-        toDate: filters.toDate,
-        tutorId: filters.tutorId || undefined,
-        status: filters.status || undefined,
-      })
-      setSchedule(response.data)
-      setUnscheduledCount(response.unscheduledWithin24hCount)
+      if (mode === 'sessions') {
+        const response = await api.getAdminClassSchedule({
+          fromDate: filters.fromDate || new Date().toISOString().split('T')[0],
+          toDate: filters.toDate,
+          tutorId: filters.tutorId || undefined,
+          status: filters.status || undefined,
+        })
+        setSchedule(response.data)
+        setUnscheduledCount(response.unscheduledWithin24hCount)
+      } else {
+        // Enrollments mode
+        const params: any = {
+          page: pagination.page,
+          limit: pagination.limit,
+        }
+        if (filters.tutorId) params.tutorId = filters.tutorId
+        if (filters.subjectId) params.subjectId = filters.subjectId
+        if (filters.status) params.status = filters.status
+        if (filters.fromDate) params.from = filters.fromDate
+        if (filters.toDate) params.to = filters.toDate
+        if (filters.search) params.search = filters.search
+
+        const response = await api.getAdminClassSchedule(params)
+        setEnrollments(response.data || [])
+        setPagination({
+          page: response.page || 1,
+          limit: response.limit || 20,
+          total: response.total || 0,
+        })
+      }
     } catch (error) {
       console.error('Failed to load class schedule:', error)
       toast({
@@ -104,15 +131,37 @@ export default function AdminClassSchedulePage() {
             <div className="h-6 w-px bg-border" />
             <div>
               <h1 className="text-3xl font-bold text-foreground">Class Schedule</h1>
-              <p className="text-muted-foreground mt-2">View all students with their next class</p>
+              <p className="text-muted-foreground mt-2">
+                {mode === 'sessions' ? 'View all students with their next class' : 'View student enrollment schedules'}
+              </p>
             </div>
           </div>
-          {unscheduledCount > 0 && (
-            <Badge variant="destructive" className="text-sm">
-              <AlertCircle className="h-4 w-4 mr-1" />
-              {unscheduledCount} classes unscheduled within 24h
-            </Badge>
-          )}
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 bg-muted rounded-lg p-1">
+              <Button
+                size="sm"
+                variant={mode === 'sessions' ? 'default' : 'ghost'}
+                onClick={() => setMode('sessions')}
+                className="text-xs"
+              >
+                Sessions
+              </Button>
+              <Button
+                size="sm"
+                variant={mode === 'enrollments' ? 'default' : 'ghost'}
+                onClick={() => setMode('enrollments')}
+                className="text-xs"
+              >
+                Student Schedules
+              </Button>
+            </div>
+            {mode === 'sessions' && unscheduledCount > 0 && (
+              <Badge variant="destructive" className="text-sm">
+                <AlertCircle className="h-4 w-4 mr-1" />
+                {unscheduledCount} classes unscheduled within 24h
+              </Badge>
+            )}
+          </div>
         </div>
 
         {/* Filters */}
@@ -124,7 +173,29 @@ export default function AdminClassSchedulePage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+              {mode === 'enrollments' && (
+                <>
+                  <div>
+                    <label className="text-sm text-muted-foreground mb-2 block">Search</label>
+                    <Input
+                      placeholder="Student name..."
+                      value={filters.search}
+                      onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                      className="bg-background border-input"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm text-muted-foreground mb-2 block">Subject ID</label>
+                    <Input
+                      placeholder="Subject ID"
+                      value={filters.subjectId}
+                      onChange={(e) => setFilters({ ...filters, subjectId: e.target.value })}
+                      className="bg-background border-input"
+                    />
+                  </div>
+                </>
+              )}
               <div>
                 <label className="text-sm text-muted-foreground mb-2 block">Tutor ID</label>
                 <Input
@@ -148,6 +219,7 @@ export default function AdminClassSchedulePage() {
                     <SelectItem value="SCHEDULED">Scheduled</SelectItem>
                     <SelectItem value="UNSCHEDULED">Unscheduled</SelectItem>
                     <SelectItem value="MISSED">Missed</SelectItem>
+                    <SelectItem value="NOT_STARTED">Not Started</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -174,71 +246,192 @@ export default function AdminClassSchedulePage() {
         </Card>
 
         {/* Schedule List */}
-        {schedule.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <Calendar className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold text-foreground">No classes found</h3>
-            <p className="mt-2 text-sm text-muted-foreground max-w-sm">
-              There are no classes matching your current filters
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {schedule.map((item) => (
-              <Card key={`${item.studentId}-${item.enrollmentId}`} className="bg-card border-brand-gold/30">
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-3">
-                        <h3 className="font-semibold text-foreground">{item.studentName}</h3>
-                        {getStatusBadge(item.status)}
-                        {item.unscheduledWithin24h && (
-                          <Badge variant="destructive" className="text-xs">
-                            <AlertCircle className="h-3 w-3 mr-1" />
-                            Within 24h
-                          </Badge>
-                        )}
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
-                        <div className="flex items-center gap-2">
-                          <User className="h-4 w-4 text-muted-foreground" />
-                          <div>
-                            <span className="text-muted-foreground block">Tutor</span>
-                            <p className="text-foreground font-medium">{item.tutorName}</p>
-                          </div>
+        {mode === 'sessions' ? (
+          schedule.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <Calendar className="h-12 w-12 text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold text-foreground">No classes found</h3>
+              <p className="mt-2 text-sm text-muted-foreground max-w-sm">
+                There are no classes matching your current filters
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {schedule.map((item) => (
+                <Card key={`${item.studentId}-${item.enrollmentId}`} className="bg-card border-brand-gold/30">
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-3">
+                          <h3 className="font-semibold text-foreground">{item.studentName}</h3>
+                          {getStatusBadge(item.status)}
+                          {item.unscheduledWithin24h && (
+                            <Badge variant="destructive" className="text-xs">
+                              <AlertCircle className="h-3 w-3 mr-1" />
+                              Within 24h
+                            </Badge>
+                          )}
                         </div>
-                        <div className="flex items-center gap-2">
-                          <Calendar className="h-4 w-4 text-muted-foreground" />
-                          <div>
-                            <span className="text-muted-foreground block">Subject</span>
-                            <p className="text-foreground font-medium">{item.subjectName}</p>
-                          </div>
-                        </div>
-                        {item.nextClassDate && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
                           <div className="flex items-center gap-2">
-                            <Clock className="h-4 w-4 text-muted-foreground" />
+                            <User className="h-4 w-4 text-muted-foreground" />
                             <div>
-                              <span className="text-muted-foreground block">Next Class</span>
-                              <p className="text-foreground font-medium">
-                                {new Date(item.nextClassDate).toLocaleDateString()}
-                                {item.nextClassTime && ` at ${item.nextClassTime}`}
-                              </p>
-                              {item.timezone && (
-                                <p className="text-xs text-muted-foreground">{item.timezone}</p>
-                              )}
+                              <span className="text-muted-foreground block">Tutor</span>
+                              <p className="text-foreground font-medium">{item.tutorName}</p>
                             </div>
                           </div>
-                        )}
-                        <div>
-                          <span className="text-muted-foreground block">Enrollment ID</span>
-                          <p className="text-foreground font-medium">{item.enrollmentId}</p>
+                          <div className="flex items-center gap-2">
+                            <Calendar className="h-4 w-4 text-muted-foreground" />
+                            <div>
+                              <span className="text-muted-foreground block">Subject</span>
+                              <p className="text-foreground font-medium">{item.subjectName}</p>
+                            </div>
+                          </div>
+                          {item.nextClassDate && (
+                            <div className="flex items-center gap-2">
+                              <Clock className="h-4 w-4 text-muted-foreground" />
+                              <div>
+                                <span className="text-muted-foreground block">Next Class</span>
+                                <p className="text-foreground font-medium">
+                                  {new Date(item.nextClassDate).toLocaleDateString()}
+                                  {item.nextClassTime && ` at ${item.nextClassTime}`}
+                                </p>
+                                {item.timezone && (
+                                  <p className="text-xs text-muted-foreground">{item.timezone}</p>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                          <div>
+                            <span className="text-muted-foreground block">Enrollment ID</span>
+                            <p className="text-foreground font-medium">{item.enrollmentId}</p>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )
+        ) : (
+          // Enrollments mode - student schedules
+          enrollments.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <Calendar className="h-12 w-12 text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold text-foreground">No enrollments found</h3>
+              <p className="mt-2 text-sm text-muted-foreground max-w-sm">
+                There are no enrollments matching your current filters
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {enrollments.map((item) => (
+                <Card key={item.id} className="bg-card border-brand-gold/30">
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-3">
+                          <h3 className="font-semibold text-foreground">{item.student?.fullName}</h3>
+                          {getStatusBadge(item.status)}
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+                          <div className="flex items-center gap-2">
+                            <User className="h-4 w-4 text-muted-foreground" />
+                            <div>
+                              <span className="text-muted-foreground block">Tutor</span>
+                              <p className="text-foreground font-medium">{item.tutor?.fullName}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Calendar className="h-4 w-4 text-muted-foreground" />
+                            <div>
+                              <span className="text-muted-foreground block">Subject</span>
+                              <p className="text-foreground font-medium">{item.subject?.name}</p>
+                            </div>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground block">Start Date</span>
+                            <p className="text-foreground font-medium">
+                              {item.startDate ? new Date(item.startDate).toLocaleDateString() : 'N/A'}
+                            </p>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground block">Sessions Scheduled</span>
+                            <p className="text-foreground font-medium">{item.sessionsScheduledCount || 0}</p>
+                          </div>
+                        </div>
+                        {/* Schedule Details */}
+                        <div className="mt-4 p-3 rounded-lg bg-background border border-brand-gold/20">
+                          <div className="grid md:grid-cols-3 gap-3 text-sm">
+                            <div>
+                              <p className="text-muted-foreground text-xs">Days of Week</p>
+                              <div className="flex flex-wrap gap-1 mt-1">
+                                {item.availableDays && item.availableDays.length > 0 ? (
+                                  item.availableDays.map((day: string) => (
+                                    <span key={day} className="px-2 py-0.5 rounded bg-brand-gold/10 text-brand-gold text-xs">
+                                      {day}
+                                    </span>
+                                  ))
+                                ) : (
+                                  <span className="text-muted-foreground">Not set</span>
+                                )}
+                              </div>
+                            </div>
+                            <div>
+                              <p className="text-muted-foreground text-xs">Time Window</p>
+                              <p className="text-foreground">
+                                {item.preferredStartHour !== undefined && item.preferredEndHour !== undefined
+                                  ? `${item.preferredStartHour}:00 - ${item.preferredEndHour}:00`
+                                  : 'Not set'}
+                                {item.scheduleTimezone && (
+                                  <span className="text-muted-foreground text-xs ml-1">({item.scheduleTimezone})</span>
+                                )}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-muted-foreground text-xs">Next Expected Class</p>
+                              <p className="text-foreground">
+                                {item.nextExpectedClass?.scheduledAt
+                                  ? new Date(item.nextExpectedClass.scheduledAt).toLocaleString()
+                                  : 'Not scheduled'}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )
+        )}
+
+        {/* Pagination for enrollments mode */}
+        {mode === 'enrollments' && pagination.total > pagination.limit && (
+          <div className="flex items-center justify-between mt-6">
+            <p className="text-sm text-muted-foreground">
+              Showing {((pagination.page - 1) * pagination.limit) + 1} to {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} results
+            </p>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPagination({ ...pagination, page: pagination.page - 1 })}
+                disabled={pagination.page === 1}
+              >
+                Previous
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPagination({ ...pagination, page: pagination.page + 1 })}
+                disabled={pagination.page * pagination.limit >= pagination.total}
+              >
+                Next
+              </Button>
+            </div>
           </div>
         )}
       </div>

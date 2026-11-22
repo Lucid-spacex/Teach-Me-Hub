@@ -10,6 +10,7 @@ import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
 import { useToast } from '@/components/ui/use-toast'
 import { api } from '@/lib/api'
 import { CompiledGrade, GradeStatus, TutorStudent } from '@/lib/types'
+import { toNumber, formatPercentage } from '@/lib/utils'
 import { GradeCompileWizard } from '@/components/tutor/GradeCompileWizard'
 import { StatusBadge } from '@/components/shared/StatusBadge'
 import {
@@ -61,8 +62,8 @@ export default function TutorGradesPage() {
         api.getTutorStudentsDetailed().catch(() => []),
       ])
 
-      setGrades(gradesData)
-      setStudents(studentsData)
+      setGrades(Array.isArray(gradesData) ? gradesData : [])
+      setStudents(Array.isArray(studentsData) ? studentsData : [])
     } catch (err) {
       console.error('Failed to load grades data:', err)
       toast({
@@ -120,7 +121,7 @@ export default function TutorGradesPage() {
 
     try {
       await api.withdrawCompiledGrade(grade.id)
-      setGrades(prev => prev.map(g => g.id === grade.id ? { ...g, status: 'DRAFT' } : g))
+      setGrades(prev => Array.isArray(prev) ? prev.map(g => g.id === grade.id ? { ...g, status: 'DRAFT' } : g) : [])
       toast({
         title: 'Grade Withdrawn',
         description: 'Grade has been withdrawn and is now a draft.',
@@ -146,7 +147,7 @@ export default function TutorGradesPage() {
   }
 
   // Filtered grades list
-  const filteredGrades = grades.filter((g) => {
+  const filteredGrades = Array.isArray(grades) ? grades.filter((g) => {
     if (selectedStatus !== 'ALL' && g.status !== selectedStatus) return false
     if (selectedStudentId !== 'ALL' && g.studentId !== selectedStudentId) return false
     if (searchQuery.trim()) {
@@ -159,13 +160,13 @@ export default function TutorGradesPage() {
       if (!studentName.includes(q) && !subject.includes(q) && !period.includes(q)) return false
     }
     return true
-  })
+  }) : []
 
   // Calculations for stats
-  const totalGrades = grades.length
-  const approvedCount = grades.filter(g => g.status === 'APPROVED').length
-  const pendingCount = grades.filter(g => g.status === 'PENDING_APPROVAL').length
-  const draftCount = grades.filter(g => g.status === 'DRAFT').length
+  const totalGrades = Array.isArray(grades) ? grades.length : 0
+  const approvedCount = Array.isArray(grades) ? grades.filter(g => g.status === 'APPROVED').length : 0
+  const pendingCount = Array.isArray(grades) ? grades.filter(g => g.status === 'PENDING_APPROVAL').length : 0
+  const draftCount = Array.isArray(grades) ? grades.filter(g => g.status === 'DRAFT').length : 0
 
   return (
     <div className="min-h-screen bg-background">
@@ -293,7 +294,7 @@ export default function TutorGradesPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="ALL">All Students</SelectItem>
-                  {students.map((s) => (
+                  {Array.isArray(students) && students.map((s) => (
                     <SelectItem key={s.student.id} value={s.student.id}>
                       {s.student.fullName}
                     </SelectItem>
@@ -352,10 +353,10 @@ export default function TutorGradesPage() {
           </Card>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {filteredGrades.map((grade) => {
+            {Array.isArray(filteredGrades) && filteredGrades.map((grade) => {
               const student = getStudent(grade.studentId)
               const enrollment = getEnrollment(grade.enrollmentId)
-              const score = grade.finalScore ?? grade.computedScore
+              const score = toNumber(grade.finalScore) ?? toNumber(grade.computedScore)
 
               return (
                 <Card
@@ -381,14 +382,14 @@ export default function TutorGradesPage() {
                       <div>
                         <p className="text-xs text-muted-foreground">Score</p>
                         <p className="text-xl font-bold text-foreground mt-0.5">
-                          {score.toFixed(1)}%
+                          {formatPercentage(score)}
                         </p>
                       </div>
-                      {grade.finalScore !== null && (
+                      {toNumber(grade.finalScore) !== null && toNumber(grade.computedScore) !== null && (
                         <div className="text-right">
                           <p className="text-xs text-muted-foreground">Computed</p>
                           <p className="text-sm text-brand-gold">
-                            {grade.computedScore.toFixed(1)}%
+                            {formatPercentage(grade.computedScore)}
                           </p>
                         </div>
                       )}
@@ -397,7 +398,7 @@ export default function TutorGradesPage() {
                     <div className="text-xs text-muted-foreground space-y-1">
                       <div className="flex justify-between">
                         <span>Attendance:</span>
-                        <span className="text-foreground">{grade.attendanceRate.toFixed(1)}%</span>
+                        <span className="text-foreground">{formatPercentage(grade.attendanceRate)}</span>
                       </div>
                       <div className="flex justify-between">
                         <span>Components:</span>

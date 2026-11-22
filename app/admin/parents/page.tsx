@@ -13,7 +13,7 @@ import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
 import { StatusBadge } from '@/components/shared/StatusBadge'
 import { useToast } from '@/components/ui/use-toast'
 import { api } from '@/lib/api'
-import { ParentDirectoryEntry, ParentDetailProfile, UserStatus } from '@/lib/types'
+import { ParentDirectoryEntry, ParentDetailProfile, ParentProfileWithPaymentSummary, UserStatus } from '@/lib/types'
 import { Search, User, Users, DollarSign, AlertCircle, ChevronRight, ArrowLeft, Mail } from 'lucide-react'
 
 export default function AdminParentsPage() {
@@ -79,7 +79,7 @@ export default function AdminParentsPage() {
   const handleSelectParent = async (parentId: string) => {
     setDetailLoading(true)
     try {
-      const data = await api.getParentDetail(parentId)
+      const data = await api.getParentDetail(parentId) as ParentProfileWithPaymentSummary
       // Transform API response to match expected structure with all details
       const transformedData = {
         parent: {
@@ -94,9 +94,9 @@ export default function AdminParentsPage() {
           updatedAt: data.updatedAt,
           childrenCount: data.children?.length || 0,
           activeEnrollments: data.children?.reduce((acc: number, child: any) => acc + (child.enrollments?.length || 0), 0) || 0,
-          pendingPayments: 0,
-          totalPaidNGN: 0,
-          totalPaidUSD: 0,
+          pendingPayments: data.pendingPaymentCount || 0,
+          totalPaidNGN: data.totalPaidNGN || 0,
+          totalPaidUSD: data.totalPaidUSD || 0,
           complaintCount: data.complaintCount || 0,
         },
         children: data.children?.map((child: any) => ({
@@ -231,7 +231,7 @@ export default function AdminParentsPage() {
         ) : (
           <div className="space-y-6">
             {/* Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
               <Card className="bg-card border-brand-gold/30">
                 <CardContent className="pt-6">
                   <div className="flex items-center gap-3">
@@ -268,10 +268,21 @@ export default function AdminParentsPage() {
               <Card className="bg-card border-brand-gold/30">
                 <CardContent className="pt-6">
                   <div className="flex items-center gap-3">
+                    <DollarSign className="h-5 w-5 text-brand-gold" />
+                    <div>
+                      <p className="text-2xl font-bold text-white">${(selectedParent.parent?.totalPaidUSD || 0).toLocaleString()}</p>
+                      <p className="text-xs text-gray-400">Total Paid (USD)</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="bg-card border-brand-gold/30">
+                <CardContent className="pt-6">
+                  <div className="flex items-center gap-3">
                     <AlertCircle className="h-5 w-5 text-brand-gold" />
                     <div>
-                      <p className="text-2xl font-bold text-white">{selectedParent.parent?.complaintCount || 0}</p>
-                      <p className="text-xs text-gray-400">Complaints</p>
+                      <p className="text-2xl font-bold text-white">{selectedParent.parent?.pendingPayments || 0}</p>
+                      <p className="text-xs text-gray-400">Pending Payments</p>
                     </div>
                   </div>
                 </CardContent>

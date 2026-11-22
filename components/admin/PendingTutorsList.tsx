@@ -91,8 +91,8 @@ export function PendingTutorsList({ onUpdate, refreshTrigger }: PendingTutorsLis
     },
     {
       key: 'rate',
-      header: 'Hourly Rate',
-      cell: (item: TutorWithProfile) => `$${item.tutorProfile?.hourlyRate || 0}/hr`,
+      header: 'Expected Monthly Salary (NGN)',
+      cell: (item: TutorWithProfile) => item.tutorProfile?.monthlySalaryNGN ? `₦${item.tutorProfile.monthlySalaryNGN.toLocaleString()}` : 'Not set',
     },
     {
       key: 'bio',

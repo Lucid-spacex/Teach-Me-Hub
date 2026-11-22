@@ -29,7 +29,7 @@ export function Homepage() {
     <div className="fixed left-0 right-0 top-0 z-[60] h-1 origin-left bg-[#F3C33F]" style={{ transform: `scaleX(${progress / 100})` }} aria-hidden="true" />
     <div className="fixed bottom-5 right-5 z-50"><button onClick={() => setDark(!dark)} className="grid size-11 place-items-center rounded-full border border-black/10 bg-white/85 text-black shadow-lg backdrop-blur dark:border-white/10 dark:bg-[#22221d] dark:text-white" aria-label={dark ? 'Switch to light theme' : 'Switch to dark theme'}>{dark ? <Sun className="size-4" /> : <Moon className="size-4" />}</button></div>
     <Nav go={(path) => router.push(path)} />
-    <main><Hero go={(path) => router.push(path)} /><TrustStrip /><WhySection /><HowItWorks /><FeatureBento /><Roles /><ProgressQuiz /><SocialProofAndPricing go={(path) => router.push(path)} /></main>
+    <main><Hero go={(path) => router.push(path)} /><TrustStrip /><WhySection /><HowItWorks /><FeatureBento /><Roles go={(path) => router.push(path)} /><ProgressQuiz /><SocialProofAndPricing go={(path) => router.push(path)} /></main>
     <Footer />
   </div>
 }

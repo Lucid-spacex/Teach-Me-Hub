@@ -36,6 +36,7 @@ export interface RegisterRequest {
   whyTeach?: string
   howHeard?: HowHeardSource
   aboutYou?: string[]
+  expectedMonthlySalaryNGN?: number // Required when role=TUTOR (min 10000, max 5000000)
 }
 
 export interface TutorRegistrationRequest extends RegisterRequest {
@@ -74,6 +75,7 @@ export interface VerifyRequest {
 export interface LoginRequest {
   email: string
   password: string
+  portal?: 'PARENT' | 'TUTOR' | 'ADMIN'
 }
 
 export interface StudentLoginRequest {
@@ -205,10 +207,18 @@ export interface Enrollment {
   availableDays?: string[]
   preferredStartHour?: number
   preferredEndHour?: number
+  scheduleTimezone?: string
+  startTimeUtc?: string
   billingFrequency?: BillingFrequency
   createdAt: string
   student?: Student
   subject?: Subject
+  nextExpectedClass?: {
+    id: string
+    scheduledAt: string
+    status: string
+  }
+  sessionsScheduledCount?: number
 }
 
 export interface CreateEnrollmentRequest {
@@ -314,7 +324,7 @@ export interface TutorProfile {
   bio: string
   credentialsUrl: string | null
   vettingStatus: VettingStatus
-  hourlyRate: number
+  monthlySalaryNGN: number | null // Replaces monthlySalaryNGN
   availability: Record<string, any>
   availabilityStatus?: TutorAvailabilityStatus
   maxStudents?: number
@@ -356,7 +366,7 @@ export interface Tutor {
   subjects: string[]
   bio: string
   vettingStatus: VettingStatus
-  hourlyRate: number
+  monthlySalaryNGN: number | null // Nullable until admin sets it
   availability: Record<string, any>
 }
 
@@ -403,7 +413,6 @@ export interface CreateTutorProfileRequest {
   subjects: string[]
   bio: string
   credentialsUrl?: string
-  hourlyRate: number
   availability: Record<string, any>
 }
 
@@ -526,7 +535,7 @@ export interface AdminStudentDetail {
     bio?: string
     subjects: string[]
     availabilityStatus?: TutorAvailabilityStatus
-    hourlyRate?: number
+    monthlySalaryNGN?: number
   }>
   enrollments: Enrollment[]
   sessions: Session[]
@@ -656,7 +665,7 @@ export interface StudentProfile {
     bio?: string
     subjects: string[]
     availabilityStatus?: TutorAvailabilityStatus
-    hourlyRate?: number
+    monthlySalaryNGN?: number
   }>
   // Sessions
   sessions?: Session[]

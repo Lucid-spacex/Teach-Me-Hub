@@ -41,7 +41,8 @@ export default function TutorAssignmentsPage() {
     title: '',
     description: '',
     type: 'ASSIGNMENT' as AssignmentType,
-    dueDate: ''
+    dueDate: '',
+    timeLimitMinutes: ''
   })
   const [selectedEnrollmentIds, setSelectedEnrollmentIds] = useState<string[]>([])
 
@@ -114,7 +115,8 @@ export default function TutorAssignmentsPage() {
       title: '',
       description: '',
       type: 'ASSIGNMENT',
-      dueDate: ''
+      dueDate: '',
+      timeLimitMinutes: ''
     })
     setSelectedEnrollmentIds([])
     setAssignmentModalOpen(true)
@@ -130,7 +132,8 @@ export default function TutorAssignmentsPage() {
       title: assignment.title,
       description: assignment.description,
       type: assignment.type,
-      dueDate: assignment.dueDate ? assignment.dueDate.split('T')[0] : ''
+      dueDate: assignment.dueDate ? assignment.dueDate.split('T')[0] : '',
+      timeLimitMinutes: assignment.timeLimitMinutes?.toString() || ''
     })
     setAssignmentModalOpen(true)
   }
@@ -188,6 +191,7 @@ export default function TutorAssignmentsPage() {
           type: formData.type,
           dueDate: formData.dueDate ? new Date(formData.dueDate).toISOString() : undefined,
           attachment: attachmentFile || undefined,
+          timeLimitMinutes: formData.timeLimitMinutes ? parseInt(formData.timeLimitMinutes) : undefined,
         })
         toast({
           title: 'Assignment updated',
@@ -203,6 +207,7 @@ export default function TutorAssignmentsPage() {
           type: formData.type,
           dueDate: formData.dueDate ? new Date(formData.dueDate).toISOString() : new Date().toISOString(),
           attachment: attachmentFile || undefined,
+          timeLimitMinutes: formData.timeLimitMinutes ? parseInt(formData.timeLimitMinutes) : undefined,
         })
         const createdCount = Array.isArray(result) ? result.length : selectedEnrollmentIds.length
         toast({
@@ -451,6 +456,7 @@ export default function TutorAssignmentsPage() {
             onOpenChange={setQuizModalOpen}
             assignmentId={selectedAssignment.id}
             assignmentTitle={selectedAssignment.title}
+            timeLimitMinutes={selectedAssignment.timeLimitMinutes}
             onSuccess={loadData}
           />
         )}
@@ -559,6 +565,24 @@ export default function TutorAssignmentsPage() {
                 </SelectContent>
               </Select>
             </div>
+
+            {formData.type === 'TEST' && (
+              <div className="space-y-2">
+                <Label htmlFor="timeLimitMinutes">Time Limit per Question (seconds)</Label>
+                <Input
+                  id="timeLimitMinutes"
+                  type="number"
+                  min="10"
+                  max="300"
+                  value={formData.timeLimitMinutes}
+                  onChange={(e) => setFormData({ ...formData, timeLimitMinutes: e.target.value })}
+                  placeholder="30"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Leave empty for default 30 seconds per question
+                </p>
+              </div>
+            )}
 
             <div className="space-y-2">
               <Label htmlFor="dueDate">Due Date</Label>

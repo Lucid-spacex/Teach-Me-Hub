@@ -37,6 +37,7 @@ interface ApplicationFormState {
   subjects: string[]
   levels: TutorLevel[]
   yearsOfExperience: number
+  expectedMonthlySalaryNGN: number
   whyTeach: string
   howHeard?: HowHeardSource
   aboutYou: string[]
@@ -50,6 +51,7 @@ const emptyApplication: ApplicationFormState = {
   subjects: [],
   levels: [],
   yearsOfExperience: 0,
+  expectedMonthlySalaryNGN: 50000,
   whyTeach: '',
   howHeard: undefined,
   aboutYou: ['', '', ''],
@@ -125,6 +127,7 @@ export default function TutorRegisterForm() {
       if (appData.subjects.length === 0) return 'Please select at least one subject'
       if (appData.levels.length === 0) return 'Please select at least one level'
       if (appData.yearsOfExperience < 0) return 'Years of experience cannot be negative'
+      if (appData.expectedMonthlySalaryNGN < 10000 || appData.expectedMonthlySalaryNGN > 5000000) return 'Expected monthly salary must be between ₦10,000 and ₦5,000,000'
       if (appData.whyTeach.trim().length < 10) return 'Please tell us why you want to teach (min 10 characters)'
       if (!appData.howHeard) return 'Please select how you heard about us'
       const aboutYou = filledAboutYou()
@@ -167,6 +170,7 @@ export default function TutorRegisterForm() {
       subjects: appData.subjects,
       levels: appData.levels,
       yearsOfExperience: appData.yearsOfExperience,
+      expectedMonthlySalaryNGN: appData.expectedMonthlySalaryNGN,
       whyTeach: appData.whyTeach.trim(),
       howHeard: appData.howHeard,
       aboutYou: filledAboutYou(),
@@ -484,16 +488,23 @@ export default function TutorRegisterForm() {
                       className="bg-muted border-border text-foreground focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11" />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-medium text-muted-foreground">How Did You Hear About Us? *</Label>
-                    <Select value={appData.howHeard} onValueChange={(v) => setApp('howHeard', v as HowHeardSource)}>
-                      <SelectTrigger className="bg-muted border-border rounded-xl h-11">
-                        <SelectValue placeholder="Select" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {HEARD_ABOUT.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
+                    <Label className="text-xs font-medium text-muted-foreground">Expected Monthly Salary (NGN) *</Label>
+                    <Input type="number" min="10000" max="5000000" step="1000" value={appData.expectedMonthlySalaryNGN}
+                      onChange={(e) => setApp('expectedMonthlySalaryNGN', parseInt(e.target.value) || 50000)}
+                      className="bg-muted border-border text-foreground focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11" />
+                    <p className="text-[10px] text-muted-foreground">Between ₦10,000 and ₦5,000,000</p>
                   </div>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-medium text-muted-foreground">How Did You Hear About Us? *</Label>
+                  <Select value={appData.howHeard} onValueChange={(v) => setApp('howHeard', v as HowHeardSource)}>
+                    <SelectTrigger className="bg-muted border-border rounded-xl h-11">
+                      <SelectValue placeholder="Select" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {HEARD_ABOUT.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs font-medium text-muted-foreground">Why Do You Want to Teach? *</Label>
@@ -530,6 +541,7 @@ export default function TutorRegisterForm() {
                   <p><span className="text-muted-foreground">Subjects:</span> {appData.subjects.length} selected</p>
                   <p><span className="text-muted-foreground">Levels:</span> {appData.levels.map(l => LEVELS.find(lev => lev.value === l)?.label).join(', ')}</p>
                   <p><span className="text-muted-foreground">Experience:</span> {appData.yearsOfExperience} years</p>
+                  <p><span className="text-muted-foreground">Expected Monthly Salary:</span> ₦{appData.expectedMonthlySalaryNGN.toLocaleString()}</p>
                   <p><span className="text-muted-foreground">About You:</span> {filledAboutYou().length} paragraph(s)</p>
                 </div>
                 <p className="text-xs text-muted-foreground">

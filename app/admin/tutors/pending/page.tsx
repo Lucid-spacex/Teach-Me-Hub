@@ -285,7 +285,7 @@ export default function AdminPendingTutorsPage() {
                     </div>
                     <div>
                       <p className="text-sm text-gray-400">Hourly Rate</p>
-                      <p className="text-white">${tutor.tutorProfile?.hourlyRate || 0}/hour</p>
+                      <p className="text-white">${tutor.tutorProfile?.monthlySalaryNGN || 0}/hour</p>
                     </div>
                     {tutor.tutorProfile?.credentialsUrl && (
                       <div>

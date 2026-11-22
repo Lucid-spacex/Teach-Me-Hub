@@ -6,6 +6,7 @@ import { UnreadCountResponse } from '@/lib/types'
 import { getUserRole } from '@/lib/auth'
 
 export interface BadgeCounts {
+  // Notification category counts (all roles)
   ASSIGNMENTS?: number
   GRADES?: number
   SESSIONS?: number
@@ -17,7 +18,18 @@ export interface BadgeCounts {
   COMPLAINTS?: number
   QUIZZES?: number
   SCHEDULE?: number
-  // Admin-specific badges
+  // Parent-specific
+  unpaidEnrollments?: number
+  upcomingSessions24h?: number
+  // Tutor-specific
+  sessionsNeedingScheduling?: number
+  classesWithin24h?: number
+  draftOrRejectedGrades?: number
+  unmarkedAttendance?: number
+  submissionsToScore?: number
+  // Student-specific
+  pendingAssignments?: number
+  // Admin-specific (from /admin/badge-counts in addition to /badge-counts)
   unreadNewParents?: number
   unreadNewTutors?: number
   pendingTutorApplications?: number
@@ -25,9 +37,11 @@ export interface BadgeCounts {
   unreadMessages?: number
   unmatchedPaidEnrollments?: number
   failedPayments?: number
+  outstandingEnrollments?: number
   pendingGrades?: number
   pendingChangeRequests?: number
   unscheduledWithin24h?: number
+  attendanceUnmarkedSessions?: number
 }
 
 export function useBadgeCounts() {
@@ -39,28 +53,56 @@ export function useBadgeCounts() {
     try {
       setLoading(true)
 
-      if (role === 'ADMIN') {
-        // Admin: combine notification counts with admin badge counts
-        const [notificationCounts, adminBadgeCounts] = await Promise.all([
-          api.getUnreadCount().catch(() => ({ byCategory: {} })),
-          api.getAdminBadgeCounts().catch(() => ({ byCategory: {} }))
-        ])
+      // Call GET /badge-counts for all roles (role-aware, own data only)
+      const roleBadgeCounts = await api.getBadgeCounts().catch(() => ({}))
+      const merged: BadgeCounts = {}
 
-        const merged: BadgeCounts = {
-          ...notificationCounts.byCategory,
-          ...adminBadgeCounts.byCategory,
-        }
+      // Map unreadNotifications categories
+      if (roleBadgeCounts.unreadNotifications) {
+        Object.assign(merged, roleBadgeCounts.unreadNotifications)
+      }
 
-        // Map admin-specific fields from response. The exact response shape
-        // is not documented in ENDPOINT.md, so check top-level, byCategory,
-        // and counts locations.
+      // Map role-specific fields
+      if (role === 'PARENT') {
+        merged.unpaidEnrollments = roleBadgeCounts.unpaidEnrollments
+        merged.upcomingSessions24h = roleBadgeCounts.upcomingSessions24h
+        merged.unreadMessages = roleBadgeCounts.unreadMessages
+      } else if (role === 'TUTOR') {
+        merged.sessionsNeedingScheduling = roleBadgeCounts.sessionsNeedingScheduling
+        merged.classesWithin24h = roleBadgeCounts.classesWithin24h
+        merged.draftOrRejectedGrades = roleBadgeCounts.draftOrRejectedGrades
+        merged.unmarkedAttendance = roleBadgeCounts.unmarkedAttendance
+        merged.submissionsToScore = roleBadgeCounts.submissionsToScore
+        merged.unreadMessages = roleBadgeCounts.unreadMessages
+      } else if (role === 'STUDENT') {
+        merged.pendingAssignments = roleBadgeCounts.pendingAssignments
+        merged.classesWithin24h = roleBadgeCounts.classesWithin24h
+      } else if (role === 'ADMIN') {
+        // Admin: also call GET /admin/badge-counts for additional admin-specific counts
+        const adminBadgeCounts = await api.getAdminBadgeCounts().catch(() => ({}))
+        
+        // Merge role badge counts
+        Object.assign(merged, {
+          pendingTutorApplications: roleBadgeCounts.pendingTutorApplications,
+          pendingGrades: roleBadgeCounts.pendingGrades,
+          openComplaints: roleBadgeCounts.openComplaints,
+          unmatchedPaidEnrollments: roleBadgeCounts.unmatchedPaidEnrollments,
+          pendingChangeRequests: roleBadgeCounts.pendingChangeRequests,
+          unscheduledWithin24h: roleBadgeCounts.unscheduledWithin24h,
+          failedPayments: roleBadgeCounts.failedPayments,
+          outstandingEnrollments: roleBadgeCounts.outstandingEnrollments,
+          unreadMessages: roleBadgeCounts.unreadMessages,
+          attendanceUnmarkedSessions: roleBadgeCounts.attendanceUnmarkedSessions,
+        })
+
+        // Merge admin-specific fields from /admin/badge-counts
         const adminData = adminBadgeCounts as any
         const sources = [adminData, adminData?.byCategory, adminData?.counts, adminData?.data]
         const adminKeys: (keyof BadgeCounts)[] = [
           'unreadNewParents', 'unreadNewTutors', 'pendingTutorApplications',
           'openComplaints', 'unreadMessages', 'unmatchedPaidEnrollments',
-          'failedPayments', 'pendingGrades', 'pendingChangeRequests',
-          'unscheduledWithin24h',
+          'failedPayments', 'outstandingEnrollments', 'pendingGrades',
+          'pendingChangeRequests', 'unscheduledWithin24h', 'attendanceUnmarkedSessions',
         ]
         for (const key of adminKeys) {
           for (const src of sources) {
@@ -70,27 +112,12 @@ export function useBadgeCounts() {
             }
           }
         }
-
-        setCounts(merged)
-      } else {
-        // Parent, Tutor, Student: use notification counts only
-        const notificationCounts = await api.getUnreadCount().catch(() => ({ byCategory: {} }))
-        setCounts(notificationCounts.byCategory || {})
       }
+
+      setCounts(merged)
     } catch (error) {
       console.error('Failed to load badge counts:', error)
-      // If admin badge counts fail, fall back to notification counts alone
-      if (role === 'ADMIN') {
-        try {
-          const notificationCounts = await api.getUnreadCount().catch(() => ({ byCategory: {} }))
-          setCounts(notificationCounts.byCategory || {})
-        } catch (fallbackError) {
-          console.error('Fallback also failed:', fallbackError)
-          setCounts({})
-        }
-      } else {
-        setCounts({})
-      }
+      setCounts({})
     } finally {
       setLoading(false)
     }

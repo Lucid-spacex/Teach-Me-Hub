@@ -116,7 +116,7 @@ export default function AdminNotificationsPage() {
     }
   }
 
-  const filtered = notifications.filter(n => filter === 'ALL' || !n.read)
+  const filtered = notifications?.filter(n => filter === 'ALL' || !(n.read || n.isRead)) || []
   const categoryOptions: Array<{ value: NotificationCategory | 'ALL'; label: string }> = [
     { value: 'ALL', label: 'All Categories' },
     { value: 'USERS', label: 'Users' },
@@ -248,7 +248,7 @@ export default function AdminNotificationsPage() {
               <div
                 key={item.id}
                 className={`p-4 rounded-xl border transition-all flex items-start gap-4 ${
-                  !item.read
+                  !(item.read || item.isRead)
                     ? 'bg-card border-brand-gold/40 shadow-sm'
                     : 'bg-brand-dark/60 border-brand-gold/15 opacity-85'
                 }`}
@@ -258,7 +258,7 @@ export default function AdminNotificationsPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
-                    <h3 className={`text-base font-semibold ${!item.read ? 'text-white' : 'text-gray-300'}`}>
+                    <h3 className={`text-base font-semibold ${!(item.read || item.isRead) ? 'text-white' : 'text-gray-300'}`}>
                       {item.title}
                     </h3>
                     <span className="text-xs text-gray-400 shrink-0">
@@ -266,10 +266,10 @@ export default function AdminNotificationsPage() {
                     </span>
                   </div>
                   <p className="text-sm text-gray-300 mt-1 whitespace-pre-wrap leading-relaxed">
-                    {item.message}
+                    {item.message || item.body}
                   </p>
                 </div>
-                {!item.read && (
+                {!(item.read || item.isRead) && (
                   <Button
                     variant="ghost"
                     size="sm"

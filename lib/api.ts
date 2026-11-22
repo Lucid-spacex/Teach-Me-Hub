@@ -253,6 +253,10 @@ class ApiClient {
             // Redirect to appropriate login page based on role
             if (userRole === 'STUDENT') {
               window.location.href = '/student-login'
+            } else if (userRole === 'TUTOR') {
+              window.location.href = '/tutor/login'
+            } else if (userRole === 'ADMIN') {
+              window.location.href = '/admin/login'
             } else {
               window.location.href = '/login'
             }
@@ -269,6 +273,10 @@ class ApiClient {
           // Redirect to appropriate login page based on role
           if (userRole === 'STUDENT') {
             window.location.href = '/student-login'
+          } else if (userRole === 'TUTOR') {
+            window.location.href = '/tutor/login'
+          } else if (userRole === 'ADMIN') {
+            window.location.href = '/admin/login'
           } else {
             window.location.href = '/login'
           }
@@ -285,8 +293,19 @@ class ApiClient {
       if (errorData.error === 'TUTOR_NOT_APPROVED' || errorData.error === 'APPLICATION_REJECTED') {
         if (typeof window !== 'undefined') {
           const userRole = localStorage.getItem('userRole')
+          // Redirect to tutor application page for tutors
           if (userRole === 'TUTOR') {
             window.location.href = '/tutor/application'
+          } else {
+            // For other roles, redirect to their respective login page
+            this.clearTokens()
+            if (userRole === 'STUDENT') {
+              window.location.href = '/student-login'
+            } else if (userRole === 'ADMIN') {
+              window.location.href = '/admin/login'
+            } else {
+              window.location.href = '/login'
+            }
           }
         }
       }
@@ -419,7 +438,7 @@ class ApiClient {
 
   async refresh(refreshToken: string): Promise<{ accessToken: string; refreshToken: string }> {
     const url = `${this.baseUrl}/auth/refresh`
-    
+
     const response = await fetch(url, {
       method: 'POST',
       headers: {
@@ -431,13 +450,19 @@ class ApiClient {
     if (!response.ok) {
       const errorData: ApiError = await response.json().catch(() => ({ error: 'Unknown error' }))
       console.error('Refresh token error:', errorData)
+      // Clear tokens on refresh failure - they're invalid now
+      this.clearTokens()
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('user')
+        localStorage.removeItem('userRole')
+      }
       throw new Error(errorData.error || errorData.message || 'Token refresh failed')
     }
 
     const result = await response.json()
     this.setToken(result.accessToken)
     this.setRefreshToken(result.refreshToken)
-    
+
     return result
   }
 
@@ -611,6 +636,17 @@ class ApiClient {
     return this.request<any>(`/assignments/${assignmentId}/submissions/${submissionId}`)
   }
 
+  async scoreAssignmentSubmission(assignmentId: string, submissionId: string, data: {
+    score: number
+    maxScore?: number
+    comment?: string
+  }): Promise<any> {
+    return this.request<any>(`/tutor/assignments/${assignmentId}/submissions/${submissionId}/score`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
   // GET /assignments/:id/schema — assignment fields plus enrollment
   // (subject, student) context.
   async getAssignmentSchema(assignmentId: string): Promise<any> {
@@ -693,9 +729,13 @@ class ApiClient {
     if (filters?.page) params.append('page', filters.page.toString())
     if (filters?.limit) params.append('limit', filters.limit.toString())
     const query = params.toString()
-    return this.request<{ notifications: Notification[]; total: number }>(
+    const response = await this.request<{ data: Notification[]; page: number; limit: number; total: number }>(
       `/notifications${query ? `?${query}` : ''}`
     )
+    return {
+      notifications: response.data,
+      total: response.total,
+    }
   }
 
   async getUnreadCount(): Promise<UnreadCountResponse> {
@@ -704,6 +744,23 @@ class ApiClient {
 
   async getAdminBadgeCounts(): Promise<EnhancedBadgeCounts> {
     return this.request<EnhancedBadgeCounts>('/admin/badge-counts')
+  }
+
+  // Role-aware badge counts endpoint
+  async getBadgeCounts(): Promise<any> {
+    return this.request<any>('/badge-counts')
+  }
+
+  // Salary management endpoints (admin only)
+  async updateTutorSalary(tutorId: string, data: { monthlySalaryNGN: number; reason?: string }): Promise<any> {
+    return this.request<any>(`/admin/tutors/${tutorId}/salary`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async getTutorSalaryHistory(tutorId: string): Promise<any[]> {
+    return this.request<any[]>(`/admin/tutors/${tutorId}/salary-history`)
   }
 
 
@@ -1626,41 +1683,38 @@ class ApiClient {
   }
 
   // Grade Compilation endpoints
-  async previewCompiledGrade(data: GradePreviewRequest): Promise<GradePreviewResponse> {
-    return this.request<GradePreviewResponse>('/tutor/grades/preview', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    })
+  async previewCompiledGrade(gradeId: string): Promise<GradePreviewResponse> {
+    return this.request<GradePreviewResponse>(`/grades/${gradeId}/preview`)
   }
 
   async createCompiledGrade(data: CreateGradeRequest): Promise<CompiledGrade> {
-    return this.request<CompiledGrade>('/tutor/grades', {
+    return this.request<CompiledGrade>('/grades', {
       method: 'POST',
       body: JSON.stringify(data),
     })
   }
 
   async submitCompiledGrade(gradeId: string): Promise<CompiledGrade> {
-    return this.request<CompiledGrade>(`/tutor/grades/${gradeId}/submit`, {
+    return this.request<CompiledGrade>(`/grades/${gradeId}/submit`, {
       method: 'POST',
     })
   }
 
   async withdrawCompiledGrade(gradeId: string): Promise<CompiledGrade> {
-    return this.request<CompiledGrade>(`/tutor/grades/${gradeId}/withdraw`, {
+    return this.request<CompiledGrade>(`/grades/${gradeId}/withdraw`, {
       method: 'POST',
     })
   }
 
   async updateCompiledGradeDraft(gradeId: string, data: Partial<CreateGradeRequest>): Promise<CompiledGrade> {
-    return this.request<CompiledGrade>(`/tutor/grades/${gradeId}`, {
+    return this.request<CompiledGrade>(`/grades/${gradeId}`, {
       method: 'PATCH',
       body: JSON.stringify(data),
     })
   }
 
   async deleteCompiledGrade(gradeId: string): Promise<{ message: string }> {
-    return this.request<{ message: string }>(`/tutor/grades/${gradeId}`, {
+    return this.request<{ message: string }>(`/grades/${gradeId}`, {
       method: 'DELETE',
     })
   }
@@ -1675,11 +1729,11 @@ class ApiClient {
     if (filters?.studentId) params.append('studentId', filters.studentId)
     if (filters?.enrollmentId) params.append('enrollmentId', filters.enrollmentId)
     const query = params.toString()
-    return this.request<CompiledGrade[]>(`/tutor/grades${query ? `?${query}` : ''}`)
+    return this.request<CompiledGrade[]>(`/grades${query ? `?${query}` : ''}`)
   }
 
   async getCompiledGradeDetail(gradeId: string): Promise<CompiledGrade> {
-    return this.request<CompiledGrade>(`/tutor/grades/${gradeId}`)
+    return this.request<CompiledGrade>(`/grades/${gradeId}`)
   }
 
   // Admin Grade endpoints
@@ -2248,7 +2302,7 @@ class ApiClient {
 
   async updateTutorProfileInfo(data: {
     bio?: string
-    hourlyRate?: number
+    monthlySalaryNGN?: number
   }): Promise<TutorProfile> {
     return this.request<TutorProfile>('/tutor/me', {
       method: 'PATCH',

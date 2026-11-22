@@ -57,6 +57,12 @@ export default function TutorAssignmentDetailPage({ params }: PageProps) {
   const [creatingItem, setCreatingItem] = useState(false)
   const [addedToPool, setAddedToPool] = useState<Set<string>>(new Set())
 
+  // Score submission - new backend endpoint
+  const [scoreModalOpen, setScoreModalOpen] = useState(false)
+  const [scoreSubmission, setScoreSubmission] = useState<any>(null)
+  const [scoreForm, setScoreForm] = useState({ score: '', maxScore: 100, comment: '' })
+  const [scoring, setScoring] = useState(false)
+
   useEffect(() => {
     const user = getUser()
     if (!user || getUserRole() !== 'TUTOR') {
@@ -168,6 +174,50 @@ export default function TutorAssignmentDetailPage({ params }: PageProps) {
     setGradePoolSubmission(sub)
     setGradePoolForm({ maxScore: 100, score: '', comment: '' })
     setGradePoolOpen(true)
+  }
+
+  const openScoreModal = (sub: any) => {
+    setScoreSubmission(sub)
+    setScoreForm({ score: '', maxScore: 100, comment: '' })
+    setScoreModalOpen(true)
+  }
+
+  const handleScoreSubmission = async () => {
+    if (!scoreSubmission?.id || !assignmentId) {
+      toast({ title: 'Missing data', description: 'Cannot score submission', variant: 'destructive' })
+      return
+    }
+    const scoreValue = Number(scoreForm.score)
+    if (isNaN(scoreValue) || scoreValue < 0) {
+      toast({ title: 'Validation Error', description: 'Score must be a non-negative number', variant: 'destructive' })
+      return
+    }
+    if (scoreForm.maxScore <= 0) {
+      toast({ title: 'Validation Error', description: 'Max score must be greater than 0', variant: 'destructive' })
+      return
+    }
+    setScoring(true)
+    try {
+      await api.scoreAssignmentSubmission(assignmentId, scoreSubmission.id, {
+        score: scoreValue,
+        maxScore: scoreForm.maxScore,
+        comment: scoreForm.comment || undefined,
+      })
+      toast({
+        title: 'Submission Scored',
+        description: 'The submission has been scored successfully',
+      })
+      setScoreModalOpen(false)
+      loadData() // Refresh to show updated status
+    } catch (err) {
+      toast({
+        title: 'Error',
+        description: err instanceof Error ? err.message : 'Failed to score submission',
+        variant: 'destructive',
+      })
+    } finally {
+      setScoring(false)
+    }
   }
 
   const handleCreateScoredItem = async () => {
@@ -332,6 +382,9 @@ export default function TutorAssignmentDetailPage({ params }: PageProps) {
                             <p className="text-xs text-muted-foreground">
                               {submittedAt ? `Submitted ${new Date(submittedAt).toLocaleString()}` : 'Submitted'}
                               {sub.status ? ` • ${sub.status}` : ''}
+                              {sub.scoredItem && (
+                                <span className="ml-2 text-brand-gold">• Scored: {sub.scoredItem.score}/{sub.scoredItem.maxScore}</span>
+                              )}
                             </p>
                           </div>
                         </div>
@@ -375,21 +428,40 @@ export default function TutorAssignmentDetailPage({ params }: PageProps) {
                         )}
 
                         {sub.id && studentIdForItem && enrollmentIdForItem && (
-                          addedToPool.has(sub.id) ? (
-                            <p className="text-xs text-green-500 flex items-center gap-1.5">
-                              <CheckCircle2 className="h-3 w-3" /> Added to grade pool
-                            </p>
-                          ) : (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => openGradePool(sub)}
-                              className="gap-1.5 text-xs border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10"
-                            >
-                              <Star className="h-3 w-3" />
-                              Add to Grade Pool
-                            </Button>
-                          )
+                          <>
+                            {sub.status === 'SUBMITTED' && (
+                              <Button
+                                size="sm"
+                                variant="default"
+                                onClick={() => openScoreModal(sub)}
+                                className="gap-1.5 text-xs bg-brand-gold hover:bg-brand-goldLight text-brand-dark"
+                              >
+                                <Star className="h-3 w-3" />
+                                Score
+                              </Button>
+                            )}
+                            {sub.status === 'GRADED' && (
+                              <p className="text-xs text-green-500 flex items-center gap-1.5">
+                                <CheckCircle2 className="h-3 w-3" /> Graded
+                              </p>
+                            )}
+                            {sub.status !== 'GRADED' && !addedToPool.has(sub.id) && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => openGradePool(sub)}
+                                className="gap-1.5 text-xs border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10"
+                              >
+                                <Star className="h-3 w-3" />
+                                Add to Grade Pool
+                              </Button>
+                            )}
+                            {addedToPool.has(sub.id) && (
+                              <p className="text-xs text-green-500 flex items-center gap-1.5">
+                                <CheckCircle2 className="h-3 w-3" /> Added to grade pool
+                              </p>
+                            )}
+                          </>
                         )}
 
                         {/* Expanded detail from GET /assignments/:id/submissions/:submissionId */}
@@ -419,6 +491,68 @@ export default function TutorAssignmentDetailPage({ params }: PageProps) {
           </CardContent>
         </Card>
       </div>
+
+      {/* Score Submission modal */}
+      <Modal
+        isOpen={scoreModalOpen}
+        onClose={() => setScoreModalOpen(false)}
+        title="Score Submission"
+      >
+        <div className="space-y-4 pt-2">
+          <p className="text-sm text-muted-foreground">
+            Score this submission for <span className="font-medium text-foreground">{assignment.title}</span>.
+          </p>
+          <div className="space-y-2">
+            <Label htmlFor="scoreValue">Score *</Label>
+            <Input
+              id="scoreValue"
+              type="number"
+              min="0"
+              max={scoreForm.maxScore}
+              value={scoreForm.score}
+              onChange={(e) => setScoreForm({ ...scoreForm, score: e.target.value })}
+              placeholder={`0 - ${scoreForm.maxScore}`}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="scoreMaxScore">Maximum Score *</Label>
+            <Input
+              id="scoreMaxScore"
+              type="number"
+              min="1"
+              value={scoreForm.maxScore}
+              onChange={(e) => setScoreForm({ ...scoreForm, maxScore: Number(e.target.value) })}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="scoreComment">Comment (optional)</Label>
+            <Textarea
+              id="scoreComment"
+              value={scoreForm.comment}
+              onChange={(e) => setScoreForm({ ...scoreForm, comment: e.target.value })}
+              placeholder="Add feedback for the student..."
+              rows={3}
+            />
+          </div>
+          <div className="flex gap-2 justify-end pt-2">
+            <Button
+              variant="outline"
+              onClick={() => setScoreModalOpen(false)}
+              disabled={scoring}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleScoreSubmission}
+              disabled={scoring}
+              className="bg-brand-gold hover:bg-brand-goldLight text-brand-dark"
+            >
+              {scoring ? <LoadingSpinner size="sm" className="mr-2" /> : null}
+              {scoring ? 'Scoring...' : 'Score Submission'}
+            </Button>
+          </div>
+        </div>
+      </Modal>
 
       {/* Add to Grade Pool modal */}
       <Modal

@@ -30,6 +30,11 @@ export default function AdminTutorDetailPage() {
   const [rejectReason, setRejectReason] = useState('')
   const [unapproveModalOpen, setUnapproveModalOpen] = useState(false)
   const [unapproveReason, setUnapproveReason] = useState('')
+  const [salaryModalOpen, setSalaryModalOpen] = useState(false)
+  const [newSalary, setNewSalary] = useState('')
+  const [salaryReason, setSalaryReason] = useState('')
+  const [salaryHistory, setSalaryHistory] = useState<any[]>([])
+  const [loadingHistory, setLoadingHistory] = useState(false)
 
   useEffect(() => {
     const user = getUser()
@@ -58,6 +63,9 @@ export default function AdminTutorDetailPage() {
       ])
       setStudents(Array.isArray(studentsData) ? studentsData : [])
       setSessions(Array.isArray(sessionsData) ? sessionsData : [])
+
+      // Load salary history
+      loadSalaryHistory(tutorId)
     } catch (err) {
       console.error('Failed to load tutor data:', err)
       toast({
@@ -68,6 +76,19 @@ export default function AdminTutorDetailPage() {
     } finally {
       setLoading(false)
       setDetailLoading(false)
+    }
+  }
+
+  const loadSalaryHistory = async (tutorId: string) => {
+    setLoadingHistory(true)
+    try {
+      const history = await api.getTutorSalaryHistory(tutorId)
+      setSalaryHistory(Array.isArray(history) ? history : [])
+    } catch (err) {
+      console.error('Failed to load salary history:', err)
+      setSalaryHistory([])
+    } finally {
+      setLoadingHistory(false)
     }
   }
 
@@ -148,6 +169,43 @@ export default function AdminTutorDetailPage() {
       toast({
         title: 'Error',
         description: err instanceof Error ? err.message : 'Failed to unapprove tutor',
+        variant: 'destructive',
+      })
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  const handleSalaryUpdate = async () => {
+    const salaryValue = parseInt(newSalary)
+    if (!salaryValue || salaryValue <= 0) {
+      toast({
+        title: 'Invalid Salary',
+        description: 'Please enter a valid positive salary amount',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    setActionLoading(true)
+    try {
+      await api.updateTutorSalary(params.id as string, {
+        monthlySalaryNGN: salaryValue,
+        reason: salaryReason || undefined,
+      })
+      toast({
+        title: 'Salary Updated',
+        description: 'The tutor salary has been updated successfully',
+      })
+      setSalaryModalOpen(false)
+      setNewSalary('')
+      setSalaryReason('')
+      loadTutorData(params.id as string)
+      loadSalaryHistory(params.id as string)
+    } catch (err) {
+      toast({
+        title: 'Error',
+        description: err instanceof Error ? err.message : 'Failed to update salary',
         variant: 'destructive',
       })
     } finally {
@@ -441,8 +499,21 @@ export default function AdminTutorDetailPage() {
                     <p className="text-white">{profile.bio || '-'}</p>
                   </div>
                   <div>
-                    <p className="text-gray-400">Hourly Rate</p>
-                    <p className="text-white">${profile.hourlyRate || 0}/hr</p>
+                    <p className="text-gray-400">Monthly Salary (NGN)</p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-white">{profile.monthlySalaryNGN ? `₦${profile.monthlySalaryNGN.toLocaleString()}` : 'Not set'}</p>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setSalaryModalOpen(true)}
+                        className="text-xs h-7"
+                      >
+                        Edit
+                      </Button>
+                    </div>
+                    {!profile.monthlySalaryNGN && (
+                      <p className="text-xs text-orange-400 mt-1">Salary not set</p>
+                    )}
                   </div>
                   <div>
                     <p className="text-gray-400">Availability Status</p>
@@ -607,6 +678,78 @@ export default function AdminTutorDetailPage() {
           </div>
         </div>
       </Modal>
+
+      {/* Salary Edit Modal */}
+      <Modal
+        open={salaryModalOpen}
+        onOpenChange={setSalaryModalOpen}
+        title="Update Monthly Salary"
+        description="Set the tutor's monthly salary in NGN"
+        footer={
+          <div className="flex gap-2 justify-end">
+            <Button variant="outline" onClick={() => setSalaryModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSalaryUpdate} disabled={actionLoading} className="bg-brand-gold hover:bg-brand-goldLight text-brand-dark">
+              {actionLoading ? <LoadingSpinner size="sm" /> : 'Update Salary'}
+            </Button>
+          </div>
+        }
+      >
+        <div className="space-y-4">
+          <div>
+            <label className="text-sm font-medium">Monthly Salary (NGN) *</label>
+            <input
+              type="number"
+              min="1"
+              value={newSalary}
+              onChange={(e) => setNewSalary(e.target.value)}
+              className="w-full mt-2 bg-brand-dark/30 border border-brand-gold/30 rounded-lg p-3 text-white"
+              placeholder="Enter salary amount"
+            />
+            <p className="text-xs text-gray-400 mt-1">Enter a positive integer value</p>
+          </div>
+          <div>
+            <label className="text-sm font-medium">Reason (Optional)</label>
+            <textarea
+              value={salaryReason}
+              onChange={(e) => setSalaryReason(e.target.value)}
+              rows={3}
+              className="w-full mt-2 bg-brand-dark/30 border border-brand-gold/30 rounded-lg p-3 text-white"
+              placeholder="Why is this salary being changed?"
+            />
+          </div>
+        </div>
+      </Modal>
+
+      {/* Salary History */}
+      {salaryHistory.length > 0 && (
+        <Card className="bg-card border-brand-gold/30 mt-4">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <Info className="h-4 w-4 text-brand-gold" />
+              Salary History
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {salaryHistory.map((history) => (
+                <div key={history.id} className="p-3 bg-brand-dark/30 rounded-lg text-sm">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="text-white">
+                        {history.oldValue ? `₦${history.oldValue.toLocaleString()} → ₦${history.newValue.toLocaleString()}` : `Set to ₦${history.newValue.toLocaleString()}`}
+                      </p>
+                      {history.reason && <p className="text-xs text-gray-400 mt-1">{history.reason}</p>}
+                    </div>
+                    <p className="text-xs text-gray-400">{new Date(history.createdAt).toLocaleString()}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

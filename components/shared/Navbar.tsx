@@ -15,7 +15,18 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     await api.logout()
-    router.push('/login')
+    // Clear all badge state and cached data
+    localStorage.removeItem('badgeCounts')
+    localStorage.removeItem('lastBadgeFetch')
+    localStorage.removeItem('notificationSoundEnabled')
+    // Redirect to appropriate login page based on role
+    if (user?.role === 'TUTOR') {
+      router.push('/tutor/login')
+    } else if (user?.role === 'ADMIN') {
+      router.push('/admin/login')
+    } else {
+      router.push('/login')
+    }
   }
 
   if (!user) return null

@@ -12,6 +12,7 @@ import { Loader2, CheckCircle, XCircle, Filter, ArrowLeft, FileText } from 'luci
 import { useToast } from '@/components/ui/use-toast'
 import { api } from '@/lib/api'
 import { CompiledGrade, GradeStatus } from '@/lib/types'
+import { toNumber, formatPercentage } from '@/lib/utils'
 import { CardSkeleton } from '@/components/shared/SkeletonLoader'
 
 export default function AdminGradesPage() {
@@ -307,12 +308,12 @@ export default function AdminGradesPage() {
                           </div>
                           <div>
                             <span className="text-muted-foreground">Computed Score:</span>
-                            <p className="text-foreground font-medium">{grade.computedScore.toFixed(1)}%</p>
+                            <p className="text-foreground font-medium">{formatPercentage(grade.computedScore)}</p>
                           </div>
                           <div>
                             <span className="text-muted-foreground">Final Score:</span>
                             <p className="text-foreground font-medium">
-                              {grade.finalScore ? grade.finalScore.toFixed(1) + '%' : 'N/A'}
+                              {formatPercentage(grade.finalScore)}
                             </p>
                           </div>
                         </div>

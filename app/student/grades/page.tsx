@@ -9,6 +9,7 @@ import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
 import { useToast } from '@/components/ui/use-toast'
 import { api } from '@/lib/api'
 import { CompiledGrade } from '@/lib/types'
+import { toNumber, formatPercentage } from '@/lib/utils'
 import { BarChart3, Award, ArrowLeft, RefreshCw, MessageSquare, BookOpen } from 'lucide-react'
 
 export default function StudentGradesPage() {
@@ -133,8 +134,8 @@ export default function StudentGradesPage() {
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {grades.map((item) => {
-              const finalScore: number = item.finalScore !== null && item.finalScore !== undefined ? item.finalScore : item.computedScore
-              const percentage = Math.round(finalScore)
+              const finalScore = toNumber(item.finalScore) ?? toNumber(item.computedScore)
+              const percentage = finalScore != null ? Math.round(finalScore) : 0
               return (
                 <Card key={item.id} className="bg-card border-brand-gold/25 hover:border-brand-gold/40 transition-colors flex flex-col justify-between">
                   <CardHeader className="pb-3">
@@ -155,15 +156,15 @@ export default function StudentGradesPage() {
                       <div>
                         <span className="text-xs text-gray-400">Final Score</span>
                         <div className="text-2xl font-bold text-white">
-                          {finalScore.toFixed(1)}%
+                          {formatPercentage(finalScore)}
                         </div>
                       </div>
                       <div className="text-right">
                         <span className="text-xs text-gray-400">Attendance</span>
                         <div className={`text-xl font-bold ${
-                          item.attendanceRate >= 80 ? 'text-green-400' : item.attendanceRate >= 60 ? 'text-brand-gold' : 'text-red-400'
+                          toNumber(item.attendanceRate) != null && toNumber(item.attendanceRate)! >= 80 ? 'text-green-400' : toNumber(item.attendanceRate) != null && toNumber(item.attendanceRate)! >= 60 ? 'text-brand-gold' : 'text-red-400'
                         }`}>
-                          {item.attendanceRate.toFixed(0)}%
+                          {formatPercentage(item.attendanceRate, 0)}
                         </div>
                       </div>
                     </div>
@@ -175,7 +176,7 @@ export default function StudentGradesPage() {
                         {item.components.map((comp, idx) => (
                           <div key={idx} className="flex items-center justify-between text-xs">
                             <span className="text-gray-300">{comp.type} ({comp.weight}%)</span>
-                            <span className="text-white font-medium">{comp.componentPercentage?.toFixed(1) || 0}%</span>
+                            <span className="text-white font-medium">{formatPercentage(comp.componentPercentage, 1)}</span>
                           </div>
                         ))}
                       </div>

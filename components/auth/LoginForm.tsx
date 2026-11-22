@@ -14,12 +14,33 @@ import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
 import { useToast } from '@/components/ui/use-toast'
 import { Mail, Lock, ArrowLeft, User, GraduationCap, ShieldCheck, Sparkles, Eye, EyeOff } from 'lucide-react'
 
-export default function LoginForm() {
+interface LoginFormProps {
+  portal?: 'PARENT' | 'TUTOR' | 'ADMIN'
+  title?: string
+  description?: string
+  showStudentLink?: boolean
+  showRegisterLink?: boolean
+  showForgotPassword?: boolean
+  showBackToHome?: boolean
+  hideStudentLoginBox?: boolean
+}
+
+export default function LoginForm({
+  portal = 'PARENT',
+  title,
+  description,
+  showStudentLink = true,
+  showRegisterLink = true,
+  showForgotPassword = true,
+  showBackToHome = true,
+  hideStudentLoginBox = false,
+}: LoginFormProps) {
   const router = useRouter()
   const { toast } = useToast()
   const [formData, setFormData] = useState<LoginRequest>({
     email: '',
     password: '',
+    portal,
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -45,7 +66,7 @@ export default function LoginForm() {
         console.warn('Failed to set timezone:', tzError)
       }
 
-      // Redirect based on user role
+      // Redirect based on user role - if portal mismatch, will redirect to correct dashboard
       const userRole = localStorage.getItem('userRole')
       if (userRole === 'PARENT') {
         router.push('/parent')
@@ -53,6 +74,8 @@ export default function LoginForm() {
         router.push('/tutor')
       } else if (userRole === 'ADMIN') {
         router.push('/admin')
+      } else if (userRole === 'STUDENT') {
+        router.push('/student')
       } else {
         router.push('/')
       }
@@ -77,26 +100,26 @@ export default function LoginForm() {
           <BrandHeader />
         </div>
         <p className="text-xs uppercase tracking-widest text-primary font-semibold">
-          Parent & Tutor Portal
+          {portal === 'ADMIN' ? 'Administrator Portal' : portal === 'TUTOR' ? 'Tutor Portal' : 'Parent Portal'}
         </p>
       </div>
 
       {/* Main Login Card */}
       <Card className="bg-card/95 backdrop-blur-xl border border-primary/30 shadow-[0_10px_40px_rgba(0,0,0,0.8),0_0_30px_rgba(212,160,23,0.08)] rounded-2xl overflow-hidden">
         <div className="h-1 bg-primary opacity-80" />
-        
+
         <CardHeader className="pt-6 pb-4">
           <CardTitle className="text-xl font-bold text-foreground flex items-center justify-between">
             <span className="flex items-center gap-2">
-              <User className="w-5 h-5 text-primary" />
-              Sign In to Your Account
+              {portal === 'ADMIN' ? <ShieldCheck className="w-5 h-5 text-primary" /> : portal === 'TUTOR' ? <GraduationCap className="w-5 h-5 text-primary" /> : <User className="w-5 h-5 text-primary" />}
+              {title || (portal === 'ADMIN' ? 'Administrator Sign In' : 'Sign In to Your Account')}
             </span>
             <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/15 text-secondary border border-primary/30 font-medium">
               Secure
             </span>
           </CardTitle>
           <CardDescription className="text-muted-foreground text-xs mt-1">
-            Access your student dashboards, live schedules, and learning reports
+            {description || (portal === 'ADMIN' ? 'Access the admin dashboard' : 'Access your student dashboards, live schedules, and learning reports')}
           </CardDescription>
         </CardHeader>
 
@@ -163,60 +186,68 @@ export default function LoginForm() {
               {loading ? 'Authenticating...' : 'Sign In'}
             </Button>
 
-            <div className="pt-2 flex items-center justify-between text-xs text-muted-foreground">
-              <span>Don&apos;t have an account?</span>
-              <Link
-                href="/register"
-                className="text-primary hover:text-secondary font-semibold underline underline-offset-4 decoration-[#D4A017]/40 hover:decoration-[#D4A017]"
-              >
-                Create Account
-              </Link>
-            </div>
-            <div className="flex items-center justify-between text-xs text-muted-foreground pt-1">
-              <span>Need to enter OTP?</span>
-              <Link
-                href="/verify"
-                className="text-muted-foreground hover:text-foreground font-medium"
-              >
-                Verify Email
-              </Link>
-            </div>
+            {showRegisterLink && (
+              <div className="pt-2 flex items-center justify-between text-xs text-muted-foreground">
+                <span>Don&apos;t have an account?</span>
+                <Link
+                  href={portal === 'TUTOR' ? '/tutor/register' : '/register'}
+                  className="text-primary hover:text-secondary font-semibold underline underline-offset-4 decoration-[#D4A017]/40 hover:decoration-[#D4A017]"
+                >
+                  Create Account
+                </Link>
+              </div>
+            )}
+
+            {showForgotPassword && (
+              <div className="flex items-center justify-between text-xs text-muted-foreground pt-1">
+                <span>Forgot password?</span>
+                <Link
+                  href="/forgot-password"
+                  className="text-muted-foreground hover:text-foreground font-medium"
+                >
+                  Reset Password
+                </Link>
+              </div>
+            )}
           </form>
 
-          {/* Quick Switch to Student Login */}
-          <div className="mt-6 pt-5 border-t border-border">
-            <div className="p-3 rounded-xl bg-secondary border border-border flex items-center justify-between group hover:border-primary/40 transition-colors">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-primary/15 text-primary flex items-center justify-center font-bold">
-                  <GraduationCap className="w-4 h-4" />
+          {!hideStudentLoginBox && showStudentLink && (
+            <div className="mt-6 pt-5 border-t border-border">
+              <div className="p-3 rounded-xl bg-secondary border border-border flex items-center justify-between group hover:border-primary/40 transition-colors">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-primary/15 text-primary flex items-center justify-center font-bold">
+                    <GraduationCap className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-zinc-200">Are you a Student?</p>
+                    <p className="text-[10px] text-muted-foreground">Sign in with your Student Code & PIN</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-xs font-semibold text-zinc-200">Are you a Student?</p>
-                  <p className="text-[10px] text-muted-foreground">Sign in with your Student Code & PIN</p>
-                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => router.push('/student-login')}
+                  className="text-xs text-primary hover:text-foreground hover:bg-primary/20 font-semibold h-8 px-2.5 rounded-lg"
+                >
+                  Student Login →
+                </Button>
               </div>
+            </div>
+          )}
+
+          {showBackToHome && (
+            <div className="text-center pt-2">
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => router.push('/student-login')}
-                className="text-xs text-primary hover:text-foreground hover:bg-primary/20 font-semibold h-8 px-2.5 rounded-lg"
+                onClick={() => router.push('/')}
+                className="text-xs text-muted-foreground hover:text-muted-foreground hover:bg-transparent"
               >
-                Student Login →
+                <ArrowLeft className="mr-1.5 h-3.5 w-3.5" />
+                Back to Home
               </Button>
             </div>
-          </div>
-
-          <div className="text-center pt-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => router.push('/')}
-              className="text-xs text-muted-foreground hover:text-muted-foreground hover:bg-transparent"
-            >
-              <ArrowLeft className="mr-1.5 h-3.5 w-3.5" />
-              Back to Home
-            </Button>
-          </div>
+          )}
         </CardContent>
       </Card>
     </div>

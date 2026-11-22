@@ -23,6 +23,7 @@ export default function TutorSettingsPage() {
   const { toast } = useToast()
   const { soundEnabled, setSoundEnabled } = useNotifications()
   const [user, setUser] = useState<User | null>(null)
+  const [tutorProfile, setTutorProfile] = useState<TutorProfile | null>(null)
   const [loading, setLoading] = useState(true)
 
   // Password change state
@@ -60,6 +61,14 @@ export default function TutorSettingsPage() {
         const parsedUser = JSON.parse(userData)
         setUser(parsedUser)
       }
+    }
+
+    // Load tutor profile for salary display
+    try {
+      const profile = await api.getTutorProfile()
+      setTutorProfile(profile)
+    } catch (err) {
+      console.error('Failed to load tutor profile:', err)
     }
 
     // Load active student count for UNAVAILABLE warning
@@ -355,6 +364,34 @@ export default function TutorSettingsPage() {
                   )}
                 </Button>
               </form>
+            </CardContent>
+          </Card>
+
+          {/* Monthly Salary (Read-Only) */}
+          <Card className="bg-card border-brand-gold/30">
+            <CardHeader>
+              <CardTitle className="text-foreground flex items-center gap-2">
+                <Settings className="h-5 w-5 text-brand-gold" />
+                Monthly Salary
+              </CardTitle>
+              <CardDescription className="text-muted-foreground">
+                Your current monthly salary (read-only)
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div>
+                  <Label className="text-muted-foreground text-sm">Monthly Salary (NGN)</Label>
+                  <p className="text-foreground font-medium text-lg">
+                    {tutorProfile?.monthlySalaryNGN ? `₦${tutorProfile.monthlySalaryNGN.toLocaleString()}` : 'Not set'}
+                  </p>
+                </div>
+                <div className="bg-brand-gold/10 border border-brand-gold/30 p-3 rounded-lg">
+                  <p className="text-xs text-foreground/80">
+                    Only the admin can change your salary. Contact the admin team if you need to discuss your compensation.
+                  </p>
+                </div>
+              </div>
             </CardContent>
           </Card>
 

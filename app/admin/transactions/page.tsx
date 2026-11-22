@@ -15,6 +15,7 @@ import { Modal } from '@/components/shared/Modal'
 import { useToast } from '@/components/ui/use-toast'
 import { api } from '@/lib/api'
 import { PaymentDetail, AdminPaymentSummary, PaymentStatus, OutstandingEnrollment } from '@/lib/types'
+import { toNumber } from '@/lib/utils'
 import { Search, DollarSign, TrendingUp, Calendar, ChevronRight, ArrowLeft, BarChart3, RefreshCw, StickyNote, CheckCircle, Download, FileText, Filter, Users, Clock, AlertTriangle, MessageSquare } from 'lucide-react'
 
 type TabType = 'overview' | 'all' | 'outstanding' | 'failed'
@@ -741,9 +742,9 @@ function AdminTransactionsContent() {
                           ₦{summary.totalCollectedNGNEquivalent.toLocaleString()}
                         </p>
                         <p className="text-xs text-gray-400">Total Collected (NGN)</p>
-                        {summary.changePercent !== undefined && (
-                          <p className={`text-xs mt-1 ${summary.changePercent >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                            {summary.changePercent >= 0 ? '+' : ''}{summary.changePercent.toFixed(1)}% vs previous
+                        {toNumber(summary.changePercent) !== null && (
+                          <p className={`text-xs mt-1 ${toNumber(summary.changePercent)! >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                            {toNumber(summary.changePercent)! >= 0 ? '+' : ''}{toNumber(summary.changePercent)!.toFixed(1)}% vs previous
                           </p>
                         )}
                       </div>
