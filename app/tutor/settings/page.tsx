@@ -74,7 +74,8 @@ export default function TutorSettingsPage() {
     // Load active student count for UNAVAILABLE warning
     setLoadingStudents(true)
     try {
-      const students = await api.getTutorStudents()
+      const result = await api.getTutorStudents()
+      const students = result.data || []
       const activeCount = students.filter(s => s.enrollment?.status === 'ACTIVE').length
       setActiveStudentCount(activeCount)
     } catch (err) {

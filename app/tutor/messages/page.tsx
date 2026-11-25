@@ -90,12 +90,26 @@ export default function TutorMessagesPage() {
     // Get admin contact info
     try {
       const adminContact = await api.getAdminContact()
+      console.log('Admin contact response:', adminContact)
 
       // Check it is a non-empty string before sending
       if (!adminContact.recipientId || typeof adminContact.recipientId !== 'string' || adminContact.recipientId.trim() === '') {
+        console.error('Invalid admin contact recipientId:', adminContact.recipientId)
         toast({
           title: 'Admin Unavailable',
           description: 'Admin is unavailable, try again',
+          variant: 'destructive',
+        })
+        return
+      }
+
+      // Validate UUID format (basic check)
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+      if (!uuidRegex.test(adminContact.recipientId)) {
+        console.error('Invalid UUID format for recipientId:', adminContact.recipientId)
+        toast({
+          title: 'Admin Unavailable',
+          description: 'Admin contact ID is invalid. Please contact support.',
           variant: 'destructive',
         })
         return
@@ -135,12 +149,26 @@ export default function TutorMessagesPage() {
     if (!newMessage.trim() || !selectedThread?.otherParticipant?.id) return
 
     const recipientId = selectedThread.otherParticipant.id
+    console.log('Sending message to recipientId:', recipientId)
 
     // Validate recipientId before sending
     if (!recipientId || typeof recipientId !== 'string' || recipientId.trim() === '') {
+      console.error('Invalid recipientId:', recipientId)
       toast({
         title: 'Error',
         description: 'Admin is unavailable, try again',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    // Validate UUID format before sending
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    if (!uuidRegex.test(recipientId)) {
+      console.error('Invalid UUID format for recipientId:', recipientId)
+      toast({
+        title: 'Error',
+        description: 'Invalid recipient ID format. Please try starting a new admin thread.',
         variant: 'destructive',
       })
       return

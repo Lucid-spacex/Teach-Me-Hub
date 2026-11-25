@@ -314,14 +314,14 @@ export default function AdminPaymentSummaryPage() {
           )}
 
           {/* Daily Revenue Series */}
-          {summary.dailySeries && summary.dailySeries.length > 0 && (
+          {summary.series.dailySeries && summary.series.dailySeries.length > 0 && (
             <Card className="bg-card border-brand-gold/30">
               <CardHeader>
                 <CardTitle className="text-white">Daily Revenue Trend</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  {summary.dailySeries.slice(-14).map((item, index) => (
+                  {summary.series.dailySeries.slice(-14).map((item, index) => (
                     <div key={index} className="flex items-center gap-4">
                       <span className="text-xs text-gray-400 w-24">
                         {new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
@@ -336,7 +336,7 @@ export default function AdminPaymentSummaryPage() {
                               <div
                                 className={`h-2 rounded-full ${currency === 'NGN' ? 'bg-brand-gold' : 'bg-blue-500'}`}
                                 style={{
-                                  width: `${Math.min((amount / Math.max(...summary.dailySeries.map(d => 
+                                  width: `${Math.min((amount / Math.max(...(summary.series?.dailySeries || []).map(d => 
                                     Object.values(d.collected).reduce((a, b) => Math.max(a, b), 0)
                                   ))) * 100, 100)}%`
                                 }}

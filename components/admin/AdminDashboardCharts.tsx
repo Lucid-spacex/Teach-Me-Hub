@@ -53,11 +53,21 @@ export function AdminDashboardCharts({ overview }: AdminDashboardChartsProps) {
         fromDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000)
       }
 
+      console.log('Fetching payment summary with date range:', {
+        from: fromDate.toISOString(),
+        to: now.toISOString(),
+        timeRange
+      })
+
       const data = await api.getAdminPaymentSummary({
         from: fromDate.toISOString(),
         to: now.toISOString(),
       })
-      console.log('Payment summary data:', data)
+      console.log('Payment summary data received:', JSON.stringify(data, null, 2))
+      console.log('Daily series length:', data.dailySeries?.length)
+      console.log('By subject length:', data.bySubject?.length)
+      console.log('By status length:', data.byStatus?.length)
+      console.log('ByCurrency keys:', Object.keys(data.byCurrency || {}))
       setPaymentSummary(data)
     } catch (err) {
       console.error('Failed to load payment summary:', err)
@@ -66,6 +76,7 @@ export function AdminDashboardCharts({ overview }: AdminDashboardChartsProps) {
         byCurrency: {},
         totalCollectedNGNEquivalent: 0,
         changePercent: 0,
+        series: { dailySeries: [] },
         dailySeries: [],
         bySubject: [],
         byStatus: [],
@@ -96,7 +107,7 @@ export function AdminDashboardCharts({ overview }: AdminDashboardChartsProps) {
   const subjectData = paymentSummary?.bySubject || []
   const statusData = paymentSummary?.byStatus || []
 
-  const dailyRevenueData = paymentSummary?.dailySeries?.map(item => {
+  const dailyRevenueData = paymentSummary?.series?.dailySeries?.map(item => {
     if (!item || !item.date) return null
     return {
       date: new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),

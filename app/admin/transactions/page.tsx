@@ -14,7 +14,7 @@ import { StatusBadge } from '@/components/shared/StatusBadge'
 import { Modal } from '@/components/shared/Modal'
 import { useToast } from '@/components/ui/use-toast'
 import { api } from '@/lib/api'
-import { PaymentDetail, AdminPaymentSummary, PaymentStatus, OutstandingEnrollment } from '@/lib/types'
+import { PaymentDetail, AdminPaymentListItem, AdminPaymentSummary, PaymentStatus, OutstandingEnrollment, FailedPayment } from '@/lib/types'
 import { toNumber } from '@/lib/utils'
 import { Search, DollarSign, TrendingUp, Calendar, ChevronRight, ArrowLeft, BarChart3, RefreshCw, StickyNote, CheckCircle, Download, FileText, Filter, Users, Clock, AlertTriangle, MessageSquare } from 'lucide-react'
 
@@ -33,7 +33,7 @@ function AdminTransactionsContent() {
   const [currency, setCurrency] = useState('ALL')
   
   // All payments state
-  const [payments, setPayments] = useState<PaymentDetail[]>([])
+  const [payments, setPayments] = useState<AdminPaymentListItem[]>([])
   const [selectedPayment, setSelectedPayment] = useState<PaymentDetail | null>(null)
   const [paymentsLoading, setPaymentsLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -52,7 +52,7 @@ function AdminTransactionsContent() {
   const outstandingLimit = 20
   
   // Failed state
-  const [failedPayments, setFailedPayments] = useState<PaymentDetail[]>([])
+  const [failedPayments, setFailedPayments] = useState<FailedPayment[]>([])
   const [failedLoading, setFailedLoading] = useState(true)
   const [failedPage, setFailedPage] = useState(1)
   const [failedTotal, setFailedTotal] = useState(0)
@@ -65,8 +65,6 @@ function AdminTransactionsContent() {
   const [noteModalOpen, setNoteModalOpen] = useState(false)
   const [noteText, setNoteText] = useState('')
   const [savingNote, setSavingNote] = useState(false)
-  
-  // Reverify action state
   const [reverifying, setReverifying] = useState(false)
 
   useEffect(() => {
@@ -125,7 +123,7 @@ function AdminTransactionsContent() {
         page: paymentPage,
         limit: paymentLimit,
       })
-      setPayments(data.payments || [])
+      setPayments(data.data || [])
       setPaymentTotal(data.total || 0)
     } catch (err) {
       console.error('Failed to load transactions:', err)
@@ -143,6 +141,7 @@ function AdminTransactionsContent() {
         page: outstandingPage,
         limit: outstandingLimit,
         sort: 'daysWaiting:desc',
+        includeUnpaid: true,
       })
       setOutstanding(data.data || [])
       setOutstandingTotal(data.total || 0)
@@ -158,12 +157,8 @@ function AdminTransactionsContent() {
   const loadFailedPayments = async () => {
     setFailedLoading(true)
     try {
-      const data = await api.getTransactions({
-        status: 'FAILED',
-        page: failedPage,
-        limit: failedLimit,
-      })
-      setFailedPayments(data.payments || [])
+      const data = await api.getFailedPayments()
+      setFailedPayments(data.data || [])
       setFailedTotal(data.total || 0)
     } catch (err) {
       console.error('Failed to load failed payments:', err)
@@ -302,11 +297,8 @@ function AdminTransactionsContent() {
       setSelectedPayment(updated)
       toast({
         title: 'Payment Verified',
-        description: 'Payment has been reverified with the payment provider.',
+        description: 'Payment has been reverified with the provider.',
       })
-      loadPayments()
-      loadFailedPayments()
-      loadSummary()
     } catch (err) {
       console.error('Failed to reverify payment:', err)
       toast({
@@ -386,18 +378,12 @@ function AdminTransactionsContent() {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-gray-400">Reference</p>
-                    <p className="font-medium text-white">{selectedPayment.reference}</p>
-                  </div>
-                  <div>
                     <p className="text-sm text-gray-400">Receipt #</p>
-                    <p className="font-medium text-white">
-                      {selectedPayment.receiptNumber || 'N/A'}
-                    </p>
+                    <p className="font-medium text-white">{selectedPayment.receiptNumber}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-400">Provider Reference</p>
-                    <p className="font-medium text-white">{selectedPayment.providerReference || 'N/A'}</p>
+                    <p className="text-sm text-gray-400">Transaction Reference</p>
+                    <p className="font-medium text-white">{selectedPayment.transactionReference || selectedPayment.reference}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-400">Amount</p>
@@ -408,14 +394,7 @@ function AdminTransactionsContent() {
                   <div>
                     <p className="text-sm text-gray-400">NGN Equivalent</p>
                     <p className="font-medium text-white">
-                      {selectedPayment.chargedAmountNGN ? `₦${selectedPayment.chargedAmountNGN.toLocaleString()}` : 
-                       selectedPayment.ngnEquivalent ? `₦${selectedPayment.ngnEquivalent.toLocaleString()}` : 'N/A'}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-400">Exchange Rate</p>
-                    <p className="font-medium text-white">
-                      {selectedPayment.exchangeRateUsed ? `₦${selectedPayment.exchangeRateUsed.toLocaleString()}/$1` : 'N/A'}
+                      ₦{selectedPayment.ngnEquivalent?.toLocaleString() || 'N/A'}
                     </p>
                   </div>
                   <div>
@@ -427,44 +406,18 @@ function AdminTransactionsContent() {
                     <p className="font-medium text-white">{selectedPayment.provider}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-400">Initiated At</p>
+                    <p className="text-sm text-gray-400">Created At</p>
                     <p className="font-medium text-white">
-                      {new Date(selectedPayment.initiatedAt).toLocaleString()}
+                      {new Date(selectedPayment.initiatedAt || (selectedPayment as any).createdAt).toLocaleString()}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-400">Paid At</p>
+                    <p className="text-sm text-gray-400">Updated At</p>
                     <p className="font-medium text-white">
-                      {selectedPayment.paidAt ? new Date(selectedPayment.paidAt).toLocaleString() : 'N/A'}
+                      {selectedPayment.updatedAt ? new Date(selectedPayment.updatedAt).toLocaleString() : 'N/A'}
                     </p>
                   </div>
                 </div>
-
-                {selectedPayment.status === 'SUCCESS' && (
-                  <div className="pt-4 border-t border-brand-gold/10">
-                    <p className="text-sm text-gray-400 mb-3">Download Receipt</p>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDownloadReceiptPDF(selectedPayment.id)}
-                        className="border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10"
-                      >
-                        <Download className="h-4 w-4 mr-2" />
-                        Download PDF
-                      </Button>
-                    </div>
-                  </div>
-                )}
-
-                {selectedPayment.failureReason && (
-                  <div className="pt-4 border-t border-brand-gold/10">
-                    <p className="text-sm text-gray-400 mb-2">Failure Reason</p>
-                    <p className="text-sm text-red-400 bg-red-500/10 p-3 rounded border border-red-500/20">
-                      {selectedPayment.failureReason}
-                    </p>
-                  </div>
-                )}
               </CardContent>
             </Card>
 
@@ -497,20 +450,40 @@ function AdminTransactionsContent() {
               </Card>
             )}
 
-            {selectedPayment.enrollment && (
+            {selectedPayment.student && (
               <Card className="bg-card border-brand-gold/30">
                 <CardHeader>
-                  <CardTitle className="text-white">Enrollment Details</CardTitle>
+                  <CardTitle className="text-white">Student Details</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
                     <div>
-                      <p className="text-sm text-gray-400">Student</p>
-                      <p className="font-medium text-white">{selectedPayment.enrollment.student.fullName}</p>
+                      <p className="text-sm text-gray-400">Name</p>
+                      <p className="font-medium text-white">{selectedPayment.student.fullName}</p>
                     </div>
                     <div>
+                      <p className="text-sm text-gray-400">Grade Level</p>
+                      <p className="font-medium text-white">{(selectedPayment.student as any)?.gradeLevel || (selectedPayment.enrollment as any)?.student?.gradeLevel || 'N/A'}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {((selectedPayment as any).subject || selectedPayment.enrollment?.subject) && (
+              <Card className="bg-card border-brand-gold/30">
+                <CardHeader>
+                  <CardTitle className="text-white">Subject Details</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <div>
                       <p className="text-sm text-gray-400">Subject</p>
-                      <p className="font-medium text-white">{selectedPayment.enrollment.subject.name}</p>
+                      <p className="font-medium text-white">{(selectedPayment as any).subject?.name || selectedPayment.enrollment?.subject?.name}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-400">Enrollment ID</p>
+                      <p className="font-medium text-white">{selectedPayment.enrollmentId || selectedPayment.enrollment?.id || 'N/A'}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -581,67 +554,6 @@ function AdminTransactionsContent() {
                         </Button>
                       </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {selectedPayment.timeline && Array.isArray(selectedPayment.timeline) && selectedPayment.timeline.length > 0 && (
-              <Card className="bg-card border-brand-gold/30">
-                <CardHeader>
-                  <CardTitle className="text-white">Payment Timeline</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {selectedPayment.timeline.map((event: any, index: number) => (
-                      <div key={index} className="flex gap-3">
-                        <div className="flex flex-col items-center">
-                          <div className="w-2 h-2 rounded-full bg-brand-gold mt-2" />
-                          {index < (selectedPayment.timeline?.length || 0) - 1 && (
-                            <div className="w-px h-full bg-border min-h-[2rem]" />
-                          )}
-                        </div>
-                        <div className="flex-1 pb-2">
-                          <p className="text-sm text-white">{event.status || event.event}</p>
-                          <p className="text-xs text-gray-400">{new Date(event.timestamp || event.createdAt).toLocaleString()}</p>
-                          {event.message && (
-                            <p className="text-xs text-gray-400 mt-1">{event.message}</p>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {selectedPayment.auditLogs && Array.isArray(selectedPayment.auditLogs) && selectedPayment.auditLogs.length > 0 && (
-              <Card className="bg-card border-brand-gold/30">
-                <CardHeader>
-                  <CardTitle className="text-white">Audit Log</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {selectedPayment.auditLogs.map((log: any, index: number) => (
-                      <div key={index} className="p-3 bg-brand-dark/30 rounded border border-brand-gold/10">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <p className="text-sm font-medium text-white">{log.action}</p>
-                            <p className="text-xs text-gray-400 mt-1">
-                              Admin ID: {log.adminId} • {new Date(log.createdAt).toLocaleString()}
-                            </p>
-                          </div>
-                        </div>
-                        {log.details && Object.keys(log.details).length > 0 && (
-                          <details className="mt-2">
-                            <summary className="text-xs text-brand-gold cursor-pointer">View Details</summary>
-                            <pre className="text-xs text-gray-400 mt-2 bg-brand-dark/50 p-2 rounded overflow-x-auto">
-                              {JSON.stringify(log.details, null, 2)}
-                            </pre>
-                          </details>
-                        )}
-                      </div>
-                    ))}
                   </div>
                 </CardContent>
               </Card>
@@ -780,7 +692,7 @@ function AdminTransactionsContent() {
                           </p>
                           <p className="text-xs text-gray-400">USD Collected</p>
                           <p className="text-xs text-gray-500 mt-1">
-                            {summary.byCurrency.USD.successCount} / {summary.byCurrency.USD.count} successful
+                            {summary.byCurrency.USD.count} payments
                           </p>
                         </div>
                       </div>
@@ -794,7 +706,7 @@ function AdminTransactionsContent() {
                       <div>
                         <p className="text-2xl font-bold text-white">
                           {Object.values(summary.byCurrency).reduce((acc, curr) => acc + curr.successRate, 0) / 
-                           Object.keys(summary.byCurrency).length * 100 || 0
+                           Object.keys(summary.byCurrency).length || 0
                           }%
                         </p>
                         <p className="text-xs text-gray-400">Overall Success Rate</p>
@@ -946,13 +858,11 @@ function AdminTransactionsContent() {
                             <DollarSign className="h-5 w-5" />
                           </div>
                           <div>
-                            <p className="font-medium text-white">{payment.reference}</p>
-                            {payment.receiptNumber && (
-                              <p className="text-xs text-brand-gold font-medium">{payment.receiptNumber}</p>
-                            )}
+                            <p className="font-medium text-white">{payment.receiptNumber}</p>
+                            <p className="text-xs text-brand-gold font-medium">{payment.transactionReference || payment.reference}</p>
                             <p className="text-sm text-gray-400">
                               {payment.parent ? payment.parent.fullName : 'N/A'}
-                              {payment.enrollment && ` • ${payment.enrollment.student.fullName} • ${payment.enrollment.subject.name}`}
+                              {payment.student && ` • ${payment.student.fullName} • ${payment.subject.name}`}
                             </p>
                           </div>
                         </div>
@@ -963,7 +873,7 @@ function AdminTransactionsContent() {
                             </p>
                             <p className="text-xs text-gray-400 flex items-center gap-1">
                               <Calendar className="h-3 w-3" />
-                              {new Date(payment.initiatedAt).toLocaleDateString()}
+                              {new Date(payment.createdAt).toLocaleDateString()}
                             </p>
                           </div>
                           <StatusBadge status={payment.status} />
@@ -1027,25 +937,20 @@ function AdminTransactionsContent() {
                   <div className="divide-y divide-brand-gold/10">
                     {outstanding.map((item) => (
                       <div
-                        key={item.enrollmentGroupId}
+                        key={item.id}
                         className="p-4 hover:bg-brand-gold/5 transition-colors"
                       >
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
-                              <span className="font-medium text-white">{item.parent.name}</span>
+                              <span className="font-medium text-white">{item.parent.fullName}</span>
                               <span className="text-gray-400">•</span>
                               <span className="text-gray-400">{item.parent.email}</span>
-                              <span className="text-gray-400">•</span>
-                              <span className="text-gray-400">{item.parent.phone}</span>
                             </div>
                             <div className="text-sm text-gray-400 mb-2">
-                              Student: {item.student.fullName} • Subjects: {item.subjects.join(', ')}
+                              Student: {item.student.fullName} ({item.student.gradeLevel}) • Subject: {item.subject.name}
                             </div>
                             <div className="flex items-center gap-4">
-                              <span className="text-sm text-white font-medium">
-                                {item.expectedCurrency === 'NGN' ? '₦' : '$'}{item.expectedAmount.toLocaleString()}
-                              </span>
                               <span className={`text-sm px-2 py-1 rounded ${
                                 item.daysWaiting > 7 ? 'bg-red-500/20 text-red-400' :
                                 item.daysWaiting > 3 ? 'bg-amber-500/20 text-amber-400' :
@@ -1053,11 +958,9 @@ function AdminTransactionsContent() {
                               }`}>
                                 {item.daysWaiting} days waiting
                               </span>
-                              {item.latestPaymentStatus && (
-                                <span className="text-sm text-gray-400">
-                                  Last: {item.latestPaymentStatus}
-                                </span>
-                              )}
+                              <span className="text-sm text-gray-400">
+                                Payment: {item.paymentStatus}
+                              </span>
                             </div>
                           </div>
                           <Button
@@ -1137,10 +1040,9 @@ function AdminTransactionsContent() {
                             <AlertTriangle className="h-5 w-5" />
                           </div>
                           <div>
-                            <p className="font-medium text-white">{payment.reference}</p>
+                            <p className="font-medium text-white">{payment.receiptNumber}</p>
                             <p className="text-sm text-gray-400">
-                              {payment.parent ? payment.parent.fullName : 'N/A'}
-                              {payment.enrollment && ` • ${payment.enrollment.student.fullName}`}
+                              {payment.parent.fullName} • {payment.student.fullName}
                             </p>
                             {payment.failureReason && (
                               <p className="text-xs text-red-400 mt-1">{payment.failureReason}</p>
@@ -1154,7 +1056,7 @@ function AdminTransactionsContent() {
                             </p>
                             <p className="text-xs text-gray-400 flex items-center gap-1">
                               <Calendar className="h-3 w-3" />
-                              {new Date(payment.initiatedAt).toLocaleDateString()}
+                              {new Date(payment.failedAt || payment.createdAt).toLocaleDateString()}
                             </p>
                           </div>
                           <StatusBadge status={payment.status} />

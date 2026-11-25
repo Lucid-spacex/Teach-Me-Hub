@@ -43,7 +43,7 @@ export default function VerifyForm() {
     setLoading(true)
 
     try {
-      const response = await api.verify(formData)
+      const response = await api.verify({ email: formData.email.trim(), otp: formData.otp.trim() })
       const role = response?.user?.role ?? null
       setVerifiedRole(role)
       setSuccess(true)

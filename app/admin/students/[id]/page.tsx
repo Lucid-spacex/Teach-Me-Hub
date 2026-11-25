@@ -12,7 +12,7 @@ import { Avatar } from '@/components/shared/Avatar'
 import { Modal } from '@/components/shared/Modal'
 import { useToast } from '@/components/ui/use-toast'
 import { api } from '@/lib/api'
-import { AdminStudentDetail, Enrollment, Session, Grade, Assignment, TutorWithProfile, SuggestedTutor } from '@/lib/types'
+import { AdminStudentDetail, Enrollment, Session, Grade, Assignment, TutorWithProfile, SuggestedTutor, ProgressReport, StudentAttendance } from '@/lib/types'
 import { toNumber, formatPercentage } from '@/lib/utils'
 import { ArrowLeft, RefreshCw, Users, Calendar, BookOpen, Award, BarChart3, FileText, TrendingUp, UserCheck, Mail, Phone, Clock, AlertCircle } from 'lucide-react'
 
@@ -159,7 +159,14 @@ export default function AdminStudentDetailPage() {
     )
   }
 
-  const { student, parent, tutors, enrollments, sessions, attendance, grades, assignments, progressReports, performance } = studentData
+  const { student, parent, tutors } = studentData
+  const enrollments: Enrollment[] = Array.isArray(studentData.enrollments) ? studentData.enrollments : ((studentData.enrollments as any)?.data ?? [])
+  const sessions: Session[] = Array.isArray(studentData.sessions) ? studentData.sessions : ((studentData.sessions as any)?.data ?? [])
+  const grades: Grade[] = Array.isArray(studentData.grades) ? studentData.grades : ((studentData.grades as any)?.data ?? [])
+  const attendance: StudentAttendance[] = Array.isArray(studentData.attendance) ? studentData.attendance : ((studentData.attendance as any)?.data ?? [])
+  const assignments: Assignment[] = Array.isArray(studentData.assignments) ? studentData.assignments : ((studentData.assignments as any)?.data ?? [])
+  const progressReports: ProgressReport[] = Array.isArray(studentData.progressReports) ? studentData.progressReports : ((studentData.progressReports as any)?.data ?? [])
+  const performance = studentData.performance
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
@@ -447,7 +454,7 @@ export default function AdminStudentDetailPage() {
 
                 {activeTab === 'assignments' && (
                   <div className="space-y-2">
-                    {!assignments || assignments.length === 0 ? (
+                    {!assignments || !Array.isArray(assignments) || assignments.length === 0 ? (
                       <p className="text-sm text-gray-400">No assignments</p>
                     ) : (
                       assignments.map((assignment) => (
@@ -464,7 +471,7 @@ export default function AdminStudentDetailPage() {
 
                 {activeTab === 'reports' && (
                   <div className="space-y-2">
-                    {!progressReports || progressReports.length === 0 ? (
+                    {!progressReports || !Array.isArray(progressReports) || progressReports.length === 0 ? (
                       <p className="text-sm text-gray-400">No progress reports</p>
                     ) : (
                       progressReports.map((report) => (

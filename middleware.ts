@@ -6,23 +6,26 @@ export function middleware(request: NextRequest) {
   const userRole = request.cookies.get('userRole')?.value
 
   // Public routes - no auth required
-  const publicRoutes = ['/', '/login', '/register', '/tutors', '/tutor/login', '/tutor/register', '/admin/login', '/student-login', '/forgot-password', '/reset-password', '/verify']
+  const publicRoutes = [
+    '/',
+    '/login',
+    '/register',
+    '/tutors',
+    '/tutor/login',
+    '/tutor/register',
+    '/admin/login',
+    '/student-login',
+    '/forgot-password',
+    '/reset-password',
+    '/verify',
+    '/payment',
+    '/payment/callback',
+  ]
   const isPublicRoute = publicRoutes.some(route => pathname === route || pathname.startsWith(route + '/'))
 
   if (isPublicRoute) {
-    // If user is already logged in and hits a public route, redirect to their dashboard
-    if (userRole) {
-      const dashboards: Record<string, string> = {
-        PARENT: '/parent',
-        TUTOR: '/tutor',
-        ADMIN: '/admin',
-        STUDENT: '/student',
-      }
-      const dashboard = dashboards[userRole]
-      if (dashboard) {
-        return NextResponse.redirect(new URL(dashboard, request.url))
-      }
-    }
+    // Allow logged-in users to visit public routes (e.g., /login page)
+    // Redirects are handled by client-side AuthGuard in layouts
     return NextResponse.next()
   }
 

@@ -101,7 +101,8 @@ export default function TutorStudentDetailPage({ params }: PageProps) {
           ? detailEnrollments.map(enrollment => ({ student, enrollment }))
           : [{ student, enrollment: undefined as unknown as Enrollment }]
       } else {
-        const assigned = await api.getTutorStudents().catch(() => [])
+        const result = await api.getTutorStudents().catch(() => ({ data: [], total: 0, page: 1, limit: 20 }))
+        const assigned = result.data || []
         matches = assigned.filter(item => item.student?.id === studentId)
       }
 
@@ -378,7 +379,7 @@ export default function TutorStudentDetailPage({ params }: PageProps) {
                       {student.fullName || 'Student'}
                     </h1>
                     <Badge variant="outline" className="border-brand-gold/40 text-brand-gold bg-brand-gold/10">
-                      {student.actualGrade?.replace('_', ' ')}
+                      {(student as any).gradeLevel || student.actualGrade?.replace('_', ' ') || 'N/A'}
                     </Badge>
                   </div>
                   <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm text-muted-foreground">
@@ -388,7 +389,7 @@ export default function TutorStudentDetailPage({ params }: PageProps) {
                         {student.school}
                       </span>
                     )}
-                    {student.dateOfBirth && (
+                    {student.dateOfBirth && !isNaN(new Date(student.dateOfBirth).getTime()) && (
                       <span className="flex items-center gap-1.5">
                         <Calendar className="h-4 w-4 text-brand-gold" />
                         DOB: {new Date(student.dateOfBirth).toLocaleDateString()}

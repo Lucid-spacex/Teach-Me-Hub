@@ -572,13 +572,20 @@ export interface AssignTutorRequest {
 
 export interface AdminOverview {
   totalUsers: number
+  totalParents: number
   totalStudents: number
   totalTutors: number
-  totalParents: number
-  activeEnrollments: number
   pendingTutors: number
-  totalRevenue: number
+  activeEnrollments: number
+  pendingPaymentEnrollments: number
+  unmatchedEnrollments: number
+  totalRevenueNGN: number
+  revenueThisMonthNGN: number
+  totalRevenue: number // Deprecated alias, use totalRevenueNGN
   failedPayments: number
+  pendingGrades: number
+  openComplaints: number
+  suspendedUsers: number
 }
 
 // Payment types
@@ -984,6 +991,7 @@ export type PaymentProvider = 'PAYSTACK' | 'STRIPE'
 export interface PaymentDetail {
   id: string
   reference: string
+  transactionReference?: string
   enrollmentId?: string
   enrollmentGroupId?: string
   amount: number
@@ -993,6 +1001,7 @@ export interface PaymentDetail {
   providerReference?: string
   initiatedAt: string
   paidAt?: string
+  updatedAt?: string
   enrollment?: {
     id: string
     student: {
@@ -1063,6 +1072,10 @@ export interface PaymentHistoryWithSummary {
 
 // Admin Payment Summary types
 export interface AdminPaymentSummary {
+  dailySeries?: Array<{
+    date: string
+    collected: Record<string, number>
+  }>
   byCurrency: Record<string, {
     collectedTotal: number
     pendingTotal: number
@@ -1074,14 +1087,16 @@ export interface AdminPaymentSummary {
   }>
   totalCollectedNGNEquivalent: number
   changePercent: number
-  dailySeries: Array<{
-    date: string
-    collected: Record<string, number>
-  }>
-  monthlySeries?: Array<{
-    date: string
-    collected: Record<string, number>
-  }>
+  series: {
+    dailySeries?: Array<{
+      date: string
+      collected: Record<string, number>
+    }>
+    monthlySeries?: Array<{
+      date: string
+      collected: Record<string, number>
+    }>
+  }
   bySubject: Array<{
     subjectName: string
     collected: number
@@ -1095,22 +1110,58 @@ export interface AdminPaymentSummary {
 
 // Outstanding Payments types
 export interface OutstandingEnrollment {
-  enrollmentGroupId: string
-  parent: {
+  id: string
+  enrollmentId?: string
+  student: {
+    id: string
+    fullName: string
+    gradeLevel: string
+  }
+  subject: {
+    id: string
     name: string
+  }
+  parent: {
+    id: string
+    fullName: string
     email: string
-    phone: string
+  }
+  tutor?: {
+    id: string
+    fullName: string
+  }
+  enrolledAt: string
+  daysWaiting: number
+  paymentStatus: string
+}
+
+// Failed Payment type
+export interface FailedPayment {
+  id: string
+  receiptNumber: string
+  amount: number
+  currency: string
+  status: 'FAILED'
+  provider: string
+  parent: {
+    id: string
+    fullName: string
+    email: string
   }
   student: {
     id: string
     fullName: string
+    gradeLevel: string
   }
-  subjects: string[]
-  expectedAmount: number
-  expectedCurrency: string
+  subject: {
+    id: string
+    name: string
+  }
+  enrollmentGroupId?: string
   createdAt: string
-  daysWaiting: number
-  latestPaymentStatus: string | null
+  paidAt?: string
+  failureReason?: string | null
+  failedAt?: string
 }
 
 export interface OutstandingPaymentsResponse {
@@ -1124,26 +1175,47 @@ export interface OutstandingPaymentsResponse {
 export interface AdminPaymentListItem {
   id: string
   reference: string
-  receiptNumber?: string
+  transactionReference: string
+  receiptNumber: string
   amount: number
   currency: string
-  status: PaymentStatus
-  createdAt: string
-  paidAt?: string
+  status: 'SUCCESS' | 'PENDING' | 'FAILED'
+  provider: string
   parent: {
     id: string
     fullName: string
     email: string
   }
-  student?: {
+  student: {
     id: string
     fullName: string
+    gradeLevel: string
   }
-  subjects: string[]
+  subject: {
+    id: string
+    name: string
+  }
   enrollmentGroupId?: string
-  hasAdminNote: boolean
-  failureReason?: string | null
-  chargedAmountNGN: number
+  createdAt: string
+  paidAt?: string
+}
+
+// Admin Badge Counts
+export interface AdminBadgeCounts {
+  pendingTutorApplications: number
+  pendingGrades: number
+  openComplaints: number
+  unmatchedPaidEnrollments: number
+  pendingChangeRequests: number
+  unscheduledWithin24h: number
+  failedPayments: number
+  outstandingEnrollments: number
+  unreadMessages: number
+  attendanceUnmarkedSessions: number
+  unreadNewParents: number
+  unreadNewTutors: number
+  pendingVettingTutors: number
+  activeParents: number
 }
 
 // Enhanced Parent Profile with Payment Summary
@@ -1151,12 +1223,6 @@ export interface ParentProfileWithPaymentSummary extends ParentDetailProfile {
   totalPaidNGN?: number
   totalPaidUSD?: number
   pendingPaymentCount?: number
-}
-
-// Enhanced Badge Counts
-export interface EnhancedBadgeCounts extends UnreadCountResponse {
-  failedPayments?: number
-  outstandingEnrollments?: number
 }
 
 export interface PaymentSummary {

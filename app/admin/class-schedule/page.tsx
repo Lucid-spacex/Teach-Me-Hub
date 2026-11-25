@@ -34,6 +34,19 @@ export default function AdminClassSchedulePage() {
     toDate: '',
     search: '',
   })
+  const [tutorList, setTutorList] = useState<{ id: string; name: string }[]>([])
+  const [subjectList, setSubjectList] = useState<{ id: string; name: string }[]>([])
+
+  useEffect(() => {
+    // Load tutors and subjects for dropdown filters
+    Promise.all([
+      api.getApprovedTutorsForAssignment().catch(() => []),
+      api.getSubjects().catch(() => []),
+    ]).then(([tutorsData, subjectsData]) => {
+      setTutorList(tutorsData.map(t => ({ id: t.id, name: t.fullName || t.email })))
+      setSubjectList(subjectsData.map(s => ({ id: s.id, name: s.name })))
+    })
+  }, [])
 
   useEffect(() => {
     const user = getUser()
@@ -104,146 +117,159 @@ export default function AdminClassSchedulePage() {
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-brand-dark">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <CardSkeleton />
-        </div>
-      </div>
-    )
+    return <CardSkeleton />
   }
 
   return (
-    <div className="min-h-screen bg-brand-dark">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => router.push('/admin')}
-              className="gap-2 text-foreground/80 hover:text-foreground"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back
-            </Button>
-            <div className="h-6 w-px bg-border" />
-            <div>
-              <h1 className="text-3xl font-bold text-foreground">Class Schedule</h1>
-              <p className="text-muted-foreground mt-2">
-                {mode === 'sessions' ? 'View all students with their next class' : 'View student enrollment schedules'}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 bg-muted rounded-lg p-1">
-              <Button
-                size="sm"
-                variant={mode === 'sessions' ? 'default' : 'ghost'}
-                onClick={() => setMode('sessions')}
-                className="text-xs"
-              >
-                Sessions
-              </Button>
-              <Button
-                size="sm"
-                variant={mode === 'enrollments' ? 'default' : 'ghost'}
-                onClick={() => setMode('enrollments')}
-                className="text-xs"
-              >
-                Student Schedules
-              </Button>
-            </div>
-            {mode === 'sessions' && unscheduledCount > 0 && (
-              <Badge variant="destructive" className="text-sm">
-                <AlertCircle className="h-4 w-4 mr-1" />
-                {unscheduledCount} classes unscheduled within 24h
-              </Badge>
-            )}
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="mb-6 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => router.push('/admin')}
+            className="gap-2 text-foreground/80 hover:text-foreground"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </Button>
+          <div className="h-6 w-px bg-border" />
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">Class Schedule</h1>
+            <p className="text-muted-foreground mt-2">
+              {mode === 'sessions' ? 'View all students with their next class' : 'View student enrollment schedules'}
+            </p>
           </div>
         </div>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 bg-muted rounded-lg p-1">
+            <Button
+              size="sm"
+              variant={mode === 'sessions' ? 'default' : 'ghost'}
+              onClick={() => setMode('sessions')}
+              className="text-xs"
+            >
+              Sessions
+            </Button>
+            <Button
+              size="sm"
+              variant={mode === 'enrollments' ? 'default' : 'ghost'}
+              onClick={() => setMode('enrollments')}
+              className="text-xs"
+            >
+              Student Schedules
+            </Button>
+          </div>
+          {mode === 'sessions' && unscheduledCount > 0 && (
+            <Badge variant="destructive" className="text-sm">
+              <AlertCircle className="h-4 w-4 mr-1" />
+              {unscheduledCount} classes unscheduled within 24h
+            </Badge>
+          )}
+        </div>
+      </div>
 
-        {/* Filters */}
-        <Card className="bg-card border-brand-gold/30 mb-6">
-          <CardHeader>
-            <CardTitle className="text-foreground flex items-center gap-2">
-              <Filter className="h-5 w-5 text-brand-gold" />
-              Filters
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-              {mode === 'enrollments' && (
-                <>
-                  <div>
-                    <label className="text-sm text-muted-foreground mb-2 block">Search</label>
-                    <Input
-                      placeholder="Student name..."
-                      value={filters.search}
-                      onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-                      className="bg-background border-input"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm text-muted-foreground mb-2 block">Subject ID</label>
-                    <Input
-                      placeholder="Subject ID"
-                      value={filters.subjectId}
-                      onChange={(e) => setFilters({ ...filters, subjectId: e.target.value })}
-                      className="bg-background border-input"
-                    />
-                  </div>
-                </>
-              )}
-              <div>
-                <label className="text-sm text-muted-foreground mb-2 block">Tutor ID</label>
-                <Input
-                  placeholder="Enter tutor ID"
-                  value={filters.tutorId}
-                  onChange={(e) => setFilters({ ...filters, tutorId: e.target.value })}
-                  className="bg-background border-input"
-                />
-              </div>
-              <div>
-                <label className="text-sm text-muted-foreground mb-2 block">Status</label>
-                <Select
-                  value={filters.status}
-                  onValueChange={(value) => setFilters({ ...filters, status: value as ClassScheduleStatus | '' })}
-                >
-                  <SelectTrigger className="bg-background border-input">
-                    <SelectValue placeholder="All statuses" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">All statuses</SelectItem>
-                    <SelectItem value="SCHEDULED">Scheduled</SelectItem>
-                    <SelectItem value="UNSCHEDULED">Unscheduled</SelectItem>
-                    <SelectItem value="MISSED">Missed</SelectItem>
-                    <SelectItem value="NOT_STARTED">Not Started</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <label className="text-sm text-muted-foreground mb-2 block">Date From</label>
-                <Input
-                  type="date"
-                  value={filters.fromDate}
-                  onChange={(e) => setFilters({ ...filters, fromDate: e.target.value })}
-                  className="bg-background border-input"
-                />
-              </div>
-              <div>
-                <label className="text-sm text-muted-foreground mb-2 block">Date To</label>
-                <Input
-                  type="date"
-                  value={filters.toDate}
-                  onChange={(e) => setFilters({ ...filters, toDate: e.target.value })}
-                  className="bg-background border-input"
-                />
-              </div>
+      {/* Filters */}
+      <Card className="bg-card border-brand-gold/30 mb-6">
+        <CardHeader>
+          <CardTitle className="text-foreground flex items-center gap-2">
+            <Filter className="h-5 w-5 text-brand-gold" />
+            Filters
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+            {mode === 'enrollments' && (
+              <>
+                <div>
+                  <label className="text-sm text-muted-foreground mb-2 block">Search</label>
+                  <Input
+                    placeholder="Student name..."
+                    value={filters.search}
+                    onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                    className="bg-background border-input"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm text-muted-foreground mb-2 block">Subject</label>
+                  <Select
+                    value={filters.subjectId || 'ALL'}
+                    onValueChange={(val) => setFilters({ ...filters, subjectId: val === 'ALL' ? '' : val })}
+                  >
+                    <SelectTrigger className="bg-background border-input">
+                      <SelectValue placeholder="All subjects" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ALL">All subjects</SelectItem>
+                      {subjectList.map((s) => (
+                        <SelectItem key={s.id} value={s.id}>
+                          {s.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </>
+            )}
+            <div>
+              <label className="text-sm text-muted-foreground mb-2 block">Tutor</label>
+              <Select
+                value={filters.tutorId || 'ALL'}
+                onValueChange={(val) => setFilters({ ...filters, tutorId: val === 'ALL' ? '' : val })}
+              >
+                <SelectTrigger className="bg-background border-input">
+                  <SelectValue placeholder="All tutors" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ALL">All tutors</SelectItem>
+                  {tutorList.map((t) => (
+                    <SelectItem key={t.id} value={t.id}>
+                      {t.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-          </CardContent>
-        </Card>
+            <div>
+              <label className="text-sm text-muted-foreground mb-2 block">Status</label>
+              <Select
+                value={filters.status}
+                onValueChange={(value) => setFilters({ ...filters, status: value as ClassScheduleStatus | '' })}
+              >
+                <SelectTrigger className="bg-background border-input">
+                  <SelectValue placeholder="All statuses" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">All statuses</SelectItem>
+                  <SelectItem value="SCHEDULED">Scheduled</SelectItem>
+                  <SelectItem value="UNSCHEDULED">Unscheduled</SelectItem>
+                  <SelectItem value="MISSED">Missed</SelectItem>
+                  <SelectItem value="NOT_STARTED">Not Started</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="text-sm text-muted-foreground mb-2 block">Date From</label>
+              <Input
+                type="date"
+                value={filters.fromDate}
+                onChange={(e) => setFilters({ ...filters, fromDate: e.target.value })}
+                className="bg-background border-input"
+              />
+            </div>
+            <div>
+              <label className="text-sm text-muted-foreground mb-2 block">Date To</label>
+              <Input
+                type="date"
+                value={filters.toDate}
+                onChange={(e) => setFilters({ ...filters, toDate: e.target.value })}
+                className="bg-background border-input"
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
         {/* Schedule List */}
         {mode === 'sessions' ? (
@@ -435,6 +461,5 @@ export default function AdminClassSchedulePage() {
           </div>
         )}
       </div>
-    </div>
   )
 }

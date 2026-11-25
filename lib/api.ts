@@ -5,6 +5,7 @@ import {
   AdminPaymentSummary,
   AdminStudent,
   AdminStudentDetail,
+  AdminBadgeCounts,
   ApiError,
   AssignTutorRequest,
   Assignment,
@@ -26,8 +27,8 @@ import {
   CreateTutorProfileRequest,
   Enrollment,
   EnrollmentChangeRequest,
-  EnhancedBadgeCounts,
   ExchangeRate,
+  FailedPayment,
   Grade,
   GradeBandTier,
   GradeComponentType,
@@ -106,6 +107,7 @@ const SCORED_ITEM_TYPES: ScoredItemType[] = ['QUIZ', 'ASSIGNMENT', 'TEST', 'PART
 
 class ApiClient {
   private baseUrl: string
+  private _refreshPromise: Promise<{ accessToken: string; refreshToken: string }> | null = null
 
   constructor(baseUrl: string) {
     this.baseUrl = baseUrl
@@ -201,7 +203,13 @@ class ApiClient {
 
       if (refreshToken) {
         try {
-          const refreshResponse = await this.refresh(refreshToken)
+          // Deduplicate concurrent refreshes using a singleton promise
+          if (!this._refreshPromise) {
+            this._refreshPromise = this.refresh(refreshToken).finally(() => {
+              this._refreshPromise = null
+            })
+          }
+          const refreshResponse = await this._refreshPromise
           console.log('Token refresh successful')
 
           // Reconcile user with GET /auth/me after token refresh
@@ -336,14 +344,14 @@ class ApiClient {
 
   private setToken(token: string): void {
     if (typeof document === 'undefined') return
-    // Access token: 1 day (86400 seconds)
-    document.cookie = `accessToken=${token}; path=/; max-age=86400; SameSite=Strict`
+    // Access token: 1 day (86400 seconds). Use Lax so cookies survive top-level redirects (e.g. payment callbacks)
+    document.cookie = `accessToken=${token}; path=/; max-age=86400; SameSite=Lax`
   }
 
   private setRefreshToken(token: string): void {
     if (typeof document === 'undefined') return
-    // Refresh token: 7 days (604800 seconds)
-    document.cookie = `refreshToken=${token}; path=/; max-age=604800; SameSite=Strict`
+    // Refresh token: 7 days (604800 seconds). Use Lax so cookies survive top-level redirects (e.g. payment callbacks)
+    document.cookie = `refreshToken=${token}; path=/; max-age=604800; SameSite=Lax`
   }
 
   private clearTokens(): void {
@@ -403,10 +411,12 @@ class ApiClient {
     this.setToken(response.accessToken)
     this.setRefreshToken(response.refreshToken)
 
-    // Store user data in localStorage for easy access
+    // Store user data in localStorage and cookie for easy access & middleware check
     if (typeof window !== 'undefined') {
       localStorage.setItem('user', JSON.stringify(response.user))
       localStorage.setItem('userRole', response.user.role)
+      document.cookie = `userRole=${response.user.role}; path=/; max-age=86400; SameSite=Lax`
+      window.dispatchEvent(new CustomEvent('auth:user-changed', { detail: response.user }))
     }
 
     return response
@@ -427,10 +437,12 @@ class ApiClient {
     this.setToken(response.accessToken)
     this.setRefreshToken(response.refreshToken)
 
-    // Store user data in localStorage for easy access
+    // Store user data in localStorage and cookie for easy access & middleware check
     if (typeof window !== 'undefined') {
       localStorage.setItem('user', JSON.stringify(response.user))
       localStorage.setItem('userRole', response.user.role)
+      document.cookie = `userRole=${response.user.role}; path=/; max-age=86400; SameSite=Lax`
+      window.dispatchEvent(new CustomEvent('auth:user-changed', { detail: response.user }))
     }
 
     return response
@@ -568,7 +580,41 @@ class ApiClient {
   }
 
   async getAdminStudentDetail(studentId: string): Promise<AdminStudentDetail> {
-    return this.request<AdminStudentDetail>(`/admin/students/${studentId}`)
+    const res: any = await this.request(`/admin/students/${studentId}`)
+    const data = res?.data ?? res
+    if (data && typeof data === 'object') {
+      if (data.assignments && !Array.isArray(data.assignments)) {
+        data.assignments = data.assignments.data || data.assignments.assignments || []
+      } else if (!data.assignments) {
+        data.assignments = []
+      }
+      if (data.sessions && !Array.isArray(data.sessions)) {
+        data.sessions = data.sessions.data || data.sessions.sessions || []
+      } else if (!data.sessions) {
+        data.sessions = []
+      }
+      if (data.grades && !Array.isArray(data.grades)) {
+        data.grades = data.grades.data || data.grades.grades || []
+      } else if (!data.grades) {
+        data.grades = []
+      }
+      if (data.progressReports && !Array.isArray(data.progressReports)) {
+        data.progressReports = data.progressReports.data || data.progressReports.reports || []
+      } else if (!data.progressReports) {
+        data.progressReports = []
+      }
+      if (data.enrollments && !Array.isArray(data.enrollments)) {
+        data.enrollments = data.enrollments.data || data.enrollments.enrollments || []
+      } else if (!data.enrollments) {
+        data.enrollments = []
+      }
+      if (data.attendance && !Array.isArray(data.attendance)) {
+        data.attendance = data.attendance.data || data.attendance.attendance || []
+      } else if (!data.attendance) {
+        data.attendance = []
+      }
+    }
+    return data as AdminStudentDetail
   }
 
   async getStudentSchedule(): Promise<Session[]> {
@@ -742,13 +788,8 @@ class ApiClient {
     return this.request<UnreadCountResponse>('/notifications/unread-count')
   }
 
-  async getAdminBadgeCounts(): Promise<EnhancedBadgeCounts> {
-    return this.request<EnhancedBadgeCounts>('/admin/badge-counts')
-  }
-
-  // Role-aware badge counts endpoint
-  async getBadgeCounts(): Promise<any> {
-    return this.request<any>('/badge-counts')
+  async getAdminBadgeCounts(): Promise<AdminBadgeCounts> {
+    return this.request<AdminBadgeCounts>('/admin/badge-counts')
   }
 
   // Salary management endpoints (admin only)
@@ -863,40 +904,30 @@ class ApiClient {
   }
 
   // Tutor-specific endpoints
-  async getTutorStudents(): Promise<TutorStudent[]> {
-    const res: any = await this.request('/tutor/students')
+  async getTutorStudents(params?: { page?: number; limit?: number }): Promise<{ data: TutorStudent[]; page: number; limit: number; total: number }> {
+    const queryParams = new URLSearchParams()
+    if (params?.page) queryParams.append('page', params.page.toString())
+    if (params?.limit) queryParams.append('limit', params.limit.toString())
+    const queryString = queryParams.toString()
+    const res: any = await this.request(`/tutor/students${queryString ? `?${queryString}` : ''}`)
+    
+    // Handle both direct array and paginated response formats
     const list = Array.isArray(res) ? res : res?.data ?? res?.students ?? []
-    return (Array.isArray(list) ? list : []).map(normalizeTutorStudentItem)
+    const normalizedList = (Array.isArray(list) ? list : []).map(normalizeTutorStudentItem)
+    
+    return {
+      data: normalizedList,
+      page: res?.page || params?.page || 1,
+      limit: res?.limit || params?.limit || 20,
+      total: res?.total || normalizedList.length,
+    }
   }
 
-  // GET /tutor/students returns ID-only rows by design (parent contact
-  // info excluded per ENDPOINT.md). This hydrates each row via
-  // GET /tutor/students/:studentId so the UI gets fullName, grade,
-  // school and the joined subject object.
+  // GET /tutor/students now returns full data including student, subject, sessionFrequency, startDate
+  // No need for additional hydration - the response is complete
   async getTutorStudentsDetailed(): Promise<TutorStudent[]> {
-    const rows = await this.getTutorStudents()
-    const studentIds = [...new Set(rows.map(r => r.student?.id).filter(Boolean))] as string[]
-    const details = await Promise.all(
-      studentIds.map(id => this.getTutorStudentDetail(id).catch(() => null))
-    )
-    const detailMap = new Map(studentIds.map((id, i) => [id, details[i]]))
-
-    return rows.map(row => {
-      const detail = row.student?.id ? detailMap.get(row.student.id) : null
-      if (!detail?.student) return row
-
-      const detailEnrollments = detail.enrollments ?? (detail.enrollment ? [detail.enrollment] : [])
-      const matchedEnrollment =
-        detailEnrollments.find(e => e.id === row.enrollment?.id) ??
-        (detailEnrollments.length === 1 ? detailEnrollments[0] : undefined)
-
-      return {
-        student: { ...row.student, ...detail.student },
-        enrollment: matchedEnrollment
-          ? { ...row.enrollment, ...matchedEnrollment }
-          : row.enrollment,
-      } as TutorStudent
-    })
+    const result = await this.getTutorStudents()
+    return result.data
   }
 
   async getTutorSessions(): Promise<Session[]> {
@@ -1128,11 +1159,15 @@ class ApiClient {
   }
 
   async getAdminTutorStudents(tutorId: string): Promise<TutorStudent[]> {
-    return this.request<TutorStudent[]>(`/admin/tutors/${tutorId}/students`)
+    const res: any = await this.request(`/admin/tutors/${tutorId}/students`)
+    const list = Array.isArray(res) ? res : res?.data ?? res?.students ?? []
+    return (Array.isArray(list) ? list : []).map(normalizeTutorStudentItem)
   }
 
   async getAdminTutorSessions(tutorId: string): Promise<Session[]> {
-    return this.request<Session[]>(`/admin/tutors/${tutorId}/sessions`)
+    const res: any = await this.request(`/admin/tutors/${tutorId}/sessions`)
+    const list = Array.isArray(res) ? res : res?.data ?? res?.sessions ?? []
+    return Array.isArray(list) ? list : []
   }
 
   async getUnmatchedEnrollments(includeUnpaid?: boolean): Promise<Enrollment[]> {
@@ -1147,8 +1182,8 @@ class ApiClient {
     })
   }
 
-  async getFailedPayments(): Promise<Payment[]> {
-    return this.request<Payment[]>('/admin/payments/failed')
+  async getFailedPayments(): Promise<{ data: FailedPayment[]; total: number }> {
+    return this.request<{ data: FailedPayment[]; total: number }>('/admin/payments/failed')
   }
 
   async getAdminOverview(): Promise<AdminOverview> {
@@ -1222,18 +1257,69 @@ class ApiClient {
     return this.request<AdminPaymentSummary>(`/admin/payments/summary${query ? `?${query}` : ''}`)
   }
 
-  // Outstanding Payments
+  // Outstanding Payments (Unmatched Enrollments)
   async getOutstandingPayments(filters?: {
     page?: number
     limit?: number
     sort?: string
+    includeUnpaid?: boolean
   }): Promise<OutstandingPaymentsResponse> {
     const params = new URLSearchParams()
     if (filters?.page) params.append('page', filters.page.toString())
     if (filters?.limit) params.append('limit', filters.limit.toString())
     if (filters?.sort) params.append('sort', filters.sort)
+    if (filters?.includeUnpaid !== undefined) params.append('includeUnpaid', filters.includeUnpaid.toString())
     const query = params.toString()
-    return this.request<OutstandingPaymentsResponse>(`/admin/payments/outstanding${query ? `?${query}` : ''}`)
+    const res: any = await this.request<any>(`/admin/enrollments/unmatched${query ? `?${query}` : ''}`)
+    
+    // Handle both direct array and paginated response formats
+    const dataArray = Array.isArray(res) ? res : res?.data || []
+    
+    // Transform the enrollment data to match OutstandingEnrollment interface
+    const transformedData = dataArray.map((item: any) => {
+      const enrolledAt = item.createdAt || item.enrolledAt || new Date().toISOString()
+      const now = new Date()
+      const createdDate = new Date(enrolledAt)
+      const daysWaiting = Math.floor((now.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24))
+      
+      // Build parent info from student data - the API only has parentId, need to fetch parent details separately
+      // For now, use parentId and student email as fallback
+      const parentId = item.student?.parentId || ''
+      const studentEmail = item.student?.email || ''
+      
+      return {
+        id: item.id,
+        enrollmentId: item.id,
+        student: {
+          id: item.student?.id || item.studentId,
+          fullName: item.student?.fullName || 'Unknown',
+          gradeLevel: item.student?.gradeLevel || item.student?.actualGrade || 'N/A',
+        },
+        subject: {
+          id: item.subject?.id || item.subjectId,
+          name: item.subject?.name || 'Unknown',
+        },
+        parent: {
+          id: parentId,
+          fullName: '', // Empty - parent name not available in enrollment response
+          email: studentEmail,
+        },
+        tutor: item.tutorId ? {
+          id: item.tutorId,
+          fullName: item.tutor?.fullName || 'Unknown',
+        } : undefined,
+        enrolledAt,
+        daysWaiting,
+        paymentStatus: item.status === 'PENDING_PAYMENT' ? 'PENDING_PAYMENT' : 'UNPAID',
+      }
+    })
+    
+    return {
+      data: transformedData,
+      page: res?.page || filters?.page || 1,
+      limit: res?.limit || filters?.limit || 20,
+      total: res?.total || transformedData.length,
+    }
   }
 
   // Enhanced Parent Profile
@@ -1541,14 +1627,21 @@ class ApiClient {
     if (typeof recipientOrPayload === 'object') {
       payload = {
         recipientId: recipientOrPayload.recipientId,
-        body: recipientOrPayload.body,
+        body: (recipientOrPayload.body || '').trim(),
         ...(recipientOrPayload.threadId ? { threadId: recipientOrPayload.threadId } : {}),
       }
     } else {
       payload = {
         recipientId: recipientOrPayload,
-        body: bodyText || '',
+        body: (bodyText || '').trim(),
       }
+    }
+
+    if (!payload.recipientId) {
+      throw new Error('A recipient is required to send a message')
+    }
+    if (!payload.body) {
+      throw new Error('Message body cannot be empty')
     }
 
     console.log('sendMessage payload:', payload)
@@ -1968,7 +2061,31 @@ class ApiClient {
 
   // Admin contact endpoint
   async getAdminContact(): Promise<{ recipientId: string }> {
-    return this.request<{ recipientId: string }>('/messages/admin-contact')
+    const res: any = await this.request<any>('/messages/admin-contact')
+    
+    // Handle various response formats
+    let recipientId = ''
+    
+    // If response is the admin ID directly (string)
+    if (typeof res === 'string') {
+      recipientId = res
+    }
+    // If response is an object with various possible field names
+    else if (res && typeof res === 'object') {
+      recipientId =
+        res?.recipientId ||
+        res?.adminId ||
+        res?.id ||
+        res?.userId ||
+        res?.data?.recipientId ||
+        res?.data?.id ||
+        res?.data?.userId ||
+        res?.admin?.id ||
+        res?.admin?.userId ||
+        ''
+    }
+    
+    return { recipientId }
   }
 
   // Subject endpoints with per-grade pricing
@@ -2079,36 +2196,30 @@ class ApiClient {
     )
   }
 
-  // Transaction endpoints (legacy aliases for backward compatibility)
+  // Transaction endpoints (GET /api/admin/payments)
   async getTransactions(params?: {
     status?: string
     currency?: string
     provider?: string
     parentId?: string
-    studentId?: string
-    subjectId?: string
     from?: string
     to?: string
     search?: string
     page?: number
     limit?: number
-    sort?: string
-  }): Promise<{ payments: PaymentDetail[]; total: number; page: number; limit: number }> {
+  }): Promise<{ data: AdminPaymentListItem[]; page: number; limit: number; total: number }> {
     const queryParams = new URLSearchParams()
     if (params?.status) queryParams.append('status', params.status)
     if (params?.currency) queryParams.append('currency', params.currency)
     if (params?.provider) queryParams.append('provider', params.provider)
     if (params?.parentId) queryParams.append('parentId', params.parentId)
-    if (params?.studentId) queryParams.append('studentId', params.studentId)
-    if (params?.subjectId) queryParams.append('subjectId', params.subjectId)
     if (params?.from) queryParams.append('from', params.from)
     if (params?.to) queryParams.append('to', params.to)
     if (params?.search) queryParams.append('search', params.search)
     if (params?.page) queryParams.append('page', params.page.toString())
     if (params?.limit) queryParams.append('limit', params.limit.toString())
-    if (params?.sort) queryParams.append('sort', params.sort)
     const queryString = queryParams.toString()
-    return this.request<{ payments: PaymentDetail[]; total: number; page: number; limit: number }>(
+    return this.request<{ data: AdminPaymentListItem[]; page: number; limit: number; total: number }>(
       `/admin/payments${queryString ? `?${queryString}` : ''}`
     )
   }
@@ -2297,14 +2408,14 @@ class ApiClient {
 
   // Tutor profile endpoints
   async getTutorProfile(): Promise<TutorProfile> {
-    return this.request<TutorProfile>('/tutor/me')
+    return this.request<TutorProfile>('/tutor-profile')
   }
 
   async updateTutorProfileInfo(data: {
     bio?: string
     monthlySalaryNGN?: number
   }): Promise<TutorProfile> {
-    return this.request<TutorProfile>('/tutor/me', {
+    return this.request<TutorProfile>('/tutor-profile', {
       method: 'PATCH',
       body: JSON.stringify(data),
     })
@@ -2362,11 +2473,15 @@ export function tutorToSuggestedTutor(tutor: TutorWithProfile): SuggestedTutor {
 }
 
 // Normalizes a /tutor/students row into the TutorStudent shape the UI expects.
-// The backend nests student/enrollment but field names vary — tolerate the
-// common alternates so missing joins don't render as blank/UUID fields.
+// Handles both top-level fields and nested enrollment objects:
+// { student: {...}, enrollment: {...}, subject: {...} } or { student: {...}, enrollmentId, subject, sessionFrequency, startDate }
 function normalizeTutorStudentItem(item: any): TutorStudent {
-  const student = item?.student ?? item?.enrollment?.student ?? item?.data?.student ?? {}
-  const enrollment = item?.enrollment ?? item?.data?.enrollment ?? {}
+  const student = item?.student ?? {}
+  const enrollment = item?.enrollment ?? {}
+  const subject = (item?.subject && Object.keys(item.subject).length > 0)
+    ? item.subject
+    : (enrollment?.subject ?? {})
+  const enrollmentId = item?.enrollmentId ?? enrollment?.id ?? item?.id
 
   const fullName =
     student.fullName ||
@@ -2376,30 +2491,47 @@ function normalizeTutorStudentItem(item: any): TutorStudent {
     ''
 
   const actualGrade =
-    student.actualGrade || student.grade || student.gradeLevel || student.currentGrade || undefined
+    student.gradeLevel || student.actualGrade || student.grade || student.currentGrade || undefined
 
-  const subject =
-    enrollment.subject ??
-    (enrollment.subjectName
-      ? { id: enrollment.subjectId, name: enrollment.subjectName }
-      : enrollment.subjectId
-        ? { id: enrollment.subjectId, name: enrollment.subjectId }
-        : undefined)
+  const subjectObj = (subject && (subject.name || subject.id))
+    ? subject
+    : (enrollment.subjectId ? { id: enrollment.subjectId, name: enrollment.subjectName || 'Subject' } : undefined)
 
   const normalizedEnrollment = {
-    ...enrollment,
-    subject,
-    sessionFrequency: enrollment.sessionFrequency ?? enrollment.frequency,
+    id: enrollmentId,
+    subject: subjectObj,
+    subjectId: enrollment.subjectId || item?.subjectId || subject?.id,
+    sessionFrequency: enrollment.sessionFrequency || item?.sessionFrequency,
+    startDate: enrollment.startDate || item?.startDate,
+    status: enrollment.status || item?.status || 'ACTIVE',
+    availableDays: enrollment.availableDays || item?.availableDays,
+    preferredStartHour: enrollment.preferredStartHour ?? item?.preferredStartHour,
+    preferredEndHour: enrollment.preferredEndHour ?? item?.preferredEndHour,
+    scheduleTimezone: enrollment.scheduleTimezone ?? item?.scheduleTimezone,
+    nextExpectedClass: enrollment.nextExpectedClass ?? item?.nextExpectedClass,
+    sessionsScheduledCount: enrollment.sessionsScheduledCount ?? item?.sessionsScheduledCount ?? 0,
+  }
+
+  // Build student object with available fields and defaults for required fields
+  const normalizedStudent: any = {
+    id: student.id,
+    parentId: student.parentId || '', // Required field, default to empty string
+    fullName,
+    dateOfBirth: student.dateOfBirth || student.dob || student.birthDate || '', // Required field
+    actualGrade: actualGrade || student.gradeLevel || 'GRADE_1', // Required field, default
+    gender: student.gender || 'PREFER_NOT_TO_SAY', // Required field, default
+    school: student.school || student.schoolName || null, // Required field
+    notes: student.notes || null, // Required field
+    email: student.email || null, // Required field
+    preferredStartDate: student.preferredStartDate || null, // Required field
+    studentCode: student.studentCode,
+    profilePictureUrl: student.profilePictureUrl,
+    createdAt: student.createdAt || new Date().toISOString(), // Required field
+    gradeLevel: student.gradeLevel || actualGrade, // Keep gradeLevel for display
   }
 
   return {
-    student: {
-      ...student,
-      fullName,
-      actualGrade,
-      dateOfBirth: student.dateOfBirth ?? student.dob ?? student.birthDate,
-      school: student.school ?? student.schoolName,
-    },
+    student: normalizedStudent,
     enrollment: normalizedEnrollment,
   } as TutorStudent
 }

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { api } from '@/lib/api'
-import { Payment } from '@/lib/types'
+import { FailedPayment } from '@/lib/types'
 import { DataTable } from '@/components/shared/DataTable'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
@@ -14,7 +14,7 @@ interface FailedPaymentsListProps {
 }
 
 export function FailedPaymentsList({ refreshTrigger }: FailedPaymentsListProps) {
-  const [payments, setPayments] = useState<Payment[]>([])
+  const [payments, setPayments] = useState<FailedPayment[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -23,8 +23,8 @@ export function FailedPaymentsList({ refreshTrigger }: FailedPaymentsListProps) 
 
   const loadPayments = async () => {
     try {
-      const data = await api.getFailedPayments()
-      setPayments(Array.isArray(data) ? data : [])
+      const response = await api.getFailedPayments()
+      setPayments(Array.isArray(response.data) ? response.data : [])
     } catch (err) {
       console.error('Failed to load failed payments:', err)
       setPayments([])
@@ -35,38 +35,51 @@ export function FailedPaymentsList({ refreshTrigger }: FailedPaymentsListProps) 
 
   const columns = [
     {
-      key: 'id',
-      header: 'Payment ID',
-      cell: (payment: Payment) => (
-        <code className="text-xs bg-brand-gold/10 text-brand-gold px-2 py-1 rounded">{payment.id}</code>
+      key: 'receiptNumber',
+      header: 'Receipt #',
+      cell: (payment: FailedPayment) => (
+        <code className="text-xs bg-brand-gold/10 text-brand-gold px-2 py-1 rounded">{payment.receiptNumber}</code>
       ),
     },
     {
-      key: 'enrollmentId',
-      header: 'Enrollment ID',
-      cell: (payment: Payment) => (
-        <code className="text-xs bg-brand-gold/10 text-brand-gold px-2 py-1 rounded">{payment.enrollmentId}</code>
+      key: 'parent',
+      header: 'Parent',
+      cell: (payment: FailedPayment) => (
+        <div>
+          <div className="font-medium text-white">{payment.parent.fullName}</div>
+          <div className="text-xs text-gray-400">{payment.parent.email}</div>
+        </div>
+      ),
+    },
+    {
+      key: 'student',
+      header: 'Student',
+      cell: (payment: FailedPayment) => (
+        <div>
+          <div className="font-medium text-white">{payment.student.fullName}</div>
+          <div className="text-xs text-gray-400">{payment.student.gradeLevel}</div>
+        </div>
       ),
     },
     {
       key: 'amount',
       header: 'Amount',
-      cell: (payment: Payment) => (
-        <div className="text-gray-300">${payment.amount}</div>
+      cell: (payment: FailedPayment) => (
+        <div className="text-gray-300">{payment.currency === 'NGN' ? '₦' : '$'}{payment.amount.toLocaleString()}</div>
       ),
     },
     {
-      key: 'status',
-      header: 'Status',
-      cell: (payment: Payment) => (
-        <span className="text-sm font-medium text-destructive">{payment.status}</span>
+      key: 'failureReason',
+      header: 'Reason',
+      cell: (payment: FailedPayment) => (
+        <div className="text-sm text-red-400">{payment.failureReason}</div>
       ),
     },
     {
       key: 'date',
-      header: 'Date',
-      cell: (payment: Payment) => (
-        <div className="text-gray-300">{new Date(payment.createdAt).toLocaleDateString()}</div>
+      header: 'Failed At',
+      cell: (payment: FailedPayment) => (
+        <div className="text-gray-300">{payment.failedAt ? new Date(payment.failedAt).toLocaleDateString() : 'N/A'}</div>
       ),
     },
   ]

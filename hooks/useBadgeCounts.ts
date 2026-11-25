@@ -52,49 +52,13 @@ export function useBadgeCounts() {
   const loadCounts = useCallback(async () => {
     try {
       setLoading(true)
-
-      // Call GET /badge-counts for all roles (role-aware, own data only)
-      const roleBadgeCounts = await api.getBadgeCounts().catch(() => ({}))
       const merged: BadgeCounts = {}
 
-      // Map unreadNotifications categories
-      if (roleBadgeCounts.unreadNotifications) {
-        Object.assign(merged, roleBadgeCounts.unreadNotifications)
-      }
-
-      // Map role-specific fields
-      if (role === 'PARENT') {
-        merged.unpaidEnrollments = roleBadgeCounts.unpaidEnrollments
-        merged.upcomingSessions24h = roleBadgeCounts.upcomingSessions24h
-        merged.unreadMessages = roleBadgeCounts.unreadMessages
-      } else if (role === 'TUTOR') {
-        merged.sessionsNeedingScheduling = roleBadgeCounts.sessionsNeedingScheduling
-        merged.classesWithin24h = roleBadgeCounts.classesWithin24h
-        merged.draftOrRejectedGrades = roleBadgeCounts.draftOrRejectedGrades
-        merged.unmarkedAttendance = roleBadgeCounts.unmarkedAttendance
-        merged.submissionsToScore = roleBadgeCounts.submissionsToScore
-        merged.unreadMessages = roleBadgeCounts.unreadMessages
-      } else if (role === 'STUDENT') {
-        merged.pendingAssignments = roleBadgeCounts.pendingAssignments
-        merged.classesWithin24h = roleBadgeCounts.classesWithin24h
-      } else if (role === 'ADMIN') {
-        // Admin: also call GET /admin/badge-counts for additional admin-specific counts
+      // Only call GET /admin/badge-counts for ADMIN users
+      // Do NOT call GET /badge-counts as it's not being used
+      if (role === 'ADMIN') {
         const adminBadgeCounts = await api.getAdminBadgeCounts().catch(() => ({}))
         
-        // Merge role badge counts
-        Object.assign(merged, {
-          pendingTutorApplications: roleBadgeCounts.pendingTutorApplications,
-          pendingGrades: roleBadgeCounts.pendingGrades,
-          openComplaints: roleBadgeCounts.openComplaints,
-          unmatchedPaidEnrollments: roleBadgeCounts.unmatchedPaidEnrollments,
-          pendingChangeRequests: roleBadgeCounts.pendingChangeRequests,
-          unscheduledWithin24h: roleBadgeCounts.unscheduledWithin24h,
-          failedPayments: roleBadgeCounts.failedPayments,
-          outstandingEnrollments: roleBadgeCounts.outstandingEnrollments,
-          unreadMessages: roleBadgeCounts.unreadMessages,
-          attendanceUnmarkedSessions: roleBadgeCounts.attendanceUnmarkedSessions,
-        })
-
         // Merge admin-specific fields from /admin/badge-counts
         const adminData = adminBadgeCounts as any
         const sources = [adminData, adminData?.byCategory, adminData?.counts, adminData?.data]

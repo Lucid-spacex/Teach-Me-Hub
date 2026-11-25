@@ -9,13 +9,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { RefreshCw, Users, GraduationCap, CreditCard, AlertCircle, Sparkles, ArrowUpRight } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
-import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
 import { api } from '@/lib/api'
 
 export default function AdminDashboard() {
   const router = useRouter()
   const { toast } = useToast()
-  const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [refreshTrigger, setRefreshTrigger] = useState(0)
   const [overview, setOverview] = useState<any>(null)
@@ -32,12 +30,10 @@ export default function AdminDashboard() {
     } catch (err) {
       console.error('Error in admin dashboard useEffect:', err)
       setError('Failed to initialize dashboard')
-      setLoading(false)
     }
   }, [router])
 
   const loadInitialData = async (forceRefresh = false) => {
-    setLoading(true)
     setError(null)
 
     try {
@@ -57,7 +53,6 @@ export default function AdminDashboard() {
           if (now - timestamp < cacheExpiry) {
             console.log('Using cached admin overview data')
             setOverview(JSON.parse(cachedData))
-            setLoading(false)
             return
           }
         }
@@ -94,8 +89,6 @@ export default function AdminDashboard() {
           variant: "destructive",
         })
       }
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -106,17 +99,6 @@ export default function AdminDashboard() {
       title: "Refreshed",
       description: "Dashboard data has been refreshed",
     })
-  }
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-center space-y-4">
-          <LoadingSpinner size="lg" className="mx-auto text-primary" />
-          <p className="text-muted-foreground text-sm">Loading admin dashboard...</p>
-        </div>
-      </div>
-    )
   }
 
   if (error) {

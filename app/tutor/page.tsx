@@ -12,7 +12,6 @@ import { api } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { FileText, UserCircle, RefreshCw, Users, Calendar, Clock, AlertCircle, Sparkles, ArrowUpRight } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
-import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 export default function TutorDashboard() {
@@ -20,7 +19,6 @@ export default function TutorDashboard() {
   const { toast } = useToast()
   const [enrollments, setEnrollments] = useState<Enrollment[]>([])
   const [tutorProfile, setTutorProfile] = useState<TutorProfile | null>(null)
-  const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [profileModalOpen, setProfileModalOpen] = useState(false)
   const [reportModalOpen, setReportModalOpen] = useState(false)
@@ -65,14 +63,12 @@ export default function TutorDashboard() {
     } catch (err) {
       console.error('Error in tutor dashboard useEffect:', err)
       setError('Failed to initialize dashboard')
-      setLoading(false)
     }
     }
     init()
   }, [router])
 
   const loadInitialData = async () => {
-    setLoading(true)
     setError(null)
     try {
       const [enrollmentsData] = await Promise.all([
@@ -82,7 +78,8 @@ export default function TutorDashboard() {
 
       // Try to load tutor profile
       try {
-        const profileData = await api.getTutorStudents()
+        const result = await api.getTutorStudents()
+        const profileData = result.data || []
         if (profileData.length > 0) {
           // Create a minimal valid profile if students exist
           setTutorProfile({
@@ -108,25 +105,12 @@ export default function TutorDashboard() {
         description: errorMessage,
         variant: "destructive",
       })
-    } finally {
-      setLoading(false)
     }
   }
 
   const handleRefresh = () => {
     setRefreshTrigger(prev => prev + 1)
     loadInitialData()
-  }
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-center space-y-4">
-          <LoadingSpinner size="lg" className="mx-auto text-primary" />
-          <p className="text-muted-foreground text-sm">Loading your dashboard...</p>
-        </div>
-      </div>
-    )
   }
 
   if (error) {

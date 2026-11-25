@@ -57,13 +57,13 @@ export default function TutorGradesPage() {
   const loadInitialData = async () => {
     setLoading(true)
     try {
-      const [gradesData, studentsData] = await Promise.all([
+      const [gradesData, studentsResult] = await Promise.all([
         api.getTutorCompiledGrades().catch(() => []),
         api.getTutorStudentsDetailed().catch(() => []),
       ])
 
       setGrades(Array.isArray(gradesData) ? gradesData : [])
-      setStudents(Array.isArray(studentsData) ? studentsData : [])
+      setStudents(Array.isArray(studentsResult) ? studentsResult : [])
     } catch (err) {
       console.error('Failed to load grades data:', err)
       toast({

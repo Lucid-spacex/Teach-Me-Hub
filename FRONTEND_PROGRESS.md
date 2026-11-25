@@ -494,7 +494,7 @@
 
 ## Part 14: Payment Receipts & Admin Payment Features
 - [x] Add typed methods in lib/api.ts: GET /admin/payments (filters), GET /admin/payments/summary, GET /admin/payments/outstanding, GET /admin/payments/:id, PATCH /admin/payments/:id/note, POST /admin/payments/:id/reverify, GET /admin/payments/export.csv, GET /payments (paginated), GET /payments/:id, GET /payments/:id/receipt, GET /payments/:id/receipt.pdf
-- [x] Add types in lib/types.ts: PaymentReceipt, PaymentHistoryWithSummary, AdminPaymentSummary, OutstandingEnrollment, OutstandingPaymentsResponse, AdminPaymentListItem, ParentProfileWithPaymentSummary, EnhancedBadgeCounts, PaymentTimelineEvent
+- [x] Add types in lib/types.ts: PaymentReceipt, PaymentHistoryWithSummary, AdminPaymentSummary, OutstandingEnrollment, OutstandingPaymentsResponse, AdminPaymentListItem, ParentProfileWithPaymentSummary, AdminBadgeCounts, PaymentTimelineEvent
 - [x] Upgrade /admin/transactions page with tabs (Overview, All payments, Outstanding, Failed)
 - [x] Overview tab: date range picker, currency selector, revenue cards per currency, success rate, line/bar charts, by-subject bar chart, status breakdown
 - [x] All payments tab: table with filters (status, currency, provider, search), pagination, sorting, Export CSV button, detail drawer with timeline, NGN equivalent, parent contact, admin note, audit log, Reverify action

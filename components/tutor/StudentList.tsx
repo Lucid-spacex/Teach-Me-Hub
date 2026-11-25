@@ -28,8 +28,7 @@ export function TutorStudentList({ refreshTrigger }: TutorStudentListProps) {
 
   const loadStudents = async () => {
     try {
-      // GET /tutor/students returns ID-only rows by design — the detailed
-      // variant hydrates each student via GET /tutor/students/:studentId.
+      // GET /tutor/students returns full data including student, subject, sessionFrequency, startDate
       const merged = await api.getTutorStudentsDetailed()
       setStudents(merged)
     } catch (err) {
@@ -92,7 +91,7 @@ export function TutorStudentList({ refreshTrigger }: TutorStudentListProps) {
       key: 'grade',
       header: 'Grade',
       cell: (item: TutorStudent) => (
-        <div className="text-muted-foreground">{item.student?.actualGrade || 'N/A'}</div>
+        <div className="text-muted-foreground">{(item.student as any)?.gradeLevel || item.student?.actualGrade || 'N/A'}</div>
       ),
     },
     {
@@ -100,26 +99,29 @@ export function TutorStudentList({ refreshTrigger }: TutorStudentListProps) {
       header: 'Subject',
       cell: (item: TutorStudent) => {
         const subject = item.enrollment?.subject
-        return subject ? (
-          <div className="text-muted-foreground">{subject.name}</div>
+        const subjectName = subject?.name || (item as any)?.subject?.name || (item as any)?.enrollment?.subjectName
+        return subjectName ? (
+          <div className="text-muted-foreground">{subjectName}</div>
         ) : (
-          <code className="text-xs bg-brand-gold/10 text-brand-gold px-2 py-1 rounded">{item.enrollment?.subjectId || 'N/A'}</code>
+          <code className="text-xs bg-brand-gold/10 text-brand-gold px-2 py-1 rounded">{item.enrollment?.subjectId || (item as any)?.enrollment?.subjectId || 'N/A'}</code>
         )
       },
     },
     {
       key: 'frequency',
       header: 'Frequency',
-      cell: (item: TutorStudent) => (
-        <div className="text-muted-foreground">{item.enrollment?.sessionFrequency || 'N/A'}</div>
-      ),
+      cell: (item: TutorStudent) => {
+        const freq = item.enrollment?.sessionFrequency || (item as any)?.enrollment?.sessionFrequency || (item as any)?.sessionFrequency
+        return <div className="text-muted-foreground">{freq ? String(freq).replace('_', ' ') : 'N/A'}</div>
+      },
     },
     {
       key: 'status',
       header: 'Status',
-      cell: (item: TutorStudent) => (
-        <StatusBadge status={item.enrollment?.status || 'UNKNOWN'} />
-      ),
+      cell: (item: TutorStudent) => {
+        const status = item.enrollment?.status || (item as any)?.enrollment?.status || (item as any)?.status || 'ACTIVE'
+        return <StatusBadge status={status} />
+      },
     },
     {
       key: 'actions',

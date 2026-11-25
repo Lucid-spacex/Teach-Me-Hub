@@ -62,11 +62,11 @@ export default function RegisterForm() {
     try {
       // Send the fields the backend expects for parent registration
       const registrationData = {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        middleName: formData.middleName,
-        email: formData.email,
-        phone: formData.phone,
+        firstName: (formData.firstName || '').trim(),
+        lastName: (formData.lastName || '').trim(),
+        middleName: (formData.middleName || '').trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
         password: formData.password,
         role: formData.role,
       }

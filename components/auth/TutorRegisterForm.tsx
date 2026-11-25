@@ -161,6 +161,12 @@ export default function TutorRegisterForm() {
     const [, birthMonth, birthDay] = appData.birthDate.split('-').map(Number)
     return {
       ...formData,
+      firstName: formData.firstName.trim(),
+      lastName: formData.lastName.trim(),
+      middleName: formData.middleName?.trim(),
+      email: formData.email.trim(),
+      phone: formData.phone.trim(),
+      address: formData.address?.trim(),
       // Application fields — sent in the same register request per spec
       birthDay,
       birthMonth,

@@ -165,23 +165,25 @@ export default function OutstandingPaymentsPage() {
             <CardContent className="p-0">
               <div className="divide-y divide-brand-gold/10">
                 {data.data.map((item) => (
-                  <div key={item.enrollmentGroupId} className="p-4">
+                  <div key={item.id} className="p-4">
                     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                       {/* Student and Subject Info */}
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
                           <span className="font-semibold text-white">{item.student.fullName}</span>
                           <span className="text-gray-400">•</span>
-                          <span className="text-brand-gold">{item.subjects.join(', ')}</span>
+                          <span className="text-brand-gold">{item.subject.name}</span>
                         </div>
                         <div className="flex items-center gap-4 text-sm text-gray-400">
                           <div className="flex items-center gap-1">
                             <Calendar className="h-3 w-3" />
-                            <span>Enrolled: {new Date(item.createdAt).toLocaleDateString()}</span>
+                            <span>Enrolled: {new Date(item.enrolledAt).toLocaleDateString()}</span>
                           </div>
                           <div className="flex items-center gap-1">
-                            <Clock className="h-3 w-3" />
-                            <span>Expected: {item.expectedCurrency === 'NGN' ? '₦' : '$'}{item.expectedAmount.toLocaleString()}</span>
+                            <span>Enrollment ID: <code className="text-xs bg-brand-gold/10 text-brand-gold px-1 rounded">{item.enrollmentId.slice(0, 8)}...</code></span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <span>Parent: {item.parent.fullName || <code className="text-xs bg-brand-gold/10 text-brand-gold px-1 rounded">{item.parent.id.slice(0, 8)}...</code> || 'N/A'}</span>
                           </div>
                         </div>
                       </div>
@@ -195,12 +197,10 @@ export default function OutstandingPaymentsPage() {
                           </div>
                         </div>
 
-                        {/* Latest Payment Status */}
-                        {item.latestPaymentStatus && (
-                          <span className="text-xs text-gray-400 bg-brand-dark/30 px-2 py-1 rounded">
-                            Last: {item.latestPaymentStatus}
-                          </span>
-                        )}
+                        {/* Payment Status */}
+                        <span className="text-xs text-gray-400 bg-brand-dark/30 px-2 py-1 rounded">
+                          {item.paymentStatus}
+                        </span>
                       </div>
 
                       {/* Contact Actions */}
@@ -208,32 +208,22 @@ export default function OutstandingPaymentsPage() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleContactParent(item.parent.email, item.parent.phone)}
+                          onClick={() => handleContactParent(item.parent.email, '')}
+                          disabled={!item.parent.email}
                           className="border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10"
                         >
                           <Mail className="h-4 w-4 mr-2" />
                           Email
                         </Button>
-                        {item.parent.phone && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleCallParent(item.parent.phone)}
-                            className="border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10"
-                          >
-                            <Phone className="h-4 w-4 mr-2" />
-                            Call
-                          </Button>
-                        )}
                       </div>
                     </div>
 
                     {/* Parent Contact Info (shown on smaller screens) */}
                     <div className="mt-3 pt-3 border-t border-brand-gold/10 lg:hidden">
                       <div className="text-sm text-gray-400">
-                        <p>Parent: {item.parent.name}</p>
-                        <p>Email: {item.parent.email}</p>
-                        {item.parent.phone && <p>Phone: {item.parent.phone}</p>}
+                        <p>Enrollment ID: <code className="text-xs bg-brand-gold/10 text-brand-gold px-1 rounded">{item.enrollmentId.slice(0, 8)}...</code></p>
+                        <p>Parent: {item.parent.fullName || item.parent.email || 'N/A'}</p>
+                        <p>Email: {item.parent.email || 'N/A'}</p>
                       </div>
                     </div>
                   </div>

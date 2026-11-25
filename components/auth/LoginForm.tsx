@@ -52,19 +52,17 @@ export default function LoginForm({
     setLoading(true)
 
     try {
-      await api.login(formData)
+      await api.login({ ...formData, email: formData.email.trim() })
       toast({
         title: 'Login Successful',
         description: 'Welcome back to Teachmenest!',
       })
 
-      // Set timezone on first login
+      // Set timezone on first login (non-blocking)
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
-      try {
-        await api.updateTimezone(timezone)
-      } catch (tzError) {
+      api.updateTimezone(timezone).catch((tzError) => {
         console.warn('Failed to set timezone:', tzError)
-      }
+      })
 
       // Redirect based on user role - if portal mismatch, will redirect to correct dashboard
       const userRole = localStorage.getItem('userRole')

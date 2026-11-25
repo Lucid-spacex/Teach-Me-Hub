@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { api } from '@/lib/api'
-import { Enrollment, TutorWithProfile, SuggestedTutor } from '@/lib/types'
+import { OutstandingEnrollment, TutorWithProfile, SuggestedTutor } from '@/lib/types'
 import { DataTable } from '@/components/shared/DataTable'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -21,10 +21,10 @@ interface UnmatchedEnrollmentsListProps {
 
 export function UnmatchedEnrollmentsList({ onUpdate, refreshTrigger }: UnmatchedEnrollmentsListProps) {
   const { toast } = useToast()
-  const [enrollments, setEnrollments] = useState<Enrollment[]>([])
+  const [enrollments, setEnrollments] = useState<OutstandingEnrollment[]>([])
   const [loading, setLoading] = useState(true)
   const [assignModalOpen, setAssignModalOpen] = useState(false)
-  const [selectedEnrollment, setSelectedEnrollment] = useState<Enrollment | null>(null)
+  const [selectedEnrollment, setSelectedEnrollment] = useState<OutstandingEnrollment | null>(null)
   const [tutorId, setTutorId] = useState('')
   const [actionLoading, setActionLoading] = useState(false)
   const [suggestedTutors, setSuggestedTutors] = useState<SuggestedTutor[]>([])
@@ -41,8 +41,8 @@ export function UnmatchedEnrollmentsList({ onUpdate, refreshTrigger }: Unmatched
   const loadEnrollments = async () => {
     setLoading(true)
     try {
-      const data = await api.getUnmatchedEnrollments(includeUnpaid)
-      setEnrollments(Array.isArray(data) ? data : [])
+      const response = await api.getOutstandingPayments({ page: 1, limit: 50 })
+      setEnrollments(Array.isArray(response.data) ? response.data : [])
     } catch (err) {
       console.error('Failed to load unmatched enrollments:', err)
       setEnrollments([])
@@ -51,7 +51,7 @@ export function UnmatchedEnrollmentsList({ onUpdate, refreshTrigger }: Unmatched
     }
   }
 
-  const openAssignModal = async (enrollment: Enrollment) => {
+  const openAssignModal = async (enrollment: OutstandingEnrollment) => {
     setSelectedEnrollment(enrollment)
     setTutorId('')
     setForceAssignment(false)
@@ -59,7 +59,8 @@ export function UnmatchedEnrollmentsList({ onUpdate, refreshTrigger }: Unmatched
     setAssignModalOpen(true)
 
     try {
-      const data = await api.getSuggestedTutors(enrollment.id)
+      const targetEnrollmentId = enrollment.enrollmentId || enrollment.id
+      const data = await api.getSuggestedTutors(targetEnrollmentId)
       if (data.length > 0) {
         setSuggestedTutors(data)
         setShowingAllTutors(false)
@@ -108,7 +109,8 @@ export function UnmatchedEnrollmentsList({ onUpdate, refreshTrigger }: Unmatched
     setActionLoading(true)
 
     try {
-      await api.assignTutorWithForce(selectedEnrollment.id, { tutorId, force: forceAssignment })
+      const targetEnrollmentId = selectedEnrollment.enrollmentId || selectedEnrollment.id
+      await api.assignTutorWithForce(targetEnrollmentId, { tutorId, force: forceAssignment })
       toast({
         title: "Success",
         description: "Tutor assigned successfully",
@@ -131,56 +133,59 @@ export function UnmatchedEnrollmentsList({ onUpdate, refreshTrigger }: Unmatched
     {
       key: 'enrollmentId',
       header: 'Enrollment ID',
-      cell: (enrollment: Enrollment) => (
-        <code className="text-xs bg-brand-gold/10 text-brand-gold px-2 py-1 rounded">{enrollment.id}</code>
+      cell: (enrollment: OutstandingEnrollment) => (
+        <code className="text-xs bg-brand-gold/10 text-brand-gold px-2 py-1 rounded">{enrollment.enrollmentId}</code>
       ),
     },
     {
       key: 'studentName',
       header: 'Student',
-      cell: (enrollment: Enrollment) => (
-        enrollment.student ? (
-          <div>
-            <div className="font-medium text-white">{enrollment.student.fullName}</div>
-            <div className="text-xs text-gray-400">{enrollment.student.actualGrade}</div>
-          </div>
-        ) : (
-          <code className="text-xs bg-brand-gold/10 text-brand-gold px-2 py-1 rounded">{enrollment.studentId}</code>
-        )
+      cell: (enrollment: OutstandingEnrollment) => (
+        <div>
+          <div className="font-medium text-white">{enrollment.student.fullName}</div>
+          <div className="text-xs text-gray-400">{enrollment.student.gradeLevel}</div>
+        </div>
       ),
     },
     {
       key: 'subjectName',
       header: 'Subject',
-      cell: (enrollment: Enrollment) => (
-        enrollment.subject ? (
-          <div>
-            <div className="font-medium text-white">{enrollment.subject.name}</div>
-            <div className="text-xs text-gray-400">{enrollment.subject.gradeBand}</div>
-          </div>
-        ) : (
-          <code className="text-xs bg-brand-gold/10 text-brand-gold px-2 py-1 rounded">{enrollment.subjectId}</code>
-        )
+      cell: (enrollment: OutstandingEnrollment) => (
+        <div>
+          <div className="font-medium text-white">{enrollment.subject.name}</div>
+        </div>
       ),
     },
     {
-      key: 'frequency',
-      header: 'Frequency',
-      cell: (enrollment: Enrollment) => (
-        <div className="text-gray-300">{enrollment.sessionFrequency}</div>
+      key: 'parent',
+      header: 'Parent',
+      cell: (enrollment: OutstandingEnrollment) => (
+        <div>
+          <div className="font-medium text-white">{enrollment.parent.fullName}</div>
+          <div className="text-xs text-gray-400">{enrollment.parent.email}</div>
+        </div>
       ),
     },
     {
-      key: 'startDate',
-      header: 'Start Date',
-      cell: (enrollment: Enrollment) => (
-        <div className="text-gray-300">{new Date(enrollment.startDate).toLocaleDateString()}</div>
+      key: 'daysWaiting',
+      header: 'Days Waiting',
+      cell: (enrollment: OutstandingEnrollment) => (
+        <div className="text-gray-300">{enrollment.daysWaiting} days</div>
+      ),
+    },
+    {
+      key: 'paymentStatus',
+      header: 'Payment Status',
+      cell: (enrollment: OutstandingEnrollment) => (
+        <span className={`text-sm font-medium ${
+          enrollment.paymentStatus === 'PAID' ? 'text-green-400' : 'text-yellow-400'
+        }`}>{enrollment.paymentStatus}</span>
       ),
     },
     {
       key: 'actions',
       header: 'Actions',
-      cell: (enrollment: Enrollment) => (
+      cell: (enrollment: OutstandingEnrollment) => (
         <Button
           size="sm"
           onClick={() => openAssignModal(enrollment)}
@@ -259,13 +264,16 @@ export function UnmatchedEnrollmentsList({ onUpdate, refreshTrigger }: Unmatched
             <div className="bg-brand-dark/50 border border-brand-gold/20 p-4 rounded-lg">
               <p className="text-sm font-medium text-white">Enrollment Details</p>
               <p className="text-xs text-gray-400 mt-1">
-                Enrollment ID: {selectedEnrollment.id}
+                Enrollment ID: {selectedEnrollment.enrollmentId}
               </p>
               <p className="text-xs text-gray-400">
-                Student: {selectedEnrollment.student?.fullName || selectedEnrollment.studentId}
+                Student: {selectedEnrollment.student.fullName}
               </p>
               <p className="text-xs text-gray-400">
-                Subject: {selectedEnrollment.subject?.name || selectedEnrollment.subjectId}
+                Subject: {selectedEnrollment.subject.name}
+              </p>
+              <p className="text-xs text-gray-400">
+                Parent: {selectedEnrollment.parent.fullName}
               </p>
             </div>
           )}

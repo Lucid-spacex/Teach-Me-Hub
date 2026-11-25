@@ -23,8 +23,8 @@ export function setUser(user: User): void {
   if (typeof window === 'undefined') return
   localStorage.setItem('user', JSON.stringify(user))
   localStorage.setItem('userRole', user.role)
-  // Also set role in cookie for middleware access (1 day, same as access token)
-  document.cookie = `userRole=${user.role}; path=/; max-age=86400; SameSite=Strict`
+  // Also set role in cookie for middleware access (1 day, same as access token). Use Lax to allow top-level redirects (e.g. payment callbacks)
+  document.cookie = `userRole=${user.role}; path=/; max-age=86400; SameSite=Lax`
   window.dispatchEvent(new CustomEvent('auth:user-changed', { detail: user }))
 }
 

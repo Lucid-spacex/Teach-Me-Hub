@@ -54,15 +54,23 @@ export default function AdminTutorDetailPage() {
     try {
       // Load tutor details from new API
       const detail = await api.getTutorDetail(tutorId)
-      setTutorData(detail)
+      const normalizedDetail = detail?.data ?? detail
+      setTutorData(normalizedDetail)
 
       // Load tutor's students and sessions
       const [studentsData, sessionsData] = await Promise.all([
         api.getAdminTutorStudents(tutorId).catch(() => []),
         api.getAdminTutorSessions(tutorId).catch(() => []),
       ])
-      setStudents(Array.isArray(studentsData) ? studentsData : [])
-      setSessions(Array.isArray(sessionsData) ? sessionsData : [])
+      const studentList = Array.isArray(studentsData)
+        ? studentsData
+        : (studentsData as any)?.data ?? []
+      setStudents(studentList)
+
+      const sessionList = Array.isArray(sessionsData)
+        ? sessionsData
+        : (sessionsData as any)?.data ?? []
+      setSessions(sessionList)
 
       // Load salary history
       loadSalaryHistory(tutorId)
@@ -262,7 +270,11 @@ export default function AdminTutorDetailPage() {
     )
   }
 
-  const { user, application, profile, metrics } = tutorData
+  const rawData = tutorData?.data || tutorData || {}
+  const user = rawData.user || rawData
+  const application = rawData.application || rawData
+  const profile = rawData.profile || rawData
+  const metrics = rawData.metrics || rawData
   const applicationStatus = application?.applicationStatus || application?.status || 'DRAFT'
 
   return (
@@ -395,56 +407,66 @@ export default function AdminTutorDetailPage() {
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <p className="text-gray-400">First Name</p>
-                    <p className="text-white">{application.firstName || '-'}</p>
+                    <p className="text-white">{user?.firstName || application?.firstName || rawData?.firstName || '-'}</p>
                   </div>
                   <div>
                     <p className="text-gray-400">Last Name</p>
-                    <p className="text-white">{application.lastName || '-'}</p>
+                    <p className="text-white">{user?.lastName || application?.lastName || rawData?.lastName || '-'}</p>
                   </div>
                   <div>
                     <p className="text-gray-400">Middle Name</p>
-                    <p className="text-white">{application.middleName || '-'}</p>
+                    <p className="text-white">{user?.middleName || application?.middleName || rawData?.middleName || '-'}</p>
                   </div>
                   <div>
                     <p className="text-gray-400">Phone</p>
-                    <p className="text-white">{application.phone || '-'}</p>
+                    <p className="text-white">{user?.phone || application?.phone || rawData?.phone || '-'}</p>
                   </div>
                   <div>
                     <p className="text-gray-400">Birthday</p>
-                    <p className="text-white">{application.birthday || '-'}</p>
+                    <p className="text-white">
+                      {application?.birthDay && application?.birthMonth
+                        ? `${application.birthDay}/${application.birthMonth}`
+                        : application?.birthday || '-'}
+                    </p>
                   </div>
                   <div>
                     <p className="text-gray-400">Location</p>
-                    <p className="text-white">{application.city}, {application.country}</p>
+                    <p className="text-white">{[application?.city, application?.country].filter(Boolean).join(', ') || '-'}</p>
                   </div>
                   <div>
                     <p className="text-gray-400">Qualification</p>
-                    <p className="text-white">{application.highestQualification || '-'}</p>
+                    <p className="text-white">{application?.highestQualification || '-'}</p>
                   </div>
                   <div>
                     <p className="text-gray-400">Years of Experience</p>
-                    <p className="text-white">{application.yearsOfExperience || 0}</p>
+                    <p className="text-white">{application?.yearsOfExperience ?? 0}</p>
                   </div>
                 </div>
                 <div>
                   <p className="text-gray-400 text-sm">Subjects</p>
-                  <p className="text-white text-sm">{application.subjects?.join(', ') || 'None'}</p>
+                  <p className="text-white text-sm">
+                    {Array.isArray(application?.subjects) && application.subjects.length > 0
+                      ? application.subjects.map((s: any) => (typeof s === 'string' ? s : s?.name || JSON.stringify(s))).filter(Boolean).join(', ')
+                      : 'None'}
+                  </p>
                 </div>
                 <div>
                   <p className="text-gray-400 text-sm">Levels</p>
-                  <p className="text-white text-sm">{application.levels?.join(', ') || 'None'}</p>
+                  <p className="text-white text-sm">{Array.isArray(application?.levels) ? application.levels.join(', ') : application?.levels || 'None'}</p>
                 </div>
                 <div>
                   <p className="text-gray-400 text-sm">Why Teach</p>
-                  <p className="text-white text-sm">{application.whyTeach || '-'}</p>
+                  <p className="text-white text-sm">{application?.whyTeach || '-'}</p>
                 </div>
                 <div>
                   <p className="text-gray-400 text-sm">How Heard</p>
-                  <p className="text-white text-sm">{application.howHeard || '-'}</p>
+                  <p className="text-white text-sm">{application?.howHeard || '-'}</p>
                 </div>
                 <div>
                   <p className="text-gray-400 text-sm">About You</p>
-                  <p className="text-white text-sm whitespace-pre-wrap">{application.aboutYou || '-'}</p>
+                  <p className="text-white text-sm whitespace-pre-wrap">
+                    {Array.isArray(application?.aboutYou) ? application.aboutYou.join('\n') : application?.aboutYou || '-'}
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -517,19 +539,19 @@ export default function AdminTutorDetailPage() {
                   </div>
                   <div>
                     <p className="text-gray-400">Availability Status</p>
-                    <StatusBadge status={profile.availabilityStatus || 'NOT_SET'} />
+                    <StatusBadge status={profile?.availabilityStatus || 'NOT_SET'} />
                   </div>
                   <div>
                     <p className="text-gray-400">Max Students</p>
-                    <p className="text-white">{profile.maxStudents || 0}</p>
+                    <p className="text-white">{profile?.maxStudents !== null && profile?.maxStudents !== undefined && profile?.maxStudents !== 0 ? profile.maxStudents : 'Not set'}</p>
                   </div>
                   <div>
                     <p className="text-gray-400">Current Students</p>
-                    <p className="text-white">{metrics?.currentStudents || 0}</p>
+                    <p className="text-white">{metrics?.studentsCount ?? metrics?.currentStudents ?? profile?.currentStudentCount ?? students.length ?? 0}</p>
                   </div>
                   <div>
                     <p className="text-gray-400">Status Note</p>
-                    <p className="text-white">{profile.statusNote || '-'}</p>
+                    <p className="text-white">{profile?.statusNote || '-'}</p>
                   </div>
                 </div>
               </CardContent>
@@ -559,12 +581,34 @@ export default function AdminTutorDetailPage() {
                   {students.length === 0 ? (
                     <p className="text-sm text-gray-400">No students assigned</p>
                   ) : (
-                    students.map((ts) => (
-                      <div key={ts.enrollment.id} className="p-3 bg-brand-dark/30 rounded-lg">
-                        <p className="text-white text-sm">{ts.student.fullName}</p>
-                        <p className="text-xs text-gray-400">{ts.student.actualGrade} • {ts.enrollment.subject?.name || 'No subject'}</p>
-                      </div>
-                    ))
+                    students.map((ts, idx) => {
+                      const studentName = ts.student?.fullName || (ts.student as any)?.name || 'Student'
+                      const grade = ts.student?.actualGrade || (ts.student as any)?.gradeLevel || 'N/A'
+                      const subjectName = ts.enrollment?.subject?.name || (ts as any).subject?.name || 'No subject'
+                      const freq = ts.enrollment?.sessionFrequency || (ts as any).sessionFrequency
+                      const enrollId = ts.enrollment?.id || (ts as any).enrollmentId || ts.student?.id || idx
+                      return (
+                        <div key={enrollId} className="p-3 bg-brand-dark/30 rounded-lg flex items-center justify-between">
+                          <div>
+                            <p className="text-white text-sm font-medium">{studentName}</p>
+                            <p className="text-xs text-gray-400">
+                              {grade} • {subjectName}
+                              {freq && ` • ${freq}`}
+                            </p>
+                          </div>
+                          {ts.student?.id && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => router.push(`/admin/students/${ts.student.id}`)}
+                              className="text-brand-gold hover:text-brand-goldLight text-xs"
+                            >
+                              View Student
+                            </Button>
+                          )}
+                        </div>
+                      )
+                    })
                   )}
                 </div>
               )}
@@ -591,15 +635,15 @@ export default function AdminTutorDetailPage() {
               {activeTab === 'reports' && (
                 <p className="text-sm text-gray-400">Reports data would be loaded from paginated sub-resource</p>
               )}
-              {activeTab === 'overview' && metrics && (
+              {activeTab === 'overview' && (
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <p className="text-gray-400">Total Sessions</p>
-                    <p className="text-white">{metrics.totalSessions || 0}</p>
+                    <p className="text-white">{metrics?.totalSessions ?? metrics?.sessionsCompleted ?? sessions.length ?? 0}</p>
                   </div>
                   <div>
                     <p className="text-gray-400">Total Students</p>
-                    <p className="text-white">{metrics.totalStudents || 0}</p>
+                    <p className="text-white">{metrics?.totalStudents ?? metrics?.studentsCount ?? profile?.currentStudentCount ?? students.length ?? 0}</p>
                   </div>
                 </div>
               )}

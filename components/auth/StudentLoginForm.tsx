@@ -112,6 +112,8 @@ export default function StudentLoginForm() {
 
     setIsLoading(true)
     try {
+      data.parentEmail = data.parentEmail.trim()
+      data.studentCode = data.studentCode.trim()
       await api.studentLogin(data)
       toast({
         title: 'Login successful',

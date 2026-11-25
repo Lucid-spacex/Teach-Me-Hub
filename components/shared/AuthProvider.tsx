@@ -12,11 +12,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [dismissed, setDismissed] = useState(false)
 
   useEffect(() => {
-    // Reconcile user with GET /auth/me on app load
+    // Reconcile user with GET /auth/me on app load (async, non-blocking)
+    // Don't await it - let the UI render immediately
     syncUserWithServer().then((freshUser) => {
       if (freshUser) {
         setUser(freshUser)
       }
+    }).catch(() => {
+      // Silently fail - user will remain as cached or null
     })
 
     const handleUserChanged = (event: Event) => {

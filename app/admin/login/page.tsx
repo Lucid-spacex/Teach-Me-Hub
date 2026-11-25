@@ -3,11 +3,7 @@ import { ThemeToggle } from '@/components/shared/ThemeToggle'
 
 export const metadata = {
   title: 'Admin Sign In | Teachmenest',
-  description: 'Administrator sign in.',
-  robots: {
-    index: false,
-    follow: false,
-  },
+  description: 'Log in to your Teachmenest admin account.',
 }
 
 export default function AdminLoginPage() {
@@ -20,16 +16,7 @@ export default function AdminLoginPage() {
         <ThemeToggle />
       </div>
 
-      <LoginForm
-        portal="ADMIN"
-        title="Administrator Sign In"
-        description="Access the admin dashboard"
-        showStudentLink={false}
-        showRegisterLink={false}
-        showForgotPassword={false}
-        showBackToHome={false}
-        hideStudentLoginBox={true}
-      />
+      <LoginForm portal="ADMIN" />
     </div>
   )
 }

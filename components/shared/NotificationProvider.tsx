@@ -289,9 +289,9 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   useEffect(() => {
     if (!user) return
     
-    // Initial load
-    refreshUnreadCount()
-    refreshNotifications()
+    // Initial load (non-blocking)
+    refreshUnreadCount().catch(() => {})
+    refreshNotifications().catch(() => {})
     
     // Setup SSE with backoff
     let retryCount = 0
@@ -306,8 +306,8 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
         // Max retries reached, fallback to polling
         if (!pollingIntervalRef.current) {
           pollingIntervalRef.current = setInterval(() => {
-            refreshUnreadCount()
-            refreshNotifications()
+            refreshUnreadCount().catch(() => {})
+            refreshNotifications().catch(() => {})
           }, 30000)
         }
       }

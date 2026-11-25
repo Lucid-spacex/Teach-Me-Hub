@@ -28,6 +28,22 @@ export default function AdminGradesPage() {
   })
   const [selectedGrades, setSelectedGrades] = useState<Set<string>>(new Set())
   const [bulkApproving, setBulkApproving] = useState(false)
+  const [tutorList, setTutorList] = useState<{ id: string; name: string }[]>([])
+  const [studentList, setStudentList] = useState<{ id: string; fullName: string }[]>([])
+  const [subjectList, setSubjectList] = useState<{ id: string; name: string }[]>([])
+
+  useEffect(() => {
+    // Load dropdown options for tutors, students, and subjects
+    Promise.all([
+      api.getApprovedTutorsForAssignment().catch(() => []),
+      api.getAdminStudents().catch(() => []),
+      api.getSubjects().catch(() => []),
+    ]).then(([tutorsData, studentsData, subjectsData]) => {
+      setTutorList(tutorsData.map(t => ({ id: t.id, name: t.fullName || t.email })))
+      setStudentList(studentsData.map(s => ({ id: s.id, fullName: s.fullName })))
+      setSubjectList(subjectsData.map(s => ({ id: s.id, name: s.name })))
+    })
+  }, [])
 
   useEffect(() => {
     const user = getUser()
@@ -230,31 +246,61 @@ export default function AdminGradesPage() {
                 </Select>
               </div>
               <div>
-                <label className="text-sm text-muted-foreground mb-2 block">Tutor ID</label>
-                <Input
-                  placeholder="Enter tutor ID"
-                  value={filters.tutorId}
-                  onChange={(e) => setFilters({ ...filters, tutorId: e.target.value })}
-                  className="bg-background border-input"
-                />
+                <label className="text-sm text-muted-foreground mb-2 block">Tutor</label>
+                <Select
+                  value={filters.tutorId || 'ALL'}
+                  onValueChange={(val) => setFilters({ ...filters, tutorId: val === 'ALL' ? '' : val })}
+                >
+                  <SelectTrigger className="bg-background border-input">
+                    <SelectValue placeholder="All tutors" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ALL">All tutors</SelectItem>
+                    {tutorList.map((t) => (
+                      <SelectItem key={t.id} value={t.id}>
+                        {t.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
-                <label className="text-sm text-muted-foreground mb-2 block">Student ID</label>
-                <Input
-                  placeholder="Enter student ID"
-                  value={filters.studentId}
-                  onChange={(e) => setFilters({ ...filters, studentId: e.target.value })}
-                  className="bg-background border-input"
-                />
+                <label className="text-sm text-muted-foreground mb-2 block">Student</label>
+                <Select
+                  value={filters.studentId || 'ALL'}
+                  onValueChange={(val) => setFilters({ ...filters, studentId: val === 'ALL' ? '' : val })}
+                >
+                  <SelectTrigger className="bg-background border-input">
+                    <SelectValue placeholder="All students" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ALL">All students</SelectItem>
+                    {studentList.map((s) => (
+                      <SelectItem key={s.id} value={s.id}>
+                        {s.fullName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <label className="text-sm text-muted-foreground mb-2 block">Subject</label>
-                <Input
-                  placeholder="Enter subject name"
-                  value={filters.subject}
-                  onChange={(e) => setFilters({ ...filters, subject: e.target.value })}
-                  className="bg-background border-input"
-                />
+                <Select
+                  value={filters.subject || 'ALL'}
+                  onValueChange={(val) => setFilters({ ...filters, subject: val === 'ALL' ? '' : val })}
+                >
+                  <SelectTrigger className="bg-background border-input">
+                    <SelectValue placeholder="All subjects" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ALL">All subjects</SelectItem>
+                    {subjectList.map((subj) => (
+                      <SelectItem key={subj.id} value={subj.name}>
+                        {subj.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </CardContent>
