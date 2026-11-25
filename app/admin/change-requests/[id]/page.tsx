@@ -138,8 +138,8 @@ export default function AdminChangeRequestDetailPage() {
     <div className="min-h-screen bg-brand-dark">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
             <Button
               variant="ghost"
               size="sm"
@@ -149,13 +149,13 @@ export default function AdminChangeRequestDetailPage() {
               <ArrowLeft className="h-4 w-4" />
               Back
             </Button>
-            <div className="h-6 w-px bg-border" />
+            <div className="hidden h-6 w-px bg-border sm:block" />
             <div>
               <h1 className="text-3xl font-bold text-foreground">Change Request Details</h1>
               <p className="text-muted-foreground mt-2">Review the before and after schedule changes</p>
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {request.status === 'PENDING' && (
               <>
                 <Button

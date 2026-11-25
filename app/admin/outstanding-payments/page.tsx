@@ -81,8 +81,8 @@ export default function OutstandingPaymentsPage() {
   return (
     <div className="space-y-6 pb-12">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
           <Button
             variant="ghost"
             size="sm"
@@ -92,7 +92,7 @@ export default function OutstandingPaymentsPage() {
             <ArrowLeft className="h-4 w-4" />
             Back to Dashboard
           </Button>
-          <div className="h-6 w-px bg-border" />
+          <div className="hidden h-6 w-px bg-border sm:block" />
           <div>
             <h1 className="text-3xl font-serif font-bold text-white">Outstanding Payments</h1>
             <p className="text-sm text-muted-foreground">Enrollments awaiting payment</p>
@@ -118,9 +118,9 @@ export default function OutstandingPaymentsPage() {
       {/* Sort Controls */}
       <Card className="bg-card border-brand-gold/30">
         <CardContent className="pt-6">
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center">
             <span className="text-sm text-muted-foreground">Sort by:</span>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Button
                 variant="outline"
                 size="sm"

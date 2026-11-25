@@ -172,8 +172,8 @@ export default function AdminPendingTutorsPage() {
   return (
     <div className="space-y-6 pb-12">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
+        <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
           <Button
             variant="ghost"
             size="sm"
@@ -183,7 +183,7 @@ export default function AdminPendingTutorsPage() {
             <ArrowLeft className="h-4 w-4" />
             Back to Dashboard
           </Button>
-          <div className="h-6 w-px bg-border" />
+          <div className="hidden h-6 w-px bg-border sm:block" />
           <div className="flex items-center gap-2">
             <div className="bg-brand-gold/20 p-2 rounded-lg border border-brand-gold/30">
               <UserCheck className="h-5 w-5 text-brand-gold" />
@@ -207,11 +207,11 @@ export default function AdminPendingTutorsPage() {
       </div>
 
       {/* Filters */}
-      <div className="flex items-center gap-4 mb-6">
-        <div className="flex items-center gap-2">
+      <div className="mb-6 flex flex-wrap items-center gap-4">
+        <div className="flex w-full items-center gap-2 sm:w-auto">
           <Filter className="h-4 w-4 text-muted-foreground" />
           <Select value={applicationStatusFilter} onValueChange={(value: ApplicationStatus | 'ALL') => setApplicationStatusFilter(value)}>
-            <SelectTrigger className="w-[180px] bg-card border-brand-gold/30 text-white">
+            <SelectTrigger className="w-full bg-card border-brand-gold/30 text-white sm:w-[180px]">
               <SelectValue placeholder="Application Status" />
             </SelectTrigger>
             <SelectContent className="bg-card border-brand-gold/30">

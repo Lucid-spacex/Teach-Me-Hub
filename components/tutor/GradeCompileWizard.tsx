@@ -326,7 +326,7 @@ export function GradeCompileWizard({ open, onOpenChange, onSuccess, editingGrade
       description="Create a period-based grade by selecting scored items and setting component weights"
       className="sm:max-w-[800px]"
       footer={
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2">
             {STEPS.map((step, index) => (
               <div key={step} className="flex items-center">
@@ -345,7 +345,7 @@ export function GradeCompileWizard({ open, onOpenChange, onSuccess, editingGrade
               </div>
             ))}
           </div>
-          <div className="flex gap-2">
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
             <Button
               variant="outline"
               onClick={() => {
@@ -417,7 +417,7 @@ export function GradeCompileWizard({ open, onOpenChange, onSuccess, editingGrade
           {/* Step 1: Select Items */}
           {currentStep === 0 && (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="enrollment">Enrollment *</Label>
                   <Select
@@ -547,7 +547,7 @@ export function GradeCompileWizard({ open, onOpenChange, onSuccess, editingGrade
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div className="p-4 rounded-lg bg-muted/50">
                       <p className="text-sm text-muted-foreground">Computed Score</p>
                       <p className="text-3xl font-bold text-foreground">{formatPercentage(preview.computedScore)}</p>

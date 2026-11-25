@@ -226,8 +226,8 @@ export default function TutorMessagesPage() {
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-border/40 pb-6">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col gap-4 border-b border-border/40 pb-6 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
             <Button
               variant="ghost"
               size="sm"
@@ -237,7 +237,7 @@ export default function TutorMessagesPage() {
               <ArrowLeft className="h-4 w-4" />
               Back
             </Button>
-            <div className="h-6 w-px bg-border" />
+            <div className="hidden h-6 w-px bg-border sm:block" />
             <div className="flex items-center gap-3">
               <div className="bg-brand-gold/20 p-2.5 rounded-xl border border-brand-gold/30">
                 <MessageSquare className="h-6 w-6 text-brand-gold" />
@@ -251,7 +251,7 @@ export default function TutorMessagesPage() {
             </div>
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button
               variant="outline"
               size="sm"

@@ -123,8 +123,8 @@ export default function TutorNotificationsPage() {
   return (
     <div className="space-y-6 pb-12">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
             <Button
               variant="ghost"
               size="sm"
@@ -134,9 +134,9 @@ export default function TutorNotificationsPage() {
               <ArrowLeft className="h-4 w-4" />
               Back
             </Button>
-            <div className="h-6 w-px bg-border" />
+            <div className="hidden h-6 w-px bg-border sm:block" />
             <div>
-              <h1 className="text-3xl font-serif font-bold text-white flex items-center gap-3">
+              <h1 className="flex flex-wrap items-center gap-3 text-3xl font-serif font-bold text-white">
                 Tutor Notifications
                 {unreadCount > 0 && (
                   <span className="text-xs bg-brand-gold text-brand-dark px-2.5 py-0.5 rounded-full font-bold">
@@ -147,7 +147,7 @@ export default function TutorNotificationsPage() {
               <p className="text-sm text-muted-foreground">Session reminders, student updates, and grade notifications</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Button
               variant="outline"
               size="sm"

@@ -123,8 +123,8 @@ export default function AdminClassSchedulePage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="mb-6 flex items-center justify-between">
-        <div className="flex items-center gap-4">
+      <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
           <Button
             variant="ghost"
             size="sm"
@@ -134,7 +134,7 @@ export default function AdminClassSchedulePage() {
             <ArrowLeft className="h-4 w-4" />
             Back
           </Button>
-          <div className="h-6 w-px bg-border" />
+          <div className="hidden h-6 w-px bg-border sm:block" />
           <div>
             <h1 className="text-3xl font-bold text-foreground">Class Schedule</h1>
             <p className="text-muted-foreground mt-2">
@@ -142,8 +142,8 @@ export default function AdminClassSchedulePage() {
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 bg-muted rounded-lg p-1">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 bg-muted rounded-lg p-1">
             <Button
               size="sm"
               variant={mode === 'sessions' ? 'default' : 'ghost'}

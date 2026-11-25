@@ -73,8 +73,8 @@ export default function AdminSuspendedPage() {
   return (
     <div className="space-y-6 pb-12">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
           <Button
             variant="ghost"
             size="sm"
@@ -84,7 +84,7 @@ export default function AdminSuspendedPage() {
             <ArrowLeft className="h-4 w-4" />
             Back to Dashboard
           </Button>
-          <div className="h-6 w-px bg-border" />
+          <div className="hidden h-6 w-px bg-border sm:block" />
           <div className="flex items-center gap-2">
             <div className="bg-brand-gold/20 p-2 rounded-lg border border-brand-gold/30">
               <AlertCircle className="h-5 w-5 text-brand-gold" />
@@ -135,7 +135,7 @@ export default function AdminSuspendedPage() {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <p className="text-sm text-muted-foreground">Account Status</p>
                     <p className="text-white">{user.status}</p>

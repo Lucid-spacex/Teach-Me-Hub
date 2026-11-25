@@ -369,8 +369,8 @@ export default function AdminMessagesPage() {
   return (
     <div className="space-y-6 pb-12">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
+      <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
           <Button
             variant="ghost"
             size="sm"
@@ -380,7 +380,7 @@ export default function AdminMessagesPage() {
             <ArrowLeft className="h-4 w-4" />
             Back to Dashboard
           </Button>
-          <div className="h-6 w-px bg-border" />
+          <div className="hidden h-6 w-px bg-border sm:block" />
           <div>
             <h1 className="text-3xl font-serif font-bold text-white">Messages</h1>
             <p className="text-sm text-muted-foreground">Admin inbox - view and reply to parent/tutor messages</p>

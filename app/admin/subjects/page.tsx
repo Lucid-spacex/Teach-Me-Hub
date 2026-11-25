@@ -213,12 +213,12 @@ export default function AdminSubjectsPage() {
   return (
     <div className="space-y-6 pb-12">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-serif font-bold text-white">Subjects & Pricing</h1>
           <p className="text-sm text-muted-foreground">Manage subjects and their per-grade-band pricing</p>
         </div>
-        <Button onClick={openCreateModal} className="bg-brand-gold hover:bg-brand-goldLight text-brand-dark">
+        <Button onClick={openCreateModal} className="w-full bg-brand-gold hover:bg-brand-goldLight text-brand-dark sm:w-auto">
           <Plus className="h-4 w-4 mr-2" />
           Add Subject
         </Button>
@@ -247,7 +247,7 @@ export default function AdminSubjectsPage() {
                     <CardTitle className="text-white">{subject.name}</CardTitle>
                     <p className="text-sm text-muted-foreground">{subject.category}</p>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     <Button
                       variant="outline"
                       size="sm"
@@ -386,7 +386,7 @@ export default function AdminSubjectsPage() {
                 {GRADE_BANDS.map((band) => (
                   <div key={band.value} className="p-3 bg-brand-dark/30 rounded-lg">
                     <p className="text-sm text-muted-foreground mb-2">{band.label}</p>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                       <div>
                         <Label htmlFor={`ngn-${band.value}`} className="text-xs text-muted-foreground">Price (NGN)</Label>
                         <Input

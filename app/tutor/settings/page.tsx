@@ -248,7 +248,7 @@ export default function TutorSettingsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="text-sm text-foreground">
                     {soundEnabled ? 'Sound enabled' : 'Sound disabled'}
@@ -272,7 +272,7 @@ export default function TutorSettingsPage() {
           {/* Availability Status */}
           <Card className="bg-card border-brand-gold/30">
             <CardHeader>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <CardTitle className="text-foreground flex items-center gap-2">
                     <UserCheck className="h-5 w-5 text-brand-gold" />

@@ -91,7 +91,7 @@ export default function AdminSessionsPage() {
   return (
     <div className="space-y-6 pb-12">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
         <div>
           <h1 className="text-3xl font-serif font-bold text-white">Sessions</h1>
           <p className="text-sm text-muted-foreground">View and manage all tutoring sessions</p>
@@ -123,7 +123,7 @@ export default function AdminSessionsPage() {
               />
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-40 bg-brand-dark/30 border-brand-gold/30 text-white">
+              <SelectTrigger className="w-full bg-brand-dark/30 border-brand-gold/30 text-white sm:w-40">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>

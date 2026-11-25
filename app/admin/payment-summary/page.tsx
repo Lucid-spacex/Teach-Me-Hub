@@ -90,7 +90,7 @@ export default function AdminPaymentSummaryPage() {
   return (
     <div className="space-y-6 pb-12">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
@@ -122,7 +122,7 @@ export default function AdminPaymentSummaryPage() {
       {/* Date Range and Currency Filters */}
       <Card className="bg-card border-brand-gold/30">
         <CardContent className="pt-6">
-          <div className="flex flex-wrap gap-4 items-center">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
             <div className="flex items-center gap-2">
               <Calendar className="h-4 w-4 text-muted-foreground" />
               <span className="text-sm text-muted-foreground">Date Range:</span>
@@ -161,22 +161,22 @@ export default function AdminPaymentSummaryPage() {
                 All Time
               </Button>
             </div>
-            <div className="flex-1 min-w-64" />
+            <div className="hidden flex-1 lg:block" />
             <Input
               type="date"
               value={fromDate}
               onChange={(e) => setFromDate(e.target.value)}
-              className="w-40 bg-brand-dark/30 border-brand-gold/30 text-white"
+              className="w-full bg-brand-dark/30 border-brand-gold/30 text-white sm:w-40"
             />
             <span className="text-muted-foreground">to</span>
             <Input
               type="date"
               value={toDate}
               onChange={(e) => setToDate(e.target.value)}
-              className="w-40 bg-brand-dark/30 border-brand-gold/30 text-white"
+              className="w-full bg-brand-dark/30 border-brand-gold/30 text-white sm:w-40"
             />
             <Select value={currencyFilter} onValueChange={setCurrencyFilter}>
-              <SelectTrigger className="w-32 bg-brand-dark/30 border-brand-gold/30 text-white">
+              <SelectTrigger className="w-full bg-brand-dark/30 border-brand-gold/30 text-white sm:w-32">
                 <SelectValue placeholder="Currency" />
               </SelectTrigger>
               <SelectContent>
@@ -301,7 +301,7 @@ export default function AdminPaymentSummaryPage() {
                 <CardTitle className="text-white">Payments by Status</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-5">
                   {summary.byStatus.map((item, index) => (
                     <div key={index} className="p-4 bg-brand-dark/30 rounded-lg border border-brand-gold/10">
                       <p className="text-2xl font-bold text-white">{item.count}</p>

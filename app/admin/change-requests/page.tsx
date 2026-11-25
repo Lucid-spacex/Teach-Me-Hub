@@ -127,7 +127,7 @@ export default function AdminChangeRequestsPage() {
     <div className="min-h-screen bg-brand-dark">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="mb-8 flex items-center gap-4">
+        <div className="mb-8 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-4">
           <Button
             variant="ghost"
             size="sm"
@@ -137,7 +137,7 @@ export default function AdminChangeRequestsPage() {
             <ArrowLeft className="h-4 w-4" />
             Back
           </Button>
-          <div className="h-6 w-px bg-border" />
+          <div className="hidden h-6 w-px bg-border sm:block" />
           <div>
             <h1 className="text-3xl font-bold text-foreground">Enrollment Change Requests</h1>
             <p className="text-muted-foreground mt-2">Review and approve schedule change requests from parents</p>
@@ -187,9 +187,9 @@ export default function AdminChangeRequestsPage() {
             {requests.map((request) => (
               <Card key={request.id} className="bg-card border-brand-gold/30">
                 <CardContent className="p-6">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-3">
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="min-w-0 flex-1">
+                      <div className="mb-3 flex flex-wrap items-center gap-3">
                         <h3 className="font-semibold text-foreground">
                           {request.studentName} - {request.subjectName}
                         </h3>
@@ -220,7 +220,7 @@ export default function AdminChangeRequestsPage() {
                           </p>
                         </div>
                       )}
-                      <div className="flex gap-2">
+                      <div className="flex flex-wrap gap-2">
                         <Button
                           variant="outline"
                           size="sm"

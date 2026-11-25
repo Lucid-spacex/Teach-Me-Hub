@@ -20,8 +20,8 @@ export default function AdminAllTutorsPage() {
       <Navbar />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
             <Button
               variant="ghost"
               size="sm"
@@ -31,7 +31,7 @@ export default function AdminAllTutorsPage() {
               <ArrowLeft className="h-4 w-4" />
               Back to Dashboard
             </Button>
-            <div className="h-6 w-px bg-border" />
+            <div className="hidden h-6 w-px bg-border sm:block" />
             <div className="flex items-center gap-2">
               <div className="bg-blue-100 p-2 rounded-lg">
                 <GraduationCap className="h-5 w-5 text-blue-600" />

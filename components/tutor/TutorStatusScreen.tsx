@@ -40,7 +40,7 @@ export function TutorStatusScreen({ status }: TutorStatusScreenProps) {
               </div>
             )}
           </div>
-          <CardTitle className="text-2xl font-bold text-white">
+          <CardTitle className="text-2xl font-bold text-foreground">
             {isPending ? 'Application Under Review' : 'Application Not Approved'}
           </CardTitle>
         </CardHeader>
@@ -101,7 +101,7 @@ export function TutorStatusScreen({ status }: TutorStatusScreenProps) {
               <Button
                 onClick={() => router.push('/login')}
                 variant="ghost"
-                className="text-muted-foreground hover:text-white text-sm"
+                className="text-muted-foreground hover:text-foreground text-sm"
               >
                 <ArrowRight className="h-4 w-4 mr-1" />
                 Logout

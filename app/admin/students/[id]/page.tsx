@@ -173,8 +173,8 @@ export default function AdminStudentDetailPage() {
       <Navbar />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 pb-12">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
             <Button
               variant="ghost"
               size="sm"
@@ -190,7 +190,7 @@ export default function AdminStudentDetailPage() {
               <p className="text-sm text-muted-foreground">{student.fullName}</p>
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button
               onClick={() => setRegeneratePinConfirm(true)}
               variant="outline"
@@ -232,7 +232,7 @@ export default function AdminStudentDetailPage() {
                   />
                   <div className="flex-1">
                     <h3 className="text-xl font-bold text-white">{student.fullName}</h3>
-                    <div className="grid grid-cols-2 gap-4 mt-3 text-sm">
+                    <div className="mt-3 grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
                       <div>
                         <p className="text-muted-foreground">Grade</p>
                         <p className="text-white">{student.actualGrade}</p>

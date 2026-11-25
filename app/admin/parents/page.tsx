@@ -292,7 +292,7 @@ export default function AdminParentsPage() {
             {/* Parent Basic Info */}
             <Card className="bg-card border-brand-gold/30">
               <CardHeader>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <CardTitle className="text-white">Parent Information</CardTitle>
                   <Button
                     size="sm"
@@ -301,7 +301,7 @@ export default function AdminParentsPage() {
                       // This would typically open a modal or navigate to messages with this parent pre-selected
                       router.push('/admin/messages')
                     }}
-                    className="gap-1 bg-brand-gold hover:bg-brand-goldLight text-brand-dark"
+                    className="w-full gap-1 bg-brand-gold hover:bg-brand-goldLight text-brand-dark sm:w-auto"
                   >
                     <Mail className="h-4 w-4" />
                     Message Parent
@@ -309,7 +309,7 @@ export default function AdminParentsPage() {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
                   <div>
                     <p className="text-muted-foreground">Full Name</p>
                     <p className="text-white">{selectedParent.parent?.fullName || selectedParent.fullName || 'N/A'}</p>
@@ -403,8 +403,8 @@ export default function AdminParentsPage() {
                 <div className="space-y-3">
                   {selectedParent.enrollments.map((enrollment) => (
                     <div key={enrollment.id} className="p-4 bg-brand-dark/30 rounded-lg space-y-3">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                        <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2 mb-2">
                             <p className="font-medium text-white">{enrollment.studentName}</p>
                             <StatusBadge status={enrollment.status} />
@@ -425,7 +425,7 @@ export default function AdminParentsPage() {
                         </Button>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4 text-sm pt-2 border-t border-border">
+                      <div className="grid grid-cols-1 gap-4 pt-2 text-sm sm:grid-cols-2 border-t border-border">
                         <div>
                           <p className="text-muted-foreground">Tutor</p>
                           <p className="text-white">{enrollment.tutorName || 'Unassigned'}</p>
@@ -600,8 +600,8 @@ export default function AdminParentsPage() {
       {/* Search and Filters */}
       <Card className="bg-card border-brand-gold/30">
         <CardContent className="pt-6">
-          <form onSubmit={handleSearch} className="flex gap-4">
-            <div className="flex-1 relative">
+          <form onSubmit={handleSearch} className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="relative min-w-0 flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 type="text"
@@ -612,7 +612,7 @@ export default function AdminParentsPage() {
               />
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-48 bg-brand-dark/30 border-brand-gold/30 text-white">
+              <SelectTrigger className="w-full bg-brand-dark/30 border-brand-gold/30 text-white sm:w-48">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>

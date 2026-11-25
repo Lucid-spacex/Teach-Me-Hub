@@ -71,8 +71,8 @@ export default function TutorStudentPerformancePage() {
   return (
     <div className="space-y-6 pb-12">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
           <Button
             variant="ghost"
             size="sm"
@@ -82,17 +82,17 @@ export default function TutorStudentPerformancePage() {
             <ArrowLeft className="h-4 w-4" />
             Back
           </Button>
-          <div className="h-6 w-px bg-border" />
+          <div className="hidden h-6 w-px bg-border sm:block" />
           <div>
-            <h1 className="text-3xl font-serif font-bold text-white">
+            <h1 className="text-2xl font-serif font-bold text-white sm:text-3xl">
               {student?.fullName || 'Student'} Performance
             </h1>
             <p className="text-sm text-muted-foreground">Track academic progress, attendance, and achievements</p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <Select value={period} onValueChange={(value: PeriodFilter) => setPeriod(value)}>
-            <SelectTrigger className="w-[140px] bg-card border-brand-gold/30 text-white h-9 text-xs">
+            <SelectTrigger className="w-full bg-card border-brand-gold/30 text-white h-9 text-xs sm:w-[140px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

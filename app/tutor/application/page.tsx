@@ -380,10 +380,10 @@ export default function TutorApplicationPage() {
     <div className="min-h-screen bg-background">
       <div className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-3">
               <BrandHeader />
-              <div>
+              <div className="min-w-0">
                 <h1 className="text-lg font-semibold">Tutor Application</h1>
                 <p className="text-xs text-zinc-400">
                   {application?.applicationStatus === 'SUBMITTED' ? 'Under Review' : 'Complete your application'}
@@ -402,7 +402,7 @@ export default function TutorApplicationPage() {
 
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Progress Steps */}
-        <div className="flex items-center justify-between mb-8 px-4">
+        <div className="mb-8 flex items-center justify-between px-0 sm:px-4">
           {[
             { key: 'about', label: 'About You' },
             { key: 'teaching', label: 'Teaching' },
@@ -410,18 +410,18 @@ export default function TutorApplicationPage() {
             { key: 'documents', label: 'Documents' },
             { key: 'review', label: 'Review' },
           ].map((s, index) => (
-            <div key={s.key} className="flex items-center flex-1">
+            <div key={s.key} className="flex min-w-0 flex-1 items-center">
               <div className="flex flex-col items-center">
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold ${
                     step === s.key
                       ? 'bg-primary text-black'
-                      : 'bg-muted text-zinc-500'
+                      : 'bg-muted text-muted-foreground'
                   }`}
                 >
                   {index + 1}
                 </div>
-                <span className="text-xs mt-1 text-zinc-400">{s.label}</span>
+                <span className="sr-only text-center text-xs text-muted-foreground sm:not-sr-only sm:mt-1">{s.label}</span>
               </div>
               {index < 4 && <div className={`flex-1 h-0.5 mx-2 ${step === s.key ? 'bg-primary' : 'bg-muted'}`} />}
             </div>
@@ -450,7 +450,7 @@ export default function TutorApplicationPage() {
             {/* Step 1: About You */}
             {step === 'about' && (
               <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
                     <Label>First Name *</Label>
                     <Input
@@ -527,7 +527,7 @@ export default function TutorApplicationPage() {
                   </div>
                   <p className="text-xs text-zinc-400">So we can celebrate you</p>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
                     <Label>Country *</Label>
                     <Input
@@ -682,7 +682,7 @@ export default function TutorApplicationPage() {
                       size="lg"
                     />
                     <div className="flex-1 space-y-2">
-                      <div className="flex gap-2">
+                      <div className="flex flex-wrap gap-2">
                         <Button
                           type="button"
                           variant="outline"
@@ -767,7 +767,7 @@ export default function TutorApplicationPage() {
 
                 <div className="space-y-3">
                   <Label>Upload Documents</Label>
-                  <div className="flex gap-2">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                     <Button
                       type="button"
                       variant="outline"
@@ -796,12 +796,12 @@ export default function TutorApplicationPage() {
                     <Label>Pending Uploads</Label>
                     <div className="space-y-2">
                       {documents.map((file, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
-                          <div className="flex items-center gap-3">
+                        <div key={index} className="flex flex-col gap-3 rounded-lg bg-muted p-3 sm:flex-row sm:items-center sm:justify-between">
+                          <div className="flex min-w-0 flex-wrap items-center gap-3">
                             <FileText className="h-4 w-4 text-zinc-400" />
-                            <span className="text-sm">{file.name}</span>
+                            <span className="min-w-0 break-all text-sm">{file.name}</span>
                           </div>
-                          <div className="flex gap-2">
+                          <div className="flex flex-wrap gap-2">
                             <Button
                               type="button"
                               size="sm"
@@ -831,10 +831,10 @@ export default function TutorApplicationPage() {
                     <Label>Uploaded Documents</Label>
                     <div className="space-y-2">
                       {uploadedDocuments.map(doc => (
-                        <div key={doc.id} className="flex items-center justify-between p-3 bg-muted rounded-lg">
-                          <div className="flex items-center gap-3">
+                        <div key={doc.id} className="flex flex-col gap-3 rounded-lg bg-muted p-3 sm:flex-row sm:items-center sm:justify-between">
+                          <div className="flex min-w-0 flex-wrap items-center gap-3">
                             <FileText className="h-4 w-4 text-green-500" />
-                            <span className="text-sm">{doc.fileName}</span>
+                            <span className="min-w-0 break-all text-sm">{doc.fileName}</span>
                             <Badge variant="outline" className="text-xs">Uploaded</Badge>
                           </div>
                           <Button

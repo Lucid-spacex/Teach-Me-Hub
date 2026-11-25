@@ -210,7 +210,7 @@ export default function TutorDashboard() {
       {!tutorProfile && (
         <Card className="bg-amber-50 dark:bg-brand-gold/10 border-amber-300 dark:border-brand-gold/30 rounded-2xl">
           <CardContent className="pt-6">
-            <div className="flex items-start gap-3">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
               <AlertCircle className="h-5 w-5 text-amber-600 dark:text-brand-gold flex-shrink-0 mt-0.5" />
               <div className="flex-1">
                 <p className="font-semibold text-foreground">Profile Incomplete</p>
@@ -221,7 +221,7 @@ export default function TutorDashboard() {
               <Button
                 size="sm"
                 onClick={() => setProfileModalOpen(true)}
-                className="bg-brand-gold hover:bg-brand-goldLight text-black rounded-xl shrink-0"
+                className="w-full shrink-0 rounded-xl bg-brand-gold text-black hover:bg-brand-goldLight sm:w-auto"
               >
                 Complete Profile
               </Button>

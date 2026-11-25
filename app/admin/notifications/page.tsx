@@ -133,7 +133,7 @@ export default function AdminNotificationsPage() {
     <div className="space-y-6 pb-12">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
+          <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
             <Button
               variant="ghost"
               size="sm"
@@ -143,9 +143,9 @@ export default function AdminNotificationsPage() {
               <ArrowLeft className="h-4 w-4" />
               Back
             </Button>
-            <div className="h-6 w-px bg-border" />
+            <div className="hidden h-6 w-px bg-border sm:block" />
             <div>
-              <h1 className="text-3xl font-serif font-bold text-white flex items-center gap-3">
+              <h1 className="flex flex-wrap items-center gap-3 text-3xl font-serif font-bold text-white">
                 Admin Notifications
                 {unreadCount > 0 && (
                   <span className="text-xs bg-brand-gold text-brand-dark px-2.5 py-0.5 rounded-full font-bold">
@@ -156,7 +156,7 @@ export default function AdminNotificationsPage() {
               <p className="text-sm text-muted-foreground">Platform updates, user activities, and system alerts</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Button
               variant="outline"
               size="sm"
@@ -247,7 +247,7 @@ export default function AdminNotificationsPage() {
             {filtered.map((item) => (
               <div
                 key={item.id}
-                className={`p-4 rounded-xl border transition-all flex items-start gap-4 ${
+                className={`flex flex-col gap-3 rounded-xl border p-4 transition-all sm:flex-row sm:items-start sm:gap-4 ${
                   !(item.read || item.isRead)
                     ? 'bg-card border-brand-gold/40 shadow-sm'
                     : 'bg-brand-dark/60 border-brand-gold/15 opacity-85'
@@ -257,7 +257,7 @@ export default function AdminNotificationsPage() {
                   {getIconForType(item.type)}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-2">
+                  <div className="flex flex-wrap items-start justify-between gap-x-2 gap-y-1">
                     <h3 className={`text-base font-semibold ${!(item.read || item.isRead) ? 'text-white' : 'text-muted-foreground'}`}>
                       {item.title}
                     </h3>

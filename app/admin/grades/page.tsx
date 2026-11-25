@@ -179,8 +179,8 @@ export default function AdminGradesPage() {
     <div className="min-h-screen bg-brand-dark">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
             <Button
               variant="ghost"
               size="sm"
@@ -190,7 +190,7 @@ export default function AdminGradesPage() {
               <ArrowLeft className="h-4 w-4" />
               Back
             </Button>
-            <div className="h-6 w-px bg-border" />
+            <div className="hidden h-6 w-px bg-border sm:block" />
             <div>
               <h1 className="text-3xl font-bold text-foreground">Grade Review Queue</h1>
               <p className="text-muted-foreground mt-2">Review and approve tutor-submitted grades</p>
@@ -200,7 +200,7 @@ export default function AdminGradesPage() {
             <Button
               onClick={handleBulkApprove}
               disabled={bulkApproving}
-              className="bg-brand-gold hover:bg-brand-goldLight text-brand-dark"
+              className="w-full bg-brand-gold hover:bg-brand-goldLight text-brand-dark sm:w-auto"
             >
               {bulkApproving ? (
                 <>
@@ -343,7 +343,7 @@ export default function AdminGradesPage() {
                           </h3>
                           {getStatusBadge(grade.status)}
                         </div>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                        <div className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2 md:grid-cols-4">
                           <div>
                             <span className="text-muted-foreground">Student ID:</span>
                             <p className="text-foreground font-medium">{grade.studentId}</p>

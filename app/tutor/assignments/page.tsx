@@ -274,8 +274,8 @@ export default function TutorAssignmentsPage() {
     <div className="min-h-screen bg-background">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="mb-8 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
             <Button
               variant="ghost"
               size="sm"
@@ -285,7 +285,7 @@ export default function TutorAssignmentsPage() {
               <ArrowLeft className="h-4 w-4" />
               Back to Dashboard
             </Button>
-            <div className="h-6 w-px bg-border" />
+            <div className="hidden h-6 w-px bg-border sm:block" />
             <div className="flex items-center gap-2">
               <div className="bg-brand-gold/20 p-2 rounded-lg border border-brand-gold/30">
                 <FileText className="h-5 w-5 text-brand-gold" />
@@ -298,7 +298,7 @@ export default function TutorAssignmentsPage() {
           </div>
           <Button
             onClick={handleOpenCreateModal}
-            className="bg-brand-gold hover:bg-brand-goldLight text-brand-dark gap-2"
+            className="w-full bg-brand-gold hover:bg-brand-goldLight text-brand-dark gap-2 sm:w-auto"
           >
             <Plus className="h-4 w-4" />
             Create Assignment

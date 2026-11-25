@@ -85,8 +85,8 @@ export default function AdminComplaintsPage() {
   return (
     <div className="space-y-6 pb-12">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
           <Button
             variant="ghost"
             size="sm"
@@ -96,7 +96,7 @@ export default function AdminComplaintsPage() {
             <ArrowLeft className="h-4 w-4" />
             Back to Dashboard
           </Button>
-          <div className="h-6 w-px bg-border" />
+          <div className="hidden h-6 w-px bg-border sm:block" />
           <div className="flex items-center gap-2">
             <div className="bg-brand-gold/20 p-2 rounded-lg border border-brand-gold/30">
               <AlertTriangle className="h-5 w-5 text-brand-gold" />

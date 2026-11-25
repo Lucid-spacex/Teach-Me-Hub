@@ -348,7 +348,7 @@ function AdminTransactionsContent() {
   if (selectedPayment) {
     return (
       <div className="space-y-6 pb-12">
-        <div className="flex items-center gap-4 mb-6">
+        <div className="mb-6 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-4">
           <Button
             variant="ghost"
             size="sm"
@@ -358,7 +358,7 @@ function AdminTransactionsContent() {
             <ArrowLeft className="h-4 w-4" />
             Back to Transactions
           </Button>
-          <div className="h-6 w-px bg-border" />
+          <div className="hidden h-6 w-px bg-border sm:block" />
           <div>
             <h1 className="text-3xl font-serif font-bold text-white">Payment Details</h1>
             <p className="text-sm text-muted-foreground">{selectedPayment.reference}</p>
@@ -376,7 +376,7 @@ function AdminTransactionsContent() {
                 <CardTitle className="text-white">Payment Information</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
                     <p className="text-sm text-muted-foreground">Receipt #</p>
                     <p className="font-medium text-white">{selectedPayment.receiptNumber}</p>
@@ -566,15 +566,15 @@ function AdminTransactionsContent() {
 
   return (
     <div className="space-y-6 pb-12">
-      <div className="flex items-center justify-between mb-6">
-        <div>
+<div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
           <h1 className="text-3xl font-serif font-bold text-white">Transactions</h1>
           <p className="text-sm text-muted-foreground">View and manage all payment transactions</p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 border-b border-brand-gold/20 pb-4">
+      <div className="flex flex-wrap gap-2 border-b border-brand-gold/20 pb-4">
         <Button
           variant={activeTab === 'overview' ? 'default' : 'ghost'}
           onClick={() => setActiveTab('overview')}
@@ -619,9 +619,9 @@ function AdminTransactionsContent() {
           ) : summary ? (
             <>
               {/* Date Range and Currency Filters */}
-              <div className="flex gap-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                 <Select value={dateRange} onValueChange={setDateRange}>
-                  <SelectTrigger className="w-48 bg-brand-dark/30 border-brand-gold/30 text-white">
+                  <SelectTrigger className="w-full bg-brand-dark/30 border-brand-gold/30 text-white sm:w-48">
                     <SelectValue placeholder="Date Range" />
                   </SelectTrigger>
                   <SelectContent>
@@ -632,7 +632,7 @@ function AdminTransactionsContent() {
                   </SelectContent>
                 </Select>
                 <Select value={currency} onValueChange={setCurrency}>
-                  <SelectTrigger className="w-32 bg-brand-dark/30 border-brand-gold/30 text-white">
+                  <SelectTrigger className="w-full bg-brand-dark/30 border-brand-gold/30 text-white sm:w-32">
                     <SelectValue placeholder="Currency" />
                   </SelectTrigger>
                   <SelectContent>
@@ -781,7 +781,7 @@ function AdminTransactionsContent() {
                   />
                 </div>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-40 bg-brand-dark/30 border-brand-gold/30 text-white">
+                  <SelectTrigger className="w-full bg-brand-dark/30 border-brand-gold/30 text-white sm:w-40">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent>
@@ -794,7 +794,7 @@ function AdminTransactionsContent() {
                   </SelectContent>
                 </Select>
                 <Select value={currencyFilter} onValueChange={setCurrencyFilter}>
-                  <SelectTrigger className="w-32 bg-brand-dark/30 border-brand-gold/30 text-white">
+                  <SelectTrigger className="w-full bg-brand-dark/30 border-brand-gold/30 text-white sm:w-32">
                     <SelectValue placeholder="Currency" />
                   </SelectTrigger>
                   <SelectContent>
@@ -804,7 +804,7 @@ function AdminTransactionsContent() {
                   </SelectContent>
                 </Select>
                 <Select value={providerFilter} onValueChange={setProviderFilter}>
-                  <SelectTrigger className="w-32 bg-brand-dark/30 border-brand-gold/30 text-white">
+                  <SelectTrigger className="w-full bg-brand-dark/30 border-brand-gold/30 text-white sm:w-32">
                     <SelectValue placeholder="Provider" />
                   </SelectTrigger>
                   <SelectContent>

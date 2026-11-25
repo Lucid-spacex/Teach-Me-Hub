@@ -172,8 +172,8 @@ export default function TutorGradesPage() {
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/40 pb-6">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col gap-4 border-b border-border/40 pb-6 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
             <Button
               variant="ghost"
               size="sm"
@@ -183,7 +183,7 @@ export default function TutorGradesPage() {
               <ArrowLeft className="h-4 w-4" />
               Back
             </Button>
-            <div className="h-6 w-px bg-border" />
+            <div className="hidden h-6 w-px bg-border sm:block" />
             <div className="flex items-center gap-3">
               <div className="bg-brand-gold/20 p-2.5 rounded-xl border border-brand-gold/30">
                 <BarChart3 className="h-6 w-6 text-brand-gold" />
@@ -197,13 +197,13 @@ export default function TutorGradesPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
             <Button
               variant="outline"
               size="sm"
               onClick={loadInitialData}
               disabled={loading}
-              className="gap-2"
+              className="w-full gap-2 sm:w-auto"
             >
               <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
               Refresh
@@ -214,7 +214,7 @@ export default function TutorGradesPage() {
                 setEditingGrade(null)
                 setWizardOpen(true)
               }}
-              className="gap-2 bg-brand-gold hover:bg-brand-goldLight text-brand-dark font-semibold"
+              className="w-full gap-2 bg-brand-gold hover:bg-brand-goldLight text-brand-dark font-semibold sm:w-auto"
             >
               <Plus className="h-4 w-4" />
               Compile Grade

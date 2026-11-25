@@ -287,7 +287,7 @@ export function QuizQuestionsModal({ open, onOpenChange, assignmentId, assignmen
               <p className="text-xs text-muted-foreground mt-1">Click the checkmark to mark the correct answer</p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <div>
                 <Label htmlFor="points">Points *</Label>
                 <Input

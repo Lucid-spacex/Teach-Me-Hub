@@ -222,8 +222,8 @@ function TutorSessionListContent({ refreshTrigger }: TutorSessionListProps) {
     <>
       <Card className="bg-card border-brand-gold/30">
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap items-center gap-3">
               <CardTitle className="text-foreground flex items-center gap-2">
                 <Calendar className="h-5 w-5 text-brand-gold" />
                 My Sessions
@@ -238,7 +238,7 @@ function TutorSessionListContent({ refreshTrigger }: TutorSessionListProps) {
             <Button
               size="sm"
               onClick={() => setCreateModalOpen(true)}
-              className="bg-brand-gold hover:bg-brand-goldLight text-brand-dark gap-2"
+              className="w-full gap-2 bg-brand-gold text-brand-dark hover:bg-brand-goldLight sm:w-auto"
             >
               <Plus className="h-4 w-4" />
               Create Session

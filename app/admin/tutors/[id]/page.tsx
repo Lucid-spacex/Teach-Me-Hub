@@ -282,8 +282,8 @@ export default function AdminTutorDetailPage() {
       <Navbar />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 pb-12">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
           <Button
             variant="ghost"
             size="sm"
@@ -299,7 +299,7 @@ export default function AdminTutorDetailPage() {
             <p className="text-sm text-muted-foreground">{user?.fullName || 'Tutor'}</p>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button
             onClick={() => router.push('/admin/messages')}
             variant="outline"
@@ -404,7 +404,7 @@ export default function AdminTutorDetailPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
                   <div>
                     <p className="text-muted-foreground">First Name</p>
                     <p className="text-white">{user?.firstName || application?.firstName || rawData?.firstName || '-'}</p>
@@ -515,7 +515,7 @@ export default function AdminTutorDetailPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
                   <div>
                     <p className="text-muted-foreground">Bio</p>
                     <p className="text-white">{profile.bio || '-'}</p>
@@ -636,7 +636,7 @@ export default function AdminTutorDetailPage() {
                 <p className="text-sm text-muted-foreground">Reports data would be loaded from paginated sub-resource</p>
               )}
               {activeTab === 'overview' && (
-                <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
                   <div>
                     <p className="text-muted-foreground">Total Sessions</p>
                     <p className="text-white">{metrics?.totalSessions ?? metrics?.sessionsCompleted ?? sessions.length ?? 0}</p>

@@ -91,7 +91,7 @@ export default function AdminStudentPerformancePage() {
         </div>
         <div className="flex items-center gap-3">
           <Select value={period} onValueChange={(value: PeriodFilter) => setPeriod(value)}>
-            <SelectTrigger className="w-[140px] bg-card border-brand-gold/30 text-white h-9 text-xs">
+            <SelectTrigger className="w-full bg-card border-brand-gold/30 text-white h-9 text-xs sm:w-[140px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
