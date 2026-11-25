@@ -12,25 +12,29 @@ export function ThemeToggle() {
       <Button
         variant="ghost"
         size="icon"
-        className="text-gray-300"
+        className="text-muted-foreground"
+        aria-label="Switch color theme"
       >
-        <Sun className="h-5 w-5" />
+        <Sun className="size-5" aria-hidden="true" />
       </Button>
     )
   }
+
+  const label = theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
 
   return (
     <Button
       variant="ghost"
       size="icon"
       onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-      className="text-gray-300 hover:text-brand-gold"
-      title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+      className="group text-muted-foreground hover:text-primary"
+      title={label}
+      aria-label={label}
     >
       {theme === 'dark' ? (
-        <Sun className="h-5 w-5" />
+        <Sun className="size-5 transition-transform duration-300 group-hover:rotate-45" aria-hidden="true" />
       ) : (
-        <Moon className="h-5 w-5" />
+        <Moon className="size-5 transition-transform duration-300 group-hover:-rotate-12" aria-hidden="true" />
       )}
     </Button>
   )

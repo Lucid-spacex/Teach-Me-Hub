@@ -79,7 +79,7 @@ export default function AdminSuspendedPage() {
             variant="ghost"
             size="sm"
             onClick={() => router.push('/admin')}
-            className="gap-2 text-gray-300 hover:text-white"
+            className="gap-2 text-muted-foreground hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Dashboard
@@ -91,7 +91,7 @@ export default function AdminSuspendedPage() {
             </div>
             <div>
               <h1 className="text-3xl font-serif font-bold text-white">Suspended Users</h1>
-              <p className="text-sm text-gray-400">View and reactivate suspended accounts</p>
+              <p className="text-sm text-muted-foreground">View and reactivate suspended accounts</p>
             </div>
           </div>
         </div>
@@ -115,9 +115,9 @@ export default function AdminSuspendedPage() {
       ) : users.length === 0 ? (
         <Card className="bg-card border-brand-gold/30 text-center py-16">
           <CardContent>
-            <UserCheck className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+            <UserCheck className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-white mb-1">No Suspended Users</h3>
-            <p className="text-sm text-gray-400">All accounts are currently active</p>
+            <p className="text-sm text-muted-foreground">All accounts are currently active</p>
           </CardContent>
         </Card>
       ) : (
@@ -128,8 +128,8 @@ export default function AdminSuspendedPage() {
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <CardTitle className="text-white">{user.fullName}</CardTitle>
-                    <p className="text-sm text-gray-400 mt-1">{user.email}</p>
-                    <p className="text-sm text-gray-400">Role: {user.role}</p>
+                    <p className="text-sm text-muted-foreground mt-1">{user.email}</p>
+                    <p className="text-sm text-muted-foreground">Role: {user.role}</p>
                   </div>
                   <StatusBadge status={user.status as UserStatus} />
                 </div>
@@ -137,7 +137,7 @@ export default function AdminSuspendedPage() {
               <CardContent>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-400">Account Status</p>
+                    <p className="text-sm text-muted-foreground">Account Status</p>
                     <p className="text-white">{user.status}</p>
                   </div>
                   <Button

@@ -51,7 +51,7 @@ export function ProgressReports({ enrollments, refreshTrigger }: ProgressReports
   }
 
   if (loading) {
-    return <div className="text-sm text-gray-400">Loading progress reports...</div>
+    return <div className="text-sm text-muted-foreground">Loading progress reports...</div>
   }
 
   if (enrollments.length === 0) {
@@ -87,7 +87,7 @@ export function ProgressReports({ enrollments, refreshTrigger }: ProgressReports
               >
                 <div className="text-left">
                   <div className="font-medium">{subjectName}</div>
-                  <div className="text-sm text-gray-400">
+                  <div className="text-sm text-muted-foreground">
                     {enrollmentReports.length} report{enrollmentReports.length !== 1 ? 's' : ''}
                   </div>
                 </div>
@@ -97,29 +97,29 @@ export function ProgressReports({ enrollments, refreshTrigger }: ProgressReports
               {isExpanded && (
                 <div className="border-t border-brand-gold/20 p-4">
                   {enrollmentReports.length === 0 ? (
-                    <p className="text-sm text-gray-400">No progress reports yet</p>
+                    <p className="text-sm text-muted-foreground">No progress reports yet</p>
                   ) : (
                     <div className="space-y-4">
                       {enrollmentReports.map((report) => (
                         <div key={report.id} className="border border-brand-gold/20 rounded-lg p-4 bg-brand-dark/50">
                           <div className="flex items-center justify-between mb-2">
                             <h4 className="font-medium text-white">{report.period}</h4>
-                            <span className="text-xs text-gray-400">
+                            <span className="text-xs text-muted-foreground">
                               {new Date(report.createdAt).toLocaleDateString()}
                             </span>
                           </div>
                           <div className="space-y-2 text-sm">
                             <div>
                               <span className="font-medium text-brand-gold">Summary:</span>
-                              <p className="text-gray-300">{report.summary}</p>
+                              <p className="text-muted-foreground">{report.summary}</p>
                             </div>
                             <div>
                               <span className="font-medium text-brand-gold">Strengths:</span>
-                              <p className="text-gray-300">{report.strengths}</p>
+                              <p className="text-muted-foreground">{report.strengths}</p>
                             </div>
                             <div>
                               <span className="font-medium text-brand-gold">Areas to Improve:</span>
-                              <p className="text-gray-300">{report.areasToImprove}</p>
+                              <p className="text-muted-foreground">{report.areasToImprove}</p>
                             </div>
                           </div>
                         </div>

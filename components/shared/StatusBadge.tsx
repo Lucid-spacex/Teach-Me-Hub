@@ -14,37 +14,50 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
       case "ACTIVE":
       case "COMPLETED":
       case "APPROVED":
+      case "SUCCESS":
+      case "PAID":
         return {
           icon: CheckCircle,
-          variant: "default" as const,
+          variant: "success" as const,
           label: status,
         }
       case "PAUSED":
       case "PENDING":
+      case "PENDING_APPROVAL":
       case "PENDING_VETTING":
+      case "UNSCHEDULED":
         return {
           icon: Clock,
-          variant: "outline" as const,
+          variant: "warning" as const,
           label: status,
         }
       case "PENDING_PAYMENT":
         return {
           icon: Clock,
-          variant: "outline" as const,
+          variant: "warning" as const,
           label: "Pending Payment",
         }
       case "CANCELLED":
       case "REJECTED":
       case "MISSED":
+      case "FAILED":
         return {
           icon: XCircle,
-          variant: "outline" as const,
+          variant: "destructive" as const,
           label: status,
         }
       case "SCHEDULED":
+      case "REFUNDED":
         return {
           icon: Clock,
-          variant: "secondary" as const,
+          variant: "info" as const,
+          label: status,
+        }
+      case "DRAFT":
+      case "EXPIRED":
+        return {
+          icon: PauseCircle,
+          variant: "outline" as const,
           label: status,
         }
       default:
@@ -61,7 +74,7 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
 
   return (
     <Badge variant={config.variant} className={cn("gap-1.5", className)}>
-      <Icon className="h-3 w-3" />
+      <Icon className="size-3" aria-hidden="true" />
       {config.label}
     </Badge>
   )

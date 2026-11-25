@@ -51,7 +51,7 @@ export default function UUIDInput({
         <p className="mt-1 text-sm text-red-600">{error}</p>
       )}
       {helpText && (
-        <p className="mt-1 text-sm text-gray-600">{helpText}</p>
+        <p className="mt-1 text-sm text-muted-foreground">{helpText}</p>
       )}
     </div>
   )

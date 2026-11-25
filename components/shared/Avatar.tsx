@@ -21,22 +21,22 @@ export function Avatar({ fullName, profilePictureUrl, size = 'md', className = '
 
   const getAvatarColor = (name: string) => {
     const colors = [
-      'bg-blue-500',
-      'bg-purple-500',
-      'bg-pink-500',
-      'bg-orange-500',
-      'bg-teal-500',
-      'bg-cyan-500',
+      'bg-accent-indigo text-background',
+      'bg-accent-teal text-background',
+      'bg-accent-coral text-background',
+      'bg-primary text-primary-foreground',
+      'bg-accent-teal text-background',
+      'bg-accent-indigo text-background',
     ]
     const index = name.charCodeAt(0) % colors.length
     return colors[index]
   }
 
   const sizeClasses = {
-    sm: 'w-8 h-8 text-xs',
-    md: 'w-10 h-10 text-sm',
-    lg: 'w-12 h-12 text-base',
-    xl: 'w-16 h-16 text-lg',
+    sm: 'size-8 text-xs',
+    md: 'size-10 text-sm',
+    lg: 'size-12 text-base',
+    xl: 'size-16 text-lg',
   }
 
   const initials = useMemo(() => getInitials(fullName), [fullName])

@@ -216,7 +216,7 @@ export default function AdminSubjectsPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-3xl font-serif font-bold text-white">Subjects & Pricing</h1>
-          <p className="text-sm text-gray-400">Manage subjects and their per-grade-band pricing</p>
+          <p className="text-sm text-muted-foreground">Manage subjects and their per-grade-band pricing</p>
         </div>
         <Button onClick={openCreateModal} className="bg-brand-gold hover:bg-brand-goldLight text-brand-dark">
           <Plus className="h-4 w-4 mr-2" />
@@ -232,9 +232,9 @@ export default function AdminSubjectsPage() {
       ) : subjects.length === 0 ? (
         <Card className="bg-card border-brand-gold/30 text-center py-16">
           <CardContent>
-            <BookOpen className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+            <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-white mb-1">No Subjects Found</h3>
-            <p className="text-sm text-gray-400">Add subjects to get started</p>
+            <p className="text-sm text-muted-foreground">Add subjects to get started</p>
           </CardContent>
         </Card>
       ) : (
@@ -245,7 +245,7 @@ export default function AdminSubjectsPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle className="text-white">{subject.name}</CardTitle>
-                    <p className="text-sm text-gray-400">{subject.category}</p>
+                    <p className="text-sm text-muted-foreground">{subject.category}</p>
                   </div>
                   <div className="flex gap-2">
                     <Button
@@ -278,7 +278,7 @@ export default function AdminSubjectsPage() {
                       const price = (subject.prices || subject.subjectPrices)?.find(p => p.gradeBandTier === band.value)
                       return (
                         <div key={band.value} className="p-3 bg-brand-dark/30 rounded-lg">
-                          <p className="text-xs text-gray-400 mb-2">{band.label}</p>
+                          <p className="text-xs text-muted-foreground mb-2">{band.label}</p>
                           <div className="space-y-1">
                             <div className="flex items-center gap-2">
                               <Input
@@ -293,7 +293,7 @@ export default function AdminSubjectsPage() {
                                 className="bg-background border-input text-white text-sm h-8"
                                 placeholder="NGN"
                               />
-                              <span className="text-xs text-gray-400">₦</span>
+                              <span className="text-xs text-muted-foreground">₦</span>
                             </div>
                             <div className="flex items-center gap-2">
                               <Input
@@ -308,7 +308,7 @@ export default function AdminSubjectsPage() {
                                 className="bg-background border-input text-white text-sm h-8"
                                 placeholder="USD"
                               />
-                              <span className="text-xs text-gray-400">$</span>
+                              <span className="text-xs text-muted-foreground">$</span>
                             </div>
                           </div>
                         </div>
@@ -350,7 +350,7 @@ export default function AdminSubjectsPage() {
       >
         <form onSubmit={editingSubject ? handleUpdateSubject : handleCreateSubject} className="space-y-4">
           <div>
-            <Label htmlFor="name" className="text-gray-300">Subject Name *</Label>
+            <Label htmlFor="name" className="text-muted-foreground">Subject Name *</Label>
             <Input
               id="name"
               value={formData.name}
@@ -361,7 +361,7 @@ export default function AdminSubjectsPage() {
             />
           </div>
           <div>
-            <Label htmlFor="category" className="text-gray-300">Category *</Label>
+            <Label htmlFor="category" className="text-muted-foreground">Category *</Label>
             <Select
               value={formData.category}
               onValueChange={(value) => setFormData({ ...formData, category: value as 'CORE' | 'ENRICHMENT' | 'TEST_PREP' })}
@@ -381,14 +381,14 @@ export default function AdminSubjectsPage() {
           </div>
           {!editingSubject && (
             <div className="space-y-3">
-              <Label className="text-gray-300">Pricing by Grade Band *</Label>
+              <Label className="text-muted-foreground">Pricing by Grade Band *</Label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {GRADE_BANDS.map((band) => (
                   <div key={band.value} className="p-3 bg-brand-dark/30 rounded-lg">
-                    <p className="text-sm text-gray-400 mb-2">{band.label}</p>
+                    <p className="text-sm text-muted-foreground mb-2">{band.label}</p>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <Label htmlFor={`ngn-${band.value}`} className="text-xs text-gray-400">Price (NGN)</Label>
+                        <Label htmlFor={`ngn-${band.value}`} className="text-xs text-muted-foreground">Price (NGN)</Label>
                         <Input
                           id={`ngn-${band.value}`}
                           type="number"
@@ -407,7 +407,7 @@ export default function AdminSubjectsPage() {
                         />
                       </div>
                       <div>
-                        <Label htmlFor={`usd-${band.value}`} className="text-xs text-gray-400">Price (USD)</Label>
+                        <Label htmlFor={`usd-${band.value}`} className="text-xs text-muted-foreground">Price (USD)</Label>
                         <Input
                           id={`usd-${band.value}`}
                           type="number"

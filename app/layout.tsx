@@ -1,9 +1,24 @@
 import type { Metadata, Viewport } from 'next'
-import './globals.css'
-import { Toaster } from '@/components/ui/toaster'
-import { ErrorBoundaryWrapper } from '@/components/shared/ErrorBoundaryWrapper'
+import { DM_Sans, DM_Serif_Display } from 'next/font/google'
 import { AuthProvider } from '@/components/shared/AuthProvider'
+import { ErrorBoundaryWrapper } from '@/components/shared/ErrorBoundaryWrapper'
 import { NotificationProvider } from '@/components/shared/NotificationProvider'
+import { PageTransition } from '@/components/shared/PageTransition'
+import { Toaster } from '@/components/ui/toaster'
+import './globals.css'
+
+const bodyFont = DM_Sans({
+  subsets: ['latin'],
+  variable: '--font-body',
+  display: 'swap',
+})
+
+const displayFont = DM_Serif_Display({
+  subsets: ['latin'],
+  weight: '400',
+  variable: '--font-display-family',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: 'TeachMeNest — Confident learning starts here',
@@ -13,8 +28,8 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#F3C33F',
-  colorScheme: 'light',
+  themeColor: '#E3B52F',
+  colorScheme: 'light dark',
   width: 'device-width',
   initialScale: 1,
 }
@@ -26,11 +41,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="min-h-screen bg-background text-foreground">
+      <body className={`${bodyFont.variable} ${displayFont.variable} min-h-screen bg-background text-foreground`}>
         <ErrorBoundaryWrapper>
           <AuthProvider>
             <NotificationProvider>
-              {children}
+              <PageTransition>{children}</PageTransition>
             </NotificationProvider>
           </AuthProvider>
         </ErrorBoundaryWrapper>

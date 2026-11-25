@@ -240,10 +240,10 @@ export default function StudentLoginForm() {
 
             {/* 6-Digit PIN Inputs */}
             <div className="space-y-2">
-              <Label className="text-xs font-medium text-zinc-300">
+              <Label id="student-pin-label" className="text-xs font-medium text-muted-foreground">
                 6-Digit Access PIN
               </Label>
-              <div className="flex justify-between gap-1.5 sm:gap-2">
+              <div role="group" aria-labelledby="student-pin-label" className="grid grid-cols-6 gap-1.5 sm:gap-2">
                 {pinDigits.map((digit, index) => (
                   <input
                     key={index}
@@ -257,7 +257,8 @@ export default function StudentLoginForm() {
                     onChange={(e) => handlePinChange(index, e.target.value)}
                     onKeyDown={(e) => handlePinKeyDown(index, e)}
                     onPaste={handlePinPaste}
-                    className="w-11 h-12 text-center text-lg font-bold bg-muted border border-border focus:border-primary focus:ring-2 focus:ring-primary/30 text-primary rounded-xl outline-none transition-all"
+                    aria-label={`PIN digit ${index + 1}`}
+                    className="h-11 w-full min-w-0 rounded-xl border border-border bg-muted text-center text-lg font-bold text-primary outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/30"
                   />
                 ))}
               </div>

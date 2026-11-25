@@ -100,7 +100,7 @@ function PaymentCallbackContent() {
           {status === 'loading' && (
             <div className="flex flex-col items-center space-y-4 py-8">
               <LoadingSpinner size="lg" />
-              <p className="text-gray-400">Verifying your payment...</p>
+              <p className="text-muted-foreground">Verifying your payment...</p>
             </div>
           )}
 
@@ -111,12 +111,12 @@ function PaymentCallbackContent() {
               </div>
               <div className="text-center space-y-2">
                 <h3 className="text-xl font-semibold text-white">Payment Successful!</h3>
-                <p className="text-gray-400">
+                <p className="text-muted-foreground">
                   Your payment has been processed successfully. Your enrollment(s) are now active.
                 </p>
                 {payment && (
                   <div className="mt-4 p-4 bg-brand-dark/50 rounded-lg text-left">
-                    <div className="text-sm text-gray-400">
+                    <div className="text-sm text-muted-foreground">
                       <div className="flex justify-between">
                         <span>Amount:</span>
                         <span className="text-white font-medium">
@@ -165,7 +165,7 @@ function PaymentCallbackContent() {
               </div>
               <div className="text-center space-y-2">
                 <h3 className="text-xl font-semibold text-white">Payment Failed</h3>
-                <p className="text-gray-400">
+                <p className="text-muted-foreground">
                   Your payment could not be processed. Please try again or contact support.
                 </p>
               </div>
@@ -185,7 +185,7 @@ function PaymentCallbackContent() {
               </div>
               <div className="text-center space-y-2">
                 <h3 className="text-xl font-semibold text-white">Payment Processing</h3>
-                <p className="text-gray-400">
+                <p className="text-muted-foreground">
                   Your payment was submitted and is being confirmed. This can take a short while —
                   check your Payments page for the latest status.
                 </p>
@@ -198,7 +198,7 @@ function PaymentCallbackContent() {
               </button>
               <button
                 onClick={handleReturnToDashboard}
-                className="w-full text-sm text-gray-400 hover:text-white py-2"
+                className="w-full text-sm text-muted-foreground hover:text-white py-2"
               >
                 Return to Dashboard
               </button>
@@ -212,7 +212,7 @@ function PaymentCallbackContent() {
               </div>
               <div className="text-center space-y-2">
                 <h3 className="text-xl font-semibold text-white">Payment Verification Error</h3>
-                <p className="text-gray-400">
+                <p className="text-muted-foreground">
                   {errorMessage || 'Unable to verify payment status. Please contact support.'}
                 </p>
               </div>

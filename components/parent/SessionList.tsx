@@ -96,21 +96,21 @@ export function SessionList({ enrollments, refreshTrigger }: SessionListProps) {
       key: 'dateTime',
       header: 'Date & Time',
       cell: (session: Session) => (
-        <div className="text-gray-300">{new Date(session.scheduledAt).toLocaleString()}</div>
+        <div className="text-muted-foreground">{new Date(session.scheduledAt).toLocaleString()}</div>
       ),
     },
     {
       key: 'duration',
       header: 'Duration',
       cell: (session: Session) => (
-        <div className="text-gray-300">{session.durationMinutes} min</div>
+        <div className="text-muted-foreground">{session.durationMinutes} min</div>
       ),
     },
     {
       key: 'subject',
       header: 'Subject',
       cell: (session: Session) => (
-        <div className="text-gray-300">{getEnrollmentInfo(session.enrollmentId)}</div>
+        <div className="text-muted-foreground">{getEnrollmentInfo(session.enrollmentId)}</div>
       ),
     },
     {

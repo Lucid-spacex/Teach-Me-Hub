@@ -211,7 +211,7 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
           variant="ghost"
           size="sm"
           onClick={() => router.push('/parent/students')}
-          className="gap-2 text-zinc-400 hover:text-white hover:bg-white/5"
+          className="gap-2 text-zinc-400 hover:text-white hover:bg-card/5"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to My Children
@@ -406,7 +406,7 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
                   {assignedTutors.map(tutor => (
                     <div
                       key={tutor.id}
-                      className="p-4 rounded-xl bg-white/[0.02] border border-brand-gold/20 space-y-3"
+                      className="p-4 rounded-xl bg-card/[0.02] border border-brand-gold/20 space-y-3"
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-11 h-11 rounded-full bg-brand-gold/20 border border-brand-gold/40 text-brand-gold flex items-center justify-center font-bold">
@@ -529,7 +529,7 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
             <div className="space-y-6">
               {assignedTutors.map(tutor => (
                 <Card key={tutor.id} className="bg-card border-brand-gold/25 overflow-hidden">
-                  <CardHeader className="bg-white/[0.015] border-b border-white/5 p-6">
+                  <CardHeader className="bg-card/[0.015] border-b border-white/5 p-6">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div className="flex items-center gap-4">
                         <div className="w-14 h-14 rounded-2xl bg-brand-gold/15 border border-brand-gold/40 text-brand-gold flex items-center justify-center text-xl font-bold font-serif shrink-0">
@@ -566,7 +566,7 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
                       <h4 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
                         About the Instructor
                       </h4>
-                      <p className="text-sm text-zinc-300 leading-relaxed bg-white/[0.01] p-4 rounded-xl border border-white/5">
+                      <p className="text-sm text-zinc-300 leading-relaxed bg-card/[0.01] p-4 rounded-xl border border-white/5">
                         {tutor.bio}
                       </p>
                     </div>
@@ -582,7 +582,7 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
                           {tutor.sessions.map(s => (
                             <div
                               key={s.id}
-                              className="p-3 rounded-lg bg-white/[0.02] border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs"
+                              className="p-3 rounded-lg bg-card/[0.02] border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs"
                             >
                               <div className="flex items-center gap-3">
                                 <Calendar className="h-4 w-4 text-brand-gold shrink-0" />
@@ -648,7 +648,7 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
                 {sessions.map(session => (
                   <div
                     key={session.id}
-                    className="p-4 rounded-xl bg-white/[0.02] border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                    className="p-4 rounded-xl bg-card/[0.02] border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
                   >
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
@@ -728,7 +728,7 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
                   {progressReports.map(report => (
                     <div
                       key={report.id}
-                      className="p-5 rounded-xl bg-white/[0.02] border border-brand-gold/20 space-y-3"
+                      className="p-5 rounded-xl bg-card/[0.02] border border-brand-gold/20 space-y-3"
                     >
                       <div className="flex items-center justify-between border-b border-white/5 pb-2">
                         <span className="font-semibold text-brand-gold text-sm">
@@ -782,7 +782,7 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
                   {grades.map(grade => (
                     <div
                       key={grade.id}
-                      className="p-4 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-between gap-4 text-xs sm:text-sm"
+                      className="p-4 rounded-xl bg-card/[0.02] border border-white/5 flex items-center justify-between gap-4 text-xs sm:text-sm"
                     >
                       <div>
                         <h4 className="font-semibold text-white">

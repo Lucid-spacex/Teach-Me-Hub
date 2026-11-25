@@ -53,7 +53,7 @@ export default function StudentProgressReportsPage() {
               variant="ghost"
               size="sm"
               onClick={() => router.push('/student')}
-              className="gap-2 text-gray-300 hover:text-white"
+              className="gap-2 text-muted-foreground hover:text-white"
             >
               <ArrowLeft className="h-4 w-4" />
               Back
@@ -61,7 +61,7 @@ export default function StudentProgressReportsPage() {
             <div className="h-6 w-px bg-border" />
             <div>
               <h1 className="text-3xl font-serif font-bold text-white">Progress Reports</h1>
-              <p className="text-sm text-gray-400">Periodic learning evaluations and growth recommendations from your tutor</p>
+              <p className="text-sm text-muted-foreground">Periodic learning evaluations and growth recommendations from your tutor</p>
             </div>
           </div>
           <Button
@@ -84,9 +84,9 @@ export default function StudentProgressReportsPage() {
         ) : reports.length === 0 ? (
           <Card className="bg-card border-brand-gold/30 text-center py-12">
             <CardContent>
-              <FileText className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+              <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-white mb-1">No Progress Reports Yet</h3>
-              <p className="text-sm text-gray-400 max-w-sm mx-auto">
+              <p className="text-sm text-muted-foreground max-w-sm mx-auto">
                 Your tutor writes periodic progress reports to summarize your development, strengths, and goals. Your first report will appear here once published.
               </p>
             </CardContent>
@@ -101,7 +101,7 @@ export default function StudentProgressReportsPage() {
                       <Calendar className="h-5 w-5 text-brand-gold" />
                       {report.period || 'Monthly Evaluation'}
                     </CardTitle>
-                    <span className="text-xs text-gray-400">
+                    <span className="text-xs text-muted-foreground">
                       Published on {new Date(report.createdAt).toLocaleDateString()}
                     </span>
                   </div>
@@ -121,7 +121,7 @@ export default function StudentProgressReportsPage() {
                       <h4 className="text-xs font-semibold text-green-400 flex items-center gap-1.5 mb-2">
                         <ThumbsUp className="h-4 w-4" /> Key Strengths
                       </h4>
-                      <p className="text-sm text-gray-300 whitespace-pre-wrap leading-relaxed">
+                      <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">
                         {report.strengths || 'Consistent participation and diligence.'}
                       </p>
                     </div>
@@ -130,7 +130,7 @@ export default function StudentProgressReportsPage() {
                       <h4 className="text-xs font-semibold text-amber-400 flex items-center gap-1.5 mb-2">
                         <Target className="h-4 w-4" /> Areas for Growth
                       </h4>
-                      <p className="text-sm text-gray-300 whitespace-pre-wrap leading-relaxed">
+                      <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">
                         {report.areasToImprove || 'Continue revision on complex concepts.'}
                       </p>
                     </div>

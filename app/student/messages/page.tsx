@@ -27,7 +27,7 @@ export default function StudentMessagesPage() {
             variant="ghost"
             size="sm"
             onClick={() => router.push('/student')}
-            className="gap-2 text-gray-300 hover:text-white"
+            className="gap-2 text-muted-foreground hover:text-white"
           >
             <Home className="h-4 w-4" />
             Back to Dashboard
@@ -35,7 +35,7 @@ export default function StudentMessagesPage() {
           <div className="h-6 w-px bg-border" />
           <div>
             <h1 className="text-3xl font-serif font-bold text-white">Messages</h1>
-            <p className="text-sm text-gray-400">Communication guidelines</p>
+            <p className="text-sm text-muted-foreground">Communication guidelines</p>
           </div>
         </div>
       </div>
@@ -49,7 +49,7 @@ export default function StudentMessagesPage() {
             </div>
             <CardTitle className="text-white">Messaging Not Available</CardTitle>
           </div>
-          <CardDescription className="text-gray-400">
+          <CardDescription className="text-muted-foreground">
             As of October 12, 2026, students can no longer send messages through the platform.
           </CardDescription>
         </CardHeader>
@@ -59,7 +59,7 @@ export default function StudentMessagesPage() {
               <MessageSquare className="h-4 w-4 text-brand-gold" />
               How to Communicate
             </h3>
-            <ul className="space-y-2 text-sm text-gray-300">
+            <ul className="space-y-2 text-sm text-muted-foreground">
               <li className="flex items-start gap-2">
                 <span className="text-brand-gold mt-1">•</span>
                 <span>Ask your parent to contact your tutor on your behalf</span>
@@ -80,7 +80,7 @@ export default function StudentMessagesPage() {
               <User className="h-4 w-4 text-brand-gold" />
               Why This Change?
             </h3>
-            <p className="text-sm text-gray-300">
+            <p className="text-sm text-muted-foreground">
               This change ensures all student-tutor communication flows through parents for proper oversight and safety. 
               Your parent can view your assigned tutors and session details, and can coordinate directly with tutors or admin.
             </p>

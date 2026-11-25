@@ -111,8 +111,8 @@ export function AllTutorsList({ refreshTrigger }: AllTutorsListProps) {
               : statusStr === 'NO_PROFILE'
               ? 'bg-orange-100 text-orange-800'
               : statusStr === 'SUSPENDED'
-              ? 'bg-gray-100 text-gray-800'
-              : 'bg-gray-100 text-gray-800'
+              ? 'bg-muted text-foreground'
+              : 'bg-muted text-foreground'
           }`}>
             {statusStr === 'NO_PROFILE' ? 'No Profile' : statusStr}
           </span>

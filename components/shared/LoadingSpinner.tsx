@@ -1,49 +1,49 @@
-import { Loader2 } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { GraduationCap, Loader2 } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface LoadingSpinnerProps {
   className?: string
-  size?: "sm" | "md" | "lg" | "xl"
+  size?: 'sm' | 'md' | 'lg' | 'xl'
   text?: string
   fullScreen?: boolean
 }
 
-export function LoadingSpinner({ 
-  className, 
-  size = "md", 
+export function LoadingSpinner({
+  className,
+  size = 'md',
   text,
-  fullScreen = false 
+  fullScreen = false,
 }: LoadingSpinnerProps) {
   const sizeClasses = {
-    sm: "h-4 w-4",
-    md: "h-6 w-6",
-    lg: "h-8 w-8",
-    xl: "h-12 w-12",
+    sm: 'size-5',
+    md: 'size-8',
+    lg: 'size-11',
+    xl: 'size-16',
   }
 
   const spinner = (
-    <Loader2 className={cn("animate-spin text-primary", sizeClasses[size], className)} />
+    <span className={cn('relative inline-grid place-items-center', sizeClasses[size], className)} aria-hidden="true">
+      <Loader2 className="absolute inset-0 size-full animate-spin text-primary/35" strokeWidth={1.5} />
+      <GraduationCap className="relative size-1/2 text-primary" strokeWidth={2.25} />
+    </span>
+  )
+
+  const content = (
+    <div className="flex flex-col items-center gap-3" role="status" aria-live="polite" aria-label={text || 'Loading'}>
+      {spinner}
+      {text && <p className="text-sm font-medium text-muted-foreground">{text}</p>}
+    </div>
   )
 
   if (fullScreen) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm z-50">
-        <div className="flex flex-col items-center gap-4">
-          {spinner}
-          {text && <p className="text-sm text-muted-foreground">{text}</p>}
+      <div className="fixed inset-0 z-50 grid place-items-center bg-background/80 p-4 backdrop-blur-sm">
+        <div className="rounded-3xl border border-border/70 bg-card px-8 py-7 shadow-[var(--shadow-soft)]">
+          {content}
         </div>
       </div>
     )
   }
 
-  if (text) {
-    return (
-      <div className="flex flex-col items-center gap-3">
-        {spinner}
-        <p className="text-sm text-muted-foreground">{text}</p>
-      </div>
-    )
-  }
-
-  return spinner
+  return content
 }

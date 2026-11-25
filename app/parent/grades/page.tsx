@@ -85,7 +85,7 @@ export default function ParentGradesPage() {
               variant="ghost"
               size="sm"
               onClick={() => router.push('/parent')}
-              className="gap-2 text-gray-300 hover:text-white"
+              className="gap-2 text-muted-foreground hover:text-white"
             >
               <ArrowLeft className="h-4 w-4" />
               Back
@@ -93,7 +93,7 @@ export default function ParentGradesPage() {
             <div className="h-6 w-px bg-border" />
             <div>
               <h1 className="text-3xl font-serif font-bold text-white">Academic Grades</h1>
-              <p className="text-sm text-gray-400">View officially approved scores and tutor feedback for your children</p>
+              <p className="text-sm text-muted-foreground">View officially approved scores and tutor feedback for your children</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -132,9 +132,9 @@ export default function ParentGradesPage() {
         ) : filtered.length === 0 ? (
           <Card className="bg-card border-brand-gold/30 text-center py-12">
             <CardContent>
-              <Award className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+              <Award className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-white mb-1">No Approved Grades Yet</h3>
-              <p className="text-sm text-gray-400 max-w-sm mx-auto">
+              <p className="text-sm text-muted-foreground max-w-sm mx-auto">
                 Once tests and assignments are completed and approved by tutors, official scores and feedback will appear here.
               </p>
             </CardContent>
@@ -159,20 +159,20 @@ export default function ParentGradesPage() {
                     <CardTitle className="text-lg text-white font-semibold line-clamp-1">
                       {ctx.subjectName}
                     </CardTitle>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-muted-foreground">
                       {ctx.studentName}
                     </p>
                   </CardHeader>
                   <CardContent className="pt-0 space-y-3">
                     <div className="flex items-baseline justify-between p-3 rounded-lg bg-brand-dark/70 border border-brand-gold/15">
                       <div>
-                        <span className="text-xs text-gray-400">Final Score</span>
+                        <span className="text-xs text-muted-foreground">Final Score</span>
                         <div className="text-2xl font-bold text-white">
                           {formatPercentage(finalScore)}
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className="text-xs text-gray-400">Attendance</span>
+                        <span className="text-xs text-muted-foreground">Attendance</span>
                         <div className={`text-xl font-bold ${
                           toNumber(item.attendanceRate) != null && toNumber(item.attendanceRate)! >= 80 ? 'text-green-400' : toNumber(item.attendanceRate) != null && toNumber(item.attendanceRate)! >= 60 ? 'text-brand-gold' : 'text-red-400'
                         }`}>
@@ -187,7 +187,7 @@ export default function ParentGradesPage() {
                       <div className="space-y-1.5">
                         {item.components.map((comp, idx) => (
                           <div key={idx} className="flex items-center justify-between text-xs">
-                            <span className="text-gray-300">{comp.type} ({comp.weight}%)</span>
+                            <span className="text-muted-foreground">{comp.type} ({comp.weight}%)</span>
                             <span className="text-white font-medium">{formatPercentage(comp.componentPercentage, 1)}</span>
                           </div>
                         ))}
@@ -196,13 +196,13 @@ export default function ParentGradesPage() {
 
                     {/* Note: overrideReason is never shown to parents per security rules */}
                     {item.tutorComment ? (
-                      <div className="text-xs text-gray-300 bg-brand-dark/40 p-2.5 rounded border border-brand-gold/10">
+                      <div className="text-xs text-muted-foreground bg-brand-dark/40 p-2.5 rounded border border-brand-gold/10">
                         <span className="text-brand-gold font-medium block mb-0.5">Tutor Feedback:</span>
                         <p className="italic">"{item.tutorComment}"</p>
                       </div>
                     ) : null}
 
-                    <div className="text-right text-xs text-gray-500">
+                    <div className="text-right text-xs text-muted-foreground">
                       Approved on {item.approvedAt ? new Date(item.approvedAt).toLocaleDateString() : new Date(item.createdAt).toLocaleDateString()}
                     </div>
                   </CardContent>

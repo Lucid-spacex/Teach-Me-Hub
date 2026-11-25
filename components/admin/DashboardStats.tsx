@@ -48,7 +48,7 @@ export function DashboardStats({ overview }: DashboardStatsProps) {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="bg-card border-brand-gold/30">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-400">Total Revenue</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Revenue</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
@@ -74,7 +74,7 @@ export function DashboardStats({ overview }: DashboardStatsProps) {
 
         <Card className="bg-card border-brand-gold/30">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-400">Active Enrollments</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Active Enrollments</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
@@ -88,7 +88,7 @@ export function DashboardStats({ overview }: DashboardStatsProps) {
 
         <Card className="bg-card border-brand-gold/30">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-400">Total Students</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Students</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
@@ -102,7 +102,7 @@ export function DashboardStats({ overview }: DashboardStatsProps) {
 
         <Card className="bg-card border-brand-gold/30">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-400">Failed Payments</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Failed Payments</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
@@ -127,7 +127,7 @@ export function DashboardStats({ overview }: DashboardStatsProps) {
                 {Object.entries(paymentSummary.byCurrency).map(([currency, data]) => (
                   <div key={currency} className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-300">{currency}</span>
+                      <span className="text-muted-foreground">{currency}</span>
                       <span className="text-white font-medium">
                         {currency === 'NGN' ? '₦' : '$'}{data.collectedTotal.toLocaleString()}
                       </span>
@@ -138,7 +138,7 @@ export function DashboardStats({ overview }: DashboardStatsProps) {
                         style={{ width: `${(data.collectedTotal / (paymentSummary.totalCollectedNGNEquivalent || data.collectedTotal)) * 100}%` }}
                       />
                     </div>
-                    <div className="flex justify-between text-xs text-gray-400">
+                    <div className="flex justify-between text-xs text-muted-foreground">
                       <span>{data.successCount} successful</span>
                       <span>{data.count} total</span>
                     </div>
@@ -159,7 +159,7 @@ export function DashboardStats({ overview }: DashboardStatsProps) {
                   {paymentSummary.bySubject.slice(0, 6).map((item, index) => (
                     <div key={index} className="space-y-1">
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-300 truncate flex-1">{item.subjectName}</span>
+                        <span className="text-muted-foreground truncate flex-1">{item.subjectName}</span>
                         <span className="text-white font-medium ml-2">
                           ₦{item.collected.toLocaleString()}
                         </span>
@@ -174,7 +174,7 @@ export function DashboardStats({ overview }: DashboardStatsProps) {
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-gray-400 text-center py-8">No revenue data available</p>
+                <p className="text-sm text-muted-foreground text-center py-8">No revenue data available</p>
               )}
             </CardContent>
           </Card>
@@ -192,7 +192,7 @@ export function DashboardStats({ overview }: DashboardStatsProps) {
               {paymentSummary.byStatus.map((item) => (
                 <div key={item.status} className="text-center p-4 bg-brand-dark/30 rounded-lg border border-brand-gold/10">
                   <p className="text-2xl font-bold text-white">{item.count}</p>
-                  <p className="text-xs text-gray-400 mt-1">{item.status}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{item.status}</p>
                 </div>
               ))}
             </div>

@@ -397,7 +397,8 @@ export default function TutorRegisterForm() {
                       placeholder="8+ chars, upper, lower, number, special"
                       className="bg-muted border-border text-foreground placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-11 pl-10 pr-10" />
                     <button type="button" onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-2.5 text-muted-foreground hover:text-foreground">
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      className="absolute right-0.5 top-0 grid size-11 place-items-center rounded-lg text-muted-foreground hover:text-foreground">
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>

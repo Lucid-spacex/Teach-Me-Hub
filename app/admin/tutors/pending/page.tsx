@@ -178,7 +178,7 @@ export default function AdminPendingTutorsPage() {
             variant="ghost"
             size="sm"
             onClick={() => router.push('/admin')}
-            className="gap-2 text-gray-300 hover:text-white"
+            className="gap-2 text-muted-foreground hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Dashboard
@@ -190,7 +190,7 @@ export default function AdminPendingTutorsPage() {
             </div>
             <div>
               <h1 className="text-3xl font-serif font-bold text-white">Pending Tutors</h1>
-              <p className="text-sm text-gray-400">Review and approve tutor applications</p>
+              <p className="text-sm text-muted-foreground">Review and approve tutor applications</p>
             </div>
           </div>
         </div>
@@ -209,7 +209,7 @@ export default function AdminPendingTutorsPage() {
       {/* Filters */}
       <div className="flex items-center gap-4 mb-6">
         <div className="flex items-center gap-2">
-          <Filter className="h-4 w-4 text-gray-400" />
+          <Filter className="h-4 w-4 text-muted-foreground" />
           <Select value={applicationStatusFilter} onValueChange={(value: ApplicationStatus | 'ALL') => setApplicationStatusFilter(value)}>
             <SelectTrigger className="w-[180px] bg-card border-brand-gold/30 text-white">
               <SelectValue placeholder="Application Status" />
@@ -232,9 +232,9 @@ export default function AdminPendingTutorsPage() {
       ) : tutors.length === 0 ? (
         <Card className="bg-card border-brand-gold/30 text-center py-16">
           <CardContent>
-            <Users className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+            <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-white mb-1">No Pending Tutors</h3>
-            <p className="text-sm text-gray-400">All tutor applications have been reviewed</p>
+            <p className="text-sm text-muted-foreground">All tutor applications have been reviewed</p>
           </CardContent>
         </Card>
       ) : (
@@ -251,14 +251,14 @@ export default function AdminPendingTutorsPage() {
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <CardTitle className="text-white">{tutor.fullName || (tutor as any).user?.fullName || 'Tutor'}</CardTitle>
-                      <p className="text-sm text-gray-400 mt-1">{tutor.email || (tutor as any).user?.email || 'No email'}</p>
+                      <p className="text-sm text-muted-foreground mt-1">{tutor.email || (tutor as any).user?.email || 'No email'}</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <span
                         className={`px-2 py-1 rounded text-xs font-medium ${
                           isSubmitted
                             ? 'bg-brand-gold/20 text-brand-gold border border-brand-gold/40'
-                            : 'bg-gray-700/50 text-gray-400 border border-gray-600/40'
+                            : 'bg-gray-700/50 text-muted-foreground border border-gray-600/40'
                         }`}
                       >
                         {applicationStatus}
@@ -271,25 +271,25 @@ export default function AdminPendingTutorsPage() {
                   <div className="space-y-3">
                     {submittedAt && (
                       <div>
-                        <p className="text-sm text-gray-400">Submitted At</p>
+                        <p className="text-sm text-muted-foreground">Submitted At</p>
                         <p className="text-white text-sm">{new Date(submittedAt).toLocaleString()}</p>
                       </div>
                     )}
                     <div>
-                      <p className="text-sm text-gray-400">Subjects</p>
+                      <p className="text-sm text-muted-foreground">Subjects</p>
                       <p className="text-white">{tutor.tutorProfile?.subjects?.join(', ') || 'No subjects listed'}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-400">Bio</p>
+                      <p className="text-sm text-muted-foreground">Bio</p>
                       <p className="text-white text-sm">{tutor.tutorProfile?.bio || 'No bio provided'}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-400">Hourly Rate</p>
+                      <p className="text-sm text-muted-foreground">Hourly Rate</p>
                       <p className="text-white">${tutor.tutorProfile?.monthlySalaryNGN || 0}/hour</p>
                     </div>
                     {tutor.tutorProfile?.credentialsUrl && (
                       <div>
-                        <p className="text-sm text-gray-400">Credentials</p>
+                        <p className="text-sm text-muted-foreground">Credentials</p>
                         <a
                           href={tutor.tutorProfile.credentialsUrl}
                           target="_blank"
@@ -335,47 +335,49 @@ export default function AdminPendingTutorsPage() {
 
       {/* Reject Dialog */}
       <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
-        <DialogContent className="bg-card border-brand-gold/30 text-white">
-          <DialogHeader>
+        <DialogContent className="modal-split w-[calc(100%-2rem)] md:max-w-5xl">
+          <DialogHeader className="modal-split__aside">
             <DialogTitle>Reject Tutor Application</DialogTitle>
-            <DialogDescription className="text-gray-400">
+            <DialogDescription>
               Please provide a reason for rejecting this tutor application. This will be sent to the tutor.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div>
-              <label htmlFor="rejectionReason" className="text-sm font-medium text-gray-300 mb-2 block">
-                Rejection Reason <span className="text-destructive">*</span>
-              </label>
-              <Input
-                id="rejectionReason"
-                value={rejectionReason}
-                onChange={(e) => setRejectionReason(e.target.value)}
-                placeholder="Enter the reason for rejection..."
-                className="bg-gray-800/50 border-brand-gold/30 text-white placeholder:text-gray-500"
-              />
+          <div className="modal-split__main">
+            <div className="modal-split__scroll">
+              <div className="flex flex-col gap-4 py-4">
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="rejectionReason" className="text-sm font-medium text-foreground">
+                    Rejection Reason <span className="text-destructive">*</span>
+                  </label>
+                  <Input
+                    id="rejectionReason"
+                    value={rejectionReason}
+                    onChange={(e) => setRejectionReason(e.target.value)}
+                    placeholder="Enter the reason for rejection..."
+                  />
+                </div>
+              </div>
             </div>
+            <DialogFooter className="modal-split__footer">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setRejectDialogOpen(false)
+                  setRejectionReason('')
+                  setRejectTutorId(null)
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={handleReject}
+                disabled={actionLoading !== null || !rejectionReason.trim()}
+              >
+                {actionLoading !== null ? <LoadingSpinner size="sm" /> : 'Reject Application'}
+              </Button>
+            </DialogFooter>
           </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setRejectDialogOpen(false)
-                setRejectionReason('')
-                setRejectTutorId(null)
-              }}
-              className="border-gray-600 text-white hover:bg-gray-800"
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleReject}
-              disabled={actionLoading !== null || !rejectionReason.trim()}
-              className="bg-destructive hover:bg-destructive/90 text-white"
-            >
-              {actionLoading !== null ? <LoadingSpinner size="sm" /> : 'Reject Application'}
-            </Button>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

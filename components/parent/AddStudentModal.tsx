@@ -137,7 +137,7 @@ export function AddStudentModal({ open, onOpenChange, onSuccess }: AddStudentMod
       <form id="add-student-form" onSubmit={handleSubmit} className="space-y-5">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="fullName" className="text-gray-300 flex items-center gap-2">
+            <Label htmlFor="fullName" className="text-muted-foreground flex items-center gap-2">
               <User className="h-4 w-4 text-brand-gold" />
               Full Name *
             </Label>
@@ -152,7 +152,7 @@ export function AddStudentModal({ open, onOpenChange, onSuccess }: AddStudentMod
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="dateOfBirth" className="text-gray-300 flex items-center gap-2">
+            <Label htmlFor="dateOfBirth" className="text-muted-foreground flex items-center gap-2">
               <Calendar className="h-4 w-4 text-brand-gold" />
               Date of Birth *
             </Label>
@@ -169,7 +169,7 @@ export function AddStudentModal({ open, onOpenChange, onSuccess }: AddStudentMod
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="actualGrade" className="text-gray-300 flex items-center gap-2">
+            <Label htmlFor="actualGrade" className="text-muted-foreground flex items-center gap-2">
               <GraduationCap className="h-4 w-4 text-brand-gold" />
               Actual Grade *
             </Label>
@@ -192,7 +192,7 @@ export function AddStudentModal({ open, onOpenChange, onSuccess }: AddStudentMod
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="gradeLevel" className="text-gray-300 flex items-center gap-2">
+            <Label htmlFor="gradeLevel" className="text-muted-foreground flex items-center gap-2">
               <School className="h-4 w-4 text-brand-gold" />
               Grade Level *
             </Label>
@@ -209,7 +209,7 @@ export function AddStudentModal({ open, onOpenChange, onSuccess }: AddStudentMod
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="gender" className="text-gray-300 flex items-center gap-2">
+            <Label htmlFor="gender" className="text-muted-foreground flex items-center gap-2">
               <User className="h-4 w-4 text-brand-gold" />
               Gender *
             </Label>
@@ -232,7 +232,7 @@ export function AddStudentModal({ open, onOpenChange, onSuccess }: AddStudentMod
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="school" className="text-gray-300 flex items-center gap-2">
+            <Label htmlFor="school" className="text-muted-foreground flex items-center gap-2">
               <School className="h-4 w-4 text-brand-gold" />
               School
             </Label>
@@ -247,7 +247,7 @@ export function AddStudentModal({ open, onOpenChange, onSuccess }: AddStudentMod
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-gray-300 flex items-center gap-2">
+          <Label htmlFor="email" className="text-muted-foreground flex items-center gap-2">
             <Mail className="h-4 w-4 text-brand-gold" />
             Student&apos;s Email (Optional)
           </Label>
@@ -259,12 +259,12 @@ export function AddStudentModal({ open, onOpenChange, onSuccess }: AddStudentMod
             placeholder="student@example.com"
             className="bg-background border-input"
           />
-          <p className="text-xs text-gray-500">For notifications only — this is not used to log in</p>
+          <p className="text-xs text-muted-foreground">For notifications only — this is not used to log in</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="preferredStartDate" className="text-gray-300 flex items-center gap-2">
+            <Label htmlFor="preferredStartDate" className="text-muted-foreground flex items-center gap-2">
               <Calendar className="h-4 w-4 text-brand-gold" />
               Preferred Start Date
             </Label>
@@ -279,7 +279,7 @@ export function AddStudentModal({ open, onOpenChange, onSuccess }: AddStudentMod
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="notes" className="text-gray-300 flex items-center gap-2">
+          <Label htmlFor="notes" className="text-muted-foreground flex items-center gap-2">
             <Hash className="h-4 w-4 text-brand-gold" />
             Notes
           </Label>

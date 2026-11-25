@@ -47,7 +47,7 @@ export function FailedPaymentsList({ refreshTrigger }: FailedPaymentsListProps) 
       cell: (payment: FailedPayment) => (
         <div>
           <div className="font-medium text-white">{payment.parent.fullName}</div>
-          <div className="text-xs text-gray-400">{payment.parent.email}</div>
+          <div className="text-xs text-muted-foreground">{payment.parent.email}</div>
         </div>
       ),
     },
@@ -57,7 +57,7 @@ export function FailedPaymentsList({ refreshTrigger }: FailedPaymentsListProps) 
       cell: (payment: FailedPayment) => (
         <div>
           <div className="font-medium text-white">{payment.student.fullName}</div>
-          <div className="text-xs text-gray-400">{payment.student.gradeLevel}</div>
+          <div className="text-xs text-muted-foreground">{payment.student.gradeLevel}</div>
         </div>
       ),
     },
@@ -65,7 +65,7 @@ export function FailedPaymentsList({ refreshTrigger }: FailedPaymentsListProps) 
       key: 'amount',
       header: 'Amount',
       cell: (payment: FailedPayment) => (
-        <div className="text-gray-300">{payment.currency === 'NGN' ? '₦' : '$'}{payment.amount.toLocaleString()}</div>
+        <div className="text-muted-foreground">{payment.currency === 'NGN' ? '₦' : '$'}{payment.amount.toLocaleString()}</div>
       ),
     },
     {
@@ -79,7 +79,7 @@ export function FailedPaymentsList({ refreshTrigger }: FailedPaymentsListProps) 
       key: 'date',
       header: 'Failed At',
       cell: (payment: FailedPayment) => (
-        <div className="text-gray-300">{payment.failedAt ? new Date(payment.failedAt).toLocaleDateString() : 'N/A'}</div>
+        <div className="text-muted-foreground">{payment.failedAt ? new Date(payment.failedAt).toLocaleDateString() : 'N/A'}</div>
       ),
     },
   ]

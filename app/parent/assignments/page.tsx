@@ -103,7 +103,7 @@ export default function ParentAssignmentsPage() {
               variant="ghost"
               size="sm"
               onClick={() => router.push('/parent')}
-              className="gap-2 text-gray-300 hover:text-white"
+              className="gap-2 text-muted-foreground hover:text-white"
             >
               <ArrowLeft className="h-4 w-4" />
               Back
@@ -111,7 +111,7 @@ export default function ParentAssignmentsPage() {
             <div className="h-6 w-px bg-border" />
             <div>
               <h1 className="text-3xl font-serif font-bold text-white">Children&apos;s Assignments</h1>
-              <p className="text-sm text-gray-400">Track tasks, classwork, and tests assigned to your children</p>
+              <p className="text-sm text-muted-foreground">Track tasks, classwork, and tests assigned to your children</p>
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -136,7 +136,7 @@ export default function ParentAssignmentsPage() {
                   variant={statusFilter === st ? 'default' : 'ghost'}
                   size="sm"
                   onClick={() => setStatusFilter(st)}
-                  className={statusFilter === st ? 'bg-brand-gold text-brand-dark text-xs h-7' : 'text-gray-400 text-xs h-7'}
+                  className={statusFilter === st ? 'bg-brand-gold text-brand-dark text-xs h-7' : 'text-muted-foreground text-xs h-7'}
                 >
                   {st}
                 </Button>
@@ -163,9 +163,9 @@ export default function ParentAssignmentsPage() {
         ) : filtered.length === 0 ? (
           <Card className="bg-card border-brand-gold/30 text-center py-12">
             <CardContent>
-              <BookOpen className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+              <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-white mb-1">No Assignments Found</h3>
-              <p className="text-sm text-gray-400 max-w-sm mx-auto">
+              <p className="text-sm text-muted-foreground max-w-sm mx-auto">
                 No assignments match the selected filter criteria.
               </p>
             </CardContent>
@@ -193,12 +193,12 @@ export default function ParentAssignmentsPage() {
                     <CardTitle className="text-lg text-white font-semibold line-clamp-1">
                       {item.title}
                     </CardTitle>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-muted-foreground">
                       {info.studentName} • <span className="text-brand-gold font-medium">{info.subjectName}</span>
                     </p>
                   </CardHeader>
                   <CardContent className="pt-0">
-                    <p className="text-sm text-gray-300 line-clamp-3 mb-4 leading-relaxed">
+                    <p className="text-sm text-muted-foreground line-clamp-3 mb-4 leading-relaxed">
                       {item.description || 'No instructions provided.'}
                     </p>
 
@@ -219,7 +219,7 @@ export default function ParentAssignmentsPage() {
                           </div>
                           {submission.textAnswer && (
                             <div className="bg-card/80 p-2 rounded-lg border border-border/30">
-                              <p className="text-xs font-medium text-gray-400 mb-1">Student Answer:</p>
+                              <p className="text-xs font-medium text-muted-foreground mb-1">Student Answer:</p>
                               <p className="text-xs text-white line-clamp-2">{submission.textAnswer}</p>
                             </div>
                           )}
@@ -234,7 +234,7 @@ export default function ParentAssignmentsPage() {
                           {feedback && (
                             <div className="bg-brand-gold/10 p-2 rounded-lg border border-brand-gold/30">
                               <p className="text-xs font-medium text-brand-gold mb-1">Tutor Feedback:</p>
-                              <p className="text-xs text-gray-300 italic">{feedback}</p>
+                              <p className="text-xs text-muted-foreground italic">{feedback}</p>
                             </div>
                           )}
                           {feedbackAttachment && (
@@ -249,9 +249,9 @@ export default function ParentAssignmentsPage() {
                       )
                     })}
 
-                    <div className="pt-3 border-t border-brand-gold/10 flex items-center justify-between text-xs text-gray-400">
+                    <div className="pt-3 border-t border-brand-gold/10 flex items-center justify-between text-xs text-muted-foreground">
                       <span className="flex items-center gap-1.5">
-                        <Clock className="h-3.5 w-3.5 text-gray-500" />
+                        <Clock className="h-3.5 w-3.5 text-muted-foreground" />
                         Due: {new Date(item.dueDate).toLocaleDateString()}
                       </span>
                     </div>

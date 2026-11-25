@@ -202,7 +202,7 @@ function PaymentsContent() {
       case 'FAILED':
         return 'text-red-500'
       case 'EXPIRED':
-        return 'text-gray-500'
+        return 'text-muted-foreground'
       case 'REFUNDED':
         return 'text-blue-500'
       default:

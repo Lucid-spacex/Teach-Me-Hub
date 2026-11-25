@@ -133,7 +133,7 @@ export function EnrollmentList({ students, onEnrollStudent, refreshTrigger }: En
       cell: (enrollment: Enrollment) => {
         const subject = enrollment.subject
         return subject ? (
-          <div className="text-gray-300">{subject.name}</div>
+          <div className="text-muted-foreground">{subject.name}</div>
         ) : (
           <code className="text-xs bg-brand-gold/10 text-brand-gold px-2 py-1 rounded">{enrollment.subjectId}</code>
         )
@@ -143,7 +143,7 @@ export function EnrollmentList({ students, onEnrollStudent, refreshTrigger }: En
       key: 'frequency',
       header: 'Frequency',
       cell: (enrollment: Enrollment) => (
-        <div className="text-gray-300">{enrollment.sessionFrequency}</div>
+        <div className="text-muted-foreground">{enrollment.sessionFrequency}</div>
       ),
     },
     {
@@ -157,7 +157,7 @@ export function EnrollmentList({ students, onEnrollStudent, refreshTrigger }: En
       key: 'startDate',
       header: 'Start Date',
       cell: (enrollment: Enrollment) => (
-        <div className="text-gray-300">{new Date(enrollment.startDate).toLocaleDateString()}</div>
+        <div className="text-muted-foreground">{new Date(enrollment.startDate).toLocaleDateString()}</div>
       ),
     },
     {
@@ -167,7 +167,7 @@ export function EnrollmentList({ students, onEnrollStudent, refreshTrigger }: En
         enrollment.tutorId ? (
           <span className="text-sm text-brand-gold">Assigned</span>
         ) : (
-          <span className="text-sm text-gray-400">Unassigned</span>
+          <span className="text-sm text-muted-foreground">Unassigned</span>
         )
       ),
     },
@@ -254,7 +254,7 @@ export function EnrollmentList({ students, onEnrollStudent, refreshTrigger }: En
                         <span className="font-medium">
                           Enrolled together on {new Date(group.createdAt).toLocaleDateString()}
                         </span>
-                        <span className="text-gray-400">
+                        <span className="text-muted-foreground">
                           ({group.enrollments.length} subject{group.enrollments.length > 1 ? 's' : ''})
                         </span>
                       </div>

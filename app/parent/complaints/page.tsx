@@ -129,7 +129,7 @@ export default function ParentComplaintsPage() {
               variant="ghost"
               size="sm"
               onClick={() => router.push('/parent')}
-              className="gap-2 text-gray-300 hover:text-white"
+              className="gap-2 text-muted-foreground hover:text-white"
             >
               <ArrowLeft className="h-4 w-4" />
               Back
@@ -137,7 +137,7 @@ export default function ParentComplaintsPage() {
             <div className="h-6 w-px bg-border" />
             <div>
               <h1 className="text-3xl font-serif font-bold text-white">Support & Complaints</h1>
-              <p className="text-sm text-gray-400">File issues or view feedback and responses from administration</p>
+              <p className="text-sm text-muted-foreground">File issues or view feedback and responses from administration</p>
             </div>
           </div>
           <div className="flex gap-2">
@@ -169,9 +169,9 @@ export default function ParentComplaintsPage() {
         ) : complaints.length === 0 ? (
           <Card className="bg-card border-brand-gold/30 text-center py-12">
             <CardContent>
-              <FileText className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+              <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-white mb-1">No Complaints Filed</h3>
-              <p className="text-sm text-gray-400 max-w-md mx-auto mb-6">
+              <p className="text-sm text-muted-foreground max-w-md mx-auto mb-6">
                 You haven&apos;t submitted any complaints or issues. If you ever have a concern regarding a tutor, session, or account issue, you can file it here.
               </p>
               <Button
@@ -192,7 +192,7 @@ export default function ParentComplaintsPage() {
                       <span className="text-xs uppercase tracking-wider font-semibold px-2 py-0.5 rounded bg-brand-gold/15 text-brand-gold">
                         {item.aboutType}
                       </span>
-                      <span className="text-xs text-gray-400">
+                      <span className="text-xs text-muted-foreground">
                         Filed on {new Date(item.createdAt).toLocaleDateString()}
                       </span>
                     </div>
@@ -225,7 +225,7 @@ export default function ParentComplaintsPage() {
                         <MessageSquare className="h-3.5 w-3.5" />
                         Admin Reply {item.resolvedAt && `(${new Date(item.resolvedAt).toLocaleDateString()})`}
                       </div>
-                      <p className="text-sm text-gray-300 whitespace-pre-wrap">
+                      <p className="text-sm text-muted-foreground whitespace-pre-wrap">
                         {item.adminReply}
                       </p>
                     </div>
@@ -245,7 +245,7 @@ export default function ParentComplaintsPage() {
       >
         <form onSubmit={handleFileComplaint} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="aboutType" className="text-gray-300">Category</Label>
+            <Label htmlFor="aboutType" className="text-muted-foreground">Category</Label>
             <Select value={aboutType} onValueChange={(val) => setAboutType(val as ComplaintAboutType)}>
               <SelectTrigger className="bg-background border-input text-white">
                 <SelectValue placeholder="Select Category" />
@@ -260,7 +260,7 @@ export default function ParentComplaintsPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="subject" className="text-gray-300">Subject <span className="text-destructive">*</span></Label>
+            <Label htmlFor="subject" className="text-muted-foreground">Subject <span className="text-destructive">*</span></Label>
             <Input
               id="subject"
               value={subject}
@@ -274,7 +274,7 @@ export default function ParentComplaintsPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description" className="text-gray-300">Description <span className="text-destructive">*</span></Label>
+            <Label htmlFor="description" className="text-muted-foreground">Description <span className="text-destructive">*</span></Label>
             <Textarea
               id="description"
               rows={4}
@@ -299,7 +299,7 @@ export default function ParentComplaintsPage() {
                 setAboutId(undefined)
                 setFieldErrors({})
               }}
-              className="border-gray-700 text-gray-300"
+              className="border-gray-700 text-muted-foreground"
             >
               Cancel
             </Button>

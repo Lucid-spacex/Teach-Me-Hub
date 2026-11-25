@@ -94,7 +94,7 @@ export default function AdminSessionsPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-3xl font-serif font-bold text-white">Sessions</h1>
-          <p className="text-sm text-gray-400">View and manage all tutoring sessions</p>
+          <p className="text-sm text-muted-foreground">View and manage all tutoring sessions</p>
         </div>
         <Button
           onClick={loadSessions}
@@ -113,13 +113,13 @@ export default function AdminSessionsPage() {
         <CardContent className="pt-6">
           <form onSubmit={handleSearch} className="flex flex-wrap gap-4">
             <div className="flex-1 min-w-64 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 type="text"
                 placeholder="Search by student, tutor, or subject..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-10 bg-brand-dark/30 border-brand-gold/30 text-white placeholder:text-gray-500"
+                className="pl-10 bg-brand-dark/30 border-brand-gold/30 text-white placeholder:text-muted-foreground"
               />
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -150,7 +150,7 @@ export default function AdminSessionsPage() {
               <Calendar className="h-5 w-5 text-brand-gold" />
               <div>
                 <p className="text-2xl font-bold text-white">{total}</p>
-                <p className="text-xs text-gray-400">Total Sessions</p>
+                <p className="text-xs text-muted-foreground">Total Sessions</p>
               </div>
             </div>
           </CardContent>
@@ -165,9 +165,9 @@ export default function AdminSessionsPage() {
       ) : sessions.length === 0 ? (
         <Card className="bg-card border-brand-gold/30 text-center py-16">
           <CardContent>
-            <Calendar className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+            <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-white mb-1">No Sessions Found</h3>
-            <p className="text-sm text-gray-400">Try adjusting your search or filters</p>
+            <p className="text-sm text-muted-foreground">Try adjusting your search or filters</p>
           </CardContent>
         </Card>
       ) : (
@@ -181,7 +181,7 @@ export default function AdminSessionsPage() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-2">
                           <StatusBadge status={session.status} />
-                          <span className="text-xs text-gray-400">ID: {session.id.slice(0, 8)}...</span>
+                          <span className="text-xs text-muted-foreground">ID: {session.id.slice(0, 8)}...</span>
                         </div>
                         <div className="space-y-1">
                           <div className="flex items-center gap-2 text-sm">
@@ -255,7 +255,7 @@ export default function AdminSessionsPage() {
               >
                 Previous
               </Button>
-              <span className="text-sm text-gray-400">
+              <span className="text-sm text-muted-foreground">
                 Page {page} of {totalPages}
               </span>
               <Button

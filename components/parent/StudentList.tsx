@@ -129,10 +129,10 @@ export function StudentList({ onAddStudent, refreshTrigger }: StudentListProps) 
         {students.length === 0 && !loading ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <div className="mb-4 rounded-full border border-brand-gold/30 p-4">
-              <Users className="h-8 w-8 text-gray-400" />
+              <Users className="h-8 w-8 text-muted-foreground" />
             </div>
             <h3 className="text-lg font-semibold text-white">No students yet</h3>
-            <p className="mt-2 text-sm text-gray-400 max-w-sm">
+            <p className="mt-2 text-sm text-muted-foreground max-w-sm">
               Add your first child to get started with tutoring
             </p>
             {onAddStudent && (

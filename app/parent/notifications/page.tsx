@@ -133,7 +133,7 @@ export default function ParentNotificationsPage() {
               variant="ghost"
               size="sm"
               onClick={() => router.push('/parent')}
-              className="gap-2 text-gray-300 hover:text-white"
+              className="gap-2 text-muted-foreground hover:text-white"
             >
               <ArrowLeft className="h-4 w-4" />
               Back
@@ -148,7 +148,7 @@ export default function ParentNotificationsPage() {
                   </span>
                 )}
               </h1>
-              <p className="text-sm text-gray-400">Updates about sessions, assignments, and payments</p>
+              <p className="text-sm text-muted-foreground">Updates about sessions, assignments, and payments</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -178,7 +178,7 @@ export default function ParentNotificationsPage() {
                 variant={filter === 'ALL' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setFilter('ALL')}
-                className={filter === 'ALL' ? 'bg-brand-gold text-brand-dark text-xs h-7' : 'text-gray-400 text-xs h-7'}
+                className={filter === 'ALL' ? 'bg-brand-gold text-brand-dark text-xs h-7' : 'text-muted-foreground text-xs h-7'}
               >
                 All
               </Button>
@@ -186,7 +186,7 @@ export default function ParentNotificationsPage() {
                 variant={filter === 'UNREAD' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setFilter('UNREAD')}
-                className={filter === 'UNREAD' ? 'bg-brand-gold text-brand-dark text-xs h-7' : 'text-gray-400 text-xs h-7'}
+                className={filter === 'UNREAD' ? 'bg-brand-gold text-brand-dark text-xs h-7' : 'text-muted-foreground text-xs h-7'}
               >
                 Unread
               </Button>
@@ -228,11 +228,11 @@ export default function ParentNotificationsPage() {
         ) : filtered.length === 0 ? (
           <Card className="bg-card border-brand-gold/30 text-center py-12">
             <CardContent>
-              <Bell className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+              <Bell className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-white mb-1">
                 {filter === 'UNREAD' ? 'No Unread Notifications' : 'No Notifications'}
               </h3>
-              <p className="text-sm text-gray-400 max-w-sm mx-auto">
+              <p className="text-sm text-muted-foreground max-w-sm mx-auto">
                 {filter === 'UNREAD' ? "You're all caught up! Check the 'All' tab to see past notifications." : "You don't have any notifications at the moment."}
               </p>
             </CardContent>
@@ -253,14 +253,14 @@ export default function ParentNotificationsPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
-                    <h3 className={`text-base font-semibold ${!item.read ? 'text-white' : 'text-gray-300'}`}>
+                    <h3 className={`text-base font-semibold ${!item.read ? 'text-white' : 'text-muted-foreground'}`}>
                       {item.title}
                     </h3>
-                    <span className="text-xs text-gray-400 shrink-0">
+                    <span className="text-xs text-muted-foreground shrink-0">
                       {new Date(item.createdAt).toLocaleDateString()}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-300 mt-1 whitespace-pre-wrap leading-relaxed">
+                  <p className="text-sm text-muted-foreground mt-1 whitespace-pre-wrap leading-relaxed">
                     {item.message}
                   </p>
                 </div>
@@ -294,7 +294,7 @@ export default function ParentNotificationsPage() {
             >
               Previous
             </Button>
-            <span className="text-sm text-gray-400">
+            <span className="text-sm text-muted-foreground">
               Page {page} of {Math.ceil(total / 20)}
             </span>
             <Button

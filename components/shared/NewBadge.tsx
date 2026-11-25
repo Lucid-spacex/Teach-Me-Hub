@@ -19,7 +19,7 @@ export function NewBadge({ entityType, entityId }: NewBadgeProps) {
   }
 
   return (
-    <Badge variant="destructive" className="text-xs font-semibold">
+    <Badge variant="destructive" className="new-badge text-[10px] font-bold uppercase tracking-[0.12em]">
       NEW
     </Badge>
   )

@@ -327,7 +327,7 @@ export default function StudentSettingsPage() {
                       className="bg-background border-input text-foreground font-mono tracking-widest text-lg"
                       required
                     />
-                    <p className="text-xs text-gray-500">Must be exactly 6 digits (numbers only).</p>
+                    <p className="text-xs text-muted-foreground">Must be exactly 6 digits (numbers only).</p>
                   </div>
 
                   <div className="space-y-2">

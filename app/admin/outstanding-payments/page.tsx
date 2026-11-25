@@ -87,7 +87,7 @@ export default function OutstandingPaymentsPage() {
             variant="ghost"
             size="sm"
             onClick={() => router.push('/admin')}
-            className="gap-2 text-gray-300 hover:text-white"
+            className="gap-2 text-muted-foreground hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Dashboard
@@ -95,11 +95,11 @@ export default function OutstandingPaymentsPage() {
           <div className="h-6 w-px bg-border" />
           <div>
             <h1 className="text-3xl font-serif font-bold text-white">Outstanding Payments</h1>
-            <p className="text-sm text-gray-400">Enrollments awaiting payment</p>
+            <p className="text-sm text-muted-foreground">Enrollments awaiting payment</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-400">
+          <span className="text-sm text-muted-foreground">
             {data?.total || 0} total outstanding
           </span>
           <Button
@@ -119,7 +119,7 @@ export default function OutstandingPaymentsPage() {
       <Card className="bg-card border-brand-gold/30">
         <CardContent className="pt-6">
           <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-400">Sort by:</span>
+            <span className="text-sm text-muted-foreground">Sort by:</span>
             <div className="flex gap-2">
               <Button
                 variant="outline"
@@ -154,9 +154,9 @@ export default function OutstandingPaymentsPage() {
       {!data || data.data.length === 0 ? (
         <Card className="bg-card border-brand-gold/30 text-center py-16">
           <CardContent>
-            <AlertTriangle className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+            <AlertTriangle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-white mb-1">No Outstanding Payments</h3>
-            <p className="text-sm text-gray-400">All enrollments have been paid for</p>
+            <p className="text-sm text-muted-foreground">All enrollments have been paid for</p>
           </CardContent>
         </Card>
       ) : (
@@ -171,16 +171,16 @@ export default function OutstandingPaymentsPage() {
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
                           <span className="font-semibold text-white">{item.student.fullName}</span>
-                          <span className="text-gray-400">•</span>
+                          <span className="text-muted-foreground">•</span>
                           <span className="text-brand-gold">{item.subject.name}</span>
                         </div>
-                        <div className="flex items-center gap-4 text-sm text-gray-400">
+                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
                           <div className="flex items-center gap-1">
                             <Calendar className="h-3 w-3" />
                             <span>Enrolled: {new Date(item.enrolledAt).toLocaleDateString()}</span>
                           </div>
                           <div className="flex items-center gap-1">
-                            <span>Enrollment ID: <code className="text-xs bg-brand-gold/10 text-brand-gold px-1 rounded">{item.enrollmentId.slice(0, 8)}...</code></span>
+                            <span>Enrollment ID: <code className="text-xs bg-brand-gold/10 text-brand-gold px-1 rounded">{item.enrollmentId ? `${item.enrollmentId.slice(0, 8)}...` : ''}</code></span>
                           </div>
                           <div className="flex items-center gap-1">
                             <span>Parent: {item.parent.fullName || <code className="text-xs bg-brand-gold/10 text-brand-gold px-1 rounded">{item.parent.id.slice(0, 8)}...</code> || 'N/A'}</span>
@@ -198,7 +198,7 @@ export default function OutstandingPaymentsPage() {
                         </div>
 
                         {/* Payment Status */}
-                        <span className="text-xs text-gray-400 bg-brand-dark/30 px-2 py-1 rounded">
+                        <span className="text-xs text-muted-foreground bg-brand-dark/30 px-2 py-1 rounded">
                           {item.paymentStatus}
                         </span>
                       </div>
@@ -220,8 +220,8 @@ export default function OutstandingPaymentsPage() {
 
                     {/* Parent Contact Info (shown on smaller screens) */}
                     <div className="mt-3 pt-3 border-t border-brand-gold/10 lg:hidden">
-                      <div className="text-sm text-gray-400">
-                        <p>Enrollment ID: <code className="text-xs bg-brand-gold/10 text-brand-gold px-1 rounded">{item.enrollmentId.slice(0, 8)}...</code></p>
+                      <div className="text-sm text-muted-foreground">
+                        <p>Enrollment ID: <code className="text-xs bg-brand-gold/10 text-brand-gold px-1 rounded">{item.enrollmentId ? `${item.enrollmentId.slice(0, 8)}...` : ''}</code></p>
                         <p>Parent: {item.parent.fullName || item.parent.email || 'N/A'}</p>
                         <p>Email: {item.parent.email || 'N/A'}</p>
                       </div>
@@ -244,7 +244,7 @@ export default function OutstandingPaymentsPage() {
               >
                 Previous
               </Button>
-              <span className="text-sm text-gray-400">
+              <span className="text-sm text-muted-foreground">
                 Page {page} of {totalPages} ({data?.total || 0} total)
               </span>
               <Button

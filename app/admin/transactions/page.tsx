@@ -353,7 +353,7 @@ function AdminTransactionsContent() {
             variant="ghost"
             size="sm"
             onClick={() => setSelectedPayment(null)}
-            className="gap-2 text-gray-300 hover:text-white"
+            className="gap-2 text-muted-foreground hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Transactions
@@ -361,7 +361,7 @@ function AdminTransactionsContent() {
           <div className="h-6 w-px bg-border" />
           <div>
             <h1 className="text-3xl font-serif font-bold text-white">Payment Details</h1>
-            <p className="text-sm text-gray-400">{selectedPayment.reference}</p>
+            <p className="text-sm text-muted-foreground">{selectedPayment.reference}</p>
           </div>
         </div>
 
@@ -378,41 +378,41 @@ function AdminTransactionsContent() {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-gray-400">Receipt #</p>
+                    <p className="text-sm text-muted-foreground">Receipt #</p>
                     <p className="font-medium text-white">{selectedPayment.receiptNumber}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-400">Transaction Reference</p>
+                    <p className="text-sm text-muted-foreground">Transaction Reference</p>
                     <p className="font-medium text-white">{selectedPayment.transactionReference || selectedPayment.reference}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-400">Amount</p>
+                    <p className="text-sm text-muted-foreground">Amount</p>
                     <p className="font-medium text-white">
                       {selectedPayment.currency === 'NGN' ? '₦' : '$'}{selectedPayment.amount.toLocaleString()}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-400">NGN Equivalent</p>
+                    <p className="text-sm text-muted-foreground">NGN Equivalent</p>
                     <p className="font-medium text-white">
                       ₦{selectedPayment.ngnEquivalent?.toLocaleString() || 'N/A'}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-400">Status</p>
+                    <p className="text-sm text-muted-foreground">Status</p>
                     <StatusBadge status={selectedPayment.status} />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-400">Provider</p>
+                    <p className="text-sm text-muted-foreground">Provider</p>
                     <p className="font-medium text-white">{selectedPayment.provider}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-400">Created At</p>
+                    <p className="text-sm text-muted-foreground">Created At</p>
                     <p className="font-medium text-white">
                       {new Date(selectedPayment.initiatedAt || (selectedPayment as any).createdAt).toLocaleString()}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-400">Updated At</p>
+                    <p className="text-sm text-muted-foreground">Updated At</p>
                     <p className="font-medium text-white">
                       {selectedPayment.updatedAt ? new Date(selectedPayment.updatedAt).toLocaleString() : 'N/A'}
                     </p>
@@ -429,11 +429,11 @@ function AdminTransactionsContent() {
                 <CardContent>
                   <div className="space-y-2">
                     <div>
-                      <p className="text-sm text-gray-400">Name</p>
+                      <p className="text-sm text-muted-foreground">Name</p>
                       <p className="font-medium text-white">{selectedPayment.parent.fullName}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-400">Email</p>
+                      <p className="text-sm text-muted-foreground">Email</p>
                       <p className="font-medium text-white">{selectedPayment.parent.email}</p>
                     </div>
                     <Button
@@ -458,11 +458,11 @@ function AdminTransactionsContent() {
                 <CardContent>
                   <div className="space-y-2">
                     <div>
-                      <p className="text-sm text-gray-400">Name</p>
+                      <p className="text-sm text-muted-foreground">Name</p>
                       <p className="font-medium text-white">{selectedPayment.student.fullName}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-400">Grade Level</p>
+                      <p className="text-sm text-muted-foreground">Grade Level</p>
                       <p className="font-medium text-white">{(selectedPayment.student as any)?.gradeLevel || (selectedPayment.enrollment as any)?.student?.gradeLevel || 'N/A'}</p>
                     </div>
                   </div>
@@ -478,11 +478,11 @@ function AdminTransactionsContent() {
                 <CardContent>
                   <div className="space-y-2">
                     <div>
-                      <p className="text-sm text-gray-400">Subject</p>
+                      <p className="text-sm text-muted-foreground">Subject</p>
                       <p className="font-medium text-white">{(selectedPayment as any).subject?.name || selectedPayment.enrollment?.subject?.name}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-400">Enrollment ID</p>
+                      <p className="text-sm text-muted-foreground">Enrollment ID</p>
                       <p className="font-medium text-white">{selectedPayment.enrollmentId || selectedPayment.enrollment?.id || 'N/A'}</p>
                     </div>
                   </div>
@@ -509,11 +509,11 @@ function AdminTransactionsContent() {
               </CardHeader>
               <CardContent>
                 {selectedPayment.adminNote ? (
-                  <p className="text-sm text-gray-300 bg-brand-dark/40 p-3 rounded border border-brand-gold/10">
+                  <p className="text-sm text-muted-foreground bg-brand-dark/40 p-3 rounded border border-brand-gold/10">
                     {selectedPayment.adminNote}
                   </p>
                 ) : (
-                  <p className="text-sm text-gray-500 italic">No admin notes added yet.</p>
+                  <p className="text-sm text-muted-foreground italic">No admin notes added yet.</p>
                 )}
               </CardContent>
             </Card>
@@ -531,7 +531,7 @@ function AdminTransactionsContent() {
                       </div>
                       <div className="flex-1">
                         <h4 className="font-medium text-white">Reverify Payment</h4>
-                        <p className="text-sm text-gray-400 mt-1">
+                        <p className="text-sm text-muted-foreground mt-1">
                           Manually verify this payment with the payment provider. Use this if the webhook failed to arrive.
                         </p>
                         <Button
@@ -569,7 +569,7 @@ function AdminTransactionsContent() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-3xl font-serif font-bold text-white">Transactions</h1>
-          <p className="text-sm text-gray-400">View and manage all payment transactions</p>
+          <p className="text-sm text-muted-foreground">View and manage all payment transactions</p>
         </div>
       </div>
 
@@ -578,7 +578,7 @@ function AdminTransactionsContent() {
         <Button
           variant={activeTab === 'overview' ? 'default' : 'ghost'}
           onClick={() => setActiveTab('overview')}
-          className={activeTab === 'overview' ? 'bg-brand-gold text-brand-dark' : 'text-gray-300 hover:text-white'}
+          className={activeTab === 'overview' ? 'bg-brand-gold text-brand-dark' : 'text-muted-foreground hover:text-white'}
         >
           <BarChart3 className="h-4 w-4 mr-2" />
           Overview
@@ -586,7 +586,7 @@ function AdminTransactionsContent() {
         <Button
           variant={activeTab === 'all' ? 'default' : 'ghost'}
           onClick={() => setActiveTab('all')}
-          className={activeTab === 'all' ? 'bg-brand-gold text-brand-dark' : 'text-gray-300 hover:text-white'}
+          className={activeTab === 'all' ? 'bg-brand-gold text-brand-dark' : 'text-muted-foreground hover:text-white'}
         >
           <DollarSign className="h-4 w-4 mr-2" />
           All Payments
@@ -594,7 +594,7 @@ function AdminTransactionsContent() {
         <Button
           variant={activeTab === 'outstanding' ? 'default' : 'ghost'}
           onClick={() => setActiveTab('outstanding')}
-          className={activeTab === 'outstanding' ? 'bg-brand-gold text-brand-dark' : 'text-gray-300 hover:text-white'}
+          className={activeTab === 'outstanding' ? 'bg-brand-gold text-brand-dark' : 'text-muted-foreground hover:text-white'}
         >
           <Clock className="h-4 w-4 mr-2" />
           Outstanding
@@ -602,7 +602,7 @@ function AdminTransactionsContent() {
         <Button
           variant={activeTab === 'failed' ? 'default' : 'ghost'}
           onClick={() => setActiveTab('failed')}
-          className={activeTab === 'failed' ? 'bg-brand-gold text-brand-dark' : 'text-gray-300 hover:text-white'}
+          className={activeTab === 'failed' ? 'bg-brand-gold text-brand-dark' : 'text-muted-foreground hover:text-white'}
         >
           <AlertTriangle className="h-4 w-4 mr-2" />
           Failed
@@ -653,7 +653,7 @@ function AdminTransactionsContent() {
                         <p className="text-2xl font-bold text-white">
                           ₦{summary.totalCollectedNGNEquivalent.toLocaleString()}
                         </p>
-                        <p className="text-xs text-gray-400">Total Collected (NGN)</p>
+                        <p className="text-xs text-muted-foreground">Total Collected (NGN)</p>
                         {toNumber(summary.changePercent) !== null && (
                           <p className={`text-xs mt-1 ${toNumber(summary.changePercent)! >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                             {toNumber(summary.changePercent)! >= 0 ? '+' : ''}{toNumber(summary.changePercent)!.toFixed(1)}% vs previous
@@ -672,8 +672,8 @@ function AdminTransactionsContent() {
                           <p className="text-2xl font-bold text-white">
                             ₦{summary.byCurrency.NGN.collectedTotal.toLocaleString()}
                           </p>
-                          <p className="text-xs text-gray-400">NGN Collected</p>
-                          <p className="text-xs text-gray-500 mt-1">
+                          <p className="text-xs text-muted-foreground">NGN Collected</p>
+                          <p className="text-xs text-muted-foreground mt-1">
                             {summary.byCurrency.NGN.successCount} / {summary.byCurrency.NGN.count} successful
                           </p>
                         </div>
@@ -690,8 +690,8 @@ function AdminTransactionsContent() {
                           <p className="text-2xl font-bold text-white">
                             ${summary.byCurrency.USD.collectedTotal.toLocaleString()}
                           </p>
-                          <p className="text-xs text-gray-400">USD Collected</p>
-                          <p className="text-xs text-gray-500 mt-1">
+                          <p className="text-xs text-muted-foreground">USD Collected</p>
+                          <p className="text-xs text-muted-foreground mt-1">
                             {summary.byCurrency.USD.count} payments
                           </p>
                         </div>
@@ -709,7 +709,7 @@ function AdminTransactionsContent() {
                            Object.keys(summary.byCurrency).length || 0
                           }%
                         </p>
-                        <p className="text-xs text-gray-400">Overall Success Rate</p>
+                        <p className="text-xs text-muted-foreground">Overall Success Rate</p>
                       </div>
                     </div>
                   </CardContent>
@@ -755,9 +755,9 @@ function AdminTransactionsContent() {
           ) : (
             <Card className="bg-card border-brand-gold/30 text-center py-16">
               <CardContent>
-                <DollarSign className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+                <DollarSign className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-white mb-1">No Summary Data</h3>
-                <p className="text-sm text-gray-400">Select a date range to view revenue analytics</p>
+                <p className="text-sm text-muted-foreground">Select a date range to view revenue analytics</p>
               </CardContent>
             </Card>
           )}
@@ -771,13 +771,13 @@ function AdminTransactionsContent() {
             <CardContent className="pt-6">
               <form onSubmit={handleSearch} className="flex flex-wrap gap-4">
                 <div className="flex-1 min-w-64 relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="text"
                     placeholder="Search by reference, receipt #, parent name, or email..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="pl-10 bg-brand-dark/30 border-brand-gold/30 text-white placeholder:text-gray-500"
+                    className="pl-10 bg-brand-dark/30 border-brand-gold/30 text-white placeholder:text-muted-foreground"
                   />
                 </div>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -837,9 +837,9 @@ function AdminTransactionsContent() {
           ) : payments.length === 0 ? (
             <Card className="bg-card border-brand-gold/30 text-center py-16">
               <CardContent>
-                <DollarSign className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+                <DollarSign className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-white mb-1">No Transactions Found</h3>
-                <p className="text-sm text-gray-400">Try adjusting your search or filters</p>
+                <p className="text-sm text-muted-foreground">Try adjusting your search or filters</p>
               </CardContent>
             </Card>
           ) : (
@@ -860,7 +860,7 @@ function AdminTransactionsContent() {
                           <div>
                             <p className="font-medium text-white">{payment.receiptNumber}</p>
                             <p className="text-xs text-brand-gold font-medium">{payment.transactionReference || payment.reference}</p>
-                            <p className="text-sm text-gray-400">
+                            <p className="text-sm text-muted-foreground">
                               {payment.parent ? payment.parent.fullName : 'N/A'}
                               {payment.student && ` • ${payment.student.fullName} • ${payment.subject.name}`}
                             </p>
@@ -871,13 +871,13 @@ function AdminTransactionsContent() {
                             <p className="font-medium text-white">
                               {payment.currency === 'NGN' ? '₦' : '$'}{payment.amount.toLocaleString()}
                             </p>
-                            <p className="text-xs text-gray-400 flex items-center gap-1">
+                            <p className="text-xs text-muted-foreground flex items-center gap-1">
                               <Calendar className="h-3 w-3" />
                               {new Date(payment.createdAt).toLocaleDateString()}
                             </p>
                           </div>
                           <StatusBadge status={payment.status} />
-                          <ChevronRight className="h-5 w-5 text-gray-500" />
+                          <ChevronRight className="h-5 w-5 text-muted-foreground" />
                         </div>
                       </button>
                     ))}
@@ -896,7 +896,7 @@ function AdminTransactionsContent() {
                   >
                     Previous
                   </Button>
-                  <span className="text-sm text-gray-400">
+                  <span className="text-sm text-muted-foreground">
                     Page {paymentPage} of {Math.ceil(paymentTotal / paymentLimit)} ({paymentTotal} total)
                   </span>
                   <Button
@@ -925,9 +925,9 @@ function AdminTransactionsContent() {
           ) : outstanding.length === 0 ? (
             <Card className="bg-card border-brand-gold/30 text-center py-16">
               <CardContent>
-                <Clock className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+                <Clock className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-white mb-1">No Outstanding Payments</h3>
-                <p className="text-sm text-gray-400">All enrollments have been paid for</p>
+                <p className="text-sm text-muted-foreground">All enrollments have been paid for</p>
               </CardContent>
             </Card>
           ) : (
@@ -944,10 +944,10 @@ function AdminTransactionsContent() {
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
                               <span className="font-medium text-white">{item.parent.fullName}</span>
-                              <span className="text-gray-400">•</span>
-                              <span className="text-gray-400">{item.parent.email}</span>
+                              <span className="text-muted-foreground">•</span>
+                              <span className="text-muted-foreground">{item.parent.email}</span>
                             </div>
-                            <div className="text-sm text-gray-400 mb-2">
+                            <div className="text-sm text-muted-foreground mb-2">
                               Student: {item.student.fullName} ({item.student.gradeLevel}) • Subject: {item.subject.name}
                             </div>
                             <div className="flex items-center gap-4">
@@ -958,7 +958,7 @@ function AdminTransactionsContent() {
                               }`}>
                                 {item.daysWaiting} days waiting
                               </span>
-                              <span className="text-sm text-gray-400">
+                              <span className="text-sm text-muted-foreground">
                                 Payment: {item.paymentStatus}
                               </span>
                             </div>
@@ -990,7 +990,7 @@ function AdminTransactionsContent() {
                   >
                     Previous
                   </Button>
-                  <span className="text-sm text-gray-400">
+                  <span className="text-sm text-muted-foreground">
                     Page {outstandingPage} of {Math.ceil(outstandingTotal / outstandingLimit)} ({outstandingTotal} total)
                   </span>
                   <Button
@@ -1019,9 +1019,9 @@ function AdminTransactionsContent() {
           ) : failedPayments.length === 0 ? (
             <Card className="bg-card border-brand-gold/30 text-center py-16">
               <CardContent>
-                <AlertTriangle className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+                <AlertTriangle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-white mb-1">No Failed Payments</h3>
-                <p className="text-sm text-gray-400">All payments are successful or pending</p>
+                <p className="text-sm text-muted-foreground">All payments are successful or pending</p>
               </CardContent>
             </Card>
           ) : (
@@ -1041,7 +1041,7 @@ function AdminTransactionsContent() {
                           </div>
                           <div>
                             <p className="font-medium text-white">{payment.receiptNumber}</p>
-                            <p className="text-sm text-gray-400">
+                            <p className="text-sm text-muted-foreground">
                               {payment.parent.fullName} • {payment.student.fullName}
                             </p>
                             {payment.failureReason && (
@@ -1054,13 +1054,13 @@ function AdminTransactionsContent() {
                             <p className="font-medium text-white">
                               {payment.currency === 'NGN' ? '₦' : '$'}{payment.amount.toLocaleString()}
                             </p>
-                            <p className="text-xs text-gray-400 flex items-center gap-1">
+                            <p className="text-xs text-muted-foreground flex items-center gap-1">
                               <Calendar className="h-3 w-3" />
                               {new Date(payment.failedAt || payment.createdAt).toLocaleDateString()}
                             </p>
                           </div>
                           <StatusBadge status={payment.status} />
-                          <ChevronRight className="h-5 w-5 text-gray-500" />
+                          <ChevronRight className="h-5 w-5 text-muted-foreground" />
                         </div>
                       </button>
                     ))}
@@ -1079,7 +1079,7 @@ function AdminTransactionsContent() {
                   >
                     Previous
                   </Button>
-                  <span className="text-sm text-gray-400">
+                  <span className="text-sm text-muted-foreground">
                     Page {failedPage} of {Math.ceil(failedTotal / failedLimit)} ({failedTotal} total)
                   </span>
                   <Button
@@ -1109,7 +1109,7 @@ function AdminTransactionsContent() {
               onChange={(e) => setNoteText(e.target.value)}
               placeholder="Add internal notes about this payment..."
               rows={4}
-              className="mt-1.5 bg-brand-dark/30 border-brand-gold/30 text-white placeholder:text-gray-500"
+              className="mt-1.5 bg-brand-dark/30 border-brand-gold/30 text-white placeholder:text-muted-foreground"
             />
           </div>
           <div className="flex justify-end gap-3">

@@ -48,7 +48,7 @@ export default function StudentProfilePage() {
               variant="ghost"
               size="sm"
               onClick={() => router.push('/student')}
-              className="gap-2 text-gray-300 hover:text-white"
+              className="gap-2 text-muted-foreground hover:text-white"
             >
               <ArrowLeft className="h-4 w-4" />
               Back
@@ -56,7 +56,7 @@ export default function StudentProfilePage() {
             <div className="h-6 w-px bg-border" />
             <div>
               <h1 className="text-3xl font-serif font-bold text-white">Student Profile</h1>
-              <p className="text-sm text-gray-400">Your student identification and learning profile</p>
+              <p className="text-sm text-muted-foreground">Your student identification and learning profile</p>
             </div>
           </div>
           <Button
@@ -90,14 +90,14 @@ export default function StudentProfilePage() {
               <CardContent className="space-y-6">
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="p-4 rounded-lg bg-brand-dark/70 border border-brand-gold/20">
-                    <span className="text-xs text-gray-400 block mb-1">Grade Level</span>
+                    <span className="text-xs text-muted-foreground block mb-1">Grade Level</span>
                     <span className="text-xl font-semibold text-white">
                       {profile.actualGrade}
                     </span>
                   </div>
 
                   <div className="p-4 rounded-lg bg-brand-dark/70 border border-brand-gold/20">
-                    <span className="text-xs text-gray-400 block mb-1">Academic Grade Band</span>
+                    <span className="text-xs text-muted-foreground block mb-1">Academic Grade Band</span>
                     <span className="text-xl font-semibold text-white">
                       {profile.actualGrade}
                     </span>
@@ -105,7 +105,7 @@ export default function StudentProfilePage() {
 
                   {profile.school && (
                     <div className="p-4 rounded-lg bg-brand-dark/70 border border-brand-gold/20">
-                      <span className="text-xs text-gray-400 block mb-1">School</span>
+                      <span className="text-xs text-muted-foreground block mb-1">School</span>
                       <span className="text-base text-gray-200">
                         {profile.school}
                       </span>
@@ -113,7 +113,7 @@ export default function StudentProfilePage() {
                   )}
 
                   <div className="p-4 rounded-lg bg-brand-dark/70 border border-brand-gold/20">
-                    <span className="text-xs text-gray-400 block mb-1">Enrolled Since</span>
+                    <span className="text-xs text-muted-foreground block mb-1">Enrolled Since</span>
                     <span className="text-base text-gray-200">
                       {new Date(profile.createdAt).toLocaleDateString(undefined, {
                         month: 'long',
@@ -124,7 +124,7 @@ export default function StudentProfilePage() {
                 </div>
 
                 <div className="pt-4 border-t border-brand-gold/15 flex items-center justify-between">
-                  <p className="text-xs text-gray-400">
+                  <p className="text-xs text-muted-foreground">
                     Need to update your login PIN or timezone?
                   </p>
                   <Button
@@ -141,7 +141,7 @@ export default function StudentProfilePage() {
             </Card>
           </div>
         ) : (
-          <Card className="bg-card border-brand-gold/30 text-center py-12 text-gray-400">
+          <Card className="bg-card border-brand-gold/30 text-center py-12 text-muted-foreground">
             Could not load student profile.
           </Card>
         )}

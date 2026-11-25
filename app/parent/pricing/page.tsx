@@ -117,7 +117,7 @@ export default function ParentPricingPage() {
       {subjects.length === 0 ? (
         <Card className="bg-card border-brand-gold/30 text-center py-16">
           <CardContent>
-            <BookOpen className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+            <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-white mb-1">No Subjects Available</h3>
             <p className="text-sm text-muted-foreground">Check back later for available subjects and pricing</p>
           </CardContent>
@@ -144,7 +144,7 @@ export default function ParentPricingPage() {
                       Active
                     </span>
                   ) : (
-                    <span className="text-xs px-2 py-1 rounded-full bg-gray-500/20 text-muted-foreground border border-gray-500/30">
+                    <span className="text-xs px-2 py-1 rounded-full bg-background0/20 text-muted-foreground border border-gray-500/30">
                       Inactive
                     </span>
                   )}

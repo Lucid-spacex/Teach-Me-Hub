@@ -105,7 +105,7 @@ export default function ParentSessionsPage() {
           <Button
             onClick={handleRefresh}
             variant="ghost"
-            className="text-zinc-400 hover:text-white hover:bg-white/5 h-10 px-3 rounded-xl"
+            className="text-zinc-400 hover:text-white hover:bg-card/5 h-10 px-3 rounded-xl"
             title="Refresh Sessions"
           >
             <RefreshCw className="h-4 w-4" />

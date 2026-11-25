@@ -91,7 +91,7 @@ export default function AdminComplaintsPage() {
             variant="ghost"
             size="sm"
             onClick={() => router.push('/admin')}
-            className="gap-2 text-gray-300 hover:text-white"
+            className="gap-2 text-muted-foreground hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Dashboard
@@ -103,7 +103,7 @@ export default function AdminComplaintsPage() {
             </div>
             <div>
               <h1 className="text-3xl font-serif font-bold text-white">Complaints</h1>
-              <p className="text-sm text-gray-400">View and resolve user complaints</p>
+              <p className="text-sm text-muted-foreground">View and resolve user complaints</p>
             </div>
           </div>
         </div>
@@ -127,9 +127,9 @@ export default function AdminComplaintsPage() {
       ) : complaints.length === 0 ? (
         <Card className="bg-card border-brand-gold/30 text-center py-16">
           <CardContent>
-            <MessageSquare className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+            <MessageSquare className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-white mb-1">No Complaints</h3>
-            <p className="text-sm text-gray-400">No complaints have been filed</p>
+            <p className="text-sm text-muted-foreground">No complaints have been filed</p>
           </CardContent>
         </Card>
       ) : (
@@ -142,7 +142,7 @@ export default function AdminComplaintsPage() {
                     <CardTitle className="text-white">
                       Complaint about {complaint.aboutType}
                     </CardTitle>
-                    <p className="text-sm text-gray-400 mt-1">
+                    <p className="text-sm text-muted-foreground mt-1">
                       Filed on {new Date(complaint.createdAt).toLocaleDateString()}
                     </p>
                   </div>
@@ -152,13 +152,13 @@ export default function AdminComplaintsPage() {
               <CardContent>
                 <div className="space-y-4">
                   <div>
-                    <p className="text-sm text-gray-400">Description</p>
+                    <p className="text-sm text-muted-foreground">Description</p>
                     <p className="text-white">{complaint.description}</p>
                   </div>
 
                   {complaint.adminReply && (
                     <div className="bg-brand-dark/30 p-3 rounded-lg">
-                      <p className="text-sm text-gray-400 mb-1">Admin Reply</p>
+                      <p className="text-sm text-muted-foreground mb-1">Admin Reply</p>
                       <p className="text-white">{complaint.adminReply}</p>
                     </div>
                   )}

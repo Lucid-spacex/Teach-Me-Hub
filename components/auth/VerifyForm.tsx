@@ -207,7 +207,7 @@ export default function VerifyForm() {
                   type="button"
                   onClick={handleResendOtp}
                   disabled={resending}
-                  className="text-[11px] text-primary hover:text-secondary font-medium flex items-center gap-1"
+                  className="inline-flex min-h-11 items-center gap-2 rounded-lg px-2 text-xs font-medium text-primary hover:text-secondary"
                 >
                   <RefreshCw className={`w-3 h-3 ${resending ? 'animate-spin' : ''}`} />
                   {resending ? 'Sending...' : 'Resend Code'}

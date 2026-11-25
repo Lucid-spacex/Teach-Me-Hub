@@ -96,7 +96,7 @@ export default function AdminPaymentSummaryPage() {
             variant="ghost"
             size="sm"
             onClick={() => router.push('/admin')}
-            className="gap-2 text-gray-300 hover:text-white"
+            className="gap-2 text-muted-foreground hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Dashboard
@@ -104,7 +104,7 @@ export default function AdminPaymentSummaryPage() {
           <div className="h-6 w-px bg-border" />
           <div>
             <h1 className="text-3xl font-serif font-bold text-white">Payment Analytics</h1>
-            <p className="text-sm text-gray-400">Revenue metrics and payment insights</p>
+            <p className="text-sm text-muted-foreground">Revenue metrics and payment insights</p>
           </div>
         </div>
         <Button
@@ -124,8 +124,8 @@ export default function AdminPaymentSummaryPage() {
         <CardContent className="pt-6">
           <div className="flex flex-wrap gap-4 items-center">
             <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-gray-400" />
-              <span className="text-sm text-gray-400">Date Range:</span>
+              <Calendar className="h-4 w-4 text-muted-foreground" />
+              <span className="text-sm text-muted-foreground">Date Range:</span>
             </div>
             <div className="flex gap-2">
               <Button
@@ -168,7 +168,7 @@ export default function AdminPaymentSummaryPage() {
               onChange={(e) => setFromDate(e.target.value)}
               className="w-40 bg-brand-dark/30 border-brand-gold/30 text-white"
             />
-            <span className="text-gray-400">to</span>
+            <span className="text-muted-foreground">to</span>
             <Input
               type="date"
               value={toDate}
@@ -201,7 +201,7 @@ export default function AdminPaymentSummaryPage() {
                     <p className="text-2xl font-bold text-white">
                       ₦{summary.totalCollectedNGNEquivalent.toLocaleString()}
                     </p>
-                    <p className="text-xs text-gray-400">Total Collected (NGN)</p>
+                    <p className="text-xs text-muted-foreground">Total Collected (NGN)</p>
                     {toNumber(summary.changePercent) !== null && (
                       <div className={`flex items-center gap-1 mt-1 text-xs ${
                         toNumber(summary.changePercent)! >= 0 ? 'text-green-400' : 'text-red-400'
@@ -228,8 +228,8 @@ export default function AdminPaymentSummaryPage() {
                       <p className="text-2xl font-bold text-white">
                         {currency === 'NGN' ? '₦' : '$'}{data.collectedTotal.toLocaleString()}
                       </p>
-                      <p className="text-xs text-gray-400">{currency} Collected</p>
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs text-muted-foreground">{currency} Collected</p>
+                      <p className="text-xs text-muted-foreground mt-1">
                         {data.successCount} / {data.count} successful ({toNumber(data.successRate) != null ? (toNumber(data.successRate)! * 100).toFixed(1) : 'N/A'}%)
                       </p>
                     </div>
@@ -250,7 +250,7 @@ export default function AdminPaymentSummaryPage() {
                       <p className="text-2xl font-bold text-white">
                         {currency === 'NGN' ? '₦' : '$'}{data.averagePayment.toLocaleString()}
                       </p>
-                      <p className="text-xs text-gray-400">Average Payment ({currency})</p>
+                      <p className="text-xs text-muted-foreground">Average Payment ({currency})</p>
                     </div>
                   </div>
                 </CardContent>
@@ -284,7 +284,7 @@ export default function AdminPaymentSummaryPage() {
                           />
                         </div>
                       </div>
-                      <span className="text-xs text-gray-400 w-16 text-right">
+                      <span className="text-xs text-muted-foreground w-16 text-right">
                         {item.count} payments
                       </span>
                     </div>
@@ -305,7 +305,7 @@ export default function AdminPaymentSummaryPage() {
                   {summary.byStatus.map((item, index) => (
                     <div key={index} className="p-4 bg-brand-dark/30 rounded-lg border border-brand-gold/10">
                       <p className="text-2xl font-bold text-white">{item.count}</p>
-                      <p className="text-xs text-gray-400 mt-1">{item.status}</p>
+                      <p className="text-xs text-muted-foreground mt-1">{item.status}</p>
                     </div>
                   ))}
                 </div>
@@ -323,7 +323,7 @@ export default function AdminPaymentSummaryPage() {
                 <div className="space-y-2">
                   {summary.series.dailySeries.slice(-14).map((item, index) => (
                     <div key={index} className="flex items-center gap-4">
-                      <span className="text-xs text-gray-400 w-24">
+                      <span className="text-xs text-muted-foreground w-24">
                         {new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                       </span>
                       <div className="flex-1 flex gap-2">

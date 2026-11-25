@@ -50,7 +50,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           </div>
           <button
             onClick={() => setDismissed(true)}
-            className="p-1 hover:bg-white/10 rounded transition-colors"
+            className="p-1 hover:bg-card/10 rounded transition-colors"
             title="Dismiss notice"
           >
             <X className="h-4 w-4" />

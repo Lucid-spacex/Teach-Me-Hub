@@ -68,7 +68,7 @@ export default function StudentGradesPage() {
               variant="ghost"
               size="sm"
               onClick={() => router.push('/student')}
-              className="gap-2 text-gray-300 hover:text-white"
+              className="gap-2 text-muted-foreground hover:text-white"
             >
               <ArrowLeft className="h-4 w-4" />
               Back
@@ -76,7 +76,7 @@ export default function StudentGradesPage() {
             <div className="h-6 w-px bg-border" />
             <div>
               <h1 className="text-3xl font-serif font-bold text-white">My Grades</h1>
-              <p className="text-sm text-gray-400">View official approved scores and teacher feedback</p>
+              <p className="text-sm text-muted-foreground">View official approved scores and teacher feedback</p>
             </div>
           </div>
           <Button
@@ -101,11 +101,11 @@ export default function StudentGradesPage() {
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-white">Overall Performance</h3>
-                  <p className="text-xs text-gray-400">Based on {grades.length} approved grade{grades.length > 1 ? 's' : ''}</p>
+                  <p className="text-xs text-muted-foreground">Based on {grades.length} approved grade{grades.length > 1 ? 's' : ''}</p>
                 </div>
               </div>
               <div className="text-right">
-                <span className="text-xs text-gray-400 block">Average Score</span>
+                <span className="text-xs text-muted-foreground block">Average Score</span>
                 <span className={`text-3xl font-extrabold ${
                   averagePercentage >= 70 ? 'text-green-400' : averagePercentage >= 50 ? 'text-brand-gold' : 'text-red-400'
                 }`}>
@@ -124,9 +124,9 @@ export default function StudentGradesPage() {
         ) : grades.length === 0 ? (
           <Card className="bg-card border-brand-gold/30 text-center py-12">
             <CardContent>
-              <Award className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+              <Award className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-white mb-1">No Approved Grades Yet</h3>
-              <p className="text-sm text-gray-400 max-w-sm mx-auto">
+              <p className="text-sm text-muted-foreground max-w-sm mx-auto">
                 Once your submitted tests and assignments are reviewed and approved by your tutor, your grades will be displayed here.
               </p>
             </CardContent>
@@ -154,13 +154,13 @@ export default function StudentGradesPage() {
                   <CardContent className="space-y-3 pt-0">
                     <div className="flex items-baseline justify-between p-3 rounded-lg bg-brand-dark/70 border border-brand-gold/15">
                       <div>
-                        <span className="text-xs text-gray-400">Final Score</span>
+                        <span className="text-xs text-muted-foreground">Final Score</span>
                         <div className="text-2xl font-bold text-white">
                           {formatPercentage(finalScore)}
                         </div>
                       </div>
                       <div className="text-right">
-                        <span className="text-xs text-gray-400">Attendance</span>
+                        <span className="text-xs text-muted-foreground">Attendance</span>
                         <div className={`text-xl font-bold ${
                           toNumber(item.attendanceRate) != null && toNumber(item.attendanceRate)! >= 80 ? 'text-green-400' : toNumber(item.attendanceRate) != null && toNumber(item.attendanceRate)! >= 60 ? 'text-brand-gold' : 'text-red-400'
                         }`}>
@@ -175,7 +175,7 @@ export default function StudentGradesPage() {
                       <div className="space-y-1.5">
                         {item.components.map((comp, idx) => (
                           <div key={idx} className="flex items-center justify-between text-xs">
-                            <span className="text-gray-300">{comp.type} ({comp.weight}%)</span>
+                            <span className="text-muted-foreground">{comp.type} ({comp.weight}%)</span>
                             <span className="text-white font-medium">{formatPercentage(comp.componentPercentage, 1)}</span>
                           </div>
                         ))}
@@ -184,7 +184,7 @@ export default function StudentGradesPage() {
 
                     {/* Note: overrideReason and rejectionReason are never shown to students per security rules */}
                     {item.tutorComment ? (
-                      <div className="text-xs text-gray-300 bg-brand-dark/40 p-3 rounded border border-brand-gold/10">
+                      <div className="text-xs text-muted-foreground bg-brand-dark/40 p-3 rounded border border-brand-gold/10">
                         <span className="text-brand-gold font-medium block mb-1 flex items-center gap-1">
                           <MessageSquare className="h-3.5 w-3.5" /> Tutor Feedback:
                         </span>
@@ -192,7 +192,7 @@ export default function StudentGradesPage() {
                       </div>
                     ) : null}
 
-                    <div className="text-right text-xs text-gray-500">
+                    <div className="text-right text-xs text-muted-foreground">
                       Approved on {item.approvedAt ? new Date(item.approvedAt).toLocaleDateString() : new Date(item.createdAt).toLocaleDateString()}
                     </div>
                   </CardContent>

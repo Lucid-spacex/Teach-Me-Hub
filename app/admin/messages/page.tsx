@@ -375,7 +375,7 @@ export default function AdminMessagesPage() {
             variant="ghost"
             size="sm"
             onClick={() => router.push('/admin')}
-            className="gap-2 text-gray-300 hover:text-white"
+            className="gap-2 text-muted-foreground hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Dashboard
@@ -383,7 +383,7 @@ export default function AdminMessagesPage() {
           <div className="h-6 w-px bg-border" />
           <div>
             <h1 className="text-3xl font-serif font-bold text-white">Messages</h1>
-            <p className="text-sm text-gray-400">Admin inbox - view and reply to parent/tutor messages</p>
+            <p className="text-sm text-muted-foreground">Admin inbox - view and reply to parent/tutor messages</p>
           </div>
         </div>
         <Button
@@ -413,9 +413,9 @@ export default function AdminMessagesPage() {
       ) : threads.length === 0 ? (
         <Card className="bg-card border-brand-gold/30 text-center py-16">
           <CardContent>
-            <MessageSquare className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+            <MessageSquare className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-white mb-1">No Messages</h3>
-            <p className="text-sm text-gray-400">No message threads yet</p>
+            <p className="text-sm text-muted-foreground">No message threads yet</p>
           </CardContent>
         </Card>
       ) : (
@@ -427,13 +427,13 @@ export default function AdminMessagesPage() {
                 Conversations
               </h3>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="text"
                   placeholder="Search by name..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="pl-10 bg-brand-dark/30 border-brand-gold/30 text-white placeholder:text-gray-500 text-sm h-9"
+                  className="pl-10 bg-brand-dark/30 border-brand-gold/30 text-white placeholder:text-muted-foreground text-sm h-9"
                 />
               </div>
               <div className="flex items-center gap-2">
@@ -444,7 +444,7 @@ export default function AdminMessagesPage() {
                   onChange={(e) => setShowUnreadOnly(e.target.checked)}
                   className="rounded border-gray-600"
                 />
-                <label htmlFor="unread-only" className="text-xs text-gray-400 cursor-pointer">
+                <label htmlFor="unread-only" className="text-xs text-muted-foreground cursor-pointer">
                   Unread only
                 </label>
               </div>
@@ -487,7 +487,7 @@ export default function AdminMessagesPage() {
                             {participantRole}
                           </span>
                         </div>
-                        <p className="text-xs text-gray-400 truncate mt-1">
+                        <p className="text-xs text-muted-foreground truncate mt-1">
                           {thread.lastMessage?.body || thread.lastMessage?.content || 'No messages yet'}
                         </p>
                       </div>
@@ -510,7 +510,7 @@ export default function AdminMessagesPage() {
 
                 <div className="flex-1 p-4 overflow-y-auto space-y-3">
                   {messages.length === 0 ? (
-                    <div className="text-center py-16 text-gray-500 text-xs">
+                    <div className="text-center py-16 text-muted-foreground text-xs">
                       No messages yet. Start the conversation!
                     </div>
                   ) : (
@@ -547,7 +547,7 @@ export default function AdminMessagesPage() {
                     placeholder="Type a message..."
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
-                    className="flex-1 bg-card border-brand-gold/30 text-white placeholder:text-gray-500 rounded-lg px-4 py-2"
+                    className="flex-1 bg-card border-brand-gold/30 text-white placeholder:text-muted-foreground rounded-lg px-4 py-2"
                   />
                   <Button
                     type="submit"
@@ -559,7 +559,7 @@ export default function AdminMessagesPage() {
                 </form>
               </>
             ) : (
-              <div className="flex-1 flex items-center justify-center text-gray-500 text-sm">
+              <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">
                 Select a conversation to view messages
               </div>
             )}
@@ -577,7 +577,7 @@ export default function AdminMessagesPage() {
             <CardContent className="flex-1 overflow-y-auto">
               <form onSubmit={handleStartNewConversation} className="space-y-4">
                 <div>
-                  <Label htmlFor="user-search" className="text-gray-300">Search Users</Label>
+                  <Label htmlFor="user-search" className="text-muted-foreground">Search Users</Label>
                   <Input
                     id="user-search"
                     type="text"
@@ -589,7 +589,7 @@ export default function AdminMessagesPage() {
                 </div>
 
                 <div>
-                  <Label className="text-gray-300">Select a User</Label>
+                  <Label className="text-muted-foreground">Select a User</Label>
                   <div className="mt-2 max-h-48 overflow-y-auto space-y-2">
                     {loadingUsers ? (
                       <div className="flex justify-center py-4">
@@ -616,7 +616,7 @@ export default function AdminMessagesPage() {
                             <div className="flex items-center justify-between">
                               <div>
                                 <p className="text-white font-medium">{user.fullName}</p>
-                                <p className="text-xs text-gray-400">{user.email}</p>
+                                <p className="text-xs text-muted-foreground">{user.email}</p>
                               </div>
                               <div className="flex items-center gap-2">
                                 <span className={`text-xs px-2 py-1 rounded ${
@@ -634,7 +634,7 @@ export default function AdminMessagesPage() {
                 </div>
 
                 <div>
-                  <Label htmlFor="message" className="text-gray-300">Message</Label>
+                  <Label htmlFor="message" className="text-muted-foreground">Message</Label>
                   <textarea
                     id="message"
                     value={newMessageBody}

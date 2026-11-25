@@ -42,14 +42,14 @@ export class ErrorBoundary extends Component<Props, State> {
               <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
                 <AlertTriangle className="h-8 w-8 text-red-600" />
               </div>
-              <CardTitle className="text-2xl font-bold text-gray-900">Something went wrong</CardTitle>
-              <CardDescription className="text-gray-600">
+              <CardTitle className="text-2xl font-bold text-foreground">Something went wrong</CardTitle>
+              <CardDescription className="text-muted-foreground">
                 {this.state.error?.message || 'An unexpected error occurred'}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <p className="text-sm text-gray-600">
+              <div className="bg-background p-4 rounded-lg">
+                <p className="text-sm text-muted-foreground">
                   We apologize for the inconvenience. Please try refreshing the page or contact support if the problem persists.
                 </p>
               </div>

@@ -372,7 +372,7 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
         }
       >
         <div className="text-center py-4">
-          <p className="text-gray-400">Please add a student to your account first</p>
+          <p className="text-muted-foreground">Please add a student to your account first</p>
         </div>
       </Modal>
     )
@@ -419,7 +419,7 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
                   variant="outline"
                   onClick={prevStep}
                   disabled={loading}
-                  className="border-gray-600 text-gray-300 hover:bg-gray-700"
+                  className="border-gray-600 text-muted-foreground hover:bg-gray-700"
                 >
                   Back
                 </Button>
@@ -441,7 +441,7 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
       {step === 1 && (
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="student" className="text-gray-300">Student *</Label>
+            <Label htmlFor="student" className="text-muted-foreground">Student *</Label>
             <Select
               value={formData.studentId}
               onValueChange={(value) => setFormData({ ...formData, studentId: value })}
@@ -461,9 +461,9 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
           </div>
 
           <div className="space-y-2">
-            <Label className="text-gray-300">Select Subjects (1-4) *</Label>
+            <Label className="text-muted-foreground">Select Subjects (1-4) *</Label>
             {subjectsLoading ? (
-              <div className="text-sm text-gray-400">Loading subjects...</div>
+              <div className="text-sm text-muted-foreground">Loading subjects...</div>
             ) : (
               <div className="space-y-2 max-h-48 overflow-y-auto">
                 {subjects.map((subject) => (
@@ -491,7 +491,7 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
                     />
                     <label
                       htmlFor={`subject-${subject.id}`}
-                      className="text-sm text-gray-300 cursor-pointer flex-1"
+                      className="text-sm text-muted-foreground cursor-pointer flex-1"
                     >
                       {subject.name} {subject.gradeBand && `(${subject.gradeBand})`}
                       {subject.prices && subject.prices.length > 0 && (
@@ -510,18 +510,18 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
           {formData.subjectIds.length > 0 && (
             <>
               {loadingQuote ? (
-                <div className="text-sm text-gray-400">Loading pricing...</div>
+                <div className="text-sm text-muted-foreground">Loading pricing...</div>
               ) : pricingQuote ? (
                 <Card className="bg-brand-gold/10 border-brand-gold/30">
                   <CardContent className="pt-4">
                     <p className="text-sm font-medium text-white mb-2">Total Price</p>
                     <div className="space-y-1 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-gray-400">NGN:</span>
+                        <span className="text-muted-foreground">NGN:</span>
                         <span className="text-brand-gold font-bold">₦{totalPrice.ngn.toLocaleString()}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-400">USD:</span>
+                        <span className="text-muted-foreground">USD:</span>
                         <span className="text-brand-gold font-bold">${totalPrice.usd.toLocaleString()}</span>
                       </div>
                     </div>
@@ -545,7 +545,7 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
       {step === 2 && (
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="sessionFrequency" className="text-gray-300">Session Frequency *</Label>
+            <Label htmlFor="sessionFrequency" className="text-muted-foreground">Session Frequency *</Label>
             <Select
               value={formData.sessionFrequency}
               onValueChange={(value) => {
@@ -566,7 +566,7 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
           </div>
 
           <div className="space-y-2">
-            <Label className="text-gray-300">Available Days *</Label>
+            <Label className="text-muted-foreground">Available Days *</Label>
             <div className="grid grid-cols-4 gap-2">
               {DAYS_OF_WEEK.map((day) => (
                 <div key={day.value} className="flex items-center space-x-2">
@@ -585,7 +585,7 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
                   />
                   <label
                     htmlFor={`day-${day.value}`}
-                    className="text-xs text-gray-300 cursor-pointer"
+                    className="text-xs text-muted-foreground cursor-pointer"
                   >
                     {day.label.slice(0, 3)}
                   </label>
@@ -606,7 +606,7 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="preferredStartHour" className="text-gray-300">From Hour *</Label>
+              <Label htmlFor="preferredStartHour" className="text-muted-foreground">From Hour *</Label>
               <Select
                 value={formData.preferredStartHour.toString()}
                 onValueChange={(value) => setFormData({ ...formData, preferredStartHour: parseInt(value) })}
@@ -625,7 +625,7 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="preferredEndHour" className="text-gray-300">To Hour *</Label>
+              <Label htmlFor="preferredEndHour" className="text-muted-foreground">To Hour *</Label>
               <Select
                 value={formData.preferredEndHour.toString()}
                 onValueChange={(value) => setFormData({ ...formData, preferredEndHour: parseInt(value) })}
@@ -645,12 +645,12 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
           </div>
 
           <div className="bg-brand-dark/50 border border-brand-gold/30 p-3 rounded-lg">
-            <p className="text-xs text-gray-400 mb-2">
+            <p className="text-xs text-muted-foreground mb-2">
               Pick the time in your own local time — we&apos;ll convert it to Nigeria time for your tutor.
             </p>
             <div className="flex items-center gap-2 text-sm">
               <Clock className="h-4 w-4 text-brand-gold" />
-              <span className="text-gray-300">
+              <span className="text-muted-foreground">
                 This is approximately {getNigeriaTimePreview(formData.preferredStartHour)} – {getNigeriaTimePreview(formData.preferredEndHour)} Nigeria time
               </span>
             </div>
@@ -668,7 +668,7 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
       {step === 4 && (
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="billingFrequency" className="text-gray-300">Billing Frequency *</Label>
+            <Label htmlFor="billingFrequency" className="text-muted-foreground">Billing Frequency *</Label>
             <Select
               value={formData.billingFrequency}
               onValueChange={(value) => setFormData({ ...formData, billingFrequency: value as BillingFrequency })}
@@ -687,7 +687,7 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="startDate" className="text-gray-300">Start Date *</Label>
+            <Label htmlFor="startDate" className="text-muted-foreground">Start Date *</Label>
             <Input
               id="startDate"
               type="date"
@@ -703,23 +703,23 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
               <p className="text-sm font-medium text-white mb-2">Enrollment Summary</p>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Student:</span>
+                  <span className="text-muted-foreground">Student:</span>
                   <span className="text-white">{students.find(s => s.id === formData.studentId)?.fullName}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Subjects:</span>
+                  <span className="text-muted-foreground">Subjects:</span>
                   <span className="text-white">
                     {formData.subjectIds.map(id => subjects.find(s => s.id === id)?.name).join(', ')}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Frequency:</span>
+                  <span className="text-muted-foreground">Frequency:</span>
                   <span className="text-white">
                     {SESSION_FREQUENCIES.find(f => f.value === formData.sessionFrequency)?.label}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Days:</span>
+                  <span className="text-muted-foreground">Days:</span>
                   <span className="text-white">
                     {formData.availableDays.map(day => {
                       const dayObj = DAYS_OF_WEEK.find(d => d.value === day)
@@ -728,24 +728,24 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Time:</span>
+                  <span className="text-muted-foreground">Time:</span>
                   <span className="text-white">
                     {formData.preferredStartHour}:00 - {formData.preferredEndHour}:00
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Billing:</span>
+                  <span className="text-muted-foreground">Billing:</span>
                   <span className="text-white">
                     {BILLING_FREQUENCIES.find(f => f.value === formData.billingFrequency)?.label}
                   </span>
                 </div>
                 <div className="border-t border-gray-600 pt-2 mt-2">
                   <div className="flex justify-between">
-                    <span className="text-gray-400">Total (NGN):</span>
+                    <span className="text-muted-foreground">Total (NGN):</span>
                     <span className="text-brand-gold font-bold">₦{totalPrice.ngn.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-400">Total (USD):</span>
+                    <span className="text-muted-foreground">Total (USD):</span>
                     <span className="text-brand-gold font-bold">${totalPrice.usd.toLocaleString()}</span>
                   </div>
                 </div>
@@ -784,11 +784,11 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
               <p className="text-sm font-medium text-white mb-4">Enrollment Details</p>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Student:</span>
+                  <span className="text-muted-foreground">Student:</span>
                   <span className="text-white">{students.find(s => s.id === formData.studentId)?.fullName}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Subjects:</span>
+                  <span className="text-muted-foreground">Subjects:</span>
                   <span className="text-white">
                     {formData.subjectIds.map(id => subjects.find(s => s.id === id)?.name).join(', ')}
                   </span>
@@ -807,25 +807,25 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
                 <div className="space-y-3">
                   <div className="flex justify-between items-center p-3 bg-brand-dark/50 rounded-lg">
                     <div>
-                      <p className="text-xs text-gray-400">Nigerian Naira</p>
+                      <p className="text-xs text-muted-foreground">Nigerian Naira</p>
                       <p className="text-2xl font-bold text-brand-gold">₦{totalPrice.ngn.toLocaleString()}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-xs text-gray-400">US Dollar</p>
+                      <p className="text-xs text-muted-foreground">US Dollar</p>
                       <p className="text-2xl font-bold text-brand-gold">${totalPrice.usd.toLocaleString()}</p>
                     </div>
                   </div>
-                  <p className="text-xs text-gray-400 text-center">
+                  <p className="text-xs text-muted-foreground text-center">
                     You can pay in either currency below
                   </p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   <div className="p-3 bg-brand-dark/50 rounded-lg">
-                    <p className="text-sm text-gray-300">
+                    <p className="text-sm text-muted-foreground">
                       The exact payment amount will be calculated by the server based on your selected subjects, session frequency, and billing period.
                     </p>
-                    <p className="text-xs text-gray-400 mt-2">
+                    <p className="text-xs text-muted-foreground mt-2">
                       You&apos;ll see the final amount on the payment page before completing your transaction.
                     </p>
                   </div>
@@ -835,7 +835,7 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
           </Card>
 
           <div className="space-y-2">
-            <Label htmlFor="currency" className="text-gray-300">Select Payment Currency *</Label>
+            <Label htmlFor="currency" className="text-muted-foreground">Select Payment Currency *</Label>
             <Select
               value={currency}
               onValueChange={(value) => setCurrency(value as 'NGN' | 'USD')}
@@ -855,7 +855,7 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
           </div>
 
           <div className="bg-brand-gold/10 border border-brand-gold/30 p-4 rounded-lg">
-            <p className="text-sm text-gray-300">
+            <p className="text-sm text-muted-foreground">
               You will be redirected to the payment gateway to complete the transaction.
             </p>
           </div>

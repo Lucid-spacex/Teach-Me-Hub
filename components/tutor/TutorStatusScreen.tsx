@@ -46,13 +46,13 @@ export function TutorStatusScreen({ status }: TutorStatusScreenProps) {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="text-center">
-            <p className="text-gray-300 mb-2">
+            <p className="text-muted-foreground mb-2">
               {isPending
                 ? 'Your tutor application is currently being reviewed by our admin team. This process typically takes 1-3 business days.'
                 : 'Unfortunately, your tutor application was not approved at this time.'}
             </p>
             {isRejected && (
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-muted-foreground">
                 If you believe this is an error or would like to reapply, please contact our support team.
               </p>
             )}
@@ -82,7 +82,7 @@ export function TutorStatusScreen({ status }: TutorStatusScreenProps) {
             <Button
               onClick={() => router.push('/register/tutor')}
               variant="outline"
-              className="w-full border-gray-600 text-gray-300 hover:bg-gray-800 font-semibold h-12 rounded-xl flex items-center justify-center gap-2"
+              className="w-full border-gray-600 text-muted-foreground hover:bg-gray-800 font-semibold h-12 rounded-xl flex items-center justify-center gap-2"
             >
               <GraduationCap className="h-4 w-4" />
               Browse Public Subjects
@@ -91,7 +91,7 @@ export function TutorStatusScreen({ status }: TutorStatusScreenProps) {
 
           {/* Navigation Restriction Notice */}
           <div className="p-4 rounded-lg bg-brand-dark/40 border border-brand-gold/10">
-            <p className="text-xs text-gray-400 text-center">
+            <p className="text-xs text-muted-foreground text-center">
               <span className="text-brand-gold font-medium">Navigation Restricted:</span> Access to tutor dashboard and student management is limited until your application is approved.
             </p>
           </div>
@@ -101,7 +101,7 @@ export function TutorStatusScreen({ status }: TutorStatusScreenProps) {
               <Button
                 onClick={() => router.push('/login')}
                 variant="ghost"
-                className="text-gray-400 hover:text-white text-sm"
+                className="text-muted-foreground hover:text-white text-sm"
               >
                 <ArrowRight className="h-4 w-4 mr-1" />
                 Logout

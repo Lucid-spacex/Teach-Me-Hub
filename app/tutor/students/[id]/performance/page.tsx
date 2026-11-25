@@ -77,7 +77,7 @@ export default function TutorStudentPerformancePage() {
             variant="ghost"
             size="sm"
             onClick={() => router.push(`/tutor/students/${studentId}`)}
-            className="gap-2 text-gray-300 hover:text-white"
+            className="gap-2 text-muted-foreground hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" />
             Back
@@ -87,7 +87,7 @@ export default function TutorStudentPerformancePage() {
             <h1 className="text-3xl font-serif font-bold text-white">
               {student?.fullName || 'Student'} Performance
             </h1>
-            <p className="text-sm text-gray-400">Track academic progress, attendance, and achievements</p>
+            <p className="text-sm text-muted-foreground">Track academic progress, attendance, and achievements</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -124,9 +124,9 @@ export default function TutorStudentPerformancePage() {
       ) : !performance ? (
         <Card className="bg-card border-brand-gold/30 text-center py-12">
           <CardContent>
-            <BarChart3 className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+            <BarChart3 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-white mb-1">No Performance Data</h3>
-            <p className="text-sm text-gray-400 max-w-sm mx-auto">
+            <p className="text-sm text-muted-foreground max-w-sm mx-auto">
               Performance data will appear here once the student has grades, attendance records, or completed assignments.
             </p>
           </CardContent>
@@ -140,11 +140,11 @@ export default function TutorStudentPerformancePage() {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs text-gray-400 uppercase tracking-wider">Average Grade</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider">Average Grade</p>
                     <p className="text-2xl font-bold text-white mt-1">
                       {formatPercentage(performance.averageGrade.percentage)}
                     </p>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-muted-foreground mt-1">
                       {performance.averageGrade.gradedCount} grade{performance.averageGrade.gradedCount !== 1 ? 's' : ''}
                     </p>
                   </div>
@@ -161,11 +161,11 @@ export default function TutorStudentPerformancePage() {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs text-gray-400 uppercase tracking-wider">Attendance</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider">Attendance</p>
                     <p className="text-2xl font-bold text-white mt-1">
                       {formatPercentage(performance.attendance.rate)}
                     </p>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-muted-foreground mt-1">
                       {performance.attendance.attended} attended / {performance.attendance.attended + performance.attendance.missed} total
                     </p>
                   </div>
@@ -182,11 +182,11 @@ export default function TutorStudentPerformancePage() {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs text-gray-400 uppercase tracking-wider">Assignments</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider">Assignments</p>
                     <p className="text-2xl font-bold text-white mt-1">
                       {formatPercentage(performance.assignments.completionRate)}
                     </p>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-muted-foreground mt-1">
                       {performance.assignments.completed} / {performance.assignments.total} completed
                     </p>
                   </div>
@@ -202,11 +202,11 @@ export default function TutorStudentPerformancePage() {
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs text-gray-400 uppercase tracking-wider">Quiz Average</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider">Quiz Average</p>
                     <p className="text-2xl font-bold text-white mt-1">
                       {performance.quizzes.attempts > 0 ? formatPercentage(performance.quizzes.averagePercentage) : 'N/A'}
                     </p>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-muted-foreground mt-1">
                       {performance.quizzes.attempts} attempt{performance.quizzes.attempts !== 1 ? 's' : ''}
                     </p>
                   </div>
@@ -226,7 +226,7 @@ export default function TutorStudentPerformancePage() {
                   <Clock className="h-5 w-5 text-amber-400 mt-0.5" />
                   <div>
                     <h4 className="font-medium text-amber-400">No Approved Grades Yet</h4>
-                    <p className="text-sm text-gray-300 mt-1">
+                    <p className="text-sm text-muted-foreground mt-1">
                       This student has not yet had any grades approved by admin. Grade averages are calculated only from approved grades.
                     </p>
                   </div>
@@ -245,7 +245,7 @@ export default function TutorStudentPerformancePage() {
                 <div className="space-y-3">
                   {performance.gradesBySubject.map((subject) => (
                     <div key={subject.subjectName} className="flex items-center justify-between">
-                      <span className="text-sm text-gray-300">{subject.subjectName}</span>
+                      <span className="text-sm text-muted-foreground">{subject.subjectName}</span>
                       <div className="flex items-center gap-3">
                         <div className="w-32 h-2 bg-brand-dark rounded-full overflow-hidden">
                           <div
@@ -256,7 +256,7 @@ export default function TutorStudentPerformancePage() {
                         <span className="text-sm font-medium text-white">
                           {formatPercentage(subject.averagePercentage)}
                         </span>
-                        <span className="text-xs text-gray-500">({subject.gradedCount})</span>
+                        <span className="text-xs text-muted-foreground">({subject.gradedCount})</span>
                       </div>
                     </div>
                   ))}
@@ -280,15 +280,15 @@ export default function TutorStudentPerformancePage() {
                     >
                       <div className="flex-1">
                         <p className="text-sm font-medium text-white">{grade.assignmentTitle}</p>
-                        <p className="text-xs text-gray-400">{grade.subjectName}</p>
+                        <p className="text-xs text-muted-foreground">{grade.subjectName}</p>
                       </div>
                       <div className="text-right">
                         <p className="text-sm font-bold text-white">
                           {grade.score} / {grade.maxScore}
                         </p>
-                        <p className="text-xs text-gray-400">{formatPercentage(grade.percentage)}</p>
+                        <p className="text-xs text-muted-foreground">{formatPercentage(grade.percentage)}</p>
                       </div>
-                      <div className="text-xs text-gray-500 flex items-center gap-1 ml-4">
+                      <div className="text-xs text-muted-foreground flex items-center gap-1 ml-4">
                         <Calendar className="h-3 w-3" />
                         {new Date(grade.createdAt).toLocaleDateString()}
                       </div>
@@ -308,23 +308,23 @@ export default function TutorStudentPerformancePage() {
               <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                 <div className="text-center p-3 rounded-lg bg-brand-dark/40 border border-brand-gold/10">
                   <p className="text-2xl font-bold text-white">{performance.assignments.total}</p>
-                  <p className="text-xs text-gray-400">Total</p>
+                  <p className="text-xs text-muted-foreground">Total</p>
                 </div>
                 <div className="text-center p-3 rounded-lg bg-green-950/20 border border-green-500/20">
                   <p className="text-2xl font-bold text-green-400">{performance.assignments.completed}</p>
-                  <p className="text-xs text-gray-400">Completed</p>
+                  <p className="text-xs text-muted-foreground">Completed</p>
                 </div>
                 <div className="text-center p-3 rounded-lg bg-blue-950/20 border border-blue-500/20">
                   <p className="text-2xl font-bold text-blue-400">{performance.assignments.pending}</p>
-                  <p className="text-xs text-gray-400">Pending</p>
+                  <p className="text-xs text-muted-foreground">Pending</p>
                 </div>
                 <div className="text-center p-3 rounded-lg bg-amber-950/20 border border-amber-500/20">
                   <p className="text-2xl font-bold text-amber-400">{performance.assignments.overdue}</p>
-                  <p className="text-xs text-gray-400">Overdue</p>
+                  <p className="text-xs text-muted-foreground">Overdue</p>
                 </div>
                 <div className="text-center p-3 rounded-lg bg-red-950/20 border border-red-500/20">
                   <p className="text-2xl font-bold text-red-400">{performance.assignments.submittedLate}</p>
-                  <p className="text-xs text-gray-400">Late</p>
+                  <p className="text-xs text-muted-foreground">Late</p>
                 </div>
               </div>
             </CardContent>

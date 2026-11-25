@@ -66,7 +66,7 @@ export default function StudentAttendancePage() {
             <div className="h-6 w-px bg-border" />
             <div>
               <h1 className="text-3xl font-serif font-bold text-white">Attendance Log</h1>
-              <p className="text-sm text-gray-400">Detailed record of attended and scheduled tutoring sessions</p>
+              <p className="text-sm text-muted-foreground">Detailed record of attended and scheduled tutoring sessions</p>
             </div>
           </div>
           <Button
@@ -85,7 +85,7 @@ export default function StudentAttendancePage() {
         <div className="grid gap-4 sm:grid-cols-3">
           <Card className="bg-card border-border">
             <CardHeader className="pb-2">
-              <CardTitle className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+              <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Attendance Rate
               </CardTitle>
             </CardHeader>
@@ -105,7 +105,7 @@ export default function StudentAttendancePage() {
 
           <Card className="bg-card border-border">
             <CardHeader className="pb-2">
-              <CardTitle className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+              <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Attended Lessons
               </CardTitle>
             </CardHeader>
@@ -123,7 +123,7 @@ export default function StudentAttendancePage() {
 
           <Card className="bg-card border-border">
             <CardHeader className="pb-2">
-              <CardTitle className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+              <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Missed / Absent
               </CardTitle>
             </CardHeader>
@@ -147,7 +147,7 @@ export default function StudentAttendancePage() {
               <Clock className="h-5 w-5 text-brand-gold" />
               Lesson Attendance History
             </CardTitle>
-            <CardDescription className="text-gray-400">
+            <CardDescription className="text-muted-foreground">
               Complete list of recorded class attendance sessions
             </CardDescription>
           </CardHeader>
@@ -157,7 +157,7 @@ export default function StudentAttendancePage() {
                 <LoadingSpinner size="lg" className="text-brand-gold" />
               </div>
             ) : sessions.length === 0 ? (
-              <div className="text-center py-12 text-gray-400 text-sm">
+              <div className="text-center py-12 text-muted-foreground text-sm">
                 No attendance records have been registered yet. Attendance will be recorded as your classes take place.
               </div>
             ) : (
@@ -182,7 +182,7 @@ export default function StudentAttendancePage() {
                             year: 'numeric',
                           })}
                         </p>
-                        <p className="text-xs text-gray-400">
+                        <p className="text-xs text-muted-foreground">
                           {new Date(record.sessionDate).toLocaleTimeString(undefined, {
                             hour: '2-digit',
                             minute: '2-digit',

@@ -212,7 +212,7 @@ export default function AdminParentsPage() {
             variant="ghost"
             size="sm"
             onClick={() => setSelectedParent(null)}
-            className="gap-2 text-gray-300 hover:text-white"
+            className="gap-2 text-muted-foreground hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Directory
@@ -220,7 +220,7 @@ export default function AdminParentsPage() {
           <div className="h-6 w-px bg-border" />
           <div>
             <h1 className="text-3xl font-serif font-bold text-white">Parent Profile</h1>
-            <p className="text-sm text-gray-400">{selectedParent.parent?.fullName || selectedParent.fullName}</p>
+            <p className="text-sm text-muted-foreground">{selectedParent.parent?.fullName || selectedParent.fullName}</p>
           </div>
         </div>
 
@@ -238,7 +238,7 @@ export default function AdminParentsPage() {
                     <Users className="h-5 w-5 text-brand-gold" />
                     <div>
                       <p className="text-2xl font-bold text-white">{selectedParent.parent?.childrenCount || 0}</p>
-                      <p className="text-xs text-gray-400">Children</p>
+                      <p className="text-xs text-muted-foreground">Children</p>
                     </div>
                   </div>
                 </CardContent>
@@ -249,7 +249,7 @@ export default function AdminParentsPage() {
                     <User className="h-5 w-5 text-brand-gold" />
                     <div>
                       <p className="text-2xl font-bold text-white">{selectedParent.parent?.activeEnrollments || 0}</p>
-                      <p className="text-xs text-gray-400">Active Enrollments</p>
+                      <p className="text-xs text-muted-foreground">Active Enrollments</p>
                     </div>
                   </div>
                 </CardContent>
@@ -260,7 +260,7 @@ export default function AdminParentsPage() {
                     <DollarSign className="h-5 w-5 text-brand-gold" />
                     <div>
                       <p className="text-2xl font-bold text-white">₦{(selectedParent.parent?.totalPaidNGN || 0).toLocaleString()}</p>
-                      <p className="text-xs text-gray-400">Total Paid (NGN)</p>
+                      <p className="text-xs text-muted-foreground">Total Paid (NGN)</p>
                     </div>
                   </div>
                 </CardContent>
@@ -271,7 +271,7 @@ export default function AdminParentsPage() {
                     <DollarSign className="h-5 w-5 text-brand-gold" />
                     <div>
                       <p className="text-2xl font-bold text-white">${(selectedParent.parent?.totalPaidUSD || 0).toLocaleString()}</p>
-                      <p className="text-xs text-gray-400">Total Paid (USD)</p>
+                      <p className="text-xs text-muted-foreground">Total Paid (USD)</p>
                     </div>
                   </div>
                 </CardContent>
@@ -282,7 +282,7 @@ export default function AdminParentsPage() {
                     <AlertCircle className="h-5 w-5 text-brand-gold" />
                     <div>
                       <p className="text-2xl font-bold text-white">{selectedParent.parent?.pendingPayments || 0}</p>
-                      <p className="text-xs text-gray-400">Pending Payments</p>
+                      <p className="text-xs text-muted-foreground">Pending Payments</p>
                     </div>
                   </div>
                 </CardContent>
@@ -311,27 +311,27 @@ export default function AdminParentsPage() {
               <CardContent>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <p className="text-gray-400">Full Name</p>
+                    <p className="text-muted-foreground">Full Name</p>
                     <p className="text-white">{selectedParent.parent?.fullName || selectedParent.fullName || 'N/A'}</p>
                   </div>
                   <div>
-                    <p className="text-gray-400">Email</p>
+                    <p className="text-muted-foreground">Email</p>
                     <p className="text-white">{selectedParent.parent?.email || selectedParent.email || 'N/A'}</p>
                   </div>
                   <div>
-                    <p className="text-gray-400">Phone</p>
+                    <p className="text-muted-foreground">Phone</p>
                     <p className="text-white">{selectedParent.parent?.phone || selectedParent.phone || 'N/A'}</p>
                   </div>
                   <div>
-                    <p className="text-gray-400">Timezone</p>
+                    <p className="text-muted-foreground">Timezone</p>
                     <p className="text-white">{selectedParent.parent?.timezone || selectedParent.timezone || 'N/A'}</p>
                   </div>
                   <div>
-                    <p className="text-gray-400">Status</p>
+                    <p className="text-muted-foreground">Status</p>
                     <StatusBadge status={(selectedParent.parent?.status || selectedParent.status) as UserStatus} />
                   </div>
                   <div>
-                    <p className="text-gray-400">Account Created</p>
+                    <p className="text-muted-foreground">Account Created</p>
                     <p className="text-white">{new Date(selectedParent.parent?.createdAt || selectedParent.createdAt || '').toLocaleDateString()}</p>
                   </div>
                 </div>
@@ -350,7 +350,7 @@ export default function AdminParentsPage() {
                       <div className="flex items-start justify-between">
                         <div>
                           <p className="font-medium text-white text-lg">{child.fullName}</p>
-                          <div className="flex items-center gap-3 text-sm text-gray-400 mt-1">
+                          <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
                             <span>Grade: {child.actualGrade || child.gradeLevel}</span>
                             <span>•</span>
                             <span>Grade Band: {child.gradeBandTier}</span>
@@ -360,19 +360,19 @@ export default function AdminParentsPage() {
                       </div>
                       {child.school && (
                         <div>
-                          <p className="text-xs text-gray-400">School</p>
+                          <p className="text-xs text-muted-foreground">School</p>
                           <p className="text-white text-sm">{child.school}</p>
                         </div>
                       )}
                       {child.notes && (
                         <div>
-                          <p className="text-xs text-gray-400">Notes</p>
+                          <p className="text-xs text-muted-foreground">Notes</p>
                           <p className="text-white text-sm">{child.notes}</p>
                         </div>
                       )}
                       {child.enrollments && child.enrollments.length > 0 && (
                         <div className="pt-2 border-t border-border">
-                          <p className="text-xs text-gray-400 mb-2">Enrollments ({child.enrollments.length})</p>
+                          <p className="text-xs text-muted-foreground mb-2">Enrollments ({child.enrollments.length})</p>
                           <div className="space-y-2">
                             {child.enrollments.map((enrollment: any) => (
                               <div key={enrollment.id} className="p-2 bg-brand-dark/20 rounded text-sm">
@@ -381,7 +381,7 @@ export default function AdminParentsPage() {
                                   <StatusBadge status={enrollment.status} />
                                 </div>
                                 {enrollment.tutor && (
-                                  <p className="text-gray-400 text-xs mt-1">Tutor: {enrollment.tutor.fullName}</p>
+                                  <p className="text-muted-foreground text-xs mt-1">Tutor: {enrollment.tutor.fullName}</p>
                                 )}
                               </div>
                             ))}
@@ -409,8 +409,8 @@ export default function AdminParentsPage() {
                             <p className="font-medium text-white">{enrollment.studentName}</p>
                             <StatusBadge status={enrollment.status} />
                           </div>
-                          <p className="text-sm text-gray-400">{enrollment.subjectName}</p>
-                          <p className="text-xs text-gray-500 mt-1">
+                          <p className="text-sm text-muted-foreground">{enrollment.subjectName}</p>
+                          <p className="text-xs text-muted-foreground mt-1">
                             Category: {enrollment.subjectCategory} • Grade Band: {enrollment.subjectGradeBand}
                           </p>
                         </div>
@@ -427,35 +427,35 @@ export default function AdminParentsPage() {
 
                       <div className="grid grid-cols-2 gap-4 text-sm pt-2 border-t border-border">
                         <div>
-                          <p className="text-gray-400">Tutor</p>
+                          <p className="text-muted-foreground">Tutor</p>
                           <p className="text-white">{enrollment.tutorName || 'Unassigned'}</p>
                         </div>
                         <div>
-                          <p className="text-gray-400">Session Frequency</p>
+                          <p className="text-muted-foreground">Session Frequency</p>
                           <p className="text-white">{enrollment.sessionFrequency || 'N/A'}</p>
                         </div>
                         <div>
-                          <p className="text-gray-400">Available Days</p>
+                          <p className="text-muted-foreground">Available Days</p>
                           <p className="text-white">{enrollment.availableDays?.join(', ') || 'N/A'}</p>
                         </div>
                         <div>
-                          <p className="text-gray-400">Billing Frequency</p>
+                          <p className="text-muted-foreground">Billing Frequency</p>
                           <p className="text-white">{enrollment.billingFrequency || 'N/A'}</p>
                         </div>
                         <div>
-                          <p className="text-gray-400">Yearly Price</p>
+                          <p className="text-muted-foreground">Yearly Price</p>
                           <p className="text-white">${enrollment.yearlyPrice || 'N/A'}</p>
                         </div>
                         <div>
-                          <p className="text-gray-400">Effective Price (NGN)</p>
+                          <p className="text-muted-foreground">Effective Price (NGN)</p>
                           <p className="text-white">₦{enrollment.effectivePriceNGN?.toLocaleString() || 'N/A'}</p>
                         </div>
                         <div>
-                          <p className="text-gray-400">Effective Price (USD)</p>
+                          <p className="text-muted-foreground">Effective Price (USD)</p>
                           <p className="text-white">${enrollment.effectivePriceUSD?.toLocaleString() || 'N/A'}</p>
                         </div>
                         <div>
-                          <p className="text-gray-400">Price Source</p>
+                          <p className="text-muted-foreground">Price Source</p>
                           <p className={`text-xs font-medium ${enrollment.priceSource === 'error' ? 'text-red-400' : 'text-brand-gold'}`}>
                             {enrollment.priceSource === 'error' ? 'Not Configured' : enrollment.priceSource}
                           </p>
@@ -466,21 +466,21 @@ export default function AdminParentsPage() {
                           )}
                         </div>
                         <div>
-                          <p className="text-gray-400">Start Date</p>
+                          <p className="text-muted-foreground">Start Date</p>
                           <p className="text-white">{enrollment.startDate ? new Date(enrollment.startDate).toLocaleDateString() : 'N/A'}</p>
                         </div>
                         <div>
-                          <p className="text-gray-400">Pending Payment</p>
+                          <p className="text-muted-foreground">Pending Payment</p>
                           <p className="text-white">{enrollment.hasPendingPayment ? 'Yes' : 'No'}</p>
                         </div>
                       </div>
 
                       {enrollment.payments && enrollment.payments.length > 0 && (
                         <div className="pt-2 border-t border-border">
-                          <p className="text-xs text-gray-400 mb-2">Payments ({enrollment.payments.length})</p>
+                          <p className="text-xs text-muted-foreground mb-2">Payments ({enrollment.payments.length})</p>
                           <div className="space-y-1">
                             {enrollment.payments.map((payment: any) => (
-                              <div key={payment.id} className="text-xs text-gray-300">
+                              <div key={payment.id} className="text-xs text-muted-foreground">
                                 Payment ID: {payment.id} - Status: {payment.status}
                               </div>
                             ))}
@@ -505,7 +505,7 @@ export default function AdminParentsPage() {
                       <div key={payment.id} className="flex items-center justify-between p-3 bg-brand-dark/30 rounded-lg">
                         <div>
                           <p className="font-medium text-white">{payment.studentName}</p>
-                          <p className="text-sm text-gray-400">{payment.subjectName} • {payment.reference}</p>
+                          <p className="text-sm text-muted-foreground">{payment.subjectName} • {payment.reference}</p>
                         </div>
                         <div className="text-right">
                           <p className="font-medium text-white">
@@ -529,14 +529,14 @@ export default function AdminParentsPage() {
             <Card className="bg-card border-brand-gold/30 w-full max-w-md">
               <CardHeader>
                 <CardTitle className="text-white">Update Enrollment Pricing</CardTitle>
-                <CardDescription className="text-gray-400">
+                <CardDescription className="text-muted-foreground">
                   {selectedEnrollment.studentName} - {selectedEnrollment.subjectName}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="price-ngn" className="text-gray-300">Override Price (NGN)</Label>
+                    <Label htmlFor="price-ngn" className="text-muted-foreground">Override Price (NGN)</Label>
                     <Input
                       id="price-ngn"
                       type="number"
@@ -545,10 +545,10 @@ export default function AdminParentsPage() {
                       placeholder="Leave empty to use default pricing"
                       className="bg-brand-dark/30 border-brand-gold/30 text-white mt-2"
                     />
-                    <p className="text-xs text-gray-500 mt-1">Current: ₦{selectedEnrollment.effectivePriceNGN?.toLocaleString() || 'N/A'}</p>
+                    <p className="text-xs text-muted-foreground mt-1">Current: ₦{selectedEnrollment.effectivePriceNGN?.toLocaleString() || 'N/A'}</p>
                   </div>
                   <div>
-                    <Label htmlFor="price-usd" className="text-gray-300">Override Price (USD)</Label>
+                    <Label htmlFor="price-usd" className="text-muted-foreground">Override Price (USD)</Label>
                     <Input
                       id="price-usd"
                       type="number"
@@ -557,7 +557,7 @@ export default function AdminParentsPage() {
                       placeholder="Leave empty to use default pricing"
                       className="bg-brand-dark/30 border-brand-gold/30 text-white mt-2"
                     />
-                    <p className="text-xs text-gray-500 mt-1">Current: ${selectedEnrollment.effectivePriceUSD?.toLocaleString() || 'N/A'}</p>
+                    <p className="text-xs text-muted-foreground mt-1">Current: ${selectedEnrollment.effectivePriceUSD?.toLocaleString() || 'N/A'}</p>
                   </div>
                   <div className="flex gap-2 justify-end pt-4">
                     <Button
@@ -593,7 +593,7 @@ export default function AdminParentsPage() {
         <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-3xl font-serif font-bold text-white">Parent Directory</h1>
-          <p className="text-sm text-gray-400">Manage parent accounts and view enrollment details</p>
+          <p className="text-sm text-muted-foreground">Manage parent accounts and view enrollment details</p>
         </div>
       </div>
 
@@ -602,13 +602,13 @@ export default function AdminParentsPage() {
         <CardContent className="pt-6">
           <form onSubmit={handleSearch} className="flex gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 type="text"
                 placeholder="Search by name, email, or phone..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-10 bg-brand-dark/30 border-brand-gold/30 text-white placeholder:text-gray-500"
+                className="pl-10 bg-brand-dark/30 border-brand-gold/30 text-white placeholder:text-muted-foreground"
               />
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -637,9 +637,9 @@ export default function AdminParentsPage() {
       ) : parents.length === 0 ? (
         <Card className="bg-card border-brand-gold/30 text-center py-16">
           <CardContent>
-            <User className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+            <User className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-white mb-1">No Parents Found</h3>
-            <p className="text-sm text-gray-400">Try adjusting your search or filters</p>
+            <p className="text-sm text-muted-foreground">Try adjusting your search or filters</p>
           </CardContent>
         </Card>
       ) : (
@@ -659,16 +659,16 @@ export default function AdminParentsPage() {
                       </div>
                       <div>
                         <p className="font-medium text-white">{parent.fullName}</p>
-                        <p className="text-sm text-gray-400">{parent.email} {parent.phone && `• ${parent.phone}`}</p>
+                        <p className="text-sm text-muted-foreground">{parent.email} {parent.phone && `• ${parent.phone}`}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-4">
                       <div className="text-right text-sm">
-                        <p className="text-gray-400">{parent.childrenCount} children</p>
-                        <p className="text-gray-400">{parent.activeEnrollments} active</p>
+                        <p className="text-muted-foreground">{parent.childrenCount} children</p>
+                        <p className="text-muted-foreground">{parent.activeEnrollments} active</p>
                       </div>
                       <StatusBadge status={parent.status as UserStatus} />
-                      <ChevronRight className="h-5 w-5 text-gray-500" />
+                      <ChevronRight className="h-5 w-5 text-muted-foreground" />
                     </div>
                   </button>
                 ))}
@@ -688,7 +688,7 @@ export default function AdminParentsPage() {
               >
                 Previous
               </Button>
-              <span className="text-sm text-gray-400">
+              <span className="text-sm text-muted-foreground">
                 Page {page} of {totalPages} ({total} total)
               </span>
               <Button

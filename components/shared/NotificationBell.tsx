@@ -148,11 +148,11 @@ export function NotificationBell() {
         className="relative"
         aria-label={`Notifications ${unreadCount > 0 ? `(${displayCount} unread)` : ''}`}
       >
-        <Bell className="h-5 w-5" />
+            <Bell className="size-5" aria-hidden="true" />
         {unreadCount > 0 && (
           <Badge
             variant="destructive"
-            className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
+            className="notification-count absolute -right-1 -top-1 grid size-5 place-items-center p-0 text-[10px] font-bold"
           >
             {displayCount}
           </Badge>
@@ -165,7 +165,7 @@ export function NotificationBell() {
             className="fixed inset-0 z-40"
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute right-0 top-full mt-2 w-80 bg-background border rounded-lg shadow-lg z-50">
+          <div className="absolute right-0 top-full z-50 mt-2 w-[calc(100vw-2rem)] max-w-sm overflow-hidden rounded-3xl border border-border/80 bg-card text-card-foreground shadow-[var(--shadow-soft)]">
             <div className="p-4 border-b">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="font-semibold">Notifications</h3>
@@ -173,9 +173,10 @@ export function NotificationBell() {
                   variant="ghost"
                   size="sm"
                   onClick={() => setIsOpen(false)}
-                  className="h-8 w-8 p-0"
+                  className="size-9 p-0"
+                  aria-label="Close notifications"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="size-4" aria-hidden="true" />
                 </Button>
               </div>
               <div className="flex items-center justify-between">

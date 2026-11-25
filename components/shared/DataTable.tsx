@@ -7,12 +7,13 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { EmptyState } from "./EmptyState"
-import { LucideIcon } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
+import type { ReactNode } from "react"
 
 interface Column<T> {
   key: string
   header: string
-  cell: (item: T) => React.ReactNode
+  cell: (item: T) => ReactNode
 }
 
 interface DataTableProps<T> {
@@ -29,8 +30,8 @@ interface DataTableProps<T> {
 export function DataTable<T>({ data, columns, emptyState, loading }: DataTableProps<T>) {
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-sm text-muted-foreground">Loading...</div>
+      <div className="flex items-center justify-center rounded-3xl border border-border/70 bg-card py-12 text-sm text-muted-foreground shadow-[var(--shadow-soft)]">
+        Loading...
       </div>
     )
   }
@@ -46,25 +47,52 @@ export function DataTable<T>({ data, columns, emptyState, loading }: DataTablePr
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-border/80 bg-card shadow-sm">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            {columns.map((column) => (
-              <TableHead key={column.key}>{column.header}</TableHead>
-            ))}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {data.map((item, index) => (
-            <TableRow key={index}>
+    <div className="min-w-0 overflow-hidden rounded-3xl border border-border/70 bg-card shadow-[var(--shadow-soft)]">
+      <div className="hidden overflow-x-auto lg:block">
+        <Table>
+          <TableHeader>
+            <TableRow>
               {columns.map((column) => (
-                <TableCell key={column.key}>{column.cell(item)}</TableCell>
+                <TableHead key={column.key}>{column.header}</TableHead>
               ))}
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {data.map((item, index) => (
+              <TableRow key={index}>
+                {columns.map((column) => (
+                  <TableCell key={column.key}>{column.cell(item)}</TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+      <div className="flex flex-col gap-3 p-3 lg:hidden" role="list">
+        {data.map((item, index) => (
+          <article
+            key={index}
+            className="rounded-2xl border border-border/70 bg-background p-4"
+            role="listitem"
+          >
+            <dl className="flex flex-col gap-3">
+              {columns.map((column) => (
+                <div
+                  key={column.key}
+                  className="grid grid-cols-[minmax(5.25rem,0.35fr)_minmax(0,1fr)] items-start gap-3"
+                >
+                  <dt className="pt-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+                    {column.header || "Actions"}
+                  </dt>
+                  <dd className="min-w-0 break-words text-right text-sm font-medium [&_a]:break-all">
+                    {column.cell(item)}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </article>
+        ))}
+      </div>
     </div>
   )
 }

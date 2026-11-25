@@ -49,7 +49,7 @@ export default function TutorsContent() {
                 </button>
               </div>
             </div>
-            <div className="relative hidden lg:block">
+            <div className="relative hidden md:block">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-yellow-500/20 rounded-3xl blur-3xl" />
               <div className="relative rounded-3xl border border-border bg-card p-8 shadow-2xl">
                 <div className="flex items-center gap-4 mb-6">

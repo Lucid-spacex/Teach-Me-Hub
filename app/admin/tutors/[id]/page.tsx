@@ -254,7 +254,7 @@ export default function AdminTutorDetailPage() {
             variant="ghost"
             size="sm"
             onClick={() => router.push('/admin/tutors')}
-            className="gap-2 text-gray-300 hover:text-white"
+            className="gap-2 text-muted-foreground hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Tutors
@@ -262,7 +262,7 @@ export default function AdminTutorDetailPage() {
         </div>
         <Card className="bg-card border-brand-gold/30 text-center py-16">
           <CardContent>
-            <p className="text-gray-400">Tutor not found</p>
+            <p className="text-muted-foreground">Tutor not found</p>
           </CardContent>
         </Card>
         </div>
@@ -288,7 +288,7 @@ export default function AdminTutorDetailPage() {
             variant="ghost"
             size="sm"
             onClick={() => router.push('/admin/tutors')}
-            className="gap-2 text-gray-300 hover:text-white"
+            className="gap-2 text-muted-foreground hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Tutors
@@ -296,7 +296,7 @@ export default function AdminTutorDetailPage() {
           <div className="h-6 w-px bg-border" />
           <div>
             <h1 className="text-3xl font-serif font-bold text-white">Tutor Profile</h1>
-            <p className="text-sm text-gray-400">{user?.fullName || 'Tutor'}</p>
+            <p className="text-sm text-muted-foreground">{user?.fullName || 'Tutor'}</p>
           </div>
         </div>
         <div className="flex gap-2">
@@ -371,7 +371,7 @@ export default function AdminTutorDetailPage() {
                 />
                 <div className="flex-1">
                   <h3 className="text-xl font-bold text-white">{user?.fullName || 'Tutor'}</h3>
-                  <div className="flex items-center gap-4 mt-2 text-sm text-gray-400">
+                  <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
                     <span className="flex items-center gap-1">
                       <Mail className="h-4 w-4" />
                       {user?.email}
@@ -406,23 +406,23 @@ export default function AdminTutorDetailPage() {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <p className="text-gray-400">First Name</p>
+                    <p className="text-muted-foreground">First Name</p>
                     <p className="text-white">{user?.firstName || application?.firstName || rawData?.firstName || '-'}</p>
                   </div>
                   <div>
-                    <p className="text-gray-400">Last Name</p>
+                    <p className="text-muted-foreground">Last Name</p>
                     <p className="text-white">{user?.lastName || application?.lastName || rawData?.lastName || '-'}</p>
                   </div>
                   <div>
-                    <p className="text-gray-400">Middle Name</p>
+                    <p className="text-muted-foreground">Middle Name</p>
                     <p className="text-white">{user?.middleName || application?.middleName || rawData?.middleName || '-'}</p>
                   </div>
                   <div>
-                    <p className="text-gray-400">Phone</p>
+                    <p className="text-muted-foreground">Phone</p>
                     <p className="text-white">{user?.phone || application?.phone || rawData?.phone || '-'}</p>
                   </div>
                   <div>
-                    <p className="text-gray-400">Birthday</p>
+                    <p className="text-muted-foreground">Birthday</p>
                     <p className="text-white">
                       {application?.birthDay && application?.birthMonth
                         ? `${application.birthDay}/${application.birthMonth}`
@@ -430,20 +430,20 @@ export default function AdminTutorDetailPage() {
                     </p>
                   </div>
                   <div>
-                    <p className="text-gray-400">Location</p>
+                    <p className="text-muted-foreground">Location</p>
                     <p className="text-white">{[application?.city, application?.country].filter(Boolean).join(', ') || '-'}</p>
                   </div>
                   <div>
-                    <p className="text-gray-400">Qualification</p>
+                    <p className="text-muted-foreground">Qualification</p>
                     <p className="text-white">{application?.highestQualification || '-'}</p>
                   </div>
                   <div>
-                    <p className="text-gray-400">Years of Experience</p>
+                    <p className="text-muted-foreground">Years of Experience</p>
                     <p className="text-white">{application?.yearsOfExperience ?? 0}</p>
                   </div>
                 </div>
                 <div>
-                  <p className="text-gray-400 text-sm">Subjects</p>
+                  <p className="text-muted-foreground text-sm">Subjects</p>
                   <p className="text-white text-sm">
                     {Array.isArray(application?.subjects) && application.subjects.length > 0
                       ? application.subjects.map((s: any) => (typeof s === 'string' ? s : s?.name || JSON.stringify(s))).filter(Boolean).join(', ')
@@ -451,19 +451,19 @@ export default function AdminTutorDetailPage() {
                   </p>
                 </div>
                 <div>
-                  <p className="text-gray-400 text-sm">Levels</p>
+                  <p className="text-muted-foreground text-sm">Levels</p>
                   <p className="text-white text-sm">{Array.isArray(application?.levels) ? application.levels.join(', ') : application?.levels || 'None'}</p>
                 </div>
                 <div>
-                  <p className="text-gray-400 text-sm">Why Teach</p>
+                  <p className="text-muted-foreground text-sm">Why Teach</p>
                   <p className="text-white text-sm">{application?.whyTeach || '-'}</p>
                 </div>
                 <div>
-                  <p className="text-gray-400 text-sm">How Heard</p>
+                  <p className="text-muted-foreground text-sm">How Heard</p>
                   <p className="text-white text-sm">{application?.howHeard || '-'}</p>
                 </div>
                 <div>
-                  <p className="text-gray-400 text-sm">About You</p>
+                  <p className="text-muted-foreground text-sm">About You</p>
                   <p className="text-white text-sm whitespace-pre-wrap">
                     {Array.isArray(application?.aboutYou) ? application.aboutYou.join('\n') : application?.aboutYou || '-'}
                   </p>
@@ -486,7 +486,7 @@ export default function AdminTutorDetailPage() {
                   {application.documents.map((doc: TutorDocument) => (
                     <div key={doc.id} className="flex items-center justify-between p-3 bg-brand-dark/30 rounded-lg">
                       <div className="flex items-center gap-3">
-                        <FileText className="h-4 w-4 text-gray-400" />
+                        <FileText className="h-4 w-4 text-muted-foreground" />
                         <span className="text-sm">{doc.fileName}</span>
                       </div>
                       <Button
@@ -517,11 +517,11 @@ export default function AdminTutorDetailPage() {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <p className="text-gray-400">Bio</p>
+                    <p className="text-muted-foreground">Bio</p>
                     <p className="text-white">{profile.bio || '-'}</p>
                   </div>
                   <div>
-                    <p className="text-gray-400">Monthly Salary (NGN)</p>
+                    <p className="text-muted-foreground">Monthly Salary (NGN)</p>
                     <div className="flex items-center gap-2">
                       <p className="text-white">{profile.monthlySalaryNGN ? `₦${profile.monthlySalaryNGN.toLocaleString()}` : 'Not set'}</p>
                       <Button
@@ -538,19 +538,19 @@ export default function AdminTutorDetailPage() {
                     )}
                   </div>
                   <div>
-                    <p className="text-gray-400">Availability Status</p>
+                    <p className="text-muted-foreground">Availability Status</p>
                     <StatusBadge status={profile?.availabilityStatus || 'NOT_SET'} />
                   </div>
                   <div>
-                    <p className="text-gray-400">Max Students</p>
+                    <p className="text-muted-foreground">Max Students</p>
                     <p className="text-white">{profile?.maxStudents !== null && profile?.maxStudents !== undefined && profile?.maxStudents !== 0 ? profile.maxStudents : 'Not set'}</p>
                   </div>
                   <div>
-                    <p className="text-gray-400">Current Students</p>
+                    <p className="text-muted-foreground">Current Students</p>
                     <p className="text-white">{metrics?.studentsCount ?? metrics?.currentStudents ?? profile?.currentStudentCount ?? students.length ?? 0}</p>
                   </div>
                   <div>
-                    <p className="text-gray-400">Status Note</p>
+                    <p className="text-muted-foreground">Status Note</p>
                     <p className="text-white">{profile?.statusNote || '-'}</p>
                   </div>
                 </div>
@@ -579,7 +579,7 @@ export default function AdminTutorDetailPage() {
               {activeTab === 'students' && (
                 <div className="space-y-2">
                   {students.length === 0 ? (
-                    <p className="text-sm text-gray-400">No students assigned</p>
+                    <p className="text-sm text-muted-foreground">No students assigned</p>
                   ) : (
                     students.map((ts, idx) => {
                       const studentName = ts.student?.fullName || (ts.student as any)?.name || 'Student'
@@ -591,7 +591,7 @@ export default function AdminTutorDetailPage() {
                         <div key={enrollId} className="p-3 bg-brand-dark/30 rounded-lg flex items-center justify-between">
                           <div>
                             <p className="text-white text-sm font-medium">{studentName}</p>
-                            <p className="text-xs text-gray-400">
+                            <p className="text-xs text-muted-foreground">
                               {grade} • {subjectName}
                               {freq && ` • ${freq}`}
                             </p>
@@ -615,13 +615,13 @@ export default function AdminTutorDetailPage() {
               {activeTab === 'sessions' && (
                 <div className="space-y-2">
                   {sessions.length === 0 ? (
-                    <p className="text-sm text-gray-400">No sessions scheduled</p>
+                    <p className="text-sm text-muted-foreground">No sessions scheduled</p>
                   ) : (
                     sessions.slice(0, 10).map((session) => (
                       <div key={session.id} className="p-3 bg-brand-dark/30 rounded-lg flex justify-between">
                         <div>
                           <p className="text-white text-sm">{new Date(session.scheduledAt).toLocaleString()}</p>
-                          <p className="text-xs text-gray-400">{session.durationMinutes} min</p>
+                          <p className="text-xs text-muted-foreground">{session.durationMinutes} min</p>
                         </div>
                         <StatusBadge status={session.status} />
                       </div>
@@ -630,19 +630,19 @@ export default function AdminTutorDetailPage() {
                 </div>
               )}
               {activeTab === 'grades' && (
-                <p className="text-sm text-gray-400">Grades data would be loaded from paginated sub-resource</p>
+                <p className="text-sm text-muted-foreground">Grades data would be loaded from paginated sub-resource</p>
               )}
               {activeTab === 'reports' && (
-                <p className="text-sm text-gray-400">Reports data would be loaded from paginated sub-resource</p>
+                <p className="text-sm text-muted-foreground">Reports data would be loaded from paginated sub-resource</p>
               )}
               {activeTab === 'overview' && (
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <p className="text-gray-400">Total Sessions</p>
+                    <p className="text-muted-foreground">Total Sessions</p>
                     <p className="text-white">{metrics?.totalSessions ?? metrics?.sessionsCompleted ?? sessions.length ?? 0}</p>
                   </div>
                   <div>
-                    <p className="text-gray-400">Total Students</p>
+                    <p className="text-muted-foreground">Total Students</p>
                     <p className="text-white">{metrics?.totalStudents ?? metrics?.studentsCount ?? profile?.currentStudentCount ?? students.length ?? 0}</p>
                   </div>
                 </div>
@@ -751,7 +751,7 @@ export default function AdminTutorDetailPage() {
               className="w-full mt-2 bg-brand-dark/30 border border-brand-gold/30 rounded-lg p-3 text-white"
               placeholder="Enter salary amount"
             />
-            <p className="text-xs text-gray-400 mt-1">Enter a positive integer value</p>
+            <p className="text-xs text-muted-foreground mt-1">Enter a positive integer value</p>
           </div>
           <div>
             <label className="text-sm font-medium">Reason (Optional)</label>
@@ -784,9 +784,9 @@ export default function AdminTutorDetailPage() {
                       <p className="text-white">
                         {history.oldValue ? `₦${history.oldValue.toLocaleString()} → ₦${history.newValue.toLocaleString()}` : `Set to ₦${history.newValue.toLocaleString()}`}
                       </p>
-                      {history.reason && <p className="text-xs text-gray-400 mt-1">{history.reason}</p>}
+                      {history.reason && <p className="text-xs text-muted-foreground mt-1">{history.reason}</p>}
                     </div>
-                    <p className="text-xs text-gray-400">{new Date(history.createdAt).toLocaleString()}</p>
+                    <p className="text-xs text-muted-foreground">{new Date(history.createdAt).toLocaleString()}</p>
                   </div>
                 </div>
               ))}

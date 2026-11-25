@@ -151,7 +151,7 @@ export function ProfilePictureUpload({
               size="icon"
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading}
-              className="text-white hover:text-white hover:bg-white/20"
+              className="text-white hover:text-white hover:bg-card/20"
             >
               {uploading ? (
                 <Loader2 className="h-5 w-5 animate-spin" />

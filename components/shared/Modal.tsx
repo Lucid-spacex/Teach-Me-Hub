@@ -6,8 +6,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { X } from "lucide-react"
+import { Sparkles } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 interface ModalProps {
   open?: boolean
@@ -44,22 +44,21 @@ export function Modal({
 
   return (
     <Dialog open={isModalOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className={className || "sm:max-w-[500px]"}>
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          {description && <DialogDescription>{description}</DialogDescription>}
+      <DialogContent
+        showCloseButton={showCloseButton}
+        className={cn("modal-split w-[calc(100%-2rem)] md:max-w-5xl", className)}
+      >
+        <DialogHeader className="modal-split__aside">
+          <div className="grid size-12 place-items-center rounded-2xl border border-primary/20 bg-primary/10 text-primary">
+            <Sparkles className="size-5" aria-hidden="true" />
+          </div>
+          <DialogTitle className="font-display text-2xl leading-tight tracking-tight sm:text-3xl">{title}</DialogTitle>
+          {description && <DialogDescription className="max-w-xs text-sm leading-6">{description}</DialogDescription>}
         </DialogHeader>
-        <div className="py-4">{children}</div>
-        {footer && <DialogFooter>{footer}</DialogFooter>}
-        {showCloseButton && (
-          <button
-            onClick={() => handleOpenChange(false)}
-            className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-          >
-            <X className="h-4 w-4" />
-            <span className="sr-only">Close</span>
-          </button>
-        )}
+        <div className="modal-split__main">
+          <div className="modal-split__scroll">{children}</div>
+          {footer && <DialogFooter className="modal-split__footer">{footer}</DialogFooter>}
+        </div>
       </DialogContent>
     </Dialog>
   )

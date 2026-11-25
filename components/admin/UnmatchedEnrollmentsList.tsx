@@ -143,7 +143,7 @@ export function UnmatchedEnrollmentsList({ onUpdate, refreshTrigger }: Unmatched
       cell: (enrollment: OutstandingEnrollment) => (
         <div>
           <div className="font-medium text-white">{enrollment.student.fullName}</div>
-          <div className="text-xs text-gray-400">{enrollment.student.gradeLevel}</div>
+          <div className="text-xs text-muted-foreground">{enrollment.student.gradeLevel}</div>
         </div>
       ),
     },
@@ -162,7 +162,7 @@ export function UnmatchedEnrollmentsList({ onUpdate, refreshTrigger }: Unmatched
       cell: (enrollment: OutstandingEnrollment) => (
         <div>
           <div className="font-medium text-white">{enrollment.parent.fullName}</div>
-          <div className="text-xs text-gray-400">{enrollment.parent.email}</div>
+          <div className="text-xs text-muted-foreground">{enrollment.parent.email}</div>
         </div>
       ),
     },
@@ -170,7 +170,7 @@ export function UnmatchedEnrollmentsList({ onUpdate, refreshTrigger }: Unmatched
       key: 'daysWaiting',
       header: 'Days Waiting',
       cell: (enrollment: OutstandingEnrollment) => (
-        <div className="text-gray-300">{enrollment.daysWaiting} days</div>
+        <div className="text-muted-foreground">{enrollment.daysWaiting} days</div>
       ),
     },
     {
@@ -213,7 +213,7 @@ export function UnmatchedEnrollmentsList({ onUpdate, refreshTrigger }: Unmatched
               onClick={() => setIncludeUnpaid(!includeUnpaid)}
               className={includeUnpaid 
                 ? "bg-brand-gold text-brand-dark hover:bg-brand-goldLight text-xs" 
-                : "border-brand-gold/40 text-gray-300 hover:text-white text-xs"}
+                : "border-brand-gold/40 text-muted-foreground hover:text-white text-xs"}
             >
               {includeUnpaid ? "Showing Unpaid Included" : "Include Unpaid"}
             </Button>
@@ -263,23 +263,23 @@ export function UnmatchedEnrollmentsList({ onUpdate, refreshTrigger }: Unmatched
           {selectedEnrollment && (
             <div className="bg-brand-dark/50 border border-brand-gold/20 p-4 rounded-lg">
               <p className="text-sm font-medium text-white">Enrollment Details</p>
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 Enrollment ID: {selectedEnrollment.enrollmentId}
               </p>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-muted-foreground">
                 Student: {selectedEnrollment.student.fullName}
               </p>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-muted-foreground">
                 Subject: {selectedEnrollment.subject.name}
               </p>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-muted-foreground">
                 Parent: {selectedEnrollment.parent.fullName}
               </p>
             </div>
           )}
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Suggested Tutors *</label>
+            <label className="text-sm font-medium text-muted-foreground">Suggested Tutors *</label>
             {showingAllTutors && (
               <p className="text-xs text-yellow-400">
                 No subject/availability matches — showing all approved tutors.
@@ -290,7 +290,7 @@ export function UnmatchedEnrollmentsList({ onUpdate, refreshTrigger }: Unmatched
                 <LoadingSpinner size="sm" />
               </div>
             ) : suggestedTutors.length === 0 ? (
-              <div className="text-sm text-gray-400 py-2">No suggested tutors available for this enrollment</div>
+              <div className="text-sm text-muted-foreground py-2">No suggested tutors available for this enrollment</div>
             ) : (
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {suggestedTutors.map((tutor) => {
@@ -313,14 +313,14 @@ export function UnmatchedEnrollmentsList({ onUpdate, refreshTrigger }: Unmatched
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <p className="font-medium text-white">{tutor.fullName}</p>
-                          <p className="text-xs text-gray-400 mt-1">
+                          <p className="text-xs text-muted-foreground mt-1">
                             {tutor.subjects.map(s => s.name).join(', ')}
                           </p>
                           <div className="flex items-center gap-2 mt-2 text-xs">
-                            <span className="text-gray-400">
+                            <span className="text-muted-foreground">
                               {tutor.maxStudents > 0 ? `${tutor.currentStudents}/${tutor.maxStudents}` : `${tutor.currentStudents} students`}
                             </span>
-                            <span className="text-gray-500">•</span>
+                            <span className="text-muted-foreground">•</span>
                             <span className={`${
                               tutor.availabilityStatus === 'AVAILABLE' ? 'text-green-400' :
                               tutor.availabilityStatus === 'LIMITED' ? 'text-yellow-400' :
@@ -353,7 +353,7 @@ export function UnmatchedEnrollmentsList({ onUpdate, refreshTrigger }: Unmatched
               />
               <label
                 htmlFor="force"
-                className="text-sm text-gray-300 cursor-pointer"
+                className="text-sm text-muted-foreground cursor-pointer"
               >
                 Force assignment (override capacity/availability warnings)
               </label>

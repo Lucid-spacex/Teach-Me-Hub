@@ -1,8 +1,22 @@
 'use client'
 
-import { useReducedMotion } from 'motion/react'
+import { useReducedMotion, type Variants } from 'motion/react'
 
-export const fadeUp = {
+export const landscapeDialogVariants: Variants = {
+  hidden: { opacity: 0, x: -18 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { type: 'spring', stiffness: 280, damping: 28, duration: 0.5 },
+  },
+}
+
+export const reducedDialogVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.18 } },
+}
+
+export const fadeUp: Variants = {
   hidden: { opacity: 0, y: 18 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
 }
