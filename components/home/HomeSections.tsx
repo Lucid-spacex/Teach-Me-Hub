@@ -23,15 +23,15 @@ export function Nav({ go }: { go: (path: string) => void }) {
   return <header className="sticky top-0 z-50 border-b border-black/5 bg-white/85 backdrop-blur-xl dark:border-white/10 dark:bg-[#11110f]/85">
     <div className="mx-auto flex h-[76px] max-w-7xl items-center justify-between px-5 sm:px-8 lg:px-12">
       <button onClick={() => go('/')} className="flex items-center gap-3 text-left"><span className="grid size-10 place-items-center rounded-2xl bg-[#F3C33F] text-[#111] shadow-[0_8px_24px_rgba(212,160,23,.25)]"><GraduationCap className="size-5" /></span><span><strong className="block text-[18px] tracking-[-.04em] text-[#161616] dark:text-white">TeachMeNest</strong><span className="block text-[10px] font-bold uppercase tracking-[.18em] text-black/40 dark:text-white/40">Learn. Grow. Thrive.</span></span></button>
-      <nav className="hidden items-center gap-8 text-sm font-bold text-black/55 lg:flex dark:text-white/60"><a href="#why">Why us</a><a href="#how-it-works">How it works</a><a href="#features">Features</a><a href="#faq">FAQ</a></nav>
-      <div className="hidden items-center gap-3 sm:flex">
+      <nav className="hidden items-center gap-8 text-sm font-bold text-black/55 xl:flex dark:text-white/60"><a href="#why">Why us</a><a href="#how-it-works">How it works</a><a href="#features">Features</a><a href="#faq">FAQ</a></nav>
+      <div className="hidden items-center gap-3 xl:flex">
         <button onClick={() => go('/login')} className="px-3 py-2 text-sm font-bold text-black/60 dark:text-white/65">Parent Sign in</button>
         <button onClick={() => go('/tutor/login')} className="px-3 py-2 text-sm font-bold text-black/60 dark:text-white/65">Tutor Sign in</button>
         <button onClick={() => go('/register')} className="rounded-full bg-[#F3C33F] px-5 py-3 text-sm font-black text-[#111] shadow-[0_8px_20px_rgba(212,160,23,.2)]">Get started <ArrowRight className="ml-1 inline size-4" /></button>
       </div>
-      <button onClick={() => setOpen(!open)} className="grid size-10 place-items-center rounded-xl border border-black/10 dark:border-white/15 sm:hidden" aria-label={open ? 'Close menu' : 'Open menu'}>{open ? <X /> : <Menu />}</button>
+      <button onClick={() => setOpen(!open)} className="grid size-10 place-items-center rounded-xl border border-black/10 dark:border-white/15 xl:hidden" aria-label={open ? 'Close menu' : 'Open menu'}>{open ? <X /> : <Menu />}</button>
     </div>
-    {open && <div className="border-t border-black/5 bg-white px-5 py-5 dark:border-white/10 dark:bg-[#161612] sm:hidden"><nav className="flex flex-col gap-4 text-sm font-bold"><a href="#why" onClick={() => setOpen(false)}>Why us</a><a href="#how-it-works" onClick={() => setOpen(false)}>How it works</a><a href="#features" onClick={() => setOpen(false)}>Features</a><a href="#faq" onClick={() => setOpen(false)}>FAQ</a><button onClick={() => go('/login')} className="text-left">Parent Sign in</button><button onClick={() => go('/tutor/login')} className="text-left">Tutor Sign in</button><button onClick={() => go('/register')} className="rounded-full bg-[#F3C33F] px-5 py-3 text-[#111]">Get started</button></nav></div>}
+    {open && <div className="border-t border-black/5 bg-white px-5 py-5 dark:border-white/10 dark:bg-[#161612] xl:hidden"><nav className="flex flex-col gap-4 text-sm font-bold"><a href="#why" onClick={() => setOpen(false)}>Why us</a><a href="#how-it-works" onClick={() => setOpen(false)}>How it works</a><a href="#features" onClick={() => setOpen(false)}>Features</a><a href="#faq" onClick={() => setOpen(false)}>FAQ</a><button onClick={() => go('/login')} className="text-left">Parent Sign in</button><button onClick={() => go('/tutor/login')} className="text-left">Tutor Sign in</button><button onClick={() => go('/register')} className="rounded-full bg-[#F3C33F] px-5 py-3 text-[#111]">Get started</button></nav></div>}
   </header>
 }
 
@@ -41,7 +41,7 @@ export function Hero({ go }: { go: (path: string) => void }) {
   return <section onMouseMove={handleMove} className="relative isolate overflow-hidden bg-[#171715] px-5 py-20 text-white sm:px-8 lg:px-12 lg:py-28">
     <div className="absolute inset-0 -z-10 opacity-80 [background:radial-gradient(circle_at_72%_22%,rgba(243,195,63,.32),transparent_27%),radial-gradient(circle_at_92%_80%,rgba(97,143,121,.22),transparent_24%),linear-gradient(135deg,#171715_0%,#2b291e_45%,#141412_100%)]" />
     <div className="absolute -right-28 top-12 -z-10 size-96 rounded-full bg-[#F3C33F]/10 blur-3xl" />
-    <div className="mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-[1.05fr_.95fr]">
+    <div className="mx-auto grid max-w-7xl items-center gap-14 xl:grid-cols-[1.05fr_.95fr]">
       <motion.div initial="hidden" animate="visible" variants={{ visible: { transition: { staggerChildren: .08 } } }} className="relative z-10">
         <motion.div variants={reveal} className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-black uppercase tracking-[.16em] text-[#F3C33F] backdrop-blur"> <Sparkles className="size-3.5" /> Learning that feels personal</motion.div>
         <motion.h1 variants={reveal} className="max-w-3xl text-5xl font-black leading-[.97] tracking-[-.07em] sm:text-7xl">A brighter path to <span className="bg-gradient-to-r from-[#F3C33F] via-[#ffe38a] to-[#D4A017] bg-clip-text text-transparent">confident learning.</span></motion.h1>

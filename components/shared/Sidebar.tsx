@@ -176,7 +176,7 @@ export function Sidebar({ role }: SidebarProps) {
   return (
     <>
       {/* Mobile Top App Bar */}
-      <header className="lg:hidden sticky top-0 z-40 flex items-center justify-between px-4 py-3 bg-background/95 backdrop-blur-md border-b border-border">
+      <header className="xl:hidden sticky top-0 z-40 flex items-center justify-between px-4 py-3 bg-background/95 backdrop-blur-md border-b border-border">
         <button
           onClick={() => setMobileOpen(true)}
           className="p-2 -ml-2 text-foreground/80 hover:text-primary transition-colors rounded-lg hover:bg-foreground/5"
@@ -200,14 +200,14 @@ export function Sidebar({ role }: SidebarProps) {
       {/* Mobile Drawer Overlay Backdrop */}
       {mobileOpen && (
         <div
-          className="lg:hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm transition-opacity"
+          className="xl:hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm transition-opacity"
           onClick={() => setMobileOpen(false)}
         />
       )}
 
       {/* Sidebar Container */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-50 w-72 bg-sidebar border-r-2 border-sidebar-border flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0 shadow-[2px_0_12px_rgba(0,0,0,0.08)] ${
+        className={`fixed top-0 bottom-0 left-0 z-50 w-72 bg-sidebar border-r-2 border-sidebar-border flex flex-col transition-transform duration-300 ease-in-out xl:translate-x-0 shadow-[2px_0_12px_rgba(0,0,0,0.08)] ${
           mobileOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -218,7 +218,7 @@ export function Sidebar({ role }: SidebarProps) {
           </Link>
           <button
             onClick={() => setMobileOpen(false)}
-            className="lg:hidden p-1.5 text-sidebar-foreground/60 hover:text-sidebar-foreground rounded-lg hover:bg-sidebar-foreground/5 transition-colors"
+            className="xl:hidden p-1.5 text-sidebar-foreground/60 hover:text-sidebar-foreground rounded-lg hover:bg-sidebar-foreground/5 transition-colors"
             aria-label="Close navigation menu"
           >
             <X className="w-5 h-5" aria-hidden="true" />

@@ -140,6 +140,37 @@
 
 html {
   scroll-behavior: smooth;
+  width: 100%;
+  overflow-x: clip;
+}
+
+body {
+  min-width: 320px;
+  width: 100%;
+  overflow-x: clip;
+}
+
+main,
+section,
+article,
+[role='main'] {
+  min-width: 0;
+}
+
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
+}
+
+@media (max-width: 640px) {
+  input,
+  select,
+  textarea,
+  button {
+    max-width: 100%;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
