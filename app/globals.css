@@ -161,8 +161,19 @@ html {
   * {
     @apply border-border outline-ring/50;
   }
+  html,
+  body {
+    /* clip (not hidden) keeps position: sticky working while preventing sideways page scroll on phones and tablets */
+    overflow-x: clip;
+  }
   body {
     @apply bg-background text-foreground antialiased;
+    -webkit-text-size-adjust: 100%;
+  }
+  img,
+  video,
+  canvas {
+    max-width: 100%;
   }
   ::selection {
     background-color: rgba(243, 195, 63, 0.30);

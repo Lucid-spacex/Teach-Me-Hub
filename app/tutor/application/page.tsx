@@ -380,8 +380,8 @@ export default function TutorApplicationPage() {
     <div className="min-h-screen bg-background">
       <div className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-3">
               <BrandHeader />
               <div>
                 <h1 className="text-lg font-semibold">Tutor Application</h1>

@@ -60,7 +60,7 @@ export default function StudentProgressReportsPage() {
             </Button>
             <div className="h-6 w-px bg-border" />
             <div>
-              <h1 className="text-3xl font-serif font-bold text-white">Progress Reports</h1>
+              <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white">Progress Reports</h1>
               <p className="text-sm text-gray-400">Periodic learning evaluations and growth recommendations from your tutor</p>
             </div>
           </div>

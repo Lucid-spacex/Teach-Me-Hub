@@ -34,7 +34,7 @@ export default function StudentMessagesPage() {
           </Button>
           <div className="h-6 w-px bg-border" />
           <div>
-            <h1 className="text-3xl font-serif font-bold text-white">Messages</h1>
+            <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white">Messages</h1>
             <p className="text-sm text-gray-400">Communication guidelines</p>
           </div>
         </div>

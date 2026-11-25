@@ -103,7 +103,7 @@ export default function AdminPaymentSummaryPage() {
           </Button>
           <div className="h-6 w-px bg-border" />
           <div>
-            <h1 className="text-3xl font-serif font-bold text-white">Payment Analytics</h1>
+            <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white">Payment Analytics</h1>
             <p className="text-sm text-gray-400">Revenue metrics and payment insights</p>
           </div>
         </div>
@@ -161,7 +161,7 @@ export default function AdminPaymentSummaryPage() {
                 All Time
               </Button>
             </div>
-            <div className="flex-1 min-w-64" />
+            <div className="flex-1 min-w-0 sm:min-w-64" />
             <Input
               type="date"
               value={fromDate}

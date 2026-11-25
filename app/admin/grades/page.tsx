@@ -192,7 +192,7 @@ export default function AdminGradesPage() {
             </Button>
             <div className="h-6 w-px bg-border" />
             <div>
-              <h1 className="text-3xl font-bold text-foreground">Grade Review Queue</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Grade Review Queue</h1>
               <p className="text-muted-foreground mt-2">Review and approve tutor-submitted grades</p>
             </div>
           </div>

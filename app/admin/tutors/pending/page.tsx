@@ -189,7 +189,7 @@ export default function AdminPendingTutorsPage() {
               <UserCheck className="h-5 w-5 text-brand-gold" />
             </div>
             <div>
-              <h1 className="text-3xl font-serif font-bold text-white">Pending Tutors</h1>
+              <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white">Pending Tutors</h1>
               <p className="text-sm text-gray-400">Review and approve tutor applications</p>
             </div>
           </div>
@@ -211,7 +211,7 @@ export default function AdminPendingTutorsPage() {
         <div className="flex items-center gap-2">
           <Filter className="h-4 w-4 text-gray-400" />
           <Select value={applicationStatusFilter} onValueChange={(value: ApplicationStatus | 'ALL') => setApplicationStatusFilter(value)}>
-            <SelectTrigger className="w-[180px] bg-card border-brand-gold/30 text-white">
+            <SelectTrigger className="w-full sm:w-[180px] bg-card border-brand-gold/30 text-white">
               <SelectValue placeholder="Application Status" />
             </SelectTrigger>
             <SelectContent className="bg-card border-brand-gold/30">

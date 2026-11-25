@@ -65,7 +65,7 @@ export default function StudentAttendancePage() {
             </Button>
             <div className="h-6 w-px bg-border" />
             <div>
-              <h1 className="text-3xl font-serif font-bold text-white">Attendance Log</h1>
+              <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white">Attendance Log</h1>
               <p className="text-sm text-gray-400">Detailed record of attended and scheduled tutoring sessions</p>
             </div>
           </div>

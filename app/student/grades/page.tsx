@@ -75,7 +75,7 @@ export default function StudentGradesPage() {
             </Button>
             <div className="h-6 w-px bg-border" />
             <div>
-              <h1 className="text-3xl font-serif font-bold text-white">My Grades</h1>
+              <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white">My Grades</h1>
               <p className="text-sm text-gray-400">View official approved scores and teacher feedback</p>
             </div>
           </div>

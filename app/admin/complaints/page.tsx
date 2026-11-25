@@ -102,7 +102,7 @@ export default function AdminComplaintsPage() {
               <AlertTriangle className="h-5 w-5 text-brand-gold" />
             </div>
             <div>
-              <h1 className="text-3xl font-serif font-bold text-white">Complaints</h1>
+              <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white">Complaints</h1>
               <p className="text-sm text-gray-400">View and resolve user complaints</p>
             </div>
           </div>

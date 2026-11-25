@@ -94,7 +94,7 @@ export default function OutstandingPaymentsPage() {
           </Button>
           <div className="h-6 w-px bg-border" />
           <div>
-            <h1 className="text-3xl font-serif font-bold text-white">Outstanding Payments</h1>
+            <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white">Outstanding Payments</h1>
             <p className="text-sm text-gray-400">Enrollments awaiting payment</p>
           </div>
         </div>

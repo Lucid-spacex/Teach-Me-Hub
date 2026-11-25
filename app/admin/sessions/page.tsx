@@ -91,9 +91,9 @@ export default function AdminSessionsPage() {
   return (
     <div className="space-y-6 pb-12">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-serif font-bold text-white">Sessions</h1>
+          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white">Sessions</h1>
           <p className="text-sm text-gray-400">View and manage all tutoring sessions</p>
         </div>
         <Button
@@ -112,7 +112,7 @@ export default function AdminSessionsPage() {
       <Card className="bg-card border-brand-gold/30">
         <CardContent className="pt-6">
           <form onSubmit={handleSearch} className="flex flex-wrap gap-4">
-            <div className="flex-1 min-w-64 relative">
+            <div className="flex-1 min-w-0 sm:min-w-64 relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
                 type="text"

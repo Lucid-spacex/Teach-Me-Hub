@@ -90,7 +90,7 @@ export default function AdminSuspendedPage() {
               <AlertCircle className="h-5 w-5 text-brand-gold" />
             </div>
             <div>
-              <h1 className="text-3xl font-serif font-bold text-white">Suspended Users</h1>
+              <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white">Suspended Users</h1>
               <p className="text-sm text-gray-400">View and reactivate suspended accounts</p>
             </div>
           </div>

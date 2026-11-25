@@ -136,7 +136,7 @@ export default function AdminClassSchedulePage() {
           </Button>
           <div className="h-6 w-px bg-border" />
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Class Schedule</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Class Schedule</h1>
             <p className="text-muted-foreground mt-2">
               {mode === 'sessions' ? 'View all students with their next class' : 'View student enrollment schedules'}
             </p>

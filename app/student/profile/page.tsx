@@ -55,7 +55,7 @@ export default function StudentProfilePage() {
             </Button>
             <div className="h-6 w-px bg-border" />
             <div>
-              <h1 className="text-3xl font-serif font-bold text-white">Student Profile</h1>
+              <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white">Student Profile</h1>
               <p className="text-sm text-gray-400">Your student identification and learning profile</p>
             </div>
           </div>

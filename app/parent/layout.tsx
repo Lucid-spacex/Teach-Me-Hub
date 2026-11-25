@@ -15,8 +15,8 @@ export default function ParentLayout({
     <AuthGuard requiredRole="PARENT" loginPath="/login">
       <div className="min-h-screen bg-background text-foreground antialiased flex flex-col">
         <Sidebar role="PARENT" />
-        <main className="flex-1 lg:pl-72 flex flex-col min-h-screen">
-          <div className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+        <main className="flex-1 min-w-0 lg:pl-72 flex flex-col min-h-screen">
+          <div className="flex-1 min-w-0 max-w-7xl w-full mx-auto px-4 py-5 sm:p-6 lg:p-8">
             {children}
           </div>
         </main>

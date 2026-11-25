@@ -289,7 +289,7 @@ export default function TutorGradesPage() {
             <div className="flex items-center gap-2">
               <span className="text-xs text-muted-foreground font-medium">Student:</span>
               <Select value={selectedStudentId} onValueChange={setSelectedStudentId}>
-                <SelectTrigger className="w-[180px] bg-background/80 text-xs">
+                <SelectTrigger className="w-full sm:w-[180px] bg-background/80 text-xs">
                   <SelectValue placeholder="All Students" />
                 </SelectTrigger>
                 <SelectContent>
@@ -306,7 +306,7 @@ export default function TutorGradesPage() {
             <div className="flex items-center gap-2">
               <span className="text-xs text-muted-foreground font-medium">Status:</span>
               <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-                <SelectTrigger className="w-[150px] bg-background/80 text-xs">
+                <SelectTrigger className="w-full sm:w-[150px] bg-background/80 text-xs">
                   <SelectValue placeholder="All Status" />
                 </SelectTrigger>
                 <SelectContent>

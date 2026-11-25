@@ -92,14 +92,14 @@ export default function ParentGradesPage() {
             </Button>
             <div className="h-6 w-px bg-border" />
             <div>
-              <h1 className="text-3xl font-serif font-bold text-white">Academic Grades</h1>
+              <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white">Academic Grades</h1>
               <p className="text-sm text-gray-400">View officially approved scores and tutor feedback for your children</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
             {students.length > 0 && (
               <Select value={studentFilter} onValueChange={setStudentFilter}>
-                <SelectTrigger className="w-[180px] bg-card border-brand-gold/30 text-white h-9 text-xs">
+                <SelectTrigger className="w-full sm:w-[180px] bg-card border-brand-gold/30 text-white h-9 text-xs">
                   <SelectValue placeholder="All Children" />
                 </SelectTrigger>
                 <SelectContent>

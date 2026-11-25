@@ -101,7 +101,7 @@ export default function TutorUpcomingClassesPage() {
           </Button>
           <div className="h-6 w-px bg-border" />
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Upcoming Classes</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Upcoming Classes</h1>
             <p className="text-muted-foreground mt-2">View and manage your upcoming tutoring sessions</p>
           </div>
         </div>

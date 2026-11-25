@@ -360,7 +360,7 @@ function AdminTransactionsContent() {
           </Button>
           <div className="h-6 w-px bg-border" />
           <div>
-            <h1 className="text-3xl font-serif font-bold text-white">Payment Details</h1>
+            <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white">Payment Details</h1>
             <p className="text-sm text-gray-400">{selectedPayment.reference}</p>
           </div>
         </div>
@@ -568,13 +568,13 @@ function AdminTransactionsContent() {
     <div className="space-y-6 pb-12">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-serif font-bold text-white">Transactions</h1>
+          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white">Transactions</h1>
           <p className="text-sm text-gray-400">View and manage all payment transactions</p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 border-b border-brand-gold/20 pb-4">
+      <div className="flex gap-2 overflow-x-auto border-b border-brand-gold/20 pb-4 [&>button]:shrink-0">
         <Button
           variant={activeTab === 'overview' ? 'default' : 'ghost'}
           onClick={() => setActiveTab('overview')}
@@ -770,7 +770,7 @@ function AdminTransactionsContent() {
           <Card className="bg-card border-brand-gold/30">
             <CardContent className="pt-6">
               <form onSubmit={handleSearch} className="flex flex-wrap gap-4">
-                <div className="flex-1 min-w-64 relative">
+                <div className="flex-1 min-w-0 sm:min-w-64 relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input
                     type="text"

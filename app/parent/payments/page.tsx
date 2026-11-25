@@ -372,7 +372,7 @@ function PaymentsContent() {
             </Button>
             <div className="h-6 w-px bg-border" />
             <div>
-              <h1 className="text-3xl font-serif font-bold text-foreground">Payments & Billing</h1>
+              <h1 className="text-2xl sm:text-3xl font-serif font-bold text-foreground">Payments & Billing</h1>
               <p className="text-sm text-muted-foreground">View payment history and pay for pending enrollments</p>
             </div>
           </div>

@@ -158,7 +158,7 @@ export default function AdminGradeDetailPage() {
             </Button>
             <div className="h-6 w-px bg-border" />
             <div>
-              <h1 className="text-3xl font-bold text-foreground">Grade Details</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Grade Details</h1>
               <p className="text-muted-foreground mt-2">Review the full grade breakdown</p>
             </div>
           </div>

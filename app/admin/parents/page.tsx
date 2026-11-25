@@ -219,7 +219,7 @@ export default function AdminParentsPage() {
           </Button>
           <div className="h-6 w-px bg-border" />
           <div>
-            <h1 className="text-3xl font-serif font-bold text-white">Parent Profile</h1>
+            <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white">Parent Profile</h1>
             <p className="text-sm text-gray-400">{selectedParent.parent?.fullName || selectedParent.fullName}</p>
           </div>
         </div>
@@ -590,9 +590,9 @@ export default function AdminParentsPage() {
       <Navbar />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 pb-12">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-serif font-bold text-white">Parent Directory</h1>
+          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white">Parent Directory</h1>
           <p className="text-sm text-gray-400">Manage parent accounts and view enrollment details</p>
         </div>
       </div>
@@ -600,7 +600,7 @@ export default function AdminParentsPage() {
       {/* Search and Filters */}
       <Card className="bg-card border-brand-gold/30">
         <CardContent className="pt-6">
-          <form onSubmit={handleSearch} className="flex gap-4">
+          <form onSubmit={handleSearch} className="flex flex-col gap-3 sm:flex-row sm:gap-4">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input

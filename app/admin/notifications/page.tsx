@@ -145,7 +145,7 @@ export default function AdminNotificationsPage() {
             </Button>
             <div className="h-6 w-px bg-border" />
             <div>
-              <h1 className="text-3xl font-serif font-bold text-white flex items-center gap-3">
+              <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white flex items-center gap-3">
                 Admin Notifications
                 {unreadCount > 0 && (
                   <span className="text-xs bg-brand-gold text-brand-dark px-2.5 py-0.5 rounded-full font-bold">

@@ -567,7 +567,7 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
 
           <div className="space-y-2">
             <Label className="text-gray-300">Available Days *</Label>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
               {DAYS_OF_WEEK.map((day) => (
                 <div key={day.value} className="flex items-center space-x-2">
                   <Checkbox

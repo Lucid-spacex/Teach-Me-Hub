@@ -228,7 +228,7 @@ export default function StudentAssignmentsPage() {
             </Button>
             <div className="h-6 w-px bg-border" />
             <div>
-              <h1 className="text-3xl font-serif font-bold text-foreground">Assignments & Quizzes</h1>
+              <h1 className="text-2xl sm:text-3xl font-serif font-bold text-foreground">Assignments & Quizzes</h1>
               <p className="text-sm text-muted-foreground">Complete tasks, practice exercises, and online test quizzes</p>
             </div>
           </div>

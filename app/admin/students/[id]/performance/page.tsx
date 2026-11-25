@@ -83,7 +83,7 @@ export default function AdminStudentPerformancePage() {
           </Button>
           <div className="h-6 w-px bg-border" />
           <div>
-            <h1 className="text-3xl font-serif font-bold text-white">
+            <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white">
               {student?.fullName || 'Student'} Performance
             </h1>
             <p className="text-sm text-gray-400">Track academic progress, attendance, and achievements</p>
@@ -91,7 +91,7 @@ export default function AdminStudentPerformancePage() {
         </div>
         <div className="flex items-center gap-3">
           <Select value={period} onValueChange={(value: PeriodFilter) => setPeriod(value)}>
-            <SelectTrigger className="w-[140px] bg-card border-brand-gold/30 text-white h-9 text-xs">
+            <SelectTrigger className="w-full sm:w-[140px] bg-card border-brand-gold/30 text-white h-9 text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

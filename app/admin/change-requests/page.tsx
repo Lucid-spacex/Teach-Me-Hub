@@ -139,7 +139,7 @@ export default function AdminChangeRequestsPage() {
           </Button>
           <div className="h-6 w-px bg-border" />
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Enrollment Change Requests</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Enrollment Change Requests</h1>
             <p className="text-muted-foreground mt-2">Review and approve schedule change requests from parents</p>
           </div>
         </div>
