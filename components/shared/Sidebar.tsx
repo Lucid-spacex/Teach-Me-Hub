@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { BrandHeader } from '@/components/shared/BrandHeader'
@@ -53,6 +53,9 @@ export function Sidebar({ role }: SidebarProps) {
   const { byCategory } = useNotifications()
   const { counts: badgeCounts, refresh: refreshBadges } = useBadgeCounts()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const sidebarRef = useRef<HTMLElement>(null)
+  const mobileOpenButtonRef = useRef<HTMLButtonElement>(null)
+  const drawerCloseButtonRef = useRef<HTMLButtonElement>(null)
   const [user, setUserState] = useState<{ email?: string; name?: string; role?: string; status?: string } | null>(null)
 
   useEffect(() => {
@@ -65,6 +68,41 @@ export function Sidebar({ role }: SidebarProps) {
     // Refresh badges on route change
     refreshBadges()
   }, [pathname, refreshBadges])
+
+  useEffect(() => {
+    if (!mobileOpen) return
+
+    drawerCloseButtonRef.current?.focus()
+
+    const handleDrawerKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setMobileOpen(false)
+        return
+      }
+
+      if (event.key !== 'Tab') return
+
+      const focusableElements = Array.from(
+        sidebarRef.current?.querySelectorAll<HTMLElement>('a[href], button:not([disabled])') ?? []
+      )
+      const firstElement = focusableElements[0]
+      const lastElement = focusableElements[focusableElements.length - 1]
+
+      if (event.shiftKey && document.activeElement === firstElement) {
+        event.preventDefault()
+        lastElement?.focus()
+      } else if (!event.shiftKey && document.activeElement === lastElement) {
+        event.preventDefault()
+        firstElement?.focus()
+      }
+    }
+
+    window.addEventListener('keydown', handleDrawerKeyDown)
+    return () => {
+      window.removeEventListener('keydown', handleDrawerKeyDown)
+      mobileOpenButtonRef.current?.focus()
+    }
+  }, [mobileOpen])
 
   const handleLogout = async () => {
     try {
@@ -178,9 +216,12 @@ export function Sidebar({ role }: SidebarProps) {
       {/* Mobile Top App Bar */}
       <header className="xl:hidden sticky top-0 z-40 flex items-center justify-between px-4 py-3 bg-background/95 backdrop-blur-md border-b border-border">
         <button
+          ref={mobileOpenButtonRef}
           onClick={() => setMobileOpen(true)}
-          className="p-2 -ml-2 text-foreground/80 hover:text-primary transition-colors rounded-lg hover:bg-foreground/5"
+          className="-ml-2 grid size-11 place-items-center rounded-lg text-foreground/80 transition-colors hover:bg-foreground/5 hover:text-primary"
           aria-label="Open navigation menu"
+          aria-expanded={mobileOpen}
+          aria-controls="dashboard-sidebar"
         >
           <Menu className="w-6 h-6" aria-hidden="true" />
         </button>
@@ -191,34 +232,43 @@ export function Sidebar({ role }: SidebarProps) {
 
         <Link
           href={`/${role.toLowerCase()}/notifications`}
-          className="p-2 -mr-2 text-foreground/80 hover:text-primary transition-colors relative rounded-lg hover:bg-foreground/5"
+          className="-mr-2 grid size-11 place-items-center rounded-lg text-foreground/80 transition-colors hover:bg-foreground/5 hover:text-primary"
+          aria-label="Notifications"
         >
-          <Bell className="w-5 h-5" />
+          <Bell className="w-5 h-5" aria-hidden="true" />
         </Link>
       </header>
 
       {/* Mobile Drawer Overlay Backdrop */}
       {mobileOpen && (
-        <div
-          className="xl:hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm transition-opacity"
+        <button
+          type="button"
+          className="fixed inset-0 z-50 cursor-default border-0 bg-black/55 p-0 backdrop-blur-sm transition-opacity xl:hidden"
           onClick={() => setMobileOpen(false)}
+          aria-label="Close navigation menu"
         />
       )}
 
       {/* Sidebar Container */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-50 w-72 bg-sidebar border-r-2 border-sidebar-border flex flex-col transition-transform duration-300 ease-in-out xl:translate-x-0 shadow-[2px_0_12px_rgba(0,0,0,0.08)] ${
-          mobileOpen ? 'translate-x-0' : '-translate-x-full'
+        ref={sidebarRef}
+        id="dashboard-sidebar"
+        role={mobileOpen ? 'dialog' : undefined}
+        aria-modal={mobileOpen ? true : undefined}
+        aria-label={`${role.toLowerCase()} navigation menu`}
+        className={`fixed bottom-0 left-0 top-0 z-50 flex w-72 flex-col border-r-2 border-sidebar-border bg-sidebar shadow-[2px_0_12px_rgba(0,0,0,0.08)] transition-transform duration-300 ease-in-out xl:visible xl:translate-x-0 ${
+          mobileOpen ? 'visible translate-x-0' : 'invisible -translate-x-full'
         }`}
       >
         {/* Brand Header */}
         <div className="p-5 border-b border-sidebar-border flex items-center justify-between">
           <Link href={role === 'PARENT' ? '/parent' : role === 'STUDENT' ? '/student' : role === 'TUTOR' ? '/tutor' : '/admin'} className="block">
-            <BrandHeader />
+            <BrandHeader variant="sidebar" />
           </Link>
           <button
+            ref={drawerCloseButtonRef}
             onClick={() => setMobileOpen(false)}
-            className="xl:hidden p-1.5 text-sidebar-foreground/60 hover:text-sidebar-foreground rounded-lg hover:bg-sidebar-foreground/5 transition-colors"
+            className="grid size-11 place-items-center rounded-lg text-sidebar-foreground/60 transition-colors hover:bg-sidebar-foreground/5 hover:text-sidebar-foreground xl:hidden"
             aria-label="Close navigation menu"
           >
             <X className="w-5 h-5" aria-hidden="true" />
@@ -234,14 +284,14 @@ export function Sidebar({ role }: SidebarProps) {
                 {role === 'PARENT' ? 'Parent Portal' : role === 'STUDENT' ? 'Student Portal' : role === 'TUTOR' ? 'Tutor Portal' : 'Admin Portal'}
               </span>
             </div>
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-sidebar-primary/15 text-sidebar-primary font-medium border border-sidebar-primary/30">
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-sidebar-primary/15 text-sidebar-foreground font-medium border border-sidebar-primary/30">
               Active
             </span>
           </div>
         </div>
 
         {/* Navigation Links */}
-        <div className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+        <nav role="navigation" aria-label={`${role.toLowerCase()} sections`} className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
           {navItems.map((item) => {
             const active = isActive(item.href)
             const Icon = item.icon
@@ -249,7 +299,7 @@ export function Sidebar({ role }: SidebarProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`group flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+                className={`group flex min-h-11 items-center justify-between rounded-xl px-3.5 py-3 text-sm font-medium transition-all duration-200 ${
                   active
                     ? 'bg-sidebar-primary text-sidebar-primary-foreground border-l-4 border-sidebar-primary font-semibold pl-3'
                     : 'text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent'
@@ -258,13 +308,13 @@ export function Sidebar({ role }: SidebarProps) {
                 <div className="flex items-center gap-3">
                   <Icon
                     className={`w-5 h-5 transition-colors ${
-                      active ? 'text-sidebar-primary' : 'text-sidebar-foreground/70 group-hover:text-sidebar-foreground'
+                      active ? 'text-sidebar-primary-foreground' : 'text-sidebar-foreground/70 group-hover:text-sidebar-foreground'
                     }`}
                   />
                   <span>{item.label}</span>
                 </div>
                 {active ? (
-                  <ChevronRight className="w-4 h-4 text-sidebar-primary opacity-80" />
+                  <ChevronRight className="w-4 h-4 text-sidebar-primary-foreground opacity-80" />
                 ) : item.adminBadgeKey && badgeCounts[item.adminBadgeKey] !== undefined ? (
                   <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-destructive text-destructive-foreground font-bold">
                     {formatBadgeCount(badgeCounts[item.adminBadgeKey])}
@@ -281,15 +331,15 @@ export function Sidebar({ role }: SidebarProps) {
               </Link>
             )
           })}
-        </div>
+        </nav>
 
         {/* Quick Links Card / Promo */}
         <div className="px-4 py-2">
           <div className="p-3 rounded-xl bg-sidebar-accent border border-sidebar-border relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-24 h-24 bg-sidebar-primary/5 rounded-full blur-xl -mr-6 -mt-6 pointer-events-none" />
-            <div className="flex items-center gap-2 mb-1 text-xs font-semibold text-sidebar-primary">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>{role === 'PARENT' ? 'Parent Support' : role === 'STUDENT' ? 'Learning Hub' : role === 'TUTOR' ? 'Tutor Resources' : 'Admin Tools'}</span>
+            <div className="mb-1 flex items-center gap-2 text-xs font-semibold text-sidebar-primary">
+              <Sparkles className="size-3.5" aria-hidden="true" />
+              <span className="text-sidebar-foreground">{role === 'PARENT' ? 'Parent Support' : role === 'STUDENT' ? 'Learning Hub' : role === 'TUTOR' ? 'Tutor Resources' : 'Admin Tools'}</span>
             </div>
             <p className="text-[11px] text-sidebar-foreground/70 leading-relaxed">
               {role === 'PARENT'
@@ -310,7 +360,7 @@ export function Sidebar({ role }: SidebarProps) {
                 <p className="text-xs font-semibold text-sidebar-foreground truncate capitalize">
                   {displayName}
                 </p>
-                <p className="text-[10px] text-sidebar-primary font-medium tracking-wide">
+                <p className="text-[10px] text-sidebar-foreground/70 font-medium tracking-wide">
                   {role}
                 </p>
               </div>
@@ -319,7 +369,7 @@ export function Sidebar({ role }: SidebarProps) {
             <div className="flex items-center gap-1 shrink-0">
               <Link
                 href={`/${role.toLowerCase()}/notifications`}
-                className="p-1.5 text-sidebar-foreground/70 hover:text-sidebar-primary hover:bg-sidebar-foreground/10 rounded-lg transition-colors"
+                className="grid size-11 place-items-center rounded-lg text-sidebar-foreground/70 transition-colors hover:bg-sidebar-foreground/10 hover:text-sidebar-primary"
                 title="Notifications"
                 aria-label="View notifications"
               >
@@ -327,7 +377,7 @@ export function Sidebar({ role }: SidebarProps) {
               </Link>
               <button
                 onClick={handleLogout}
-                className="p-1.5 text-sidebar-foreground/70 hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
+                className="grid size-11 place-items-center rounded-lg text-sidebar-foreground/70 transition-colors hover:bg-destructive/10 hover:text-destructive"
                 title="Sign Out"
                 aria-label="Sign out"
               >

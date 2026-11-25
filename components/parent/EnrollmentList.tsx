@@ -215,7 +215,7 @@ export function EnrollmentList({ students, onEnrollStudent, refreshTrigger }: En
   return (
     <Card className="bg-card border-brand-gold/30">
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle className="text-white flex items-center gap-2">
             <GraduationCap className="h-5 w-5 text-brand-gold" />
             My Enrollments
@@ -223,7 +223,7 @@ export function EnrollmentList({ students, onEnrollStudent, refreshTrigger }: En
           <Button
             onClick={onEnrollStudent}
             size="sm"
-            className="bg-brand-gold hover:bg-brand-goldLight text-brand-dark"
+            className="w-full bg-brand-gold text-brand-dark hover:bg-brand-goldLight sm:w-auto"
           >
             <GraduationCap className="h-4 w-4 mr-2" />
             Enroll Student
@@ -248,8 +248,8 @@ export function EnrollmentList({ students, onEnrollStudent, refreshTrigger }: En
               return (
                 <div key={group.groupId || group.enrollments[0].id} className="space-y-3">
                   {group.groupId && (
-                    <div className="flex items-center justify-between text-sm text-brand-gold bg-brand-gold/10 px-3 py-2 rounded-lg">
-                      <div className="flex items-center gap-2">
+                    <div className="flex flex-col gap-3 rounded-lg bg-brand-gold/10 px-3 py-3 text-sm text-brand-gold sm:flex-row sm:items-center sm:justify-between">
+                      <div className="flex min-w-0 flex-wrap items-center gap-2">
                         <Layers className="h-4 w-4" />
                         <span className="font-medium">
                           Enrolled together on {new Date(group.createdAt).toLocaleDateString()}
@@ -263,7 +263,7 @@ export function EnrollmentList({ students, onEnrollStudent, refreshTrigger }: En
                           size="sm"
                           onClick={() => handlePay(group.enrollments[0])}
                           disabled={!!payingId}
-                          className="bg-brand-gold hover:bg-brand-goldLight text-brand-dark text-xs"
+                          className="w-full bg-brand-gold text-xs text-brand-dark hover:bg-brand-goldLight sm:w-auto"
                         >
                           <CreditCard className="h-3 w-3 mr-1" />
                           Pay for Group

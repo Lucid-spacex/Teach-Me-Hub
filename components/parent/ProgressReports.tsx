@@ -102,7 +102,7 @@ export function ProgressReports({ enrollments, refreshTrigger }: ProgressReports
                     <div className="space-y-4">
                       {enrollmentReports.map((report) => (
                         <div key={report.id} className="border border-brand-gold/20 rounded-lg p-4 bg-brand-dark/50">
-                          <div className="flex items-center justify-between mb-2">
+                          <div className="mb-2 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                             <h4 className="font-medium text-white">{report.period}</h4>
                             <span className="text-xs text-muted-foreground">
                               {new Date(report.createdAt).toLocaleDateString()}

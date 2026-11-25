@@ -57,35 +57,35 @@ This is the route-by-route checklist for the presentation-only redesign. Shared 
 
 ## Parent routes
 
-- [ ] `app/parent/page.tsx`
-- [ ] `app/parent/assignments/page.tsx`
-- [ ] `app/parent/complaints/page.tsx`
-- [ ] `app/parent/enrollments/page.tsx`
-- [ ] `app/parent/grades/page.tsx`
-- [ ] `app/parent/messages/page.tsx`
-- [ ] `app/parent/notifications/page.tsx`
-- [ ] `app/parent/payments/page.tsx`
-- [ ] `app/parent/pricing/page.tsx`
-- [ ] `app/parent/sessions/page.tsx`
-- [ ] `app/parent/settings/page.tsx`
-- [ ] `app/parent/students/page.tsx`
-- [ ] `app/parent/students/[id]/page.tsx`
-- [ ] `app/parent/students/[id]/performance/page.tsx`
+- [x] `app/parent/page.tsx`
+- [x] `app/parent/assignments/page.tsx`
+- [x] `app/parent/complaints/page.tsx`
+- [x] `app/parent/enrollments/page.tsx`
+- [x] `app/parent/grades/page.tsx`
+- [x] `app/parent/messages/page.tsx`
+- [x] `app/parent/notifications/page.tsx`
+- [x] `app/parent/payments/page.tsx`
+- [x] `app/parent/pricing/page.tsx`
+- [x] `app/parent/sessions/page.tsx`
+- [x] `app/parent/settings/page.tsx`
+- [x] `app/parent/students/page.tsx`
+- [x] `app/parent/students/[id]/page.tsx`
+- [x] `app/parent/students/[id]/performance/page.tsx`
 
 ## Student routes
 
-- [ ] `app/student/page.tsx`
-- [ ] `app/student/assignments/page.tsx`
-- [ ] `app/student/attendance/page.tsx`
-- [ ] `app/student/grades/page.tsx`
-- [ ] `app/student/messages/page.tsx`
-- [ ] `app/student/my-tutors/page.tsx`
-- [ ] `app/student/notifications/page.tsx`
-- [ ] `app/student/performance/page.tsx`
-- [ ] `app/student/profile/page.tsx`
-- [ ] `app/student/progress-reports/page.tsx`
-- [ ] `app/student/schedule/page.tsx`
-- [ ] `app/student/settings/page.tsx`
+- [x] `app/student/page.tsx`
+- [x] `app/student/assignments/page.tsx`
+- [x] `app/student/attendance/page.tsx`
+- [x] `app/student/grades/page.tsx`
+- [x] `app/student/messages/page.tsx`
+- [x] `app/student/my-tutors/page.tsx`
+- [x] `app/student/notifications/page.tsx`
+- [x] `app/student/performance/page.tsx`
+- [x] `app/student/profile/page.tsx`
+- [x] `app/student/progress-reports/page.tsx`
+- [x] `app/student/schedule/page.tsx`
+- [x] `app/student/settings/page.tsx`
 - [ ] `app/grades/page.tsx`
 
 ## Tutor routes
@@ -112,10 +112,10 @@ This is the route-by-route checklist for the presentation-only redesign. Shared 
 ### Shared
 - [x] `components/shared/Avatar.tsx`
 - [ ] `components/shared/AppearanceSettings.tsx`
-- [ ] `components/shared/AuthGuard.tsx`
+- [x] `components/shared/AuthGuard.tsx`
 - [ ] `components/shared/AuthProvider.tsx`
 - [x] `components/shared/BrandHeader.tsx`
-- [ ] `components/shared/DashboardNav.tsx`
+- [x] `components/shared/DashboardNav.tsx`
 - [x] `components/shared/DataTable.tsx`
 - [x] `components/shared/EmptyState.tsx`
 - [ ] `components/shared/ErrorBoundary.tsx`
@@ -129,7 +129,7 @@ This is the route-by-route checklist for the presentation-only redesign. Shared 
 - [x] `components/shared/PageTransition.tsx`
 - [ ] `components/shared/ProfilePictureUpload.tsx`
 - [ ] `components/shared/SegmentedControl.tsx`
-- [ ] `components/shared/Sidebar.tsx`
+- [x] `components/shared/Sidebar.tsx`
 - [x] `components/shared/SkeletonLoader.tsx`
 - [x] `components/shared/StatCard.tsx`
 - [x] `components/shared/StatusBadge.tsx`
@@ -152,13 +152,13 @@ This is the route-by-route checklist for the presentation-only redesign. Shared 
 - [x] `components/home/HomeSections.tsx`
 - [x] `components/home/Homepage.tsx`
 - [x] `app/tutors/TutorsContent.tsx`
-- [ ] `components/parent/AddStudentModal.tsx`
+- [x] `components/parent/AddStudentModal.tsx`
 - [ ] `components/parent/ChangeRequestModal.tsx`
-- [ ] `components/parent/EnrollStudentModal.tsx`
-- [ ] `components/parent/EnrollmentList.tsx`
-- [ ] `components/parent/ProgressReports.tsx`
-- [ ] `components/parent/SessionList.tsx`
-- [ ] `components/parent/StudentList.tsx`
+- [x] `components/parent/EnrollStudentModal.tsx`
+- [x] `components/parent/EnrollmentList.tsx`
+- [x] `components/parent/ProgressReports.tsx`
+- [x] `components/parent/SessionList.tsx`
+- [x] `components/parent/StudentList.tsx`
 - [ ] `components/student/QuizTakingModal.tsx`
 - [ ] `components/tutor/CreateSessionModal.tsx`
 - [ ] `components/tutor/GradeCompileWizard.tsx`

@@ -1,8 +1,11 @@
 'use client'
 
 import { Sprout } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
-export function BrandHeader() {
+export function BrandHeader({ variant = 'default' }: { variant?: 'default' | 'sidebar' }) {
+  const isSidebar = variant === 'sidebar'
+
   return (
     <div className="flex items-center gap-3">
       {/* Logo Mark */}
@@ -24,15 +27,15 @@ export function BrandHeader() {
       {/* Wordmark */}
       <div className="flex flex-col">
         <h1 className="font-serif text-2xl font-bold tracking-tight">
-          <span className="text-foreground">Teachme</span>
-          <span className="text-primary">nest</span>
+          <span className={cn(isSidebar ? 'text-sidebar-foreground' : 'text-foreground')}>Teachme</span>
+          <span className={cn(isSidebar ? 'text-sidebar-foreground' : 'text-primary')}>nest</span>
         </h1>
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <span className="text-foreground font-medium">LEARN</span>
-          <span className="text-primary">•</span>
-          <span className="text-foreground font-medium">GROW</span>
-          <span className="text-primary">•</span>
-          <span className="text-foreground font-medium">THRIVE</span>
+        <div className={cn('flex items-center gap-2 text-xs', isSidebar ? 'text-sidebar-foreground' : 'text-muted-foreground')}>
+          <span className={cn(isSidebar ? 'text-sidebar-foreground' : 'text-foreground', 'font-medium')}>LEARN</span>
+          <span className={cn(isSidebar ? 'text-sidebar-foreground' : 'text-primary')}>•</span>
+          <span className={cn(isSidebar ? 'text-sidebar-foreground' : 'text-foreground', 'font-medium')}>GROW</span>
+          <span className={cn(isSidebar ? 'text-sidebar-foreground' : 'text-primary')}>•</span>
+          <span className={cn(isSidebar ? 'text-sidebar-foreground' : 'text-foreground', 'font-medium')}>THRIVE</span>
         </div>
       </div>
     </div>

@@ -109,7 +109,7 @@ export function StudentList({ onAddStudent, refreshTrigger }: StudentListProps) 
   return (
     <Card className="bg-card border-brand-gold/30">
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle className="text-white flex items-center gap-2">
             <Users className="h-5 w-5 text-brand-gold" />
             My Children
@@ -118,7 +118,7 @@ export function StudentList({ onAddStudent, refreshTrigger }: StudentListProps) 
             <Button
               onClick={onAddStudent}
               size="sm"
-              className="bg-brand-gold hover:bg-brand-goldLight text-brand-dark"
+              className="w-full bg-brand-gold text-brand-dark hover:bg-brand-goldLight sm:w-auto"
             >
               Add Student
             </Button>
