@@ -24,6 +24,8 @@ export default function TutorDashboard() {
   const [reportModalOpen, setReportModalOpen] = useState(false)
   const [refreshTrigger, setRefreshTrigger] = useState(0)
 
+  const [applicationIncomplete, setApplicationIncomplete] = useState(false)
+
   useEffect(() => {
     const init = async () => {
     try {
@@ -45,18 +47,16 @@ export default function TutorDashboard() {
         return
       }
 
-      // Tutors who haven't submitted an application go to the application wizard
+      // Check if application is incomplete, but don't redirect - just show warning
       try {
         const app = await api.getTutorApplication().catch(() => null)
         const appStatus = app?.applicationStatus || (app as any)?.status
         if (!app || appStatus === 'DRAFT') {
-          router.push('/tutor/application')
-          return
+          setApplicationIncomplete(true)
         }
       } catch (appErr) {
         console.warn('Could not check tutor application status:', appErr)
-        router.push('/tutor/application')
-        return
+        setApplicationIncomplete(true)
       }
 
       loadInitialData()
@@ -205,6 +205,30 @@ export default function TutorDashboard() {
           </div>
         </div>
       </div>
+
+      {/* Application Incomplete Warning */}
+      {applicationIncomplete && (
+        <Card className="bg-amber-50 dark:bg-brand-gold/10 border-amber-300 dark:border-brand-gold/30 rounded-2xl">
+          <CardContent className="pt-6">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+              <AlertCircle className="h-5 w-5 text-amber-600 dark:text-brand-gold flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p className="font-semibold text-foreground">Application Incomplete</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Please complete your tutor application to start receiving student assignments.
+                </p>
+              </div>
+              <Button
+                size="sm"
+                onClick={() => router.push('/tutor/application')}
+                className="w-full shrink-0 rounded-xl bg-brand-gold text-black hover:bg-brand-goldLight sm:w-auto"
+              >
+                Complete Application
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Profile Warning */}
       {!tutorProfile && (
