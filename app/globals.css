@@ -2600,3 +2600,135 @@ svg {
   .public-site[data-audience='parents'] *::before,
   .public-site[data-audience='parents'] *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 150ms !important; }
 }
+
+.public-site[data-audience='tutors'] .landing-accent { background-image: linear-gradient(105deg, #946B08, #D4A017); }
+.dark .public-site[data-audience='tutors'] .landing-accent { background-image: linear-gradient(105deg, #EBC85E, #FFF0B7); }
+.tutor-page .landing-section { padding: clamp(5rem, 9vw, 8rem) clamp(1.25rem, 6vw, 6rem); }
+.tutor-page .landing-section-title { max-width: 12ch; }
+.tutor-page .landing-section-copy { max-width: 38rem; }
+.tutor-story-hero { position: relative; isolation: isolate; overflow: hidden; padding: 8.5rem clamp(1.25rem, 6vw, 6rem) 5rem; background: radial-gradient(ellipse at 80% 24%, color-mix(in srgb, var(--public-accent) 13%, transparent), transparent 35%), linear-gradient(140deg, var(--public-bg), color-mix(in srgb, var(--public-accent-soft) 42%, var(--public-bg))); }
+.tutor-story-hero .tutor-hero-grid { z-index: -1; opacity: 0.25; }
+.tutor-hero-layout { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(20rem, 0.95fr); align-items: center; gap: clamp(2rem, 6vw, 6rem); width: min(100%, 78rem); margin-inline: auto; }
+.tutor-hero-copy { max-width: 44rem; }
+.tutor-page .landing-hero-title { max-width: 10.5ch; }
+.tutor-page .tutor-hero .landing-eyebrow { border: 1px solid color-mix(in srgb, var(--public-accent) 24%, transparent); border-radius: 999px; padding: 0.5rem 0.75rem; background: color-mix(in srgb, var(--public-panel) 78%, transparent); }
+.tutor-hero-art { position: relative; display: grid; min-width: 0; min-height: 32rem; place-items: center; }
+.tutor-hero-scene { position: relative; z-index: 1; width: min(100%, 35rem); }
+.tutor-hero-scene svg { display: block; width: 100%; height: auto; }
+.tutor-hero-art-sun { position: absolute; top: 6%; right: 12%; width: 9rem; aspect-ratio: 1; border-radius: 50%; background: color-mix(in srgb, var(--public-highlight) 45%, transparent); }
+.tutor-hero-art-note { position: absolute; z-index: 2; top: 14%; left: 2%; color: var(--public-accent-strong); font-family: var(--font-display-family, Georgia, serif); font-size: clamp(1.1rem, 2vw, 1.7rem); font-style: italic; transform: rotate(-8deg); }
+.tutor-hero-art-caption { position: absolute; right: 1%; bottom: 2%; color: var(--public-muted); font-family: var(--font-display-family, Georgia, serif); font-size: 0.85rem; font-style: italic; transform: rotate(3deg); }
+.tutor-hero-note { display: flex; align-items: center; gap: 0.45rem; margin-top: 1.2rem; color: var(--public-muted); font-size: 0.75rem; }
+.tutor-hero-note svg { color: var(--public-secondary-strong); }
+.tutor-benefits { background: color-mix(in srgb, var(--public-accent-soft) 30%, var(--public-bg)); }
+.tutor-benefit-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; margin: 3rem 0 0; padding: 0; border-top: 1px solid var(--public-border); list-style: none; }
+.tutor-benefit-item { display: grid; grid-template-columns: 3rem 2.8rem minmax(0, 1fr); align-items: center; gap: 0.8rem; min-width: 0; border-bottom: 1px solid var(--public-border); padding: 1.5rem 1rem 1.5rem 0; }
+.tutor-benefit-item:nth-child(odd) { border-right: 1px solid var(--public-border); }
+.tutor-benefit-item:nth-child(even) { padding-left: 1.3rem; }
+.tutor-benefit-number { color: var(--public-accent-strong); font-family: var(--font-display-family, Georgia, serif); font-size: 1.25rem; }
+.tutor-benefit-icon { display: grid; width: 2.5rem; aspect-ratio: 1; place-items: center; border-radius: 50%; background: var(--public-panel); color: var(--public-accent-strong); }
+.tutor-benefit-icon svg { width: 1.1rem; height: 1.1rem; }
+.tutor-benefit-item h3 { font-family: var(--font-display-family, Georgia, serif); font-size: 1.05rem; font-weight: 600; line-height: 1.15; }
+.tutor-benefit-item p { margin-top: 0.3rem; color: var(--public-muted); font-size: 0.75rem; line-height: 1.5; }
+.tutor-application { background: var(--public-bg); }
+.tutor-journey-layout { display: grid; grid-template-columns: minmax(13rem, 0.72fr) minmax(0, 1.28fr); align-items: start; gap: clamp(2rem, 7vw, 7rem); margin-top: 3rem; }
+.tutor-journey-marker { position: sticky; top: 7.5rem; display: flex; min-height: 11rem; flex-direction: column; align-items: flex-start; justify-content: center; gap: 0.45rem; padding: 1.2rem 1rem 1.2rem 1.4rem; border-left: 3px solid var(--public-accent); background: color-mix(in srgb, var(--public-accent-soft) 35%, var(--public-bg)); }
+.tutor-journey-marker-label { color: var(--public-accent-strong); font-size: 0.67rem; font-weight: 850; letter-spacing: 0.14em; text-transform: uppercase; }
+.tutor-journey-marker strong { font-family: var(--font-display-family, Georgia, serif); font-size: 1.25rem; font-weight: 600; }
+.tutor-journey-marker p { color: var(--public-muted); font-size: 0.75rem; line-height: 1.5; }
+.tutor-journey-marker-track { position: absolute; top: 0; right: 0; bottom: 0; width: 3px; overflow: hidden; background: var(--public-border); }
+.tutor-journey-marker-track span { display: block; width: 100%; height: 100%; background: var(--public-accent); transform-origin: top; }
+.tutor-application-list { position: relative; display: flex; flex-direction: column; gap: 0; margin: 0; padding: 0; list-style: none; }
+.tutor-application-list::before { position: absolute; top: 1.1rem; bottom: 2rem; left: 1.22rem; width: 1px; background: repeating-linear-gradient(to bottom, var(--public-accent) 0 5px, transparent 5px 11px); content: ''; }
+.tutor-application-step { position: relative; display: grid; grid-template-columns: 2.5rem minmax(0, 1fr); gap: 1.1rem; padding: 0 0 2.3rem; }
+.tutor-application-step:last-child { padding-bottom: 0; }
+.tutor-application-node { position: relative; z-index: 1; display: grid; width: 2.5rem; aspect-ratio: 1; place-items: center; border: 1px solid var(--public-border); border-radius: 50%; background: var(--public-panel); color: var(--public-muted); font-size: 0.68rem; font-weight: 850; transition: background-color 180ms ease, color 180ms ease; }
+.tutor-application-step[aria-current='step'] .tutor-application-node { border-color: var(--public-accent); background: var(--public-accent); color: var(--public-on-accent); }
+.tutor-application-step h3 { font-family: var(--font-display-family, Georgia, serif); font-size: 1.25rem; font-weight: 600; line-height: 1.2; }
+.tutor-application-step p { margin-top: 0.35rem; color: var(--public-muted); font-size: 0.83rem; line-height: 1.55; }
+.tutor-requirements { background: color-mix(in srgb, var(--public-accent-soft) 30%, var(--public-bg)); }
+.tutor-requirements-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(17rem, 0.8fr); align-items: center; gap: clamp(2rem, 7vw, 7rem); }
+.tutor-requirements-layout > div:first-child { max-width: 40rem; }
+.tutor-requirements-list { display: flex; flex-direction: column; gap: 0.95rem; margin: 1.8rem 0 0; padding: 0; list-style: none; }
+.tutor-requirements-list li { display: flex; align-items: center; gap: 0.75rem; color: var(--public-text); font-size: 0.9rem; font-weight: 650; }
+.tutor-requirement-check { display: grid; width: 1.8rem; flex: none; aspect-ratio: 1; place-items: center; border-radius: 50%; background: var(--public-accent); color: var(--public-on-accent); }
+.tutor-requirement-check svg { width: 1rem; height: 1rem; }
+.tutor-requirements-art { position: relative; display: grid; min-height: 20rem; place-items: center; overflow: hidden; background: radial-gradient(circle at 70% 30%, color-mix(in srgb, var(--public-highlight) 28%, transparent), transparent 35%), color-mix(in srgb, var(--public-accent-soft) 42%, var(--public-panel)); }
+.tutor-requirements-sun { position: absolute; top: 15%; left: 25%; width: 8rem; aspect-ratio: 1; border-radius: 50%; background: color-mix(in srgb, var(--public-highlight) 55%, transparent); }
+.tutor-requirements-paper { position: relative; z-index: 1; display: grid; width: 6rem; aspect-ratio: 0.8; place-items: center; border: 1px solid var(--public-border); background: var(--public-panel); color: var(--public-accent-strong); box-shadow: 0 1rem 2rem color-mix(in srgb, var(--public-text) 12%, transparent); transform: rotate(-8deg); }
+.tutor-requirements-paper svg { width: 2rem; height: 2rem; }
+.tutor-requirements-book { position: absolute; right: 18%; bottom: 17%; display: flex; width: 5rem; height: 3.4rem; gap: 2px; transform: rotate(9deg); }
+.tutor-requirements-book span { flex: 1; border-radius: 1rem 0.2rem 0.2rem 1rem; background: var(--public-highlight); }
+.tutor-requirements-book span:nth-child(2) { background: var(--public-accent); }
+.tutor-requirements-book span:nth-child(3) { background: var(--public-secondary); }
+.tutor-requirements-note { position: absolute; top: 18%; right: 7%; color: var(--public-accent-strong); font-family: var(--font-display-family, Georgia, serif); font-size: 1rem; font-style: italic; transform: rotate(8deg); }
+.tutor-trust { background: var(--public-bg); }
+.tutor-trust-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; margin-top: 3rem; border-top: 1px solid var(--public-border); border-bottom: 1px solid var(--public-border); }
+.tutor-trust-step { position: relative; min-width: 0; padding: 1.5rem 1.2rem 1.5rem 0; }
+.tutor-trust-step + .tutor-trust-step { border-left: 1px solid var(--public-border); padding-left: 1.2rem; }
+.tutor-trust-number { color: var(--public-accent-strong); font-size: 0.7rem; font-weight: 850; letter-spacing: 0.12em; }
+.tutor-trust-connector { display: block; width: 2.7rem; height: 1px; margin: 1.1rem 0; background: var(--public-accent); }
+.tutor-trust-step h3 { font-family: var(--font-display-family, Georgia, serif); font-size: 1.12rem; font-weight: 600; line-height: 1.2; }
+.tutor-trust-step p { margin-top: 0.45rem; color: var(--public-muted); font-size: 0.77rem; line-height: 1.55; }
+.tutor-faq { background: color-mix(in srgb, var(--public-accent-soft) 28%, var(--public-bg)); }
+.tutor-faq-layout { display: grid; grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr); gap: clamp(2rem, 7vw, 7rem); }
+.tutor-faq-layout .landing-section-title { max-width: 10ch; }
+.tutor-faq-layout .landing-section-copy { margin-bottom: 1.2rem; }
+.tutor-faq-item { border-top: 1px solid var(--public-border); padding: 1rem 0; }
+.tutor-faq-item:last-child { border-bottom: 1px solid var(--public-border); }
+.tutor-faq-item summary { display: flex; align-items: center; justify-content: space-between; gap: 1rem; color: var(--public-text); font-family: var(--font-display-family, Georgia, serif); font-size: 1rem; font-weight: 600; cursor: pointer; list-style: none; }
+.tutor-faq-item summary::-webkit-details-marker { display: none; }
+.tutor-faq-item summary span { color: var(--public-accent-strong); font-size: 1.3rem; }
+.tutor-faq-item p { margin-top: 0.7rem; color: var(--public-muted); font-size: 0.82rem; line-height: 1.65; }
+.tutor-closing.landing-closing { padding: clamp(5rem, 10vw, 9rem) clamp(1.25rem, 6vw, 6rem); background: var(--public-accent-strong); color: #fffdf7; }
+.tutor-closing-inner { width: min(100%, 66rem); margin-inline: auto; }
+.tutor-closing .landing-eyebrow { color: var(--public-highlight); }
+.tutor-closing .landing-closing-title { max-width: 11ch; margin-top: 1rem; font-family: var(--font-display-family, Georgia, serif); font-size: clamp(2.8rem, 7vw, 6.3rem); font-weight: 600; line-height: 0.96; letter-spacing: -0.06em; }
+.tutor-closing .landing-accent { background-image: linear-gradient(105deg, #FFE49A, #C8FFF0); }
+.tutor-closing .landing-closing-copy { max-width: 37rem; margin-top: 1rem; color: color-mix(in srgb, #fff 78%, transparent); line-height: 1.65; }
+.tutor-closing .landing-hero-actions { margin-top: 1.4rem; }
+.tutor-closing .public-button-secondary { border-color: color-mix(in srgb, #fff 34%, transparent); background: transparent; color: #fff; }
+.tutor-closing .landing-privacy-note { color: color-mix(in srgb, #fff 76%, transparent); }
+
+@media (max-width: 900px) {
+  .tutor-hero-layout { grid-template-columns: minmax(0, 1fr) minmax(17rem, 0.82fr); gap: 1.4rem; }
+  .tutor-hero-art { min-height: 25rem; }
+  .tutor-trust-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tutor-trust-step:nth-child(3) { border-left: 0; }
+  .tutor-trust-step:nth-child(n + 3) { border-top: 1px solid var(--public-border); }
+  .tutor-journey-layout { grid-template-columns: minmax(11rem, 0.7fr) minmax(0, 1.3fr); gap: 2rem; }
+}
+
+@media (max-width: 640px) {
+  .tutor-page .landing-section { padding: 4.5rem 1rem; }
+  .tutor-story-hero { padding: 8rem 1rem 3rem; }
+  .tutor-hero-layout { grid-template-columns: minmax(0, 1fr); gap: 0.5rem; }
+  .tutor-hero-art { min-height: 21rem; }
+  .tutor-hero-scene { width: min(100%, 27rem); }
+  .tutor-hero-art-sun { width: 6rem; }
+  .tutor-hero-art-note { top: 6%; left: 4%; }
+  .tutor-hero-art-caption { bottom: 0; font-size: 0.72rem; }
+  .tutor-hero-actions { align-items: stretch; flex-direction: column; }
+  .tutor-hero-actions .public-button { width: 100%; justify-content: center; }
+  .tutor-benefit-list { grid-template-columns: minmax(0, 1fr); margin-top: 1.8rem; }
+  .tutor-benefit-item,.tutor-benefit-item:nth-child(even) { grid-template-columns: 2rem 2.5rem minmax(0, 1fr); border-right: 0; padding: 1rem 0; }
+  .tutor-benefit-item h3 { font-size: 1rem; }
+  .tutor-journey-layout { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; margin-top: 1.8rem; }
+  .tutor-journey-marker { z-index: 2; top: 5.8rem; min-height: 5.4rem; padding: 0.75rem 1rem; }
+  .tutor-journey-marker strong { font-size: 1rem; }
+  .tutor-journey-marker p { font-size: 0.68rem; }
+  .tutor-requirements-layout { grid-template-columns: minmax(0, 1fr); }
+  .tutor-requirements-art { min-height: 15rem; }
+  .tutor-trust-grid { grid-template-columns: minmax(0, 1fr); margin-top: 1.8rem; }
+  .tutor-trust-step,.tutor-trust-step + .tutor-trust-step { border-left: 0; border-top: 1px solid var(--public-border); padding: 1rem 0; }
+  .tutor-trust-step:first-child { border-top: 0; }
+  .tutor-trust-connector { margin: 0.7rem 0; }
+  .tutor-faq-layout { grid-template-columns: minmax(0, 1fr); }
+  .tutor-closing .landing-hero-actions { align-items: stretch; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .public-site[data-audience='tutors'] *,
+  .public-site[data-audience='tutors'] *::before,
+  .public-site[data-audience='tutors'] *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 150ms !important; }
+}

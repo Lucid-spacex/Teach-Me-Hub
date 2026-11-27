@@ -1,4 +1,3 @@
-import { TutorDayInLife } from '@/components/public/TutorDemos'
 import { TutorHero } from '@/components/public/TutorHero'
 import {
   TutorApplicationSteps,
@@ -18,7 +17,6 @@ export function TutorLanding() {
         <TutorBenefits />
         <TutorApplicationSteps />
         <TutorRequirements />
-        <TutorDayInLife />
         <TutorTrust />
         <TutorFaq />
         <TutorClosing />
