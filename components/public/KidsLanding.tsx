@@ -3,7 +3,7 @@
 import { PublicShell } from '@/components/public/PublicShell'
 import { KidsHero } from '@/components/public/KidsHero'
 import { KidsClassSteps, KidsSubjects, KidsSafety, KidsGrownUpHandoff, KidsFaq, KidsClosing } from '@/components/public/KidsSections'
-import { KidsSampleStats } from '@/components/public/KidsSampleStats'
+import { KidsLittleWins } from '@/components/public/KidsSampleStats'
 import { KidsQuickQuiz } from '@/components/public/KidsQuickQuiz'
 
 export function KidsLanding() {
@@ -13,7 +13,7 @@ export function KidsLanding() {
         <KidsHero />
         <KidsClassSteps />
         <KidsSubjects />
-        <KidsSampleStats />
+        <KidsLittleWins />
         <KidsQuickQuiz />
         <KidsSafety />
         <KidsGrownUpHandoff />

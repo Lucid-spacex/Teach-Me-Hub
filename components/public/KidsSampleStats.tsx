@@ -1,21 +1,23 @@
 'use client'
 
 import { motion } from 'motion/react'
-import { BadgeCheck, Sparkles, Star } from 'lucide-react'
-import { Reveal } from '@/components/public/Reveal'
+import { BookOpen, Heart, Sparkles, Star } from 'lucide-react'
 import { useReducedMotionPreference } from '@/lib/motion'
 
-export function KidsSampleStats() {
+export function KidsLittleWins() {
   const reduceMotion = useReducedMotionPreference()
 
   return (
-    <section className="kids-section kids-sample-stats" aria-labelledby="kids-sample-title">
-      <div className="kids-section-inner kids-sample-layout">
-        <Reveal><div className="kids-sample-copy"><p className="kids-eyebrow"><Sparkles className="size-4" aria-hidden="true" /> Just an example</p><h2 id="kids-sample-title" className="kids-section-title">Small steps deserve a high-five.</h2><p className="kids-section-intro">This playful progress card is a sample illustration. It isn&apos;t connected to a real student account.</p><div className="kids-sample-badge-row"><span><BadgeCheck className="size-4" aria-hidden="true" /> Sample badge shelf</span><span><Star className="size-4" aria-hidden="true" /> Sample star count</span></div></div></Reveal>
-        <div className="kids-sample-card" role="img" aria-label="Sample only: example progress ring, badge count, and practice steps. Not real student data.">
-          <div className="kids-sample-card-top"><span>Learning snapshot</span><span className="kids-sample-tag">Sample only</span></div>
-          <div className="kids-sample-card-main"><div className="kids-sample-ring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle className="kids-sample-ring-track" cx="60" cy="60" r="48" pathLength="1" /><motion.circle className="kids-sample-ring-fill" cx="60" cy="60" r="48" pathLength="1" initial={reduceMotion ? { pathLength: 0.68 } : { pathLength: 0 }} whileInView={{ pathLength: 0.68 }} viewport={{ once: true }} transition={{ duration: reduceMotion ? 0.15 : 1.1, ease: [0.22, 1, 0.36, 1] }} /></svg><div><strong>68%</strong><span>sample progress</span></div></div><div className="kids-sample-card-stats"><div><span className="kids-sample-stat-icon kids-sample-stat-yellow"><Star className="size-4 fill-current" aria-hidden="true" /></span><span><strong>03</strong><small>sample stars</small></span></div><div><span className="kids-sample-stat-icon kids-sample-stat-mint"><BadgeCheck className="size-4" aria-hidden="true" /></span><span><strong>02</strong><small>sample badges</small></span></div></div></div>
-          <div className="kids-sample-card-footer"><span>Practice steps</span><span>Sample · 3 of 5</span></div><div className="kids-sample-progress-track"><motion.span initial={reduceMotion ? { scaleX: 0.6 } : { scaleX: 0 }} whileInView={{ scaleX: 0.6 }} viewport={{ once: true }} transition={{ duration: reduceMotion ? 0.15 : 0.8, delay: reduceMotion ? 0 : 0.15 }} /></div>
+    <section className="kids-section kids-little-wins landing-section" aria-labelledby="kids-wins-title">
+      <div className="kids-section-inner kids-wins-layout">
+        <div className="kids-wins-copy"><p className="kids-eyebrow">No rush. Just try.</p><h2 id="kids-wins-title" className="kids-section-title">Every little try is a <em className="landing-accent">win.</em></h2><p className="kids-section-intro">Ask a question. Try again. Notice what you know now.</p><span className="kids-wins-note"><Heart aria-hidden="true" /> Your own pace is a good pace.</span></div>
+        <div className="kids-wins-scene" role="img" aria-label="A playful group of stars, books, and learning doodles">
+          <span className="kids-wins-big-word">GROW</span>
+          <motion.span className="kids-wins-star kids-wins-star-one" animate={reduceMotion ? { rotate: 0 } : { rotate: [0, 13, -8, 0], y: [0, -6, 0] }} transition={reduceMotion ? { duration: 0.15 } : { duration: 4.2, repeat: Infinity, ease: 'easeInOut' }}><Star fill="currentColor" /></motion.span>
+          <motion.span className="kids-wins-star kids-wins-star-two" animate={reduceMotion ? { y: 0 } : { y: [0, 7, 0] }} transition={reduceMotion ? { duration: 0.15 } : { duration: 5.1, repeat: Infinity, ease: 'easeInOut' }}><Sparkles /></motion.span>
+          <span className="kids-wins-book"><BookOpen /></span>
+          <span className="kids-wins-doodle">one step at a time</span>
+          <span className="kids-wins-dot kids-wins-dot-one" /><span className="kids-wins-dot kids-wins-dot-two" /><span className="kids-wins-dot kids-wins-dot-three" />
         </div>
       </div>
     </section>
