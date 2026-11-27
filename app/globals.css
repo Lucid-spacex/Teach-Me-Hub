@@ -3278,16 +3278,16 @@ svg {
 
 .adult-parent-hero {
   background-image:
-    linear-gradient(90deg, var(--public-bg) 0%, color-mix(in srgb, var(--public-bg) 96%, transparent) 30%, color-mix(in srgb, var(--public-bg) 78%, transparent) 54%, color-mix(in srgb, var(--public-bg) 16%, transparent) 100%),
-    linear-gradient(0deg, color-mix(in srgb, var(--public-bg) 62%, transparent), transparent 48%),
+    linear-gradient(90deg, var(--public-bg) 0%, color-mix(in srgb, var(--public-bg) 94%, transparent) 24%, color-mix(in srgb, var(--public-bg) 80%, transparent) 42%, color-mix(in srgb, var(--public-bg) 30%, transparent) 65%, color-mix(in srgb, var(--public-bg) 0%, transparent) 100%),
+    linear-gradient(0deg, color-mix(in srgb, var(--public-bg) 18%, transparent), transparent 42%),
     url('/teachmenest-hero.png');
   background-position: center, center, 58% center;
 }
 
 .adult-tutor-hero {
   background-image:
-    linear-gradient(90deg, var(--public-bg) 0%, color-mix(in srgb, var(--public-bg) 97%, transparent) 31%, color-mix(in srgb, var(--public-bg) 79%, transparent) 56%, color-mix(in srgb, var(--public-bg) 18%, transparent) 100%),
-    linear-gradient(0deg, color-mix(in srgb, var(--public-bg) 66%, transparent), transparent 48%),
+    linear-gradient(90deg, var(--public-bg) 0%, color-mix(in srgb, var(--public-bg) 94%, transparent) 24%, color-mix(in srgb, var(--public-bg) 80%, transparent) 42%, color-mix(in srgb, var(--public-bg) 30%, transparent) 65%, color-mix(in srgb, var(--public-bg) 0%, transparent) 100%),
+    linear-gradient(0deg, color-mix(in srgb, var(--public-bg) 18%, transparent), transparent 42%),
     url('/teachmenest-tutor-hero.png');
   background-position: center, center, 62% center;
 }
@@ -3404,76 +3404,6 @@ svg {
   align-items: center;
   gap: 0.35rem;
 }
-
-.adult-hero-art {
-  position: relative;
-  display: grid;
-  min-width: 0;
-  min-height: 28rem;
-  grid-column: 8 / span 5;
-  place-items: center;
-}
-
-.adult-world-motif {
-  position: relative;
-  width: min(100%, 27rem);
-  aspect-ratio: 1;
-  border: 1px solid color-mix(in srgb, var(--public-accent-strong) 46%, transparent);
-  border-radius: 50%;
-  background: radial-gradient(circle at center, color-mix(in srgb, var(--public-accent) 6%, transparent), transparent 65%);
-}
-
-.adult-world-ring,
-.adult-world-meridian,
-.adult-world-equator,
-.adult-world-axis {
-  position: absolute;
-  display: block;
-  border: 1px solid color-mix(in srgb, var(--public-accent-strong) 42%, transparent);
-  border-radius: 50%;
-  pointer-events: none;
-}
-
-.adult-world-ring-one { inset: 11%; }
-.adult-world-ring-two { inset: 23%; }
-.adult-world-ring-three { inset: 35%; border-color: color-mix(in srgb, var(--public-highlight) 68%, transparent); }
-.adult-world-meridian-one { inset: 7% 32%; }
-.adult-world-meridian-two { inset: 7% 18%; transform: scaleX(0.48); }
-.adult-world-equator { inset: 27% 0; border-inline-color: transparent; }
-.adult-world-axis { top: -9%; bottom: -9%; left: 50%; width: 0; border: 0; border-left: 1px solid color-mix(in srgb, var(--public-accent-strong) 40%, transparent); border-radius: 0; }
-.adult-world-point {
-  position: absolute;
-  width: 0.52rem;
-  height: 0.52rem;
-  border: 1px solid var(--public-bg);
-  border-radius: 50%;
-  background: var(--public-highlight);
-}
-
-.adult-world-point-one { top: 25%; left: 31%; }
-.adult-world-point-two { right: 23%; bottom: 29%; background: var(--public-accent); }
-.adult-world-meridian-two { transform-origin: center; animation: adult-world-drift 48s linear infinite; }
-
-@keyframes adult-world-drift {
-  to { rotate: 360deg; }
-}
-
-.adult-art-caption {
-  position: absolute;
-  right: 2%;
-  bottom: 2%;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  border-top: 1px solid var(--public-border);
-  padding-top: 0.65rem;
-  color: var(--public-muted);
-  font-family: var(--font-display-family, Georgia, serif);
-  font-size: 0.9rem;
-  font-style: italic;
-}
-
-.adult-art-caption svg { width: 1rem; height: 1rem; color: var(--public-accent-strong); stroke-width: 1.5; }
 
 .adult-hero-bottom {
   position: absolute;
@@ -3799,16 +3729,6 @@ svg {
 .adult-tutor-trust-list { grid-column: 6 / span 7; border-top: 1px solid var(--public-border); }
 .adult-tutor-faq { background: var(--public-panel); }
 .adult-tutor-closing { background: var(--adult-dark); }
-.adult-architecture-art { overflow: hidden; }
-.adult-architecture-frame,.adult-architecture-inner,.adult-architecture-step,.adult-architecture-axis { position: absolute; display: block; border: 1px solid color-mix(in srgb, var(--public-accent-strong) 56%, transparent); }
-.adult-architecture-frame { inset: 8% 9%; border-radius: 50% 50% 0 0; border-bottom: 0; }
-.adult-architecture-inner { inset: 20% 21% 0; border-color: color-mix(in srgb, var(--public-highlight) 55%, transparent); border-radius: 50% 50% 0 0; border-bottom: 0; }
-.adult-architecture-step { right: 15%; bottom: 19%; left: 15%; height: 14%; border-bottom: 0; border-inline-width: 0; }
-.adult-architecture-step-two { right: 24%; bottom: 33%; left: 24%; height: 10%; }
-.adult-architecture-step-three { right: 33%; bottom: 44%; left: 33%; height: 8%; }
-.adult-architecture-axis { top: 7%; bottom: 0; left: 50%; width: 0; border: 0; border-left: 1px solid color-mix(in srgb, var(--public-accent-strong) 44%, transparent); }
-.adult-architecture-point { position: absolute; top: 31%; right: 27%; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--public-highlight); }
-.adult-architecture-art > p { position: absolute; right: 4%; bottom: 1%; color: var(--public-muted); font-family: var(--font-display-family, Georgia, serif); font-size: 0.86rem; font-style: italic; }
 
 @media (min-width: 1120px) {
   .public-site[data-audience='parents'] .public-desktop-nav,
@@ -3830,12 +3750,21 @@ svg {
 
 @media (max-width: 780px) {
   .adult-hero { min-height: auto; padding: 4.5rem 1.25rem 4.7rem; }
+  .adult-parent-hero {
+    background-image:
+      linear-gradient(180deg, var(--public-bg) 0%, color-mix(in srgb, var(--public-bg) 96%, transparent) 58%, color-mix(in srgb, var(--public-bg) 88%, transparent) 82%, color-mix(in srgb, var(--public-bg) 32%, transparent) 100%),
+      url('/teachmenest-hero.png');
+    background-position: center, 58% center;
+  }
+  .adult-tutor-hero {
+    background-image:
+      linear-gradient(180deg, var(--public-bg) 0%, color-mix(in srgb, var(--public-bg) 96%, transparent) 58%, color-mix(in srgb, var(--public-bg) 88%, transparent) 82%, color-mix(in srgb, var(--public-bg) 32%, transparent) 100%),
+      url('/teachmenest-tutor-hero.png');
+    background-position: center, 62% center;
+  }
   .adult-hero-layout { grid-template-columns: minmax(0, 1fr); gap: 1.2rem; }
   .adult-hero-copy { grid-column: 1; }
   .adult-hero h1 { max-width: 12ch; font-size: clamp(3.4rem, 11vw, 5.4rem); }
-  .adult-hero-art { min-height: 20rem; grid-column: 1; }
-  .adult-world-motif { width: min(76vw, 20rem); }
-  .adult-art-caption { right: 0; bottom: 0; font-size: 0.8rem; }
   .adult-hero-bottom { bottom: 0.85rem; width: calc(100% - 2.5rem); font-size: 0.65rem; }
   .adult-principles-inner { grid-template-columns: 1fr; gap: 0.9rem; padding-block: 1.2rem; }
   .adult-principles ul { grid-template-columns: 1fr; }
@@ -3884,7 +3813,6 @@ svg {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .adult-world-meridian-two { animation: none; }
   .adult-landing *,
   .adult-landing *::before,
   .adult-landing *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
