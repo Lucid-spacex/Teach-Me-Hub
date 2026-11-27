@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import Link from 'next/link'
-import { ArrowRight, ChevronUp, GraduationCap, Menu, Sparkles, X } from 'lucide-react'
-import { ThemeToggle } from '@/components/shared/ThemeToggle'
+import { ArrowRight, ChevronUp, GraduationCap, Menu, Moon, Sparkles, Sun, X } from 'lucide-react'
+import { useTheme } from '@/lib/theme-provider'
 import { useReducedMotionPreference } from '@/lib/motion'
 
 type PublicAudience = 'parents' | 'tutors' | 'kids'
@@ -25,7 +25,7 @@ const navigation: Record<PublicAudience, { label: string; href: string }[]> = {
     { label: 'FAQ', href: '#faq' },
   ],
   tutors: [
-    { label: 'Parents', href: '/' },
+    { label: "I'm a parent", href: '/' },
     { label: 'For tutors', href: '/tutors' },
     { label: 'For kids', href: '/kids' },
   ],
@@ -40,6 +40,37 @@ const actionCopy: Record<PublicAudience, { login: string; loginHref: string; sta
   parents: { login: 'Parent login', loginHref: '/login', start: 'Get started', startHref: '/register' },
   tutors: { login: 'Tutor login', loginHref: '/tutor/login', start: 'Apply now', startHref: '/tutor/register' },
   kids: { login: 'Student login', loginHref: '/student-login', start: 'Ask a grown-up to sign you up', startHref: '/register' },
+}
+
+function PublicThemeToggle() {
+  const { effectiveTheme, setTheme, mounted } = useTheme()
+  const reduceMotion = useReducedMotionPreference()
+  const isDark = mounted ? effectiveTheme === 'dark' : true
+  const label = isDark ? 'Switch to light mode' : 'Switch to dark mode'
+
+  return (
+    <button
+      type="button"
+      className="public-theme-toggle"
+      aria-label={label}
+      title={label}
+      disabled={!mounted}
+      onClick={() => setTheme(isDark ? 'light' : 'dark')}
+    >
+      <AnimatePresence initial={false} mode="wait">
+        <motion.span
+          key={effectiveTheme}
+          className="public-theme-toggle-icon"
+          initial={reduceMotion ? { opacity: 0 } : { opacity: 0, rotate: -45, scale: 0.7 }}
+          animate={{ opacity: 1, rotate: 0, scale: 1 }}
+          exit={reduceMotion ? { opacity: 0 } : { opacity: 0, rotate: 45, scale: 0.7 }}
+          transition={{ duration: reduceMotion ? 0.15 : 0.24 }}
+        >
+          {isDark ? <Sun className="size-4" aria-hidden="true" /> : <Moon className="size-4" aria-hidden="true" />}
+        </motion.span>
+      </AnimatePresence>
+    </button>
+  )
 }
 
 function Brand() {
@@ -81,11 +112,14 @@ function Header({ audience }: { audience: PublicAudience }) {
         </nav>
 
         <div className="public-header-actions">
-          <ThemeToggle />
+          <PublicThemeToggle />
           <Link href={actions.loginHref} className="public-login-link">{actions.login}</Link>
-          <Link href={actions.startHref} className="public-button public-button-primary public-header-cta">
-            {actions.start}<ArrowRight className="size-4" aria-hidden="true" />
-          </Link>
+          {audience === 'parents' ? <Link href="/tutor/login" className="public-tutor-login-link">Tutor login</Link> : null}
+          {audience !== 'parents' ? (
+            <Link href={actions.startHref} className="public-button public-button-primary public-header-cta">
+              {actions.start}<ArrowRight className="size-4" aria-hidden="true" />
+            </Link>
+          ) : null}
         </div>
 
         <button
@@ -137,8 +171,9 @@ function Header({ audience }: { audience: PublicAudience }) {
               ))}
             </nav>
             <div className="public-mobile-actions">
-              <ThemeToggle />
+              <PublicThemeToggle />
               <Link href={actions.loginHref} onClick={() => setMenuOpen(false)} className="public-mobile-link">{actions.login}</Link>
+              {audience === 'parents' ? <Link href="/tutor/login" onClick={() => setMenuOpen(false)} className="public-mobile-link">Tutor login</Link> : null}
               <Link href={actions.startHref} onClick={() => setMenuOpen(false)} className="public-button public-button-primary justify-center">
                 {actions.start}<ArrowRight className="size-4" aria-hidden="true" />
               </Link>
@@ -197,7 +232,7 @@ function Footer({ audience }: { audience: PublicAudience }) {
         <div className="public-footer-bottom">
           <p>© {new Date().getFullYear()} TeachMeNest</p>
           <p className="inline-flex items-center gap-2"><Sparkles className="size-3.5" aria-hidden="true" /> Learn. Grow. Thrive.</p>
-          <ThemeToggle />
+          <PublicThemeToggle />
         </div>
       </div>
     </footer>
@@ -218,6 +253,7 @@ function FooterGroup({ title, links }: { title: string; links: { label: string; 
 export function PublicShell({ audience, children }: PublicShellProps) {
   const [scrollProgress, setScrollProgress] = useState(0)
   const [showBackToTop, setShowBackToTop] = useState(false)
+  const reduceMotion = useReducedMotionPreference()
 
   useEffect(() => {
     const updateScroll = () => {
@@ -247,7 +283,7 @@ export function PublicShell({ audience, children }: PublicShellProps) {
           type="button"
           className="public-back-to-top"
           aria-label="Back to top"
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          onClick={() => window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' })}
         >
           <ChevronUp className="size-5" aria-hidden="true" />
         </button>

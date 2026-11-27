@@ -1,102 +1,17 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
-import { ArrowLeft, ArrowRight, CalendarDays, Check, Clock3, Compass, Globe2, Sparkles } from 'lucide-react'
+import { useEffect, useState, type KeyboardEvent } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
+import { ArrowRight, Check, RotateCcw, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { LearningNotebook, ParentLearningPreview, TutorWeekPreview } from '@/components/public/LandingIllustrations'
 import { Reveal } from '@/components/public/Reveal'
+import { usePublicMotionPreference } from '@/components/public/usePublicMotionPreference'
 
-const demoViews = [
-  { label: 'Family overview', title: 'See the week at a glance.', copy: 'A sample view of learning notes and the next small step.', render: <ParentLearningPreview /> },
-  { label: 'Tutor schedule', title: 'Make room for a steady rhythm.', copy: 'A sample timetable helps show how a learning week might take shape.', render: <TutorWeekPreview /> },
-  { label: 'Learning plan', title: 'Keep the plan close to the learner.', copy: 'A sample notebook for goals, practice, and the ideas worth remembering.', render: <LearningNotebook /> },
+const places = [
+  { role: 'Parent', city: 'New York', zone: 'America/New_York', color: 'parent-time-coral' },
+  { role: 'Tutor', city: 'London', zone: 'Europe/London', color: 'parent-time-gold' },
+  { role: 'Child', city: 'Dubai', zone: 'Asia/Dubai', color: 'parent-time-teal' },
 ]
-
-const clockCities = [
-  { city: 'London', zone: 'Europe/London' },
-  { city: 'Accra', zone: 'Africa/Accra' },
-  { city: 'Lagos', zone: 'Africa/Lagos' },
-  { city: 'Nairobi', zone: 'Africa/Nairobi' },
-  { city: 'Dubai', zone: 'Asia/Dubai' },
-  { city: 'New York', zone: 'America/New_York' },
-]
-
-const sampleSessions = [
-  { day: 1, time: '4:00 pm', subject: 'Reading practice', tone: 'reading' },
-  { day: 2, time: '5:30 pm', subject: 'Maths check-in', tone: 'maths' },
-  { day: 4, time: '4:30 pm', subject: 'Science questions', tone: 'science' },
-]
-
-const finderQuestions = [
-  { prompt: 'What would feel most useful to explore first?', options: ['A school subject', 'More confidence', 'A calmer study routine'] },
-  { prompt: 'When could learning fit into your family rhythm?', options: ['After school', 'At the weekend', 'We are still figuring that out'] },
-  { prompt: 'What kind of support sounds right today?', options: ['One-to-one guidance', 'A little practice between lessons', 'A conversation with a tutor'] },
-]
-
-function formatDate(date: Date, options: Intl.DateTimeFormatOptions) {
-  return new Intl.DateTimeFormat(undefined, options).format(date)
-}
-
-function startOfWeek(date: Date) {
-  const day = date.getDay()
-  const mondayOffset = day === 0 ? -6 : 1 - day
-  const monday = new Date(date)
-  monday.setDate(date.getDate() + mondayOffset)
-  monday.setHours(0, 0, 0, 0)
-  return monday
-}
-
-function shiftDays(date: Date, amount: number) {
-  const shifted = new Date(date)
-  shifted.setDate(shifted.getDate() + amount)
-  return shifted
-}
-
-export function ParentDemos() {
-  const [activeView, setActiveView] = useState(0)
-  const selectedView = demoViews[activeView]
-
-  return (
-    <section id="features" className="parent-section parent-feature-tour" aria-labelledby="parent-feature-title">
-      <div className="parent-section-inner">
-        <Reveal>
-          <div className="parent-feature-heading">
-            <div><p className="public-eyebrow">A look inside the learning space</p><h2 id="parent-feature-title" className="parent-section-title">Useful details, without the noise.</h2></div>
-            <p className="parent-section-intro">Explore sample screens for the people and routines around a learner. These are examples, not live account data.</p>
-          </div>
-        </Reveal>
-        <div className="parent-feature-layout">
-          <div className="parent-feature-copy">
-            <div className="parent-feature-tabs" role="group" aria-label="Choose a sample learning view">
-              {demoViews.map((view, index) => (
-                <button
-                  key={view.label}
-                  type="button"
-                  className="parent-feature-tab"
-                  aria-pressed={activeView === index}
-                  onClick={() => setActiveView(index)}
-                >
-                  <span className="parent-feature-tab-index">0{index + 1}</span>{view.label}
-                </button>
-              ))}
-            </div>
-            <div className="parent-feature-description" aria-live="polite" aria-atomic="true">
-              <span className="parent-feature-kicker"><Check className="size-4" aria-hidden="true" /> Sample view</span>
-              <h3>{selectedView.title}</h3>
-              <p>{selectedView.copy}</p>
-              <Link href="/register" className="public-text-link">Explore the family portal <ArrowRight className="size-4" aria-hidden="true" /></Link>
-            </div>
-          </div>
-          <div className="parent-feature-preview" aria-live="polite" aria-atomic="true">
-            <div className="parent-feature-preview-top"><span className="parent-feature-preview-dot" aria-hidden="true" /><span>{selectedView.label} · Sample</span><span className="parent-feature-preview-spacer" /><Sparkles className="size-4" aria-hidden="true" /></div>
-            <div className="parent-feature-preview-body" key={selectedView.label}>{selectedView.render}</div>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
 
 export function ParentWorldClock() {
   const [timestamp, setTimestamp] = useState<number | null>(null)
@@ -108,165 +23,107 @@ export function ParentWorldClock() {
     return () => window.clearInterval(interval)
   }, [])
 
+  const sampleClassAt = timestamp === null ? null : timestamp + 3 * 60 * 60 * 1000
+
   return (
-    <section className="parent-world-section" aria-labelledby="parent-world-title">
+    <section className="parent-world-section landing-section" aria-labelledby="parent-world-title">
       <div className="parent-world-inner">
-        <Reveal>
-          <div className="parent-world-copy">
-            <p className="public-eyebrow">Learning has no one time zone</p>
-            <h2 id="parent-world-title" className="parent-section-title">Wherever your family is, find your local time.</h2>
-            <p className="parent-section-intro">Use these live clocks as a simple timezone reference when planning a conversation about learning.</p>
-            <span className="parent-world-note"><Clock3 className="size-4" aria-hidden="true" /> Live local times · sample reference only</span>
-          </div>
-        </Reveal>
-        <div className="parent-world-board">
-          <div className="parent-world-globe" aria-hidden="true"><Globe2 className="size-16" strokeWidth={1} /><span /><span /><span /></div>
-          <div className="parent-world-cities">
-            {clockCities.map(({ city, zone }) => {
-              const time = timestamp === null ? '--:--' : new Intl.DateTimeFormat(undefined, { timeZone: zone, hour: 'numeric', minute: '2-digit' }).format(timestamp)
-              const day = timestamp === null ? '' : new Intl.DateTimeFormat(undefined, { timeZone: zone, weekday: 'short' }).format(timestamp)
-              return (
-                <div className="parent-world-city" key={city}>
-                  <span className="parent-world-city-dot" aria-hidden="true" />
-                  <span className="parent-world-city-name">{city}<small>{day || 'Local time'}</small></span>
-                  <time className="parent-world-city-time" dateTime={timestamp === null ? undefined : new Date(timestamp).toISOString()} aria-label={`${city} local time`}>{time}</time>
-                </div>
-              )
-            })}
-          </div>
+        <div className="parent-world-copy"><p className="landing-eyebrow">Different places, one shared hour</p><h2 id="parent-world-title" className="landing-section-title">A class can fit across <em className="landing-accent">time zones.</em></h2><p className="landing-section-copy">Your family and tutor see the same class in their own local time.</p></div>
+        <div className="parent-world-board" aria-label="Sample local time scene">
+          <span className="parent-world-sun-doodle" aria-hidden="true"><Sparkles /></span>
+          <div className="parent-world-cities">{places.map((place) => {
+            const localTime = timestamp === null ? '—:—' : new Intl.DateTimeFormat('en', { timeZone: place.zone, hour: 'numeric', minute: '2-digit' }).format(timestamp)
+            const classTime = sampleClassAt === null ? '—:—' : new Intl.DateTimeFormat('en', { timeZone: place.zone, hour: 'numeric', minute: '2-digit' }).format(sampleClassAt)
+            return <article className={`parent-world-city ${place.color}`} key={place.role}><span className="parent-world-role">{place.role} · {place.city}</span><time className="parent-world-live-time" dateTime={timestamp === null ? undefined : new Date(timestamp).toISOString()}>{localTime}</time><span className="parent-world-zone">{place.zone}</span><span className="parent-world-class-time">Sample class <strong>{classTime}</strong></span></article>
+          })}</div>
+          <p className="parent-world-caption">Example only · New York, London, and Dubai</p>
         </div>
       </div>
     </section>
   )
 }
 
-export function ParentSampleWeek() {
-  const [weekStart, setWeekStart] = useState<Date | null>(null)
+const gradeBands = [
+  { label: 'Preschool to G1', subjects: ['Early reading', 'Number sense', 'Patterns', 'Creative play'] },
+  { label: 'G2 to G4', subjects: ['Reading & writing', 'Multiplication', 'Science', 'Study habits'] },
+  { label: 'G5 to G8', subjects: ['Fractions & algebra', 'Essay writing', 'Life science', 'Coding'] },
+  { label: 'G9 to G12', subjects: ['Advanced mathematics', 'Literature', 'Lab sciences', 'Exam preparation'] },
+]
+
+export function ParentGradeBands() {
+  const [activeBand, setActiveBand] = useState(0)
+  const [currency, setCurrency] = useState<'NGN' | 'USD'>('NGN')
+  const reduceMotion = usePublicMotionPreference()
+  const selectedBand = gradeBands[activeBand]
+
+  function handleKeyDown(event: KeyboardEvent<HTMLButtonElement>) {
+    let nextIndex = activeBand
+    if (event.key === 'ArrowRight') nextIndex = (activeBand + 1) % gradeBands.length
+    if (event.key === 'ArrowLeft') nextIndex = (activeBand - 1 + gradeBands.length) % gradeBands.length
+    if (event.key === 'Home') nextIndex = 0
+    if (event.key === 'End') nextIndex = gradeBands.length - 1
+    if (nextIndex !== activeBand) {
+      event.preventDefault()
+      setActiveBand(nextIndex)
+      document.getElementById(`parent-grade-tab-${nextIndex}`)?.focus()
+    }
+  }
+
+  return (
+    <section id="subjects" className="parent-section parent-grade-bands landing-section" aria-labelledby="parent-grade-title">
+      <div className="parent-section-inner">
+        <div className="landing-section-heading"><p className="landing-eyebrow">Find your child’s next step</p><h2 id="parent-grade-title" className="landing-section-title">Good learning starts with <em className="landing-accent">curiosity.</em></h2><p className="landing-section-copy">Choose a stage to see a few example subjects and skills.</p></div>
+        <div className="parent-grade-tabs" role="tablist" aria-label="Choose a grade band" aria-orientation="horizontal">{gradeBands.map((band, index) => <button key={band.label} id={`parent-grade-tab-${index}`} type="button" role="tab" aria-selected={activeBand === index} aria-controls="parent-grade-panel" tabIndex={activeBand === index ? 0 : -1} onClick={() => setActiveBand(index)} onKeyDown={handleKeyDown}>{activeBand === index ? <motion.span className="parent-grade-tab-pill" layoutId="parent-grade-tab-pill" transition={reduceMotion ? { duration: 0.15 } : { type: 'spring', stiffness: 120, damping: 20, mass: 0.8 }} /> : null}<span>{band.label}</span></button>)}</div>
+        <div id="parent-grade-panel" className="parent-grade-panel" role="tabpanel" aria-labelledby={`parent-grade-tab-${activeBand}`} tabIndex={0}>
+          <AnimatePresence mode="wait" initial={false}><motion.div key={selectedBand.label} className="parent-grade-panel-content" initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -8 }} transition={{ duration: reduceMotion ? 0.15 : 0.28 }}><div><p className="parent-grade-panel-eyebrow">A few things to explore</p><h3>{selectedBand.label}</h3></div><div className="parent-grade-chip-list">{selectedBand.subjects.map((subject, index) => <motion.span key={subject} layout className="parent-grade-chip" initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduceMotion ? 0.15 : 0.25, delay: reduceMotion ? 0 : index * 0.08 }}><Sparkles aria-hidden="true" />{subject}</motion.span>)}</div></motion.div></AnimatePresence>
+        </div>
+        <div className="parent-grade-pricing-preview"><p>See current pricing inside your family account.</p><div className="parent-grade-currency" role="group" aria-label="Preview payment currency">{(['NGN', 'USD'] as const).map((code) => <button type="button" key={code} aria-pressed={currency === code} onClick={() => setCurrency(code)}>{code}</button>)}</div><span>{currency} · Preview only · No prices shown</span></div>
+      </div>
+    </section>
+  )
+}
+
+const quizOptions = [7, 8, 9, 10]
+const correctAnswer = 8
+
+export function ParentQuizShowcase() {
+  const [secondsLeft, setSecondsLeft] = useState(30)
+  const [isRunning, setIsRunning] = useState(false)
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
+  const [result, setResult] = useState<'correct' | 'incorrect' | 'time-up' | null>(null)
+  const reduceMotion = usePublicMotionPreference()
+  const progress = secondsLeft / 30
 
   useEffect(() => {
-    setWeekStart(startOfWeek(new Date()))
-  }, [])
+    if (!isRunning || secondsLeft <= 0) return
+    const timeout = window.setTimeout(() => setSecondsLeft((remaining) => Math.max(0, remaining - 1)), 1000)
+    return () => window.clearTimeout(timeout)
+  }, [isRunning, secondsLeft])
 
-  function shiftWeek(direction: number) {
-    setWeekStart((current) => current ? shiftDays(current, direction * 7) : current)
-  }
+  useEffect(() => {
+    if (isRunning && secondsLeft === 0) { setIsRunning(false); setResult('time-up') }
+  }, [isRunning, secondsLeft])
 
-  const weekEnd = weekStart ? shiftDays(weekStart, 6) : null
-  const rangeLabel = weekStart && weekEnd
-    ? `${formatDate(weekStart, { month: 'short', day: 'numeric' })} – ${formatDate(weekEnd, { month: 'short', day: 'numeric' })}`
-    : 'Current week'
-
-  return (
-    <section className="parent-section parent-sample-week" aria-labelledby="parent-week-title">
-      <div className="parent-section-inner parent-week-layout">
-        <Reveal>
-          <div className="parent-week-copy">
-            <p className="public-eyebrow">Make room for a rhythm</p>
-            <h2 id="parent-week-title" className="parent-section-title">A week that moves with your family.</h2>
-            <p className="parent-section-intro">Step through a sample calendar to see how lessons and practice can sit alongside everyday life.</p>
-            <div className="parent-week-sample-note"><CalendarDays className="size-4" aria-hidden="true" /><span>Sample schedule · No real bookings or learner information</span></div>
-            <Link href="/register" className="public-text-link">Plan with your family account <ArrowRight className="size-4" aria-hidden="true" /></Link>
-          </div>
-        </Reveal>
-        <div className="parent-calendar-card" role="group" aria-label="Sample week calendar">
-          <div className="parent-calendar-header">
-            <div><span className="parent-calendar-kicker">Family planner</span><h3>One week at a time</h3></div>
-            <span className="parent-calendar-sample">Sample</span>
-          </div>
-          <div className="parent-calendar-controls">
-            <p className="parent-calendar-range" aria-live="polite">{rangeLabel}</p>
-            <div className="parent-calendar-buttons">
-              <button type="button" className="parent-calendar-button" aria-label="Previous sample week" disabled={!weekStart} onClick={() => shiftWeek(-1)}><ArrowLeft className="size-4" aria-hidden="true" /></button>
-              <button type="button" className="parent-calendar-button" aria-label="Next sample week" disabled={!weekStart} onClick={() => shiftWeek(1)}><ArrowRight className="size-4" aria-hidden="true" /></button>
-            </div>
-          </div>
-          <div className="parent-calendar-grid">
-            {Array.from({ length: 7 }, (_, index) => {
-              const date = weekStart ? shiftDays(weekStart, index) : null
-              const event = sampleSessions.find((session) => session.day === index)
-              const dayName = date ? formatDate(date, { weekday: 'short' }) : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][index]
-              return (
-                <div className={cn('parent-calendar-day', event && `has-${event.tone}`)} key={index}>
-                  <span className="parent-calendar-day-name">{dayName}</span>
-                  <span className="parent-calendar-date">{date ? formatDate(date, { day: 'numeric' }) : '—'}</span>
-                  {event ? <span className="parent-calendar-event"><small>{event.time}</small>{event.subject}</span> : <span className="parent-calendar-empty">Open</span>}
-                </div>
-              )
-            })}
-          </div>
-          <p className="parent-calendar-footer"><span className="parent-calendar-key" aria-hidden="true" /> Example sessions · Change weeks to explore the calendar</p>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-export function ParentFinderQuiz() {
-  const [step, setStep] = useState(0)
-  const [answers, setAnswers] = useState<string[]>([])
-  const isComplete = step >= finderQuestions.length
-  const question = finderQuestions[step]
-  const selectedAnswer = answers[step]
-  const progress = isComplete ? 100 : Math.round((step / finderQuestions.length) * 100)
-
-  function chooseAnswer(answer: string) {
-    setAnswers((current) => {
-      const next = [...current]
-      next[step] = answer
-      return next
-    })
-  }
-
-  function continueQuiz() {
-    if (!selectedAnswer) return
-    setStep((current) => current + 1)
-  }
-
-  function resetQuiz() {
-    setAnswers([])
-    setStep(0)
+  function startDemo() { setSecondsLeft(30); setSelectedAnswer(null); setResult(null); setIsRunning(true) }
+  function chooseAnswer(choice: number) {
+    if (!isRunning || selectedAnswer !== null) return
+    setSelectedAnswer(choice)
+    setIsRunning(false)
+    setResult(choice === correctAnswer ? 'correct' : 'incorrect')
   }
 
   return (
-    <section className="parent-section parent-finder" aria-labelledby="parent-finder-title">
-      <div className="parent-section-inner parent-finder-layout">
-        <Reveal>
-          <div className="parent-finder-intro">
-            <p className="public-eyebrow">A small starting point</p>
-            <h2 id="parent-finder-title" className="parent-section-title">Not sure where to begin?</h2>
-            <p className="parent-section-intro">Pick a few things that feel true today. This quick guide stays in your browser and does not save your answers.</p>
-            <div className="parent-finder-hint"><Compass className="size-5" aria-hidden="true" /><span>No perfect answers. Just a way to start the conversation.</span></div>
-          </div>
-        </Reveal>
-        <div className="parent-quiz-card">
-          <div className="parent-quiz-header">
-            <span className="parent-quiz-kicker">Parent pathfinder · Sample guide</span>
-            <span className="parent-quiz-count">{isComplete ? 'Summary' : `Step ${step + 1} of ${finderQuestions.length}`}</span>
-          </div>
-          <div className="parent-quiz-progress" role="progressbar" aria-label="Quiz progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress}><span style={{ width: `${progress}%` }} /></div>
-          {!isComplete && question ? (
-            <div className="parent-quiz-body" aria-live="polite" aria-atomic="true">
-              <h3>{question.prompt}</h3>
-              <div className="parent-quiz-options" role="group" aria-label={question.prompt}>
-                {question.options.map((option) => (
-                  <button type="button" key={option} className={cn('parent-quiz-option', selectedAnswer === option && 'is-selected')} aria-pressed={selectedAnswer === option} onClick={() => chooseAnswer(option)}>
-                    <span>{option}</span><span className="parent-quiz-option-mark" aria-hidden="true">{selectedAnswer === option ? <Check className="size-4" /> : <span />}</span>
-                  </button>
-                ))}
-              </div>
-              <div className="parent-quiz-actions">
-                <button type="button" className="parent-quiz-back" disabled={step === 0} onClick={() => setStep((current) => Math.max(0, current - 1))}>Back</button>
-                <button type="button" className="public-button public-button-primary" disabled={!selectedAnswer} onClick={continueQuiz}>{step === finderQuestions.length - 1 ? 'See my summary' : 'Next'}<ArrowRight className="size-4" aria-hidden="true" /></button>
-              </div>
-            </div>
-          ) : (
-            <div className="parent-quiz-result" aria-live="polite">
-              <span className="parent-quiz-result-icon"><Sparkles className="size-5" aria-hidden="true" /></span>
-              <h3>A good first conversation can start here.</h3>
-              <p>Your first focus: <strong>{answers[0]}</strong>. Share this with a parent or caregiver and explore the next step together.</p>
-              <div className="parent-quiz-result-actions"><Link href="/register" className="public-button public-button-primary">Explore registration <ArrowRight className="size-4" aria-hidden="true" /></Link><button type="button" className="parent-quiz-back" onClick={resetQuiz}>Start again</button></div>
-            </div>
-          )}
+    <section className="parent-section parent-quiz-showcase landing-section" aria-labelledby="parent-quiz-title">
+      <div className="parent-section-inner parent-quiz-showcase-layout">
+        <Reveal><div className="parent-quiz-showcase-copy"><p className="landing-eyebrow">A little brain break</p><h2 id="parent-quiz-title" className="landing-section-title">One quick puzzle. A bright <em className="landing-accent">aha.</em></h2><p className="landing-section-copy">Try a 30-second pattern puzzle. This demo stays in your browser and saves nothing.</p></div></Reveal>
+        <div className="parent-quiz-demo-card landing-game">
+          <span className="parent-quiz-game-doodle" aria-hidden="true"><Sparkles /></span>
+          <div className="parent-quiz-demo-question"><div><span className="parent-quiz-step-label">Your turn · Sample game</span><h3>What comes next? <strong>2, 4, 6, …</strong></h3></div><div className="parent-quiz-ring" role="img" aria-label={`${secondsLeft} seconds remain in the sample quiz`}><svg viewBox="0 0 68 68" aria-hidden="true"><circle className="parent-quiz-ring-track" cx="34" cy="34" r="28" pathLength="1" /><motion.circle className="parent-quiz-ring-fill" cx="34" cy="34" r="28" pathLength="1" initial={false} animate={{ pathLength: progress }} transition={{ duration: reduceMotion ? 0.15 : 0.4, ease: 'easeOut' }} /></svg><span aria-hidden="true">{secondsLeft}</span></div></div>
+          {!isRunning && result === null ? <button type="button" className="parent-quiz-start" onClick={startDemo}>Start the game <ArrowRight aria-hidden="true" /></button> : null}
+          <div className="parent-quiz-demo-options" role="group" aria-label="Choose the next number in the sample sequence">{quizOptions.map((choice) => { const selected = choice === selectedAnswer; const correct = selected && choice === correctAnswer; const incorrect = selected && choice !== correctAnswer; return <button type="button" key={choice} aria-pressed={selected} disabled={!isRunning || selectedAnswer !== null} onClick={() => chooseAnswer(choice)} className={cn('parent-quiz-demo-option', correct && 'is-correct', incorrect && 'is-incorrect')}>{choice}{correct ? <Check aria-label="Correct answer" /> : null}</button> })}</div>
+          <div className="parent-quiz-progress" role="progressbar" aria-label="Sample game time remaining" aria-valuemin={0} aria-valuemax={30} aria-valuenow={secondsLeft}><span style={{ transform: `scaleX(${progress})` }} /></div>
+          <p className={cn('parent-quiz-feedback', result && `is-${result}`)} aria-live="polite">{result === 'correct' ? 'That’s right. The pattern adds two.' : result === 'incorrect' ? 'Not quite. The next number is 8.' : result === 'time-up' ? 'Time is up. Take a breath and try again.' : isRunning ? 'Choose the number that fits.' : 'Start whenever you’re ready.'}</p>
+          {result ? <button type="button" className="parent-quiz-retry" onClick={startDemo}><RotateCcw aria-hidden="true" />Try again</button> : null}
         </div>
       </div>
     </section>

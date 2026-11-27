@@ -27,7 +27,6 @@ export function WordReveal({ text, highlight = '' }: WordRevealProps) {
             >
               {word}
             </motion.span>
-            {index < words.length - 1 ? ' ' : null}
           </span>
         ))}
       </span>
