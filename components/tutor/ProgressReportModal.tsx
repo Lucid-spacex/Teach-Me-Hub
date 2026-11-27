@@ -34,18 +34,12 @@ export function ProgressReportModal({ open, onOpenChange, enrollments, students,
 
   const getStudentName = (enrollmentId: string) => {
     const tutorStudent = tutorStudents.find(ts => ts.enrollment?.id === enrollmentId)
-    if (tutorStudent?.student?.fullName) {
-      return tutorStudent.student.fullName
-    }
-    if (tutorStudent?.student?.firstName && tutorStudent?.student?.lastName) {
-      return `${tutorStudent.student.firstName} ${tutorStudent.student.lastName}`
-    }
-    return 'Unknown Student'
+    return tutorStudent?.student?.fullName || 'Unknown Student'
   }
 
   const getSubjectName = (enrollmentId: string) => {
     const tutorStudent = tutorStudents.find(ts => ts.enrollment?.id === enrollmentId)
-    return tutorStudent?.subject?.name || tutorStudent?.enrollment?.subject?.name || 'Unknown Subject'
+    return tutorStudent?.enrollment?.subject?.name || 'Unknown Subject'
   }
 
   const handleSubmit = async (e: React.FormEvent) => {

@@ -1379,6 +1379,8 @@ export interface CompiledGrade {
   studentId: string
   tutorId: string
   period: string
+  periodStart?: string
+  periodEnd?: string
   status: GradeStatus
   components: GradeComponent[]
   computedScore: number

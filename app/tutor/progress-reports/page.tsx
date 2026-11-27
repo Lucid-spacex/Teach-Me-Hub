@@ -73,7 +73,7 @@ export default function TutorProgressReportsPage() {
 
   const getSubjectNameForReport = (enrollmentId: string) => {
     const tutorStudent = tutorStudents.find(ts => ts.enrollment?.id === enrollmentId)
-    return tutorStudent?.subject?.name || tutorStudent?.enrollment?.subject?.name || 'Unknown Subject'
+    return tutorStudent?.enrollment?.subject?.name || 'Unknown Subject'
   }
 
   if (loading) {

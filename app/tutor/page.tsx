@@ -7,7 +7,7 @@ import { TutorStudentList } from '@/components/tutor/StudentList'
 import { TutorSessionList } from '@/components/tutor/SessionList'
 import { ProgressReportModal } from '@/components/tutor/ProgressReportModal'
 import { TutorProfileModal } from '@/components/tutor/TutorProfileModal'
-import { Enrollment, TutorProfile } from '@/lib/types'
+import { Enrollment, TutorProfile, Student, TutorStudent } from '@/lib/types'
 import { api } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { FileText, UserCircle, RefreshCw, Users, Calendar, Clock, AlertCircle, Sparkles, ArrowUpRight } from 'lucide-react'
@@ -18,6 +18,8 @@ export default function TutorDashboard() {
   const router = useRouter()
   const { toast } = useToast()
   const [enrollments, setEnrollments] = useState<Enrollment[]>([])
+  const [students, setStudents] = useState<Student[]>([])
+  const [tutorStudents, setTutorStudents] = useState<TutorStudent[]>([])
   const [tutorProfile, setTutorProfile] = useState<TutorProfile | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [profileModalOpen, setProfileModalOpen] = useState(false)
@@ -71,10 +73,13 @@ export default function TutorDashboard() {
   const loadInitialData = async () => {
     setError(null)
     try {
-      const [enrollmentsData] = await Promise.all([
-        api.getEnrollments()
+      const [enrollmentsData, studentsData] = await Promise.all([
+        api.getEnrollments(),
+        api.getTutorStudentsDetailed().catch(() => [])
       ])
       setEnrollments(enrollmentsData.filter(e => e.tutorId !== null))
+      setTutorStudents(studentsData)
+      setStudents(studentsData.map(s => s.student))
 
       // Try to load tutor profile
       try {
@@ -289,6 +294,8 @@ export default function TutorDashboard() {
         open={reportModalOpen}
         onOpenChange={setReportModalOpen}
         enrollments={enrollments}
+        students={students}
+        tutorStudents={tutorStudents}
         onSuccess={handleRefresh}
       />
 
