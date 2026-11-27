@@ -16,18 +16,16 @@ type PublicShellProps = {
 
 const navigation: Record<PublicAudience, { label: string; href: string }[]> = {
   parents: [
-    { label: 'Parents', href: '/' },
-    { label: 'For tutors', href: '/tutors' },
-    { label: 'For kids', href: '/kids' },
     { label: 'How it works', href: '#how-it-works' },
-    { label: 'Features', href: '#features' },
+    { label: 'Learning support', href: '#features' },
     { label: 'Subjects', href: '#subjects' },
-    { label: 'FAQ', href: '#faq' },
+    { label: 'Questions', href: '#faq' },
   ],
   tutors: [
-    { label: "I'm a parent", href: '/' },
-    { label: 'For tutors', href: '/tutors' },
-    { label: 'For kids', href: '/kids' },
+    { label: 'The opportunity', href: '#tutor-benefits' },
+    { label: 'Application', href: '#tutor-application' },
+    { label: 'Support', href: '#tutor-support' },
+    { label: 'Questions', href: '#tutor-faq' },
   ],
   kids: [
     { label: 'Parents', href: '/' },
@@ -186,12 +184,57 @@ function Header({ audience }: { audience: PublicAudience }) {
 }
 
 function Footer({ audience }: { audience: PublicAudience }) {
+  if (audience !== 'kids') {
+    const learningLinks = audience === 'parents'
+      ? [
+          { label: 'How it works', href: '#how-it-works' },
+          { label: 'Learning support', href: '#features' },
+          { label: 'Subjects', href: '#subjects' },
+          { label: 'Questions', href: '#faq' },
+        ]
+      : [
+          { label: 'The opportunity', href: '#tutor-benefits' },
+          { label: 'Application steps', href: '#tutor-application' },
+          { label: 'Support', href: '#tutor-support' },
+          { label: 'Questions', href: '#tutor-faq' },
+        ]
+
+    return (
+      <footer className="public-footer editorial-footer">
+        <div className="public-footer-inner">
+          <div className="editorial-footer-grid">
+            <div className="public-footer-brand-block">
+              <Brand />
+              <p>Thoughtful learning support for families and educators.</p>
+            </div>
+            <FooterGroup title="Explore" links={learningLinks} />
+            <FooterGroup title="For families" links={[
+              { label: 'Parent login', href: '/login' },
+              { label: 'Student login', href: '/student-login' },
+              { label: 'Create a family account', href: '/register' },
+            ]} />
+            <FooterGroup title="For tutors" links={[
+              { label: 'Tutor information', href: '/tutors' },
+              { label: 'Tutor login', href: '/tutor/login' },
+              { label: 'Start an application', href: '/tutor/register' },
+            ]} />
+          </div>
+          <div className="public-footer-bottom">
+            <p>© {new Date().getFullYear()} TeachMeNest</p>
+            <p>Learning support, built around people.</p>
+            <PublicThemeToggle />
+          </div>
+        </div>
+      </footer>
+    )
+  }
+
   const cta = actionCopy[audience]
   const productLinks = [
-    { label: 'How it works', href: audience === 'parents' ? '#how-it-works' : '/#how-it-works' },
-    { label: 'Features', href: audience === 'parents' ? '#features' : '/#features' },
-    { label: 'Subjects', href: audience === 'parents' ? '#subjects' : '/#subjects' },
-    { label: 'Questions', href: audience === 'parents' ? '#faq' : '/#faq' },
+    { label: 'How it works', href: '/#how-it-works' },
+    { label: 'Features', href: '/#features' },
+    { label: 'Subjects', href: '/#subjects' },
+    { label: 'Questions', href: '/#faq' },
   ]
 
   return (

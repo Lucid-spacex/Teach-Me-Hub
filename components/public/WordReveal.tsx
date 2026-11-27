@@ -10,7 +10,8 @@ type WordRevealProps = {
 
 export function WordReveal({ text, highlight = '' }: WordRevealProps) {
   const reduceMotion = useReducedMotionPreference()
-  const highlightedWords = new Set(highlight.toLowerCase().split(/\s+/).filter(Boolean))
+  const normalizeWord = (word: string) => word.replace(/[.,!?]/g, '').toLowerCase()
+  const highlightedWords = new Set(highlight.split(/\s+/).filter(Boolean).map(normalizeWord))
   const words = text.split(/\s+/)
 
   return (
@@ -20,7 +21,7 @@ export function WordReveal({ text, highlight = '' }: WordRevealProps) {
         {words.map((word, index) => (
           <span className="word-reveal-mask" key={`${word}-${index}`}>
             <motion.span
-              className={highlightedWords.has(word.replace(/[.,!?]/g, '').toLowerCase()) ? 'word-reveal-word is-highlighted' : 'word-reveal-word'}
+              className={highlightedWords.has(normalizeWord(word)) ? 'word-reveal-word is-highlighted' : 'word-reveal-word'}
               initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: '110%' }}
               animate={{ opacity: 1, y: '0%' }}
               transition={reduceMotion ? { duration: 0.15, delay: index * 0.015 } : { duration: 0.7, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}

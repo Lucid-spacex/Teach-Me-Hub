@@ -4,7 +4,7 @@ import {
   TutorBenefits,
   TutorClosing,
   TutorFaq,
-  TutorRequirements,
+  TutorSupport,
   TutorTrust,
 } from '@/components/public/TutorSections'
 import { PublicShell } from '@/components/public/PublicShell'
@@ -12,11 +12,11 @@ import { PublicShell } from '@/components/public/PublicShell'
 export function TutorLanding() {
   return (
     <PublicShell audience="tutors">
-      <div className="tutor-page">
+      <div className="tutor-page adult-landing">
         <TutorHero />
         <TutorBenefits />
         <TutorApplicationSteps />
-        <TutorRequirements />
+        <TutorSupport />
         <TutorTrust />
         <TutorFaq />
         <TutorClosing />

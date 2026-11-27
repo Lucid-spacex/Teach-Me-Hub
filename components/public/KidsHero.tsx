@@ -17,7 +17,7 @@ export function KidsHero() {
       <div className="kids-hero-content">
         <div className="kids-hero-copy">
           <p className="kids-eyebrow"><Sparkles aria-hidden="true" /> Made for curious learners</p>
-          <h1 id="kids-hero-title" className="kids-hero-title"><WordReveal text="Learning can be a big adventure!" highlight="big adventure!" /></h1>
+          <h1 id="kids-hero-title" className="kids-hero-title"><WordReveal text="Learning can be a big adventure!" highlight="adventure!" /></h1>
           <p className="kids-hero-description">Meet a tutor. Ask questions. Try new things.</p>
           <div className="kids-hero-actions">
             <Link href="/student-login" className="public-button public-button-primary kids-action-button">Student login <ArrowRight aria-hidden="true" /></Link>

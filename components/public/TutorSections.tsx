@@ -3,40 +3,23 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { motion, useInView } from 'motion/react'
-import { ArrowRight, Check, FileText, Globe2, HeartHandshake, MessagesSquare, ShieldCheck, Sparkles, Users, WalletCards } from 'lucide-react'
-import { useReducedMotionPreference } from '@/lib/motion'
+import { ArrowRight } from 'lucide-react'
+import { usePublicMotionPreference } from '@/components/public/usePublicMotionPreference'
 
 const benefits = [
-  { title: 'A thoughtful match', copy: 'Your subjects and experience help guide the match.', icon: Users },
-  { title: 'Pay handled monthly', copy: 'An admin sets pay after approval. No rate is promised here.', icon: WalletCards },
-  { title: 'Room for your routine', copy: 'Share when you are available and plan around your week.', icon: Sparkles },
-  { title: 'Support when you need it', copy: 'Reach the team through your tutor account.', icon: MessagesSquare },
-  { title: 'Tools for teaching', copy: 'Set practice, score work, and prepare grades for review.', icon: FileText },
-  { title: 'A considered review', copy: 'The team reviews applications before approval and matching.', icon: ShieldCheck },
+  { title: 'Structured onboarding', copy: 'Move through registration, email verification, document upload, and administrator review.' },
+  { title: 'Ongoing match opportunities', copy: 'Learner matches are considered when needs align with your subjects and availability.' },
+  { title: 'Monthly pay, set by an administrator', copy: 'Payment terms are confirmed by an administrator after your application is approved.' },
+  { title: 'Support through the process', copy: 'Reach the team through your tutor account when you need guidance.' },
 ]
 
 const applicationSteps = [
-  { title: 'Register', copy: 'Create your tutor account.' },
-  { title: 'Verify email', copy: 'Confirm the email address on your account.' },
-  { title: 'Complete application', copy: 'Share your experience and teaching subjects.' },
-  { title: 'Upload documents', copy: 'Add the documents requested in your application.' },
-  { title: 'Admin review', copy: 'The team reviews your application.' },
-  { title: 'Get matched', copy: 'Approved tutors may be considered for a learner match.' },
-]
-
-const vettingSteps = [
-  { title: 'You share your experience', copy: 'Tell us what you teach and how you work with learners.' },
-  { title: 'Documents are reviewed', copy: 'Submit the items requested in your application.' },
-  { title: 'An admin checks your application', copy: 'The team reviews your details before approval.' },
-  { title: 'Matching can begin', copy: 'Approved tutors may be considered when a learner is a fit.' },
-]
-
-const faqItems = [
-  { question: 'How is tutor pay decided?', answer: 'Pay is set by an admin after approval and handled monthly. No hourly rate or amount is promised here.' },
-  { question: 'Can I change my pay after approval?', answer: 'Only an admin can change approved tutor pay. Raise questions with the team through your tutor account.' },
-  { question: 'How do tutor matches work?', answer: 'The team considers the subjects and experience in your profile alongside learner needs.' },
-  { question: 'Which documents will I need?', answer: 'Your application will list the documents currently requested. Check the instructions in your tutor account.' },
-  { question: 'Can I change my availability?', answer: 'You can share your availability and coordinate session times with the team.' },
+  { title: 'Register', copy: 'Create your tutor account with your professional details.' },
+  { title: 'Verify your email', copy: 'Confirm the email address linked to your account.' },
+  { title: 'Complete your application', copy: 'Share your experience, subjects, and availability.' },
+  { title: 'Upload requested documents', copy: 'Provide the documents listed in your application.' },
+  { title: 'Administrator review', copy: 'The team reviews your application before approval.' },
+  { title: 'Consideration for a match', copy: 'Approved tutors may be considered when a learner is a suitable fit.' },
 ]
 
 function ApplicationNode({ index, title, copy, onActive }: { index: number; title: string; copy: string; onActive: (index: number) => void }) {
@@ -46,8 +29,8 @@ function ApplicationNode({ index, title, copy, onActive }: { index: number; titl
   useEffect(() => { if (active) onActive(index) }, [active, index, onActive])
 
   return (
-    <li ref={ref} className="tutor-application-step" aria-current={active ? 'step' : undefined}>
-      <span className="tutor-application-node">0{index + 1}</span>
+    <li ref={ref} className="adult-application-step" aria-current={active ? 'step' : undefined}>
+      <span className="adult-application-number">0{index + 1}</span>
       <div><h3>{title}</h3><p>{copy}</p></div>
     </li>
   )
@@ -55,10 +38,21 @@ function ApplicationNode({ index, title, copy, onActive }: { index: number; titl
 
 export function TutorBenefits() {
   return (
-    <section className="tutor-section tutor-benefits landing-section" aria-labelledby="tutor-benefits-title">
-      <div className="tutor-section-inner">
-        <div className="landing-section-heading"><p className="tutor-eyebrow landing-eyebrow">Good teaching deserves support</p><h2 id="tutor-benefits-title" className="landing-section-title">Make space for the work you <em className="landing-accent">love.</em></h2><p className="landing-section-copy">A steady process can help you focus on the learner in front of you.</p></div>
-        <ol className="tutor-benefit-list">{benefits.map(({ title, copy, icon: Icon }, index) => <li key={title} className="tutor-benefit-item"><span className="tutor-benefit-number">0{index + 1}</span><span className="tutor-benefit-icon"><Icon aria-hidden="true" /></span><div><h3>{title}</h3><p>{copy}</p></div></li>)}</ol>
+    <section id="tutor-benefits" className="adult-section adult-tutor-benefits" aria-labelledby="tutor-benefits-title">
+      <div className="adult-section-inner">
+        <div className="adult-section-heading">
+          <p className="adult-eyebrow">A professional teaching opportunity</p>
+          <h2 id="tutor-benefits-title">Build your practice with <em className="adult-accent">support.</em></h2>
+          <p className="adult-section-copy">Clear expectations, thoughtful matching, and practical support for your work.</p>
+        </div>
+        <ol className="adult-benefit-list">
+          {benefits.map((benefit, index) => (
+            <li key={benefit.title}>
+              <span className="adult-list-number">0{index + 1}</span>
+              <div><h3>{benefit.title}</h3><p>{benefit.copy}</p></div>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
   )
@@ -67,52 +61,105 @@ export function TutorBenefits() {
 export function TutorApplicationSteps() {
   const [activeStep, setActiveStep] = useState(0)
   const current = applicationSteps[activeStep]
-  const reduceMotion = useReducedMotionPreference()
+  const reduceMotion = usePublicMotionPreference()
 
   return (
-    <section id="tutor-application" className="tutor-section tutor-application landing-section" aria-labelledby="tutor-application-title">
-      <div className="tutor-section-inner">
-        <div className="landing-section-heading"><p className="tutor-eyebrow landing-eyebrow">Your application, step by step</p><h2 id="tutor-application-title" className="landing-section-title">A clear route from hello to <em className="landing-accent">matched.</em></h2><p className="landing-section-copy">Six steps. A real review. No guessing what comes next.</p></div>
-        <div className="tutor-journey-layout">
-          <aside className="tutor-journey-marker" aria-live="polite"><span className="tutor-journey-marker-label">You are here</span><strong>0{activeStep + 1} · {current.title}</strong><p>You always know what happens next.</p><span className="tutor-journey-marker-track"><motion.span animate={{ scaleY: (activeStep + 1) / applicationSteps.length }} transition={reduceMotion ? { duration: 0.15 } : { type: 'spring', stiffness: 120, damping: 20, mass: 0.8 }} /></span></aside>
-          <ol className="tutor-application-list" aria-label="Tutor application steps">{applicationSteps.map((step, index) => <ApplicationNode key={step.title} {...step} index={index} onActive={setActiveStep} />)}</ol>
+    <section id="tutor-application" className="adult-section adult-application" aria-labelledby="tutor-application-title">
+      <div className="adult-section-inner">
+        <div className="adult-section-heading">
+          <p className="adult-eyebrow">The application process</p>
+          <h2 id="tutor-application-title">A clear route through your <em className="adult-accent">application.</em></h2>
+          <p className="adult-section-copy">Six practical stages, with an administrator reviewing your application before approval.</p>
+        </div>
+        <div className="adult-application-layout">
+          <aside className="adult-application-marker" aria-live="polite" aria-atomic="true">
+            <span className="adult-eyebrow">You are here</span>
+            <strong>0{activeStep + 1} · {current.title}</strong>
+            <p>Each stage is explained before you continue.</p>
+            <span className="adult-application-track" aria-hidden="true"><motion.span animate={{ scaleY: (activeStep + 1) / applicationSteps.length }} transition={reduceMotion ? { duration: 0.15 } : { duration: 0.45, ease: [0.22, 1, 0.36, 1] }} /></span>
+          </aside>
+          <ol className="adult-application-list" aria-label="Tutor application stages">
+            {applicationSteps.map((step, index) => <ApplicationNode key={step.title} {...step} index={index} onActive={setActiveStep} />)}
+          </ol>
         </div>
       </div>
     </section>
   )
 }
 
-const requirements = ['Your documents', 'A quiet space', 'A reliable connection']
+const supportPoints = [
+  { title: 'Onboarding', copy: 'Your application and account guide you through each requested stage.' },
+  { title: 'Matching', copy: 'Subjects, learner needs, and availability inform match consideration.' },
+  { title: 'Monthly pay', copy: 'An administrator sets payment terms after approval.' },
+  { title: 'Support', copy: 'Use your tutor account to reach the team with questions.' },
+]
 
-export function TutorRequirements() {
-  const reduceMotion = useReducedMotionPreference()
+export function TutorSupport() {
   return (
-    <section id="requirements" className="tutor-section tutor-requirements landing-section" aria-labelledby="tutor-requirements-title">
-      <div className="tutor-section-inner tutor-requirements-layout">
-        <div><p className="tutor-eyebrow landing-eyebrow">What you’ll need</p><h2 id="tutor-requirements-title" className="landing-section-title">Bring the basics. We’ll explain the <em className="landing-accent">rest.</em></h2><p className="landing-section-copy">Your application will show which documents are needed for review.</p><ul className="tutor-requirements-list">{requirements.map((item, index) => <motion.li key={item} initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-10%' }} transition={{ duration: reduceMotion ? 0.15 : 0.35, delay: reduceMotion ? 0 : index * 0.15 }}><span className="tutor-requirement-check"><Check aria-hidden="true" /></span><span>{item}</span></motion.li>)}</ul></div>
-        <div className="tutor-requirements-art" aria-hidden="true"><span className="tutor-requirements-sun" /><span className="tutor-requirements-paper"><FileText /></span><span className="tutor-requirements-book"><span /><span /><span /></span><span className="tutor-requirements-note">Ready when you are.</span></div>
+    <section id="tutor-support" className="adult-section adult-tutor-support" aria-labelledby="tutor-support-title">
+      <div className="adult-section-inner adult-tutor-support-layout">
+        <div>
+          <p className="adult-eyebrow">A clear working relationship</p>
+          <h2 id="tutor-support-title">Know what to expect from the <em className="adult-accent">start.</em></h2>
+          <p className="adult-section-copy">The important details are handled directly and explained before you begin.</p>
+        </div>
+        <ol className="adult-support-list">
+          {supportPoints.map((point, index) => <li key={point.title}><span className="adult-list-number">0{index + 1}</span><div><h3>{point.title}</h3><p>{point.copy}</p></div></li>)}
+        </ol>
       </div>
     </section>
   )
 }
+
+const trustItems = [
+  { title: 'Application review', copy: 'An administrator reviews your application before approval.' },
+  { title: 'Document review', copy: 'The requested documents are listed in your application and reviewed by the team.' },
+  { title: 'Grade review', copy: 'Grades submitted by tutors are reviewed by an administrator before families see them.' },
+  { title: 'Payment clarity', copy: 'Monthly pay is set by an administrator after approval.' },
+]
 
 export function TutorTrust() {
   return (
-    <section className="tutor-section tutor-trust landing-section" aria-labelledby="tutor-trust-title">
-      <div className="tutor-section-inner">
-        <div className="landing-section-heading"><p className="tutor-eyebrow landing-eyebrow">Care on both sides</p><h2 id="tutor-trust-title" className="landing-section-title">Learners deserve care. So do <em className="landing-accent">tutors.</em></h2><p className="landing-section-copy">Review helps set clear expectations before anyone is matched.</p></div>
-        <div className="tutor-trust-grid">{vettingSteps.map(({ title, copy }, index) => <article className="tutor-trust-step" key={title}><span className="tutor-trust-number">0{index + 1}</span><span className="tutor-trust-connector" aria-hidden="true" /><h3>{title}</h3><p>{copy}</p></article>)}</div>
+    <section className="adult-section adult-tutor-trust" aria-labelledby="tutor-trust-title">
+      <div className="adult-section-inner adult-tutor-trust-layout">
+        <div>
+          <p className="adult-eyebrow">A considered process</p>
+          <h2 id="tutor-trust-title">Clear standards, at every <em className="adult-accent">stage.</em></h2>
+          <p className="adult-section-copy">Review and communication help tutors and families understand what happens next.</p>
+        </div>
+        <ol className="adult-tutor-trust-list">
+          {trustItems.map((item, index) => <li key={item.title}><span className="adult-list-number">0{index + 1}</span><div><h3>{item.title}</h3><p>{item.copy}</p></div></li>)}
+        </ol>
       </div>
     </section>
   )
 }
 
+const faqItems = [
+  { question: 'How is tutor pay decided?', answer: 'An administrator sets payment terms after approval. Pay is handled monthly; no amount is promised on this page.' },
+  { question: 'How are tutor matches considered?', answer: 'The team considers learner needs alongside your subjects and availability. A match is not guaranteed.' },
+  { question: 'Which documents should I upload?', answer: 'Your application lists the documents currently requested. Follow the instructions in your tutor account.' },
+  { question: 'Where can I get support?', answer: 'Contact the team through your tutor account during the application and teaching process.' },
+]
+
 export function TutorFaq() {
   return (
-    <section id="tutor-faq" className="tutor-section tutor-faq landing-section" aria-labelledby="tutor-faq-title">
-      <div className="tutor-section-inner tutor-faq-layout">
-        <div><p className="tutor-eyebrow landing-eyebrow">Before you apply</p><h2 id="tutor-faq-title" className="landing-section-title">Good questions deserve <em className="landing-accent">straight answers.</em></h2><p className="landing-section-copy">Pay, review, matching, and documents—explained plainly.</p><Link href="/tutor/register" className="public-text-link">Open the application <ArrowRight aria-hidden="true" /></Link></div>
-        <div className="tutor-faq-list">{faqItems.map((item) => <details className="tutor-faq-item" key={item.question}><summary>{item.question}<span aria-hidden="true">+</span></summary><p>{item.answer}</p></details>)}</div>
+    <section id="tutor-faq" className="adult-section adult-tutor-faq" aria-labelledby="tutor-faq-title">
+      <div className="adult-section-inner adult-faq-layout">
+        <div className="adult-faq-intro">
+          <p className="adult-eyebrow">Before you apply</p>
+          <h2 id="tutor-faq-title">Good questions deserve direct <em className="adult-accent">answers.</em></h2>
+          <p className="adult-section-copy">Review the process, matching, and monthly pay before you begin.</p>
+          <Link href="/tutor/register" className="adult-text-link">Open the application <ArrowRight aria-hidden="true" /></Link>
+        </div>
+        <div className="adult-faq-list">
+          {faqItems.map((item) => (
+            <details className="adult-faq-item" key={item.question}>
+              <summary>{item.question}<span aria-hidden="true">+</span></summary>
+              <p>{item.answer}</p>
+            </details>
+          ))}
+        </div>
       </div>
     </section>
   )
@@ -120,8 +167,17 @@ export function TutorFaq() {
 
 export function TutorClosing() {
   return (
-    <section className="tutor-closing landing-closing" aria-labelledby="tutor-closing-title">
-      <div className="tutor-closing-inner"><p className="tutor-eyebrow landing-eyebrow"><HeartHandshake aria-hidden="true" /> Your next chapter</p><h2 id="tutor-closing-title" className="landing-closing-title">Let your teaching reach <em className="landing-accent">further.</em></h2><p className="landing-closing-copy">Apply when you’re ready. The team will guide you through the review.</p><div className="tutor-hero-actions landing-hero-actions"><Link href="/tutor/register" className="public-button public-button-primary">Apply now <ArrowRight aria-hidden="true" /></Link><Link href="/tutor/login" className="public-button public-button-secondary">Tutor login <ArrowRight aria-hidden="true" /></Link></div><small className="landing-privacy-note"><Globe2 aria-hidden="true" /> Your application details stay private.</small></div>
+    <section className="adult-closing adult-tutor-closing" aria-labelledby="tutor-closing-title">
+      <div className="adult-closing-inner">
+        <p className="adult-eyebrow">Your next step</p>
+        <h2 id="tutor-closing-title">Bring your teaching to more <em className="adult-accent">learners.</em></h2>
+        <p>Apply when you are ready. The team will guide you through the review.</p>
+        <div className="adult-actions">
+          <Link href="/tutor/register" className="public-button public-button-primary">Start your application <ArrowRight aria-hidden="true" /></Link>
+          <Link href="/tutor/login" className="public-button public-button-secondary">Tutor login</Link>
+        </div>
+        <small>Your application information is used for review and matching.</small>
+      </div>
     </section>
   )
 }

@@ -1,13 +1,12 @@
 import { ParentHero } from '@/components/public/ParentHero'
-import { ParentGradeBands, ParentQuizShowcase, ParentWorldClock } from '@/components/public/ParentDemos'
-import { ParentFeatureBento } from '@/components/public/ParentShowcase'
+import { ParentGradeBands, ParentWorldClock } from '@/components/public/ParentDemos'
+import { ParentFeatureList } from '@/components/public/ParentShowcase'
 import {
   ParentApproach,
   ParentFaq,
+  ParentPrinciples,
   ParentSafety,
   ParentStories,
-  ParentSubjectMarquee,
-  ParentTeasers,
   ParentClosingCta,
 } from '@/components/public/ParentSections'
 import { PublicShell } from '@/components/public/PublicShell'
@@ -15,18 +14,16 @@ import { PublicShell } from '@/components/public/PublicShell'
 export function ParentLanding() {
   return (
     <PublicShell audience="parents">
-      <div className="parent-page">
+      <div className="parent-page adult-landing">
         <ParentHero />
-        <ParentSubjectMarquee />
+        <ParentPrinciples />
         <ParentApproach />
-        <ParentFeatureBento />
+        <ParentFeatureList />
         <ParentWorldClock />
         <ParentGradeBands />
-        <ParentQuizShowcase />
         <ParentSafety />
         <ParentStories />
         <ParentFaq />
-        <ParentTeasers />
         <ParentClosingCta />
       </div>
     </PublicShell>

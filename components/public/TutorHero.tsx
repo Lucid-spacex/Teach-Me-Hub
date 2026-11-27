@@ -1,36 +1,33 @@
-'use client'
-
 import Link from 'next/link'
-import { ArrowRight, Check, Sparkles } from 'lucide-react'
-import { motion } from 'motion/react'
-import { TutorLivingRoomScene } from '@/components/public/LandingIllustrations'
-import { WordReveal } from '@/components/public/WordReveal'
-import { useReducedMotionPreference } from '@/lib/motion'
+import { ArrowRight, Check } from 'lucide-react'
 
 export function TutorHero() {
-  const reduceMotion = useReducedMotionPreference()
-
   return (
-    <section className="tutor-hero tutor-story-hero" aria-labelledby="tutor-hero-title">
-      <div className="tutor-hero-grid" aria-hidden="true" />
-      <div className="tutor-hero-layout">
-        <div className="tutor-hero-copy">
-          <p className="landing-eyebrow"><Sparkles className="size-4" aria-hidden="true" /> For tutors and educators</p>
-          <h1 id="tutor-hero-title" className="landing-hero-title"><WordReveal text="Bring your way of teaching to a wider world." highlight="wider world." /></h1>
-          <p className="landing-hero-description">Teach from home, set the times that suit you, and help learners take their next step.</p>
-          <div className="tutor-hero-actions landing-hero-actions">
-            <Link href="/tutor/register" className="public-button public-button-primary">Apply now <ArrowRight className="size-4" aria-hidden="true" /></Link>
-            <Link href="/tutor/login" className="public-button public-button-secondary">Tutor login <ArrowRight className="size-4" aria-hidden="true" /></Link>
+    <section className="adult-hero adult-tutor-hero" aria-labelledby="tutor-hero-title">
+      <div className="adult-hero-grid" aria-hidden="true" />
+      <div className="adult-hero-layout">
+        <div className="adult-hero-copy">
+          <p className="adult-eyebrow">For tutors and educators</p>
+          <h1 id="tutor-hero-title">Teach with <em className="adult-accent">purpose.</em></h1>
+          <p className="adult-lede">A structured path to learner matches, clear monthly pay, and support for your teaching work.</p>
+          <div className="adult-actions">
+            <Link href="/tutor/register" className="public-button public-button-primary">Start your application <ArrowRight aria-hidden="true" /></Link>
+            <Link href="/tutor/login" className="public-button public-button-secondary">Tutor login</Link>
           </div>
-          <p className="tutor-hero-note"><Check className="size-4" aria-hidden="true" /> A clear review process, one step at a time.</p>
+          <p className="adult-privacy"><Check aria-hidden="true" /> An administrator reviews applications and sets pay after approval.</p>
         </div>
-        <div className="tutor-hero-art" aria-hidden="true">
-          <span className="tutor-hero-art-sun" />
-          <span className="tutor-hero-art-note">Good work travels.</span>
-          <motion.div className="tutor-hero-scene" animate={reduceMotion ? { y: 0 } : { y: [0, -5, 0] }} transition={reduceMotion ? { duration: 0.15 } : { duration: 6.4, repeat: Infinity, ease: 'easeInOut' }}><TutorLivingRoomScene /></motion.div>
-          <span className="tutor-hero-art-caption">A lesson can begin right where you are.</span>
+        <div className="adult-hero-art adult-architecture-art" aria-hidden="true">
+          <span className="adult-architecture-frame" />
+          <span className="adult-architecture-inner" />
+          <span className="adult-architecture-step adult-architecture-step-one" />
+          <span className="adult-architecture-step adult-architecture-step-two" />
+          <span className="adult-architecture-step adult-architecture-step-three" />
+          <span className="adult-architecture-axis" />
+          <span className="adult-architecture-point" />
+          <p>Experience. Review. Match.</p>
         </div>
       </div>
+      <div className="adult-hero-bottom"><span>Professional teaching, with a clear process.</span><a href="#tutor-application">View application steps <span aria-hidden="true">↓</span></a></div>
     </section>
   )
 }

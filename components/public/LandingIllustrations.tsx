@@ -100,8 +100,9 @@ export function KidsLearningScene({ className }: SceneProps) {
       <path d="M263 271h133l14 10H249l14-10Z" fill="var(--public-accent-strong)" />
       <path d="m310 218 13-13 13 13-13 12-13-12Z" fill="var(--public-highlight)" />
       <circle cx="323" cy="218" r="5" fill="var(--public-accent-strong)" />
-      <path d="M132 270h48v-30c0-5-4-9-9-9h-30c-5 0-9 4-9 9v39Z" fill="var(--public-panel)" stroke="var(--public-highlight)" strokeWidth="4" />
-      <path d="M139 245h31m-31 9h22" stroke="var(--public-accent-strong)" strokeWidth="3" strokeLinecap="round" />
+      <path d="M129 246c16-9 31-9 48 0v32c-17-8-32-8-48 0v-32Z" fill="var(--public-panel)" stroke="var(--public-highlight)" strokeWidth="4" />
+      <path d="M177 246c13-7 24-7 37 0v32c-13-6-24-6-37 0v-32Z" fill="var(--public-panel)" stroke="var(--public-accent)" strokeWidth="4" />
+      <path d="M177 246v32" stroke="var(--public-accent-strong)" strokeWidth="3" />
       <circle cx="420" cy="239" r="27" fill="var(--public-accent)" />
       <path d="M395 240h50m-25-26c-12 15-12 38 0 52m0-52c12 15 12 38 0 52" fill="none" stroke="var(--public-panel)" strokeWidth="3" opacity=".85" />
       <path d="m87 117 6 13 14 2-10 10 2 13-12-6-12 6 2-13-10-10 14-2 6-13Z" fill="var(--public-highlight)" />
