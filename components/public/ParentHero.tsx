@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowRight, Check, LockKeyhole, ShieldCheck } from 'lucide-react'
+import { ArrowRight, Check, LockKeyhole } from 'lucide-react'
 
 const trustPoints = ['Tutor applications reviewed', 'Grades reviewed by an administrator', 'Secure payments']
 
@@ -22,20 +22,6 @@ export function ParentHero() {
           <ul className="adult-trust-line" aria-label="What families can expect">
             {trustPoints.map((point) => <li key={point}><Check aria-hidden="true" />{point}</li>)}
           </ul>
-        </div>
-        <div className="adult-hero-art" aria-hidden="true">
-          <div className="adult-world-motif">
-            <span className="adult-world-ring adult-world-ring-one" />
-            <span className="adult-world-ring adult-world-ring-two" />
-            <span className="adult-world-ring adult-world-ring-three" />
-            <span className="adult-world-meridian adult-world-meridian-one" />
-            <span className="adult-world-meridian adult-world-meridian-two" />
-            <span className="adult-world-equator" />
-            <span className="adult-world-axis" />
-            <span className="adult-world-point adult-world-point-one" />
-            <span className="adult-world-point adult-world-point-two" />
-          </div>
-          <p className="adult-art-caption"><ShieldCheck aria-hidden="true" /> Thoughtful support, wherever you learn.</p>
         </div>
       </div>
       <div className="adult-hero-bottom"><span>Learning support that respects your family&apos;s time.</span><a href="#how-it-works">Explore the process <span aria-hidden="true">↓</span></a></div>

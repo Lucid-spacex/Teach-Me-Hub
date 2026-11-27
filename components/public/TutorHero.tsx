@@ -16,16 +16,6 @@ export function TutorHero() {
           </div>
           <p className="adult-privacy"><Check aria-hidden="true" /> An administrator reviews applications and sets pay after approval.</p>
         </div>
-        <div className="adult-hero-art adult-architecture-art" aria-hidden="true">
-          <span className="adult-architecture-frame" />
-          <span className="adult-architecture-inner" />
-          <span className="adult-architecture-step adult-architecture-step-one" />
-          <span className="adult-architecture-step adult-architecture-step-two" />
-          <span className="adult-architecture-step adult-architecture-step-three" />
-          <span className="adult-architecture-axis" />
-          <span className="adult-architecture-point" />
-          <p>Experience. Review. Match.</p>
-        </div>
       </div>
       <div className="adult-hero-bottom"><span>Professional teaching, with a clear process.</span><a href="#tutor-application">View application steps <span aria-hidden="true">↓</span></a></div>
     </section>
