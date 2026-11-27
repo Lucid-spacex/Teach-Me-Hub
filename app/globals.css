@@ -564,16 +564,18 @@ svg {
 }
 
 .public-site[data-audience='kids'] {
-  --public-bg: #FBF7EE;
-  --public-panel: #FFFEFA;
+  --public-bg: #FCFBFF;
+  --public-panel: #FFFFFF;
   --public-text: #24233D;
-  --public-muted: #66647A;
+  --public-muted: #605F7A;
   --public-accent: #6C63FF;
-  --public-accent-light: #8D86FF;
-  --public-accent-strong: #453BAF;
-  --public-accent-soft: #EAE8FF;
+  --public-accent-light: #867EFF;
+  --public-accent-strong: #443CB2;
+  --public-accent-soft: #ECEAFF;
   --public-highlight: #FFD23F;
-  --public-on-accent: #FFFFFF;
+  --public-secondary: #B9F3E4;
+  --public-secondary-strong: #175B50;
+  --public-on-accent: #08081A;
   --public-border: #E3E0F2;
   --public-focus: #8A6508;
   --public-progress: #FFD23F;
@@ -589,11 +591,198 @@ svg {
   --public-accent-strong: #CBC7FF;
   --public-accent-soft: #302E51;
   --public-highlight: #FFD23F;
+  --public-secondary: #62C8B0;
+  --public-secondary-strong: #B9F3E4;
   --public-on-accent: #1A1930;
   --public-border: #41405D;
   --public-focus: #FFD23F;
   --public-progress: #FFD23F;
 }
+
+.kids-page { color: var(--public-text); background: var(--public-bg); overflow: clip; }
+.kids-page section[id] { scroll-margin-top: 6.5rem; }
+.kids-page h1,
+.kids-page h2,
+.kids-page h3,
+.kids-page p { margin-block: 0; }
+.kids-page .public-eyebrow { color: var(--public-accent-strong); }
+.kids-page .public-button-primary { color: var(--public-on-accent); }
+.kids-page .public-button-secondary { border-color: var(--public-border); background: var(--public-panel); color: var(--public-text); }
+.kids-section { padding: clamp(4.5rem, 8vw, 7rem) clamp(1.25rem, 5vw, 4.5rem); }
+.kids-section-inner { width: min(100%, 76rem); margin-inline: auto; }
+.kids-section-heading { max-width: 47rem; }
+.kids-section-heading-center { margin-inline: auto; text-align: center; }
+.kids-section-title { max-width: 14ch; margin-top: 0.7rem !important; font-size: clamp(2.1rem, 4.4vw, 4rem); font-weight: 820; line-height: 1.02; letter-spacing: -0.055em; text-wrap: balance; }
+.kids-section-intro { max-width: 38rem; margin-top: 1rem !important; color: var(--public-muted); font-size: clamp(0.98rem, 1.3vw, 1.1rem); line-height: 1.75; }
+.kids-section-heading-center .kids-section-title,
+.kids-section-heading-center .kids-section-intro { margin-inline: auto; }
+.kids-eyebrow { display: inline-flex; align-items: center; gap: 0.45rem; border: 1px solid color-mix(in srgb, var(--public-accent) 18%, transparent); border-radius: 999px; padding: 0.42rem 0.7rem; background: color-mix(in srgb, var(--public-accent-soft) 75%, transparent); color: var(--public-accent-strong); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.025em; }
+.kids-hero { position: relative; isolation: isolate; display: flex; min-height: 100svh; flex-direction: column; justify-content: center; overflow: hidden; padding: clamp(3rem, 6vw, 5rem) clamp(1.25rem, 5vw, 4.5rem) 2rem; background: radial-gradient(ellipse at 79% 22%, color-mix(in srgb, var(--public-highlight) 23%, transparent), transparent 31%), linear-gradient(138deg, var(--public-bg), color-mix(in srgb, var(--public-accent-soft) 35%, var(--public-bg)) 68%, var(--public-bg)); }
+.kids-hero-grid { position: absolute; z-index: -1; inset: 0; opacity: 0.36; background-image: linear-gradient(to right, color-mix(in srgb, var(--public-accent) 8%, transparent) 1px, transparent 1px), linear-gradient(to bottom, color-mix(in srgb, var(--public-accent) 8%, transparent) 1px, transparent 1px); background-size: 42px 42px; mask-image: linear-gradient(90deg, transparent, #000 25%, #000 80%, transparent); }
+.kids-hero-content { display: grid; grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.92fr); align-items: center; gap: clamp(2rem, 5vw, 5rem); width: min(100%, 78rem); margin: 0 auto; }
+.kids-hero-copy { max-width: 39rem; }
+.kids-hero-title { max-width: 11ch; margin-top: 1.15rem !important; font-size: clamp(3rem, 6.4vw, 6.1rem); font-weight: 850; line-height: 0.96; letter-spacing: -0.065em; text-wrap: balance; }
+.kids-hero-title .word-reveal-highlight { position: relative; color: var(--public-accent-strong); text-decoration: underline wavy color-mix(in srgb, var(--public-highlight) 92%, var(--public-accent)); text-decoration-thickness: 0.12em; text-underline-offset: 0.12em; }
+.kids-hero-description { max-width: 34rem; margin-top: 1.25rem !important; color: var(--public-muted); font-size: clamp(1rem, 1.55vw, 1.2rem); line-height: 1.7; }
+.kids-grade-tags { display: flex; flex-wrap: wrap; gap: 0.55rem; margin-top: 1.25rem; }
+.kids-grade-tags > span { display: inline-flex; align-items: center; gap: 0.4rem; border: 1px solid var(--public-border); border-radius: 999px; padding: 0.45rem 0.7rem; background: var(--public-panel); color: var(--public-accent-strong); font-size: 0.72rem; font-weight: 800; }
+.kids-hero-actions,
+.kids-closing-actions { display: flex; flex-wrap: wrap; gap: 0.65rem; margin-top: 1.45rem; }
+.kids-action-button { min-height: 3.15rem; }
+.kids-hero-safety-note { display: flex; align-items: center; gap: 0.45rem; margin-top: 1.1rem !important; color: var(--public-muted); font-size: 0.78rem; font-weight: 700; }
+.kids-hero-art { position: relative; display: grid; min-height: 30rem; place-items: center; }
+.kids-hero-scene-wrap { position: absolute; inset: 0; display: grid; place-items: center; opacity: 0.9; }
+.kids-hero-scene-wrap .kids-learning-scene { width: 100%; max-width: 35rem; }
+.kids-mascot-stage { position: absolute; z-index: 3; inset: 0; display: grid; place-items: center; pointer-events: none; }
+.kids-mascot { position: relative; width: 15rem; height: 17rem; pointer-events: auto; }
+.kids-mascot-head { position: absolute; z-index: 2; top: 0.4rem; left: 2.1rem; display: flex; width: 10.8rem; height: 9.5rem; flex-direction: column; align-items: center; border: 0.3rem solid color-mix(in srgb, var(--public-text) 16%, transparent); border-radius: 47% 48% 42% 44%; background: var(--public-accent); box-shadow: 0 14px 28px color-mix(in srgb, var(--public-accent) 22%, transparent); transform: rotate(-4deg); }
+.kids-mascot-eyes { display: flex; gap: 1.15rem; margin-top: 2.85rem; }
+.kids-mascot-eye { display: grid; width: 1.38rem; height: 1.6rem; place-items: center; border-radius: 50%; background: var(--public-panel); transform-origin: center; }
+.kids-mascot-eye > span { width: 0.52rem; height: 0.62rem; border-radius: 50%; background: var(--public-text); }
+.kids-mascot-smile { width: 1.35rem; height: 0.7rem; margin-top: 0.55rem; border: 0.16rem solid var(--public-text); border-top: 0; border-radius: 0 0 1rem 1rem; }
+.kids-mascot-cheek { position: absolute; top: 5.4rem; width: 0.9rem; height: 0.45rem; border-radius: 50%; background: color-mix(in srgb, var(--public-highlight) 72%, transparent); }
+.kids-mascot-cheek-left { left: 1.1rem; }
+.kids-mascot-cheek-right { right: 1.1rem; }
+.kids-mascot-body { position: absolute; bottom: 0.2rem; left: 3.1rem; display: grid; width: 8.7rem; height: 6.5rem; place-items: center; border: 0.25rem solid color-mix(in srgb, var(--public-text) 14%, transparent); border-radius: 48% 48% 34% 34%; background: var(--public-secondary); box-shadow: 0 12px 25px color-mix(in srgb, var(--public-secondary-strong) 18%, transparent); }
+.kids-mascot-body-mark { width: 2.2rem; height: 2.2rem; border: 0.22rem solid var(--public-secondary-strong); border-radius: 0.7rem; transform: rotate(45deg); }
+.kids-mascot-arm { position: absolute; z-index: 1; top: 7.6rem; right: -0.05rem; width: 4rem; height: 2rem; border: 0.2rem solid color-mix(in srgb, var(--public-text) 13%, transparent); border-radius: 999px; background: var(--public-highlight); transform-origin: 12% 84%; }
+.kids-mascot-foot { position: absolute; bottom: -0.35rem; z-index: 0; width: 2.2rem; height: 1rem; border-radius: 999px; background: var(--public-accent-strong); }
+.kids-mascot-foot-left { left: 3.2rem; }
+.kids-mascot-foot-right { right: 3rem; }
+.kids-mascot-spark { position: absolute; z-index: 3; width: 0.7rem; height: 0.7rem; border: 0.18rem solid var(--public-highlight); border-radius: 50%; }
+.kids-mascot-spark-one { top: 1.6rem; left: 0.55rem; }
+.kids-mascot-spark-two { right: 0.35rem; bottom: 3.2rem; width: 0.45rem; height: 0.45rem; background: var(--public-secondary); }
+.kids-hero-sticker { position: absolute; z-index: 4; top: 9%; right: 5%; border: 1px solid color-mix(in srgb, var(--public-accent) 14%, transparent); border-radius: 999px; padding: 0.6rem 0.9rem; background: var(--public-highlight); color: var(--public-text); font-size: 0.75rem; font-weight: 850; box-shadow: 0 10px 18px color-mix(in srgb, var(--public-highlight) 22%, transparent); }
+.kids-lesson-preview { position: absolute; z-index: 5; right: 2%; bottom: 2%; display: flex; align-items: center; gap: 0.7rem; width: min(19rem, 88%); border: 1px solid var(--public-border); border-radius: 1.1rem; padding: 0.8rem; background: color-mix(in srgb, var(--public-panel) 93%, transparent); box-shadow: var(--public-shadow); backdrop-filter: blur(14px); }
+.kids-preview-icon { display: grid; width: 2.5rem; height: 2.5rem; flex: 0 0 auto; place-items: center; border-radius: 0.8rem; background: var(--public-accent-soft); color: var(--public-accent-strong); }
+.kids-lesson-preview strong,
+.kids-lesson-preview small { display: block; }
+.kids-lesson-preview strong { font-size: 0.78rem; }
+.kids-lesson-preview small { margin-top: 0.22rem; color: var(--public-muted); font-size: 0.68rem; }
+.kids-preview-sample { margin-left: auto; color: var(--public-muted); font-size: 0.62rem; font-weight: 800; }
+.kids-hero-bottom-note { display: flex; align-items: center; justify-content: center; gap: 0.55rem; margin: 1rem auto 0; color: var(--public-muted); font-size: 0.78rem; font-weight: 700; }
+.kids-hero-bottom-mark { width: 0.55rem; height: 0.55rem; border-radius: 50%; background: var(--public-highlight); }
+.kids-class-steps { background: var(--public-panel); }
+.kids-step-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.85rem; margin: 2.5rem 0 0; padding: 0; list-style: none; }
+.kids-step-card { position: relative; display: flex; min-height: 18rem; flex-direction: column; align-items: flex-start; border: 1px solid var(--public-border); border-radius: 1.4rem; padding: 1.15rem; background: var(--kids-card-bg, var(--public-panel)); box-shadow: 0 14px 32px color-mix(in srgb, var(--public-accent) 5%, transparent); }
+.kids-step-number { position: absolute; top: 1rem; right: 1rem; color: var(--public-muted); font-size: 0.72rem; font-weight: 800; }
+.kids-step-icon,
+.kids-subject-icon { display: grid; width: 2.8rem; height: 2.8rem; place-items: center; border-radius: 1rem; background: var(--kids-icon-bg, var(--public-accent-soft)); color: var(--kids-icon-color, var(--public-accent-strong)); }
+.kids-step-card h3,
+.kids-subject-card h3 { margin-top: 1.1rem !important; font-size: 1rem; font-weight: 820; letter-spacing: -0.025em; }
+.kids-step-card p,
+.kids-subject-card p { margin-top: 0.55rem !important; color: var(--public-muted); font-size: 0.84rem; line-height: 1.65; }
+.kids-step-arrow { display: grid; width: 2rem; height: 2rem; place-items: center; margin-top: auto; padding-top: 0.8rem; color: var(--public-accent-strong); }
+.kids-tone-indigo { --kids-card-bg: color-mix(in srgb, var(--public-accent-soft) 76%, var(--public-panel)); --kids-icon-bg: var(--public-accent-soft); --kids-icon-color: var(--public-accent-strong); }
+.kids-tone-yellow { --kids-card-bg: color-mix(in srgb, var(--public-highlight) 20%, var(--public-panel)); --kids-icon-bg: var(--public-highlight); --kids-icon-color: var(--public-text); }
+.kids-tone-mint { --kids-card-bg: color-mix(in srgb, var(--public-secondary) 38%, var(--public-panel)); --kids-icon-bg: var(--public-secondary); --kids-icon-color: var(--public-secondary-strong); }
+.kids-privacy-callout { display: flex; align-items: center; gap: 0.55rem; margin-top: 1.3rem !important; border: 1px solid color-mix(in srgb, var(--public-secondary-strong) 18%, transparent); border-radius: 1rem; padding: 0.85rem 1rem; background: color-mix(in srgb, var(--public-secondary) 24%, var(--public-panel)); color: var(--public-secondary-strong); font-size: 0.8rem; font-weight: 700; }
+.kids-subjects { background: var(--public-bg); }
+.kids-subject-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.9rem; margin-top: 2.5rem; }
+.kids-subject-card { min-height: 11rem; border: 1px solid var(--public-border); border-radius: 1.35rem; padding: 1.15rem; background: var(--kids-card-bg, var(--public-panel)); }
+.kids-subject-card .kids-subject-icon { width: 2.6rem; height: 2.6rem; }
+.kids-sample-stats { background: color-mix(in srgb, var(--public-accent-soft) 44%, var(--public-bg)); }
+.kids-sample-layout { display: grid; grid-template-columns: 0.92fr 1.08fr; align-items: center; gap: clamp(2rem, 6vw, 5.5rem); }
+.kids-sample-badge-row { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.5rem; }
+.kids-sample-badge-row > span { display: inline-flex; align-items: center; gap: 0.4rem; border: 1px solid var(--public-border); border-radius: 999px; padding: 0.5rem 0.75rem; background: var(--public-panel); color: var(--public-accent-strong); font-size: 0.72rem; font-weight: 800; }
+.kids-sample-card { width: min(100%, 34rem); justify-self: end; border: 1px solid var(--public-border); border-radius: 1.6rem; padding: 1.4rem; background: var(--public-panel); box-shadow: var(--public-shadow); }
+.kids-sample-card-top,
+.kids-sample-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 0.7rem; color: var(--public-muted); font-size: 0.72rem; font-weight: 800; }
+.kids-sample-tag { border-radius: 999px; padding: 0.35rem 0.55rem; background: var(--public-highlight); color: var(--public-text); font-size: 0.62rem; font-weight: 850; }
+.kids-sample-card-main { display: flex; align-items: center; justify-content: space-around; gap: 1.2rem; padding: 1.4rem 0; }
+.kids-sample-ring { position: relative; width: 9rem; height: 9rem; flex: 0 0 auto; }
+.kids-sample-ring svg { width: 100%; height: 100%; overflow: visible; transform: rotate(-90deg); }
+.kids-sample-ring-track,
+.kids-sample-ring-fill { fill: none; stroke-width: 9; }
+.kids-sample-ring-track { stroke: var(--public-accent-soft); }
+.kids-sample-ring-fill { stroke: var(--public-accent); stroke-linecap: round; }
+.kids-sample-ring > div { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.kids-sample-ring strong { font-size: 1.5rem; font-weight: 850; letter-spacing: -0.04em; }
+.kids-sample-ring span { color: var(--public-muted); font-size: 0.62rem; }
+.kids-sample-card-stats { display: grid; gap: 0.8rem; }
+.kids-sample-card-stats > div { display: flex; align-items: center; gap: 0.65rem; }
+.kids-sample-stat-icon { display: grid; width: 2.35rem; height: 2.35rem; place-items: center; border-radius: 0.75rem; }
+.kids-sample-stat-yellow { background: var(--public-highlight); color: var(--public-text); }
+.kids-sample-stat-mint { background: var(--public-secondary); color: var(--public-secondary-strong); }
+.kids-sample-card-stats strong,
+.kids-sample-card-stats small { display: block; }
+.kids-sample-card-stats strong { font-size: 1rem; }
+.kids-sample-card-stats small { color: var(--public-muted); font-size: 0.63rem; }
+.kids-sample-card-footer { border-top: 1px solid var(--public-border); padding-top: 0.8rem; }
+.kids-sample-progress-track { height: 0.5rem; margin-top: 0.55rem; overflow: hidden; border-radius: 999px; background: var(--public-accent-soft); }
+.kids-sample-progress-track span { display: block; width: 100%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--public-accent), var(--public-highlight)); transform-origin: left center; }
+.kids-quiz { background: var(--public-panel); }
+.kids-quiz-layout { display: grid; grid-template-columns: 0.78fr 1.22fr; align-items: center; gap: clamp(2rem, 6vw, 5rem); }
+.kids-quiz-callout { display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 1.4rem; color: var(--public-accent-strong); font-size: 0.8rem; font-weight: 800; }
+.kids-quiz-dot { width: 0.55rem; height: 0.55rem; border-radius: 50%; background: var(--public-highlight); }
+.kids-quiz-card { border: 1px solid var(--public-border); border-radius: 1.5rem; padding: clamp(1.15rem, 3vw, 1.65rem); background: color-mix(in srgb, var(--public-accent-soft) 38%, var(--public-panel)); box-shadow: var(--public-shadow); }
+.kids-quiz-card-top { display: flex; align-items: center; justify-content: space-between; color: var(--public-muted); font-size: 0.72rem; font-weight: 850; }
+.kids-quiz-question-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1.2rem; }
+.kids-quiz-question-row h3 { max-width: 20rem; margin-top: 0.35rem !important; font-size: clamp(1.05rem, 2.5vw, 1.4rem); line-height: 1.35; letter-spacing: -0.03em; }
+.kids-quiz-progress-label { color: var(--public-muted); font-size: 0.68rem; font-weight: 800; }
+.kids-quiz-progress-label span { font-weight: 600; }
+.kids-quiz-timer { position: relative; width: 3.8rem; height: 3.8rem; flex: 0 0 auto; }
+.kids-quiz-timer svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.kids-quiz-timer-track,
+.kids-quiz-timer-fill { fill: none; stroke-width: 5; }
+.kids-quiz-timer-track { stroke: var(--public-border); }
+.kids-quiz-timer-fill { stroke: var(--public-accent); stroke-linecap: round; }
+.kids-quiz-timer > span { position: absolute; inset: 0; display: grid; place-items: center; font-size: 0.67rem; font-weight: 850; }
+.kids-quiz-start,
+.kids-quiz-again { display: inline-flex; min-height: 2.6rem; align-items: center; justify-content: center; gap: 0.5rem; border: 1px solid var(--public-border); border-radius: 999px; padding: 0.55rem 0.85rem; background: var(--public-panel); color: var(--public-accent-strong); font-size: 0.75rem; font-weight: 850; cursor: pointer; }
+.kids-quiz-start { margin-top: 1.15rem; }
+.kids-quiz-options { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.55rem; margin-top: 1rem; }
+.kids-quiz-option { display: flex; min-height: 3.1rem; align-items: center; justify-content: center; gap: 0.3rem; border: 1px solid var(--public-border); border-radius: 0.9rem; background: var(--public-panel); color: var(--public-text); font-size: 0.9rem; font-weight: 850; cursor: pointer; transition: transform 160ms ease, border-color 160ms ease, background-color 160ms ease; }
+.kids-quiz-option:hover:not(:disabled) { transform: translateY(-2px); }
+.kids-quiz-option:disabled { cursor: default; }
+.kids-quiz-option.is-correct { border-color: var(--public-secondary-strong); background: color-mix(in srgb, var(--public-secondary) 45%, var(--public-panel)); color: var(--public-secondary-strong); }
+.kids-quiz-option.is-incorrect { border-color: #B54C5B; background: #FCE8EB; color: #8C3342; }
+.dark .kids-quiz-option.is-incorrect { border-color: #F2A0AB; background: #492A38; color: #FFDCE1; }
+.kids-quiz-option-feedback { font-size: 0.56rem; }
+.kids-quiz-message { min-height: 1.4rem; margin-top: 0.85rem !important; color: var(--public-muted); font-size: 0.74rem; line-height: 1.5; }
+.kids-quiz-message.is-correct { color: var(--public-secondary-strong); font-weight: 800; }
+.kids-quiz-message.is-incorrect { color: #8C3342; font-weight: 800; }
+.dark .kids-quiz-message.is-incorrect { color: #FFDCE1; }
+.kids-quiz-message.is-time-up { color: var(--public-accent-strong); font-weight: 800; }
+.kids-quiz-again { margin-top: 0.65rem; }
+.kids-safety { background: color-mix(in srgb, var(--public-secondary) 24%, var(--public-bg)); }
+.kids-safety-heading { display: flex; align-items: flex-start; gap: 1rem; max-width: 53rem; }
+.kids-safety-seal { display: grid; width: 3.25rem; height: 3.25rem; flex: 0 0 auto; place-items: center; border-radius: 1.1rem; background: var(--public-highlight); color: var(--public-text); }
+.kids-safety-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.8rem; margin-top: 2.1rem; }
+.kids-safety-card { display: flex; align-items: flex-start; gap: 0.85rem; border: 1px solid color-mix(in srgb, var(--public-secondary-strong) 16%, transparent); border-radius: 1.2rem; padding: 1.1rem; background: color-mix(in srgb, var(--public-panel) 88%, transparent); }
+.kids-safety-icon { display: grid; width: 2.6rem; height: 2.6rem; flex: 0 0 auto; place-items: center; border-radius: 0.8rem; background: var(--public-secondary); color: var(--public-secondary-strong); }
+.kids-safety-card h3 { font-size: 0.94rem; font-weight: 850; }
+.kids-safety-card p { margin-top: 0.4rem !important; color: var(--public-muted); font-size: 0.78rem; line-height: 1.6; }
+.kids-grown-up { background: var(--public-bg); }
+.kids-grown-up-inner { display: grid; grid-template-columns: 0.9fr 1.1fr; align-items: center; gap: clamp(2rem, 7vw, 6rem); width: min(100%, 74rem); margin-inline: auto; border: 1px solid var(--public-border); border-radius: 1.8rem; padding: clamp(1.3rem, 4vw, 3rem); background: var(--public-panel); box-shadow: var(--public-shadow); }
+.kids-grown-up-art { position: relative; display: grid; min-height: 15rem; place-items: center; overflow: hidden; border-radius: 1.3rem; background: color-mix(in srgb, var(--public-accent-soft) 70%, var(--public-panel)); }
+.kids-grown-up-icon { position: relative; z-index: 1; display: grid; width: 5.5rem; height: 5.5rem; place-items: center; border-radius: 1.7rem; background: var(--public-highlight); color: var(--public-text); transform: rotate(-8deg); }
+.kids-grown-up-orbit { position: absolute; width: 12rem; height: 5rem; border: 1px dashed color-mix(in srgb, var(--public-accent) 45%, transparent); border-radius: 50%; }
+.kids-grown-up-orbit-one { transform: rotate(25deg); }
+.kids-grown-up-orbit-two { transform: rotate(-35deg); }
+.kids-grown-up-star { position: absolute; color: var(--public-accent-strong); }
+.kids-grown-up-star-one { top: 18%; right: 24%; }
+.kids-grown-up-star-two { bottom: 18%; left: 23%; color: var(--public-highlight); }
+.kids-grown-up-copy > p:not(.kids-eyebrow) { margin-top: 1rem !important; color: var(--public-muted); font-size: 0.9rem; line-height: 1.75; }
+.kids-grown-up-reminder { display: flex; align-items: center; gap: 0.5rem; border-left: 3px solid var(--public-highlight); padding-left: 0.7rem; color: var(--public-text) !important; font-weight: 750; }
+.kids-grown-up-copy .public-button { margin-top: 1.2rem; }
+.kids-faq { background: var(--public-panel); }
+.kids-faq-layout { display: grid; grid-template-columns: 0.78fr 1.22fr; align-items: start; gap: clamp(2rem, 7vw, 6rem); }
+.kids-faq-list { display: grid; gap: 0.55rem; }
+.kids-faq-item { border: 1px solid var(--public-border); border-radius: 1rem; padding: 0.95rem 1rem; background: var(--public-bg); }
+.kids-faq-item summary { display: flex; align-items: center; justify-content: space-between; gap: 1rem; color: var(--public-text); font-size: 0.87rem; font-weight: 820; cursor: pointer; list-style: none; }
+.kids-faq-item summary::-webkit-details-marker { display: none; }
+.kids-faq-item summary > span { color: var(--public-accent-strong); font-size: 1.2rem; transition: transform 160ms ease; }
+.kids-faq-item[open] summary > span { transform: rotate(45deg); }
+.kids-faq-item > p { max-width: 45rem; margin-top: 0.75rem !important; color: var(--public-muted); font-size: 0.8rem; line-height: 1.7; }
+.kids-closing { position: relative; overflow: hidden; padding: clamp(4rem, 8vw, 6.5rem) clamp(1.25rem, 5vw, 4.5rem); background: var(--public-accent); color: var(--public-on-accent); text-align: center; }
+.kids-closing-inner { position: relative; width: min(100%, 52rem); margin-inline: auto; }
+.kids-closing-spark { display: grid; width: 3rem; height: 3rem; place-items: center; margin: 0 auto 1rem; border-radius: 1rem; background: var(--public-highlight); color: var(--public-text); }
+.kids-closing .kids-eyebrow { border-color: color-mix(in srgb, var(--public-on-accent) 24%, transparent); background: color-mix(in srgb, var(--public-on-accent) 10%, transparent); color: var(--public-on-accent); }
+.kids-closing h2 { margin-top: 0.8rem !important; font-size: clamp(2.4rem, 5.5vw, 4.8rem); font-weight: 850; line-height: 0.98; letter-spacing: -0.06em; text-wrap: balance; }
+.kids-closing-inner > p:not(.kids-eyebrow) { max-width: 34rem; margin: 0.9rem auto 0 !important; color: color-mix(in srgb, var(--public-on-accent) 82%, transparent); font-size: 0.98rem; line-height: 1.65; }
+.kids-closing-actions { justify-content: center; }
+.kids-closing .public-button-secondary { border-color: color-mix(in srgb, var(--public-on-accent) 30%, transparent); background: color-mix(in srgb, var(--public-on-accent) 10%, transparent); color: var(--public-on-accent); }
 
 .public-site a,
 .public-site button {
@@ -1085,22 +1274,22 @@ svg {
 .kids-scene-orbit { position: absolute; top: 50%; left: 50%; border: 1px dashed color-mix(in srgb, var(--public-accent) 36%, transparent); border-radius: 50%; transform: translate(-50%, -50%); }
 .kids-scene-orbit-one { width: 17rem; height: 11rem; transform: translate(-50%, -50%) rotate(-17deg); }
 .kids-scene-orbit-two { width: 13rem; height: 15rem; transform: translate(-50%, -50%) rotate(22deg); }
-.kids-scene-book { position: absolute; top: 50%; left: 50%; display: flex; width: 8rem; height: 9rem; flex-direction: column; align-items: center; justify-content: center; gap: 0.35rem; border: 1px solid #E1D9B9; border-radius: 0.95rem; background: #FFF4CE; color: #356F67; box-shadow: 0 18px 35px rgba(42, 66, 56, 0.13); transform: translate(-50%, -50%) rotate(-5deg); }
-.kids-scene-book span { color: #624F25; font-family: var(--font-display-family, Georgia, serif); font-size: 0.8rem; font-weight: 700; line-height: 1.1; text-align: center; }
+.kids-scene-book { position: absolute; top: 50%; left: 50%; display: flex; width: 8rem; height: 9rem; flex-direction: column; align-items: center; justify-content: center; gap: 0.35rem; border: 1px solid color-mix(in srgb, var(--public-accent) 18%, transparent); border-radius: 0.95rem; background: var(--public-highlight); color: var(--public-accent-strong); box-shadow: 0 18px 35px rgba(42, 66, 56, 0.13); transform: translate(-50%, -50%) rotate(-5deg); }
+.kids-scene-book span { color: var(--public-text); font-family: var(--font-display-family, Georgia, serif); font-size: 0.8rem; font-weight: 700; line-height: 1.1; text-align: center; }
 .kids-scene-card { position: absolute; z-index: 1; display: flex; flex-direction: column; gap: 0.2rem; border: 1px solid var(--public-border); border-radius: 0.95rem; padding: 0.65rem 0.8rem; background: var(--public-panel); box-shadow: 0 12px 28px rgba(31, 56, 49, 0.12); transform: rotate(-5deg); }
 .kids-scene-card > span { display: grid; width: 1.7rem; height: 1.7rem; place-items: center; border-radius: 0.5rem; background: var(--public-accent-soft); color: var(--public-accent-strong); }
 .kids-scene-card strong { font-size: 0.72rem; }
 .kids-scene-card small { color: var(--public-muted); font-size: 0.57rem; }
 .kids-scene-card-left { top: 21%; left: 6%; }
 .kids-scene-card-right { right: 5%; bottom: 19%; transform: rotate(5deg); }
-.kids-scene-sticker { position: absolute; right: 12%; top: 19%; display: inline-flex; align-items: center; gap: 0.35rem; border: 1px solid #E9C5B5; border-radius: 999px; padding: 0.45rem 0.65rem; background: #FFE3D8; color: #9D4E38; font-size: 0.6rem; font-weight: 800; transform: rotate(7deg); }
+.kids-scene-sticker { position: absolute; right: 12%; top: 19%; display: inline-flex; align-items: center; gap: 0.35rem; border: 1px solid color-mix(in srgb, var(--public-secondary-strong) 22%, transparent); border-radius: 999px; padding: 0.45rem 0.65rem; background: var(--public-secondary); color: var(--public-secondary-strong); font-size: 0.6rem; font-weight: 800; transform: rotate(7deg); }
 .kids-scene-star { position: absolute; z-index: 1; color: var(--public-accent); }
 .kids-scene-star-one { bottom: 20%; left: 20%; }
-.kids-scene-star-two { top: 24%; left: 30%; color: #CB784F; }
-.kids-scene-dot { position: absolute; width: 0.48rem; height: 0.48rem; border-radius: 50%; background: #D2A441; }
+.kids-scene-star-two { top: 24%; left: 30%; color: var(--public-highlight); }
+.kids-scene-dot { position: absolute; width: 0.48rem; height: 0.48rem; border-radius: 50%; background: var(--public-highlight); }
 .kids-scene-dot-one { left: 17%; top: 41%; }
-.kids-scene-dot-two { right: 23%; top: 53%; background: #ED9980; }
-.kids-scene-dot-three { left: 37%; bottom: 17%; background: #859BD3; }
+.kids-scene-dot-two { right: 23%; top: 53%; background: var(--public-secondary); }
+.kids-scene-dot-three { left: 37%; bottom: 17%; background: var(--public-accent-light); }
 
 .learning-notebook {
   position: relative;
