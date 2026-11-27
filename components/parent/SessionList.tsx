@@ -163,7 +163,7 @@ export function SessionList({ enrollments, refreshTrigger }: SessionListProps) {
     <div className="space-y-6">
       <Card className="bg-card border-brand-gold/30">
         <CardHeader>
-          <CardTitle className="text-white flex items-center gap-2">
+          <CardTitle className="text-foreground flex items-center gap-2">
             <Calendar className="h-5 w-5 text-brand-gold" />
             Upcoming Sessions
           </CardTitle>
@@ -184,7 +184,7 @@ export function SessionList({ enrollments, refreshTrigger }: SessionListProps) {
 
       <Card className="bg-card border-brand-gold/30">
         <CardHeader>
-          <CardTitle className="text-white flex items-center gap-2">
+          <CardTitle className="text-foreground flex items-center gap-2">
             <Video className="h-5 w-5 text-brand-gold" />
             Completed Sessions
           </CardTitle>

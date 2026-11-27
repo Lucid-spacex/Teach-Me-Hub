@@ -165,6 +165,7 @@ export interface Student {
   email: string | null
   preferredStartDate: string | null
   studentCode?: string
+  studentPin?: string
   profilePictureUrl?: string | null
   createdAt: string
 }

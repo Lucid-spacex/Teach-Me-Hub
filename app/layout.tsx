@@ -25,6 +25,10 @@ export const metadata: Metadata = {
   description: 'Personalized tutoring that helps every learner feel seen, supported, and ready for what comes next.',
   applicationName: 'TeachMeNest',
   keywords: ['personalized tutoring', 'online learning', 'student progress', 'parent portal'],
+  icons: {
+    icon: '/teachmenest-logo.jpg',
+    apple: '/teachmenest-logo.jpg',
+  },
 }
 
 export const viewport: Viewport = {

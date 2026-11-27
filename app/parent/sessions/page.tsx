@@ -90,7 +90,7 @@ export default function ParentSessionsPage() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold text-white tracking-tight">Live Tutoring Sessions</h1>
+              <h1 className="text-2xl font-bold text-foreground tracking-tight">Live Tutoring Sessions</h1>
               <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/15 text-secondary border border-primary/30 font-medium">
                 Live Classes
               </span>
@@ -105,7 +105,7 @@ export default function ParentSessionsPage() {
           <Button
             onClick={handleRefresh}
             variant="ghost"
-            className="text-zinc-400 hover:text-white hover:bg-card/5 h-10 px-3 rounded-xl"
+            className="text-zinc-400 hover:text-foreground hover:bg-card/5 h-10 px-3 rounded-xl"
             title="Refresh Sessions"
           >
             <RefreshCw className="h-4 w-4" />
@@ -128,7 +128,7 @@ export default function ParentSessionsPage() {
             <Video className="h-7 w-7" />
           </div>
           <div>
-            <h3 className="text-base font-bold text-white">No Sessions Scheduled</h3>
+            <h3 className="text-base font-bold text-foreground">No Sessions Scheduled</h3>
             <p className="text-xs text-zinc-400 mt-1 max-w-xs mx-auto">
               Enroll your children in subjects to get matched with certified tutors and schedule weekly live sessions.
             </p>

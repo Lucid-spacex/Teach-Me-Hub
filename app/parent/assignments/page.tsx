@@ -103,21 +103,21 @@ export default function ParentAssignmentsPage() {
               variant="ghost"
               size="sm"
               onClick={() => router.push('/parent')}
-              className="gap-2 text-muted-foreground hover:text-white"
+              className="gap-2 text-muted-foreground hover:text-foreground"
             >
               <ArrowLeft className="h-4 w-4" />
               Back
             </Button>
             <div className="h-6 w-px bg-border" />
             <div>
-              <h1 className="text-3xl font-serif font-bold text-white">Children&apos;s Assignments</h1>
+              <h1 className="text-3xl font-serif font-bold text-foreground">Children&apos;s Assignments</h1>
               <p className="text-sm text-muted-foreground">Track tasks, classwork, and tests assigned to your children</p>
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             {students.length > 0 && (
               <Select value={studentFilter} onValueChange={setStudentFilter}>
-                <SelectTrigger className="w-[180px] bg-card border-brand-gold/30 text-white h-9 text-xs">
+                <SelectTrigger className="w-[180px] bg-card border-brand-gold/30 text-foreground h-9 text-xs">
                   <SelectValue placeholder="All Children" />
                 </SelectTrigger>
                 <SelectContent>
@@ -164,7 +164,7 @@ export default function ParentAssignmentsPage() {
           <Card className="bg-card border-brand-gold/30 text-center py-12">
             <CardContent>
               <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-white mb-1">No Assignments Found</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-1">No Assignments Found</h3>
               <p className="text-sm text-muted-foreground max-w-sm mx-auto">
                 No assignments match the selected filter criteria.
               </p>
@@ -184,13 +184,13 @@ export default function ParentAssignmentsPage() {
                       </span>
                       <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${
                         item.status === 'PENDING' ? 'bg-yellow-500/20 text-yellow-400' :
-                        item.status === 'SUBMITTED' ? 'bg-blue-500/20 text-blue-400' :
+                        item.status === 'SUBMITTED' ? 'bg-brand-gold/20 text-brand-gold' :
                         'bg-green-500/20 text-green-400'
                       }`}>
                         {item.status}
                       </span>
                     </div>
-                    <CardTitle className="text-lg text-white font-semibold line-clamp-1">
+                    <CardTitle className="text-lg text-foreground font-semibold line-clamp-1">
                       {item.title}
                     </CardTitle>
                     <p className="text-xs text-muted-foreground">
@@ -220,7 +220,7 @@ export default function ParentAssignmentsPage() {
                           {submission.textAnswer && (
                             <div className="bg-card/80 p-2 rounded-lg border border-border/30">
                               <p className="text-xs font-medium text-muted-foreground mb-1">Student Answer:</p>
-                              <p className="text-xs text-white line-clamp-2">{submission.textAnswer}</p>
+                              <p className="text-xs text-foreground line-clamp-2">{submission.textAnswer}</p>
                             </div>
                           )}
                           {attachmentUrl && (

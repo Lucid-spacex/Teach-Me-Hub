@@ -99,9 +99,9 @@ export default function StudentNotificationsPage() {
       case 'TUTOR_ASSIGNED':
         return <GraduationCap className="h-5 w-5 text-emerald-400" />
       case 'SESSION':
-        return <Calendar className="h-5 w-5 text-blue-400" />
+        return <Calendar className="h-5 w-5 text-brand-gold" />
       case 'MESSAGE':
-        return <MessageSquare className="h-5 w-5 text-purple-400" />
+        return <MessageSquare className="h-5 w-5 text-brand-gold" />
       case 'ASSIGNMENT':
         return <BookOpen className="h-5 w-5 text-amber-400" />
       default:
@@ -126,14 +126,14 @@ export default function StudentNotificationsPage() {
               variant="ghost"
               size="sm"
               onClick={() => router.push('/student')}
-              className="gap-2 text-muted-foreground hover:text-white"
+              className="gap-2 text-muted-foreground hover:text-foreground"
             >
               <ArrowLeft className="h-4 w-4" />
               Back
             </Button>
             <div className="h-6 w-px bg-border" />
             <div>
-              <h1 className="text-3xl font-serif font-bold text-white flex items-center gap-3">
+              <h1 className="text-3xl font-serif font-bold text-foreground flex items-center gap-3">
                 Student Notifications
                 {unreadCount > 0 && (
                   <span className="text-xs bg-brand-gold text-brand-dark px-2.5 py-0.5 rounded-full font-bold">
@@ -222,7 +222,7 @@ export default function StudentNotificationsPage() {
           <Card className="bg-card border-brand-gold/30 text-center py-12">
             <CardContent>
               <Bell className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-white mb-1">
+              <h3 className="text-lg font-semibold text-foreground mb-1">
                 {filter === 'UNREAD' ? 'No Unread Notifications' : 'No Notifications'}
               </h3>
               <p className="text-sm text-muted-foreground max-w-sm mx-auto">
@@ -246,7 +246,7 @@ export default function StudentNotificationsPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
-                    <h3 className={`text-base font-semibold ${!item.read ? 'text-white' : 'text-muted-foreground'}`}>
+                    <h3 className={`text-base font-semibold ${!item.read ? 'text-foreground' : 'text-muted-foreground'}`}>
                       {item.title}
                     </h3>
                     <span className="text-xs text-muted-foreground shrink-0">
@@ -263,7 +263,7 @@ export default function StudentNotificationsPage() {
                     size="sm"
                     onClick={() => handleMarkAsRead(item.id)}
                     disabled={markingId === item.id}
-                    className="shrink-0 text-brand-gold hover:text-white hover:bg-brand-gold/20 text-xs"
+                    className="shrink-0 text-brand-gold hover:text-foreground hover:bg-brand-gold/20 text-xs"
                     title="Mark as read"
                   >
                     <Check className="h-4 w-4 mr-1" />

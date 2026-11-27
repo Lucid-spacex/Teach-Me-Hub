@@ -48,14 +48,14 @@ export default function StudentProfilePage() {
               variant="ghost"
               size="sm"
               onClick={() => router.push('/student')}
-              className="gap-2 text-muted-foreground hover:text-white"
+              className="gap-2 text-muted-foreground hover:text-foreground"
             >
               <ArrowLeft className="h-4 w-4" />
               Back
             </Button>
             <div className="h-6 w-px bg-border" />
             <div>
-              <h1 className="text-3xl font-serif font-bold text-white">Student Profile</h1>
+              <h1 className="text-3xl font-serif font-bold text-foreground">Student Profile</h1>
               <p className="text-sm text-muted-foreground">Your student identification and learning profile</p>
             </div>
           </div>
@@ -82,7 +82,7 @@ export default function StudentProfilePage() {
                     <User className="h-8 w-8" />
                   </div>
                   <div>
-                    <CardTitle className="text-2xl text-white font-serif">{profile.fullName}</CardTitle>
+                    <CardTitle className="text-2xl text-foreground font-serif">{profile.fullName}</CardTitle>
                     <p className="text-sm text-brand-gold font-medium mt-0.5">Enrolled Student</p>
                   </div>
                 </div>
@@ -91,14 +91,14 @@ export default function StudentProfilePage() {
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="p-4 rounded-lg bg-brand-dark/70 border border-brand-gold/20">
                     <span className="text-xs text-muted-foreground block mb-1">Grade Level</span>
-                    <span className="text-xl font-semibold text-white">
+                    <span className="text-xl font-semibold text-foreground">
                       {profile.actualGrade}
                     </span>
                   </div>
 
                   <div className="p-4 rounded-lg bg-brand-dark/70 border border-brand-gold/20">
                     <span className="text-xs text-muted-foreground block mb-1">Academic Grade Band</span>
-                    <span className="text-xl font-semibold text-white">
+                    <span className="text-xl font-semibold text-foreground">
                       {profile.actualGrade}
                     </span>
                   </div>

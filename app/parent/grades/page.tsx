@@ -85,21 +85,21 @@ export default function ParentGradesPage() {
               variant="ghost"
               size="sm"
               onClick={() => router.push('/parent')}
-              className="gap-2 text-muted-foreground hover:text-white"
+              className="gap-2 text-muted-foreground hover:text-foreground"
             >
               <ArrowLeft className="h-4 w-4" />
               Back
             </Button>
             <div className="h-6 w-px bg-border" />
             <div>
-              <h1 className="text-3xl font-serif font-bold text-white">Academic Grades</h1>
+              <h1 className="text-3xl font-serif font-bold text-foreground">Academic Grades</h1>
               <p className="text-sm text-muted-foreground">View officially approved scores and tutor feedback for your children</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
             {students.length > 0 && (
               <Select value={studentFilter} onValueChange={setStudentFilter}>
-                <SelectTrigger className="w-[180px] bg-card border-brand-gold/30 text-white h-9 text-xs">
+                <SelectTrigger className="w-[180px] bg-card border-brand-gold/30 text-foreground h-9 text-xs">
                   <SelectValue placeholder="All Children" />
                 </SelectTrigger>
                 <SelectContent>
@@ -133,7 +133,7 @@ export default function ParentGradesPage() {
           <Card className="bg-card border-brand-gold/30 text-center py-12">
             <CardContent>
               <Award className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-white mb-1">No Approved Grades Yet</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-1">No Approved Grades Yet</h3>
               <p className="text-sm text-muted-foreground max-w-sm mx-auto">
                 Once tests and assignments are completed and approved by tutors, official scores and feedback will appear here.
               </p>
@@ -156,7 +156,7 @@ export default function ParentGradesPage() {
                         Approved
                       </span>
                     </div>
-                    <CardTitle className="text-lg text-white font-semibold line-clamp-1">
+                    <CardTitle className="text-lg text-foreground font-semibold line-clamp-1">
                       {ctx.subjectName}
                     </CardTitle>
                     <p className="text-xs text-muted-foreground">
@@ -167,7 +167,7 @@ export default function ParentGradesPage() {
                     <div className="flex items-baseline justify-between p-3 rounded-lg bg-brand-dark/70 border border-brand-gold/15">
                       <div>
                         <span className="text-xs text-muted-foreground">Final Score</span>
-                        <div className="text-2xl font-bold text-white">
+                        <div className="text-2xl font-bold text-foreground">
                           {formatPercentage(finalScore)}
                         </div>
                       </div>
@@ -188,7 +188,7 @@ export default function ParentGradesPage() {
                         {item.components.map((comp, idx) => (
                           <div key={idx} className="flex items-center justify-between text-xs">
                             <span className="text-muted-foreground">{comp.type} ({comp.weight}%)</span>
-                            <span className="text-white font-medium">{formatPercentage(comp.componentPercentage, 1)}</span>
+                            <span className="text-foreground font-medium">{formatPercentage(comp.componentPercentage, 1)}</span>
                           </div>
                         ))}
                       </div>

@@ -441,7 +441,7 @@ export default function StudentDashboard() {
                       assignment.status === 'PENDING'
                         ? 'bg-brand-gold/15 text-brand-goldLight border border-brand-gold/30'
                         : assignment.status === 'SUBMITTED'
-                        ? 'bg-blue-500/15 text-blue-400 border border-blue-500/30'
+                        ? 'bg-brand-gold/15 text-brand-goldLight border border-brand-gold/30'
                         : 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
                     }`}
                   >

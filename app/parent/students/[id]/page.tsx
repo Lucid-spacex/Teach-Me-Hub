@@ -31,6 +31,8 @@ import {
   Shield,
   ExternalLink,
   ChevronRight,
+  Hash,
+  KeyRound,
 } from 'lucide-react'
 
 interface PageProps {
@@ -59,6 +61,7 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
   const [grades, setGrades] = useState<Grade[]>([])
   const [loading, setLoading] = useState(true)
   const [regeneratingPin, setRegeneratingPin] = useState(false)
+  const [currentPin, setCurrentPin] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<'overview' | 'tutors' | 'sessions' | 'academics'>('overview')
 
   useEffect(() => {
@@ -125,10 +128,18 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
     if (!student) return
     setRegeneratingPin(true)
     try {
-      await api.regenerateStudentPin(student.id)
+      const response = await api.regenerateStudentPin(student.id)
+      // If the API returns the new PIN (either as studentPin or newPin), store it locally for display
+      if (response.studentPin) {
+        setCurrentPin(response.studentPin)
+      } else if (response.newPin) {
+        setCurrentPin(response.newPin)
+      }
       toast({
         title: 'PIN Regenerated',
-        description: 'New credentials were emailed to the parent.',
+        description: response.emailSent
+          ? 'New credentials were emailed to the parent.'
+          : 'New credentials have been generated.',
       })
     } catch (err: any) {
       toast({
@@ -211,7 +222,7 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
           variant="ghost"
           size="sm"
           onClick={() => router.push('/parent/students')}
-          className="gap-2 text-zinc-400 hover:text-white hover:bg-card/5"
+          className="gap-2 text-zinc-400 hover:text-foreground hover:bg-card/5"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to My Children
@@ -238,7 +249,7 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
             </div>
             <div className="space-y-1">
               <div className="flex flex-wrap items-center gap-2.5">
-                <h1 className="text-2xl sm:text-3xl font-serif font-bold text-white tracking-tight">
+                <h1 className="text-2xl sm:text-3xl font-serif font-bold text-foreground tracking-tight">
                   {student.fullName}
                 </h1>
                 <Badge variant="outline" className="border-brand-gold/40 text-brand-gold bg-brand-gold/10">
@@ -284,9 +295,34 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
           </div>
         </div>
 
+        {/* Student Credentials Display */}
+        <div className="mt-5 pt-5 border-t border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="bg-card/50 rounded-lg p-3 border border-white/5">
+            <div className="flex items-center gap-2 mb-1">
+              <Hash className="h-3.5 w-3.5 text-brand-gold" />
+              <span className="text-[11px] font-semibold text-foreground uppercase tracking-wider">Student Code</span>
+            </div>
+            <p className="text-sm font-mono font-bold text-foreground tracking-wide">
+              {student.studentCode || 'Not assigned'}
+            </p>
+          </div>
+          <div className="bg-card/50 rounded-lg p-3 border border-white/5">
+            <div className="flex items-center gap-2 mb-1">
+              <KeyRound className="h-3.5 w-3.5 text-brand-gold" />
+              <span className="text-[11px] font-semibold text-foreground uppercase tracking-wider">Student PIN</span>
+            </div>
+            <p className="text-sm font-mono font-bold text-foreground tracking-wide">
+              {currentPin || student.studentPin || '••••••'}
+            </p>
+            {!currentPin && !student.studentPin && (
+              <p className="text-[10px] text-zinc-500 mt-1">Click "Regenerate Access PIN" to generate new credentials</p>
+            )}
+          </div>
+        </div>
+
         {student.notes && (
-          <div className="mt-5 pt-5 border-t border-white/10 text-xs text-zinc-400">
-            <span className="font-semibold text-zinc-300">Learning Notes: </span>
+          <div className="mt-5 pt-5 border-t border-white/10 text-xs text-foreground">
+            <span className="font-semibold text-foreground">Learning Notes: </span>
             {student.notes}
           </div>
         )}
@@ -309,7 +345,7 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
               className={`flex items-center gap-2 py-3 px-4 text-xs sm:text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
                 isActive
                   ? 'border-brand-gold text-brand-gold bg-brand-gold/5'
-                  : 'border-transparent text-zinc-400 hover:text-white hover:border-zinc-700'
+                  : 'border-transparent text-zinc-400 hover:text-foreground hover:border-zinc-700'
               }`}
             >
               <Icon className="h-4 w-4" />
@@ -326,12 +362,12 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <Card className="bg-card border-brand-gold/20">
               <CardContent className="p-5 flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center shrink-0">
+                <div className="w-12 h-12 rounded-xl bg-brand-gold/10 border border-brand-gold/20 text-brand-gold flex items-center justify-center shrink-0">
                   <BookOpen className="h-6 w-6" />
                 </div>
                 <div>
                   <p className="text-xs text-zinc-400 font-medium">Active Subjects</p>
-                  <p className="text-2xl font-bold text-white">
+                  <p className="text-2xl font-bold text-foreground">
                     {enrollments.filter(e => e.status === 'ACTIVE').length}
                   </p>
                   <p className="text-[11px] text-zinc-500">{enrollments.length} total enrolled</p>
@@ -346,7 +382,7 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
                 </div>
                 <div>
                   <p className="text-xs text-zinc-400 font-medium">Assigned Tutors</p>
-                  <p className="text-2xl font-bold text-white">{assignedTutors.length}</p>
+                  <p className="text-2xl font-bold text-foreground">{assignedTutors.length}</p>
                   <p className="text-[11px] text-zinc-500">Dedicated subject specialists</p>
                 </div>
               </CardContent>
@@ -359,7 +395,7 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
                 </div>
                 <div>
                   <p className="text-xs text-zinc-400 font-medium">Upcoming Sessions</p>
-                  <p className="text-2xl font-bold text-white">{upcomingSessions.length}</p>
+                  <p className="text-2xl font-bold text-foreground">{upcomingSessions.length}</p>
                   <p className="text-[11px] text-zinc-500">Next classes scheduled</p>
                 </div>
               </CardContent>
@@ -367,12 +403,12 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
 
             <Card className="bg-card border-brand-gold/20">
               <CardContent className="p-5 flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center shrink-0">
+                <div className="w-12 h-12 rounded-xl bg-brand-gold/10 border border-brand-gold/20 text-brand-gold flex items-center justify-center shrink-0">
                   <Award className="h-6 w-6" />
                 </div>
                 <div>
                   <p className="text-xs text-zinc-400 font-medium">Completed Classes</p>
-                  <p className="text-2xl font-bold text-white">{completedSessions.length}</p>
+                  <p className="text-2xl font-bold text-foreground">{completedSessions.length}</p>
                   <p className="text-[11px] text-zinc-500">Sessions finished</p>
                 </div>
               </CardContent>
@@ -383,7 +419,7 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
           <Card className="bg-card border-brand-gold/25">
             <CardHeader className="pb-3 border-b border-white/5">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-lg font-serif font-bold text-white flex items-center gap-2">
+                <CardTitle className="text-lg font-serif font-bold text-foreground flex items-center gap-2">
                   <GraduationCap className="h-5 w-5 text-brand-gold" />
                   Assigned Instructors
                 </CardTitle>
@@ -413,7 +449,7 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
                           {tutor.fullName.charAt(0)}
                         </div>
                         <div className="min-w-0 flex-1">
-                          <h4 className="font-semibold text-white text-base truncate">{tutor.fullName}</h4>
+                          <h4 className="font-semibold text-foreground text-base truncate">{tutor.fullName}</h4>
                           <div className="flex flex-wrap gap-1 mt-0.5">
                             {tutor.subjects.map(s => (
                               <span key={s} className="text-[10px] bg-brand-gold/10 text-brand-gold px-2 py-0.5 rounded-full border border-brand-gold/25">
@@ -448,7 +484,7 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
           {/* Section: Active Enrollments */}
           <Card className="bg-card border-brand-gold/25">
             <CardHeader className="pb-3 border-b border-white/5">
-              <CardTitle className="text-lg font-serif font-bold text-white flex items-center gap-2">
+              <CardTitle className="text-lg font-serif font-bold text-foreground flex items-center gap-2">
                 <BookOpen className="h-5 w-5 text-brand-gold" />
                 Enrolled Subjects
               </CardTitle>
@@ -464,7 +500,7 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
                     <div key={e.id} className="py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                       <div>
                         <div className="flex items-center gap-2">
-                          <h4 className="font-medium text-white text-sm">
+                          <h4 className="font-medium text-foreground text-sm">
                             {e.subject?.name || e.subjectId}
                           </h4>
                           <StatusBadge status={e.status} />
@@ -501,8 +537,8 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
         <div className="space-y-6">
           <div className="bg-brand-subtle/40 border border-brand-gold/20 rounded-xl p-4 flex items-start gap-3">
             <Shield className="h-5 w-5 text-brand-gold shrink-0 mt-0.5" />
-            <div className="text-xs text-zinc-300 leading-relaxed">
-              <span className="font-semibold text-white">Parent Tutor Policy: </span>
+            <div className="text-xs text-foreground leading-relaxed">
+              <span className="font-semibold text-foreground">Parent Tutor Policy: </span>
               To maintain academic integrity and child safety, parents view tutor credentials, bios, and session logs here. Direct parent messaging to tutors is handled through the Teachmenest Support &amp; Complaints portal to ensure all communications are officially recorded.
             </div>
           </div>
@@ -511,7 +547,7 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
             <Card className="bg-card border-dashed border-zinc-800 text-center py-16">
               <CardContent>
                 <GraduationCap className="h-12 w-12 text-zinc-600 mx-auto mb-3" />
-                <h3 className="text-base font-semibold text-white">No Assigned Tutors Yet</h3>
+                <h3 className="text-base font-semibold text-foreground">No Assigned Tutors Yet</h3>
                 <p className="text-xs text-zinc-400 max-w-sm mx-auto mt-1 mb-4">
                   Once your enrollment is matched, your child&apos;s assigned tutor&apos;s credentials and session schedules will appear here.
                 </p>
@@ -537,7 +573,7 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <h3 className="text-lg font-bold text-white">{tutor.fullName}</h3>
+                            <h3 className="text-lg font-bold text-foreground">{tutor.fullName}</h3>
                             <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[10px]">
                               Verified Instructor
                             </Badge>
@@ -587,7 +623,7 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
                               <div className="flex items-center gap-3">
                                 <Calendar className="h-4 w-4 text-brand-gold shrink-0" />
                                 <div>
-                                  <span className="font-semibold text-white">
+                                  <span className="font-semibold text-foreground">
                                     {new Date(s.scheduledAt).toLocaleDateString(undefined, {
                                       weekday: 'short',
                                       year: 'numeric',
@@ -630,7 +666,7 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
       {activeTab === 'sessions' && (
         <Card className="bg-card border-brand-gold/25">
           <CardHeader className="pb-3 border-b border-white/5">
-            <CardTitle className="text-lg font-serif font-bold text-white flex items-center gap-2">
+            <CardTitle className="text-lg font-serif font-bold text-foreground flex items-center gap-2">
               <Calendar className="h-5 w-5 text-brand-gold" />
               Class Sessions for {student.fullName}
             </CardTitle>
@@ -652,7 +688,7 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
                   >
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="font-semibold text-white text-sm">
+                        <span className="font-semibold text-foreground text-sm">
                           {new Date(session.scheduledAt).toLocaleDateString(undefined, {
                             weekday: 'short',
                             year: 'numeric',
@@ -692,7 +728,7 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
                           href={session.recordingLink}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 text-zinc-300 hover:text-white text-xs border border-zinc-700"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 text-zinc-300 hover:text-foreground text-xs border border-zinc-700"
                         >
                           <ExternalLink className="h-3.5 w-3.5" />
                           View Recording
@@ -713,7 +749,7 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
           {/* Progress Reports */}
           <Card className="bg-card border-brand-gold/25">
             <CardHeader className="pb-3 border-b border-white/5">
-              <CardTitle className="text-lg font-serif font-bold text-white flex items-center gap-2">
+              <CardTitle className="text-lg font-serif font-bold text-foreground flex items-center gap-2">
                 <FileText className="h-5 w-5 text-brand-gold" />
                 Progress Reports ({progressReports.length})
               </CardTitle>
@@ -760,7 +796,7 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
           <Card className="bg-card border-brand-gold/25">
             <CardHeader className="pb-3 border-b border-white/5">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-lg font-serif font-bold text-white flex items-center gap-2">
+                <CardTitle className="text-lg font-serif font-bold text-foreground flex items-center gap-2">
                   <Award className="h-5 w-5 text-brand-gold" />
                   Grades &amp; Assessments ({grades.length})
                 </CardTitle>
@@ -785,7 +821,7 @@ export default function ParentStudentDetailPage({ params }: PageProps) {
                       className="p-4 rounded-xl bg-card/[0.02] border border-white/5 flex items-center justify-between gap-4 text-xs sm:text-sm"
                     >
                       <div>
-                        <h4 className="font-semibold text-white">
+                        <h4 className="font-semibold text-foreground">
                           {grade.assignment?.title || 'Assignment Evaluation'}
                         </h4>
                         {grade.feedback && (

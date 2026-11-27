@@ -75,14 +75,14 @@ export default function ParentStudentPerformancePage() {
             variant="ghost"
             size="sm"
             onClick={() => router.push(`/parent/students/${studentId}`)}
-            className="gap-2 text-muted-foreground hover:text-white"
+            className="gap-2 text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4" />
             Back
           </Button>
           <div className="h-6 w-px bg-border" />
           <div>
-            <h1 className="text-3xl font-serif font-bold text-white">
+            <h1 className="text-3xl font-serif font-bold text-foreground">
               {student?.fullName || 'Student'} Performance
             </h1>
             <p className="text-sm text-muted-foreground">Track academic progress, attendance, and achievements</p>
@@ -90,7 +90,7 @@ export default function ParentStudentPerformancePage() {
         </div>
         <div className="flex items-center gap-3">
           <Select value={period} onValueChange={(value: PeriodFilter) => setPeriod(value)}>
-            <SelectTrigger className="w-[140px] bg-card border-brand-gold/30 text-white h-9 text-xs">
+            <SelectTrigger className="w-[140px] bg-card border-brand-gold/30 text-foreground h-9 text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -123,7 +123,7 @@ export default function ParentStudentPerformancePage() {
         <Card className="bg-card border-brand-gold/30 text-center py-12">
           <CardContent>
             <BarChart3 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-white mb-1">No Performance Data</h3>
+            <h3 className="text-lg font-semibold text-foreground mb-1">No Performance Data</h3>
             <p className="text-sm text-muted-foreground max-w-sm mx-auto">
               Performance data will appear here once your child has grades, attendance records, or completed assignments.
             </p>
@@ -139,7 +139,7 @@ export default function ParentStudentPerformancePage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-xs text-muted-foreground uppercase tracking-wider">Average Grade</p>
-                    <p className="text-2xl font-bold text-white mt-1">
+                    <p className="text-2xl font-bold text-foreground mt-1">
                       {formatPercentage(performance.averageGrade.percentage)}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
@@ -160,7 +160,7 @@ export default function ParentStudentPerformancePage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-xs text-muted-foreground uppercase tracking-wider">Attendance</p>
-                    <p className="text-2xl font-bold text-white mt-1">
+                    <p className="text-2xl font-bold text-foreground mt-1">
                       {formatPercentage(performance.attendance.rate)}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
@@ -181,14 +181,14 @@ export default function ParentStudentPerformancePage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-xs text-muted-foreground uppercase tracking-wider">Assignments</p>
-                    <p className="text-2xl font-bold text-white mt-1">
+                    <p className="text-2xl font-bold text-foreground mt-1">
                       {formatPercentage(performance.assignments.completionRate)}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
                       {performance.assignments.completed} / {performance.assignments.total} completed
                     </p>
                   </div>
-                  <div className="bg-blue-500/20 p-3 rounded-full text-blue-400">
+                  <div className="bg-brand-gold/20 p-3 rounded-full text-brand-gold">
                     <BookOpen className="h-6 w-6" />
                   </div>
                 </div>
@@ -201,14 +201,14 @@ export default function ParentStudentPerformancePage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-xs text-muted-foreground uppercase tracking-wider">Quiz Average</p>
-                    <p className="text-2xl font-bold text-white mt-1">
+                    <p className="text-2xl font-bold text-foreground mt-1">
                       {performance.quizzes.attempts > 0 ? formatPercentage(performance.quizzes.averagePercentage) : 'N/A'}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
                       {performance.quizzes.attempts} attempt{performance.quizzes.attempts !== 1 ? 's' : ''}
                     </p>
                   </div>
-                  <div className="bg-purple-500/20 p-3 rounded-full text-purple-400">
+                  <div className="bg-brand-gold/20 p-3 rounded-full text-brand-gold">
                     <TrendingUp className="h-6 w-6" />
                   </div>
                 </div>
@@ -220,7 +220,7 @@ export default function ParentStudentPerformancePage() {
           {performance.gradesBySubject.length > 0 && (
             <Card className="bg-card border-brand-gold/30">
               <CardHeader>
-                <CardTitle className="text-white">Grades by Subject</CardTitle>
+                <CardTitle className="text-foreground">Grades by Subject</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -234,7 +234,7 @@ export default function ParentStudentPerformancePage() {
                             style={{ width: `${subject.averagePercentage ?? 0}%` }}
                           />
                         </div>
-                        <span className="text-sm font-medium text-white">
+                        <span className="text-sm font-medium text-foreground">
                           {formatPercentage(subject.averagePercentage)}
                         </span>
                         <span className="text-xs text-muted-foreground">({subject.gradedCount})</span>
@@ -250,7 +250,7 @@ export default function ParentStudentPerformancePage() {
           {performance.recentGrades.length > 0 && (
             <Card className="bg-card border-brand-gold/30">
               <CardHeader>
-                <CardTitle className="text-white">Recent Grades</CardTitle>
+                <CardTitle className="text-foreground">Recent Grades</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -260,11 +260,11 @@ export default function ParentStudentPerformancePage() {
                       className="flex items-center justify-between p-3 rounded-lg bg-brand-dark/40 border border-brand-gold/10"
                     >
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-white">{grade.assignmentTitle}</p>
+                        <p className="text-sm font-medium text-foreground">{grade.assignmentTitle}</p>
                         <p className="text-xs text-muted-foreground">{grade.subjectName}</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-sm font-bold text-white">
+                        <p className="text-sm font-bold text-foreground">
                           {grade.score} / {grade.maxScore}
                         </p>
                         <p className="text-xs text-muted-foreground">{formatPercentage(grade.percentage)}</p>
@@ -283,20 +283,20 @@ export default function ParentStudentPerformancePage() {
           {/* Assignment Breakdown */}
           <Card className="bg-card border-brand-gold/30">
             <CardHeader>
-              <CardTitle className="text-white">Assignment Status</CardTitle>
+              <CardTitle className="text-foreground">Assignment Status</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                 <div className="text-center p-3 rounded-lg bg-brand-dark/40 border border-brand-gold/10">
-                  <p className="text-2xl font-bold text-white">{performance.assignments.total}</p>
+                  <p className="text-2xl font-bold text-foreground">{performance.assignments.total}</p>
                   <p className="text-xs text-muted-foreground">Total</p>
                 </div>
                 <div className="text-center p-3 rounded-lg bg-green-950/20 border border-green-500/20">
                   <p className="text-2xl font-bold text-green-400">{performance.assignments.completed}</p>
                   <p className="text-xs text-muted-foreground">Completed</p>
                 </div>
-                <div className="text-center p-3 rounded-lg bg-blue-950/20 border border-blue-500/20">
-                  <p className="text-2xl font-bold text-blue-400">{performance.assignments.pending}</p>
+                <div className="text-center p-3 rounded-lg bg-brand-gold/20 border border-brand-gold/30">
+                  <p className="text-2xl font-bold text-brand-gold">{performance.assignments.pending}</p>
                   <p className="text-xs text-muted-foreground">Pending</p>
                 </div>
                 <div className="text-center p-3 rounded-lg bg-amber-950/20 border border-amber-500/20">

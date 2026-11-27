@@ -65,7 +65,7 @@ export default function StudentAttendancePage() {
             </Button>
             <div className="h-6 w-px bg-border" />
             <div>
-              <h1 className="text-3xl font-serif font-bold text-white">Attendance Log</h1>
+              <h1 className="text-3xl font-serif font-bold text-foreground">Attendance Log</h1>
               <p className="text-sm text-muted-foreground">Detailed record of attended and scheduled tutoring sessions</p>
             </div>
           </div>
@@ -143,7 +143,7 @@ export default function StudentAttendancePage() {
         {/* Detailed Session History */}
         <Card className="bg-card border-border">
           <CardHeader>
-            <CardTitle className="text-white text-lg flex items-center gap-2">
+            <CardTitle className="text-foreground text-lg flex items-center gap-2">
               <Clock className="h-5 w-5 text-brand-gold" />
               Lesson Attendance History
             </CardTitle>
@@ -174,7 +174,7 @@ export default function StudentAttendancePage() {
                         {record.attended ? <CheckCircle2 className="h-5 w-5" /> : <XCircle className="h-5 w-5" />}
                       </div>
                       <div>
-                        <p className="text-white font-medium text-sm">
+                        <p className="text-foreground font-medium text-sm">
                           {new Date(record.sessionDate).toLocaleDateString(undefined, {
                             weekday: 'short',
                             month: 'short',

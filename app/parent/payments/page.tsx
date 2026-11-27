@@ -204,7 +204,7 @@ function PaymentsContent() {
       case 'EXPIRED':
         return 'text-muted-foreground'
       case 'REFUNDED':
-        return 'text-blue-500'
+        return 'text-brand-gold'
       default:
         return 'text-muted-foreground'
     }
@@ -474,13 +474,13 @@ function PaymentsContent() {
                 <div className="p-4 bg-muted rounded-lg">
                   <p className="text-sm text-muted-foreground">Total Paid (NGN)</p>
                   <p className="text-2xl font-bold text-foreground mt-1">
-                    ₦{paymentSummary.totalPaidPerCurrency.NGN.toLocaleString()}
+                    ₦{(paymentSummary?.totalPaidPerCurrency?.NGN || 0).toLocaleString()}
                   </p>
                 </div>
                 <div className="p-4 bg-muted rounded-lg">
                   <p className="text-sm text-muted-foreground">Total Paid (USD)</p>
                   <p className="text-2xl font-bold text-foreground mt-1">
-                    ${paymentSummary.totalPaidPerCurrency.USD.toLocaleString()}
+                    ${(paymentSummary?.totalPaidPerCurrency?.USD || 0).toLocaleString()}
                   </p>
                 </div>
               </div>

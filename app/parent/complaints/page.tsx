@@ -129,14 +129,14 @@ export default function ParentComplaintsPage() {
               variant="ghost"
               size="sm"
               onClick={() => router.push('/parent')}
-              className="gap-2 text-muted-foreground hover:text-white"
+              className="gap-2 text-muted-foreground hover:text-foreground"
             >
               <ArrowLeft className="h-4 w-4" />
               Back
             </Button>
             <div className="h-6 w-px bg-border" />
             <div>
-              <h1 className="text-3xl font-serif font-bold text-white">Support & Complaints</h1>
+              <h1 className="text-3xl font-serif font-bold text-foreground">Support & Complaints</h1>
               <p className="text-sm text-muted-foreground">File issues or view feedback and responses from administration</p>
             </div>
           </div>
@@ -170,7 +170,7 @@ export default function ParentComplaintsPage() {
           <Card className="bg-card border-brand-gold/30 text-center py-12">
             <CardContent>
               <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-white mb-1">No Complaints Filed</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-1">No Complaints Filed</h3>
               <p className="text-sm text-muted-foreground max-w-md mx-auto mb-6">
                 You haven&apos;t submitted any complaints or issues. If you ever have a concern regarding a tutor, session, or account issue, you can file it here.
               </p>
@@ -214,7 +214,7 @@ export default function ParentComplaintsPage() {
                       )}
                     </span>
                   </div>
-                  <CardDescription className="text-white text-base mt-2 whitespace-pre-wrap">
+                  <CardDescription className="text-foreground text-base mt-2 whitespace-pre-wrap">
                     {item.description}
                   </CardDescription>
                 </CardHeader>
@@ -247,7 +247,7 @@ export default function ParentComplaintsPage() {
           <div className="space-y-2">
             <Label htmlFor="aboutType" className="text-muted-foreground">Category</Label>
             <Select value={aboutType} onValueChange={(val) => setAboutType(val as ComplaintAboutType)}>
-              <SelectTrigger className="bg-background border-input text-white">
+              <SelectTrigger className="bg-background border-input text-foreground">
                 <SelectValue placeholder="Select Category" />
               </SelectTrigger>
               <SelectContent>
@@ -267,7 +267,7 @@ export default function ParentComplaintsPage() {
               onChange={(e) => setSubject(e.target.value)}
               placeholder="Brief summary of the issue (max 200 characters)"
               maxLength={200}
-              className="bg-background border-input text-white"
+              className="bg-background border-input text-foreground"
               required
             />
             {fieldErrors.subject && <p className="text-destructive text-sm">{fieldErrors.subject}</p>}
@@ -281,7 +281,7 @@ export default function ParentComplaintsPage() {
               placeholder="Describe the situation in detail..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="bg-background border-input text-white resize-none"
+              className="bg-background border-input text-foreground resize-none"
               required
             />
             {fieldErrors.description && <p className="text-destructive text-sm">{fieldErrors.description}</p>}

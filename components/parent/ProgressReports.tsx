@@ -67,7 +67,7 @@ export function ProgressReports({ enrollments, refreshTrigger }: ProgressReports
   return (
     <Card className="bg-card border-brand-gold/30">
       <CardHeader>
-        <CardTitle className="text-white flex items-center gap-2">
+        <CardTitle className="text-foreground flex items-center gap-2">
           <FileText className="h-5 w-5 text-brand-gold" />
           Progress Reports
         </CardTitle>
@@ -82,7 +82,7 @@ export function ProgressReports({ enrollments, refreshTrigger }: ProgressReports
             <div key={enrollment.id} className="border border-brand-gold/20 rounded-lg mb-2">
               <Button
                 variant="ghost"
-                className="w-full justify-between px-4 py-3 hover:bg-brand-gold/10 text-white"
+                className="w-full justify-between px-4 py-3 hover:bg-brand-gold/10 text-foreground"
                 onClick={() => toggleEnrollment(enrollment.id)}
               >
                 <div className="text-left">
@@ -103,7 +103,7 @@ export function ProgressReports({ enrollments, refreshTrigger }: ProgressReports
                       {enrollmentReports.map((report) => (
                         <div key={report.id} className="border border-brand-gold/20 rounded-lg p-4 bg-brand-dark/50">
                           <div className="mb-2 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                            <h4 className="font-medium text-white">{report.period}</h4>
+                            <h4 className="font-medium text-foreground">{report.period}</h4>
                             <span className="text-xs text-muted-foreground">
                               {new Date(report.createdAt).toLocaleDateString()}
                             </span>

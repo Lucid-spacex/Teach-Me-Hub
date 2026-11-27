@@ -524,10 +524,14 @@ class ApiClient {
     })
   }
 
-  async regenerateStudentPin(studentId: string): Promise<{ message: string }> {
-    return this.request<{ message: string }>(`/students/${studentId}/regenerate-pin`, {
+  async regenerateStudentPin(studentId: string): Promise<{ message: string; studentCode?: string; studentPin?: string; newPin?: string; emailSent?: boolean }> {
+    return this.request<{ message: string; studentCode?: string; studentPin?: string; newPin?: string; emailSent?: boolean }>(`/students/${studentId}/regenerate-pin`, {
       method: 'POST',
     })
+  }
+
+  async getStudentCredentials(studentId: string): Promise<{ studentId: string; fullName: string; studentCode: string; message: string }> {
+    return this.request<{ studentId: string; fullName: string; studentCode: string; message: string }>(`/students/${studentId}/credentials`)
   }
 
   async getStudentActivity(studentId: string): Promise<StudentActivity> {

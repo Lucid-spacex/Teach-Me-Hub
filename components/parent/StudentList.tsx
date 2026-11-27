@@ -7,7 +7,7 @@ import { Student } from '@/lib/types'
 import { DataTable } from '@/components/shared/DataTable'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Users, RefreshCw, Key, Eye } from 'lucide-react'
+import { Users, RefreshCw, Key } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
 
 interface StudentListProps {
@@ -61,7 +61,7 @@ export function StudentList({ onAddStudent, refreshTrigger }: StudentListProps) 
       key: 'name',
       header: 'Name',
       cell: (student: Student) => (
-        <div className="font-medium text-white">{student.fullName}</div>
+        <div className="font-medium text-foreground">{student.fullName}</div>
       ),
     },
 
@@ -86,7 +86,7 @@ export function StudentList({ onAddStudent, refreshTrigger }: StudentListProps) 
             onClick={() => router.push(`/parent/students/${student.id}`)}
             className="text-brand-gold hover:text-brand-goldLight hover:bg-brand-gold/10"
           >
-            <Eye className="h-4 w-4" />
+            Details
           </Button>
           <Button
             variant="ghost"
@@ -110,7 +110,7 @@ export function StudentList({ onAddStudent, refreshTrigger }: StudentListProps) 
     <Card className="bg-card border-brand-gold/30">
       <CardHeader>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <CardTitle className="text-white flex items-center gap-2">
+          <CardTitle className="text-foreground flex items-center gap-2">
             <Users className="h-5 w-5 text-brand-gold" />
             My Children
           </CardTitle>
@@ -131,7 +131,7 @@ export function StudentList({ onAddStudent, refreshTrigger }: StudentListProps) 
             <div className="mb-4 rounded-full border border-brand-gold/30 p-4">
               <Users className="h-8 w-8 text-muted-foreground" />
             </div>
-            <h3 className="text-lg font-semibold text-white">No students yet</h3>
+            <h3 className="text-lg font-semibold text-foreground">No students yet</h3>
             <p className="mt-2 text-sm text-muted-foreground max-w-sm">
               Add your first child to get started with tutoring
             </p>
@@ -153,3 +153,4 @@ export function StudentList({ onAddStudent, refreshTrigger }: StudentListProps) 
     </Card>
   )
 }
+

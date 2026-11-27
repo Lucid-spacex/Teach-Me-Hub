@@ -514,7 +514,7 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
               ) : pricingQuote ? (
                 <Card className="bg-brand-gold/10 border-brand-gold/30">
                   <CardContent className="pt-4">
-                    <p className="text-sm font-medium text-white mb-2">Total Price</p>
+                    <p className="text-sm font-medium text-foreground mb-2">Total Price</p>
                     <div className="space-y-1 text-sm">
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">NGN:</span>
@@ -700,27 +700,27 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
 
           <Card className="bg-brand-gold/10 border-brand-gold/30">
             <CardContent className="pt-4">
-              <p className="text-sm font-medium text-white mb-2">Enrollment Summary</p>
+              <p className="text-sm font-medium text-foreground mb-2">Enrollment Summary</p>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Student:</span>
-                  <span className="text-white">{students.find(s => s.id === formData.studentId)?.fullName}</span>
+                  <span className="text-foreground">{students.find(s => s.id === formData.studentId)?.fullName}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Subjects:</span>
-                  <span className="text-white">
+                  <span className="text-foreground">
                     {formData.subjectIds.map(id => subjects.find(s => s.id === id)?.name).join(', ')}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Frequency:</span>
-                  <span className="text-white">
+                  <span className="text-foreground">
                     {SESSION_FREQUENCIES.find(f => f.value === formData.sessionFrequency)?.label}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Days:</span>
-                  <span className="text-white">
+                  <span className="text-foreground">
                     {formData.availableDays.map(day => {
                       const dayObj = DAYS_OF_WEEK.find(d => d.value === day)
                       return dayObj ? dayObj.label : day
@@ -729,13 +729,13 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Time:</span>
-                  <span className="text-white">
+                  <span className="text-foreground">
                     {formData.preferredStartHour}:00 - {formData.preferredEndHour}:00
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Billing:</span>
-                  <span className="text-white">
+                  <span className="text-foreground">
                     {BILLING_FREQUENCIES.find(f => f.value === formData.billingFrequency)?.label}
                   </span>
                 </div>
@@ -781,15 +781,15 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
         <form id="payment-form" onSubmit={handlePaymentSubmit} className="space-y-4">
           <Card className="bg-brand-dark/50 border-brand-gold/30">
             <CardContent className="pt-6">
-              <p className="text-sm font-medium text-white mb-4">Enrollment Details</p>
+              <p className="text-sm font-medium text-foreground mb-4">Enrollment Details</p>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Student:</span>
-                  <span className="text-white">{students.find(s => s.id === formData.studentId)?.fullName}</span>
+                  <span className="text-foreground">{students.find(s => s.id === formData.studentId)?.fullName}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Subjects:</span>
-                  <span className="text-white">
+                  <span className="text-foreground">
                     {formData.subjectIds.map(id => subjects.find(s => s.id === id)?.name).join(', ')}
                   </span>
                 </div>
@@ -799,7 +799,7 @@ export function EnrollStudentModal({ open, onOpenChange, students, onSuccess }: 
 
           <Card className="bg-brand-gold/10 border-brand-gold/50">
             <CardContent className="pt-6">
-              <p className="text-sm font-medium text-white mb-4 flex items-center gap-2">
+              <p className="text-sm font-medium text-foreground mb-4 flex items-center gap-2">
                 <DollarSign className="h-4 w-4 text-brand-gold" />
                 Payment Amount
               </p>

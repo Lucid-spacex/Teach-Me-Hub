@@ -84,14 +84,14 @@ export default function ParentPricingPage() {
           variant="ghost"
           size="sm"
           onClick={() => router.push('/parent')}
-          className="gap-2 text-muted-foreground hover:text-white"
+          className="gap-2 text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Dashboard
         </Button>
         <div className="h-6 w-px bg-border" />
         <div>
-          <h1 className="text-3xl font-serif font-bold text-white">Pricing</h1>
+          <h1 className="text-3xl font-serif font-bold text-foreground">Pricing</h1>
           <p className="text-sm text-muted-foreground">View pricing for all available subjects and grade levels</p>
         </div>
       </div>
@@ -102,7 +102,7 @@ export default function ParentPricingPage() {
           <div className="flex items-start gap-3">
             <DollarSign className="h-5 w-5 text-brand-gold mt-0.5" />
             <div className="flex-1">
-              <h3 className="font-medium text-white mb-1">Understanding Our Pricing</h3>
+              <h3 className="font-medium text-foreground mb-1">Understanding Our Pricing</h3>
               <p className="text-sm text-muted-foreground">
                 Prices are displayed per grade band. When you enroll your child, the system will automatically
                 calculate the price based on their grade level. Yearly prices are shown below, which are then
@@ -118,7 +118,7 @@ export default function ParentPricingPage() {
         <Card className="bg-card border-brand-gold/30 text-center py-16">
           <CardContent>
             <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-white mb-1">No Subjects Available</h3>
+            <h3 className="text-lg font-semibold text-foreground mb-1">No Subjects Available</h3>
             <p className="text-sm text-muted-foreground">Check back later for available subjects and pricing</p>
           </CardContent>
         </Card>
@@ -133,7 +133,7 @@ export default function ParentPricingPage() {
                       <BookOpen className="h-5 w-5 text-brand-gold" />
                     </div>
                     <div>
-                      <CardTitle className="text-white">{subject.name}</CardTitle>
+                      <CardTitle className="text-foreground">{subject.name}</CardTitle>
                       <p className="text-sm text-muted-foreground mt-1">
                         Category: {subject.category}
                       </p>
@@ -153,7 +153,7 @@ export default function ParentPricingPage() {
               <CardContent>
                 {subject.subjectPrices && subject.subjectPrices.length > 0 ? (
                   <div className="space-y-3">
-                    <h4 className="text-sm font-medium text-white flex items-center gap-2">
+                    <h4 className="text-sm font-medium text-foreground flex items-center gap-2">
                       <GraduationCap className="h-4 w-4 text-brand-gold" />
                       Pricing by Grade Band
                     </h4>

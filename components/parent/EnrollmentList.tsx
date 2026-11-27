@@ -124,7 +124,7 @@ export function EnrollmentList({ students, onEnrollStudent, refreshTrigger }: En
       key: 'student',
       header: 'Student',
       cell: (enrollment: Enrollment) => (
-        <div className="font-medium text-white">{getStudentName(enrollment.studentId)}</div>
+        <div className="font-medium text-foreground">{getStudentName(enrollment.studentId)}</div>
       ),
     },
     {
@@ -133,7 +133,7 @@ export function EnrollmentList({ students, onEnrollStudent, refreshTrigger }: En
       cell: (enrollment: Enrollment) => {
         const subject = enrollment.subject
         return subject ? (
-          <div className="text-muted-foreground">{subject.name}</div>
+          <div className="text-foreground">{subject.name}</div>
         ) : (
           <code className="text-xs bg-brand-gold/10 text-brand-gold px-2 py-1 rounded">{enrollment.subjectId}</code>
         )
@@ -143,7 +143,7 @@ export function EnrollmentList({ students, onEnrollStudent, refreshTrigger }: En
       key: 'frequency',
       header: 'Frequency',
       cell: (enrollment: Enrollment) => (
-        <div className="text-muted-foreground">{enrollment.sessionFrequency}</div>
+        <div className="text-foreground">{enrollment.sessionFrequency}</div>
       ),
     },
     {
@@ -157,7 +157,7 @@ export function EnrollmentList({ students, onEnrollStudent, refreshTrigger }: En
       key: 'startDate',
       header: 'Start Date',
       cell: (enrollment: Enrollment) => (
-        <div className="text-muted-foreground">{new Date(enrollment.startDate).toLocaleDateString()}</div>
+        <div className="text-foreground">{new Date(enrollment.startDate).toLocaleDateString()}</div>
       ),
     },
     {
@@ -167,7 +167,7 @@ export function EnrollmentList({ students, onEnrollStudent, refreshTrigger }: En
         enrollment.tutorId ? (
           <span className="text-sm text-brand-gold">Assigned</span>
         ) : (
-          <span className="text-sm text-muted-foreground">Unassigned</span>
+          <span className="text-sm text-foreground">Unassigned</span>
         )
       ),
     },
@@ -216,7 +216,7 @@ export function EnrollmentList({ students, onEnrollStudent, refreshTrigger }: En
     <Card className="bg-card border-brand-gold/30">
       <CardHeader>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <CardTitle className="text-white flex items-center gap-2">
+          <CardTitle className="text-foreground flex items-center gap-2">
             <GraduationCap className="h-5 w-5 text-brand-gold" />
             My Enrollments
           </CardTitle>

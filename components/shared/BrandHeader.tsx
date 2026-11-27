@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { Sprout } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -8,20 +9,16 @@ export function BrandHeader({ variant = 'default' }: { variant?: 'default' | 'si
 
   return (
     <div className="flex items-center gap-3">
-      {/* Logo Mark */}
-      <div className="relative flex size-12 items-center justify-center rounded-full border-2 border-primary bg-foreground">
-        <div className="relative">
-          {/* House outline */}
-          <div className="absolute inset-0 rounded-sm border-2 border-primary" />
-          {/* Parent figure (white) */}
-          <div className="absolute left-1 top-2 h-3 w-2 rounded-full bg-background" />
-          {/* Child figure (gold) */}
-          <div className="absolute left-3 top-3 h-2 w-1.5 rounded-full bg-primary" />
-          {/* Book */}
-          <div className="absolute bottom-1 left-1 h-1 w-4 rounded-sm bg-primary" />
-          {/* Plant */}
-          <Sprout className="absolute -right-2 top-1 size-3 text-primary" />
-        </div>
+      {/* Logo Image */}
+      <div className="relative flex size-12 items-center justify-center rounded-full overflow-hidden border-2 border-primary bg-foreground">
+        <Image
+          src="/teachmenest-logo.jpg"
+          alt="Teachmenest Logo"
+          width={48}
+          height={48}
+          className="object-cover"
+          priority
+        />
       </div>
 
       {/* Wordmark */}

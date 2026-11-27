@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { getUser, getUserRole } from '@/lib/auth'
 import { ProgressReportModal } from '@/components/tutor/ProgressReportModal'
-import { ProgressReport, Enrollment } from '@/lib/types'
+import { ProgressReport, Enrollment, Student, TutorStudent } from '@/lib/types'
 import { api } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/shared/EmptyState'
@@ -17,6 +17,8 @@ export default function TutorProgressReportsPage() {
   const { toast } = useToast()
   const [reports, setReports] = useState<ProgressReport[]>([])
   const [enrollments, setEnrollments] = useState<Enrollment[]>([])
+  const [students, setStudents] = useState<Student[]>([])
+  const [tutorStudents, setTutorStudents] = useState<TutorStudent[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [reportModalOpen, setReportModalOpen] = useState(false)
@@ -35,12 +37,18 @@ export default function TutorProgressReportsPage() {
     setLoading(true)
     setError(null)
     try {
-      const [reportsData, enrollmentsData] = await Promise.all([
+      const [reportsData, studentsData] = await Promise.all([
         api.getProgressReports(),
-        api.getEnrollments()
+        api.getTutorStudentsDetailed().catch(() => [])
       ])
       setReports(reportsData)
-      setEnrollments(enrollmentsData.filter(e => e.tutorId !== null))
+      setTutorStudents(studentsData)
+      // Extract enrollments from tutor students response
+      const enrollmentsFromStudents = studentsData
+        .filter(s => s.enrollment)
+        .map(s => s.enrollment!)
+      setEnrollments(enrollmentsFromStudents)
+      setStudents(studentsData.map(s => s.student))
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load data'
       setError(errorMessage)
@@ -56,6 +64,16 @@ export default function TutorProgressReportsPage() {
 
   const refreshReports = () => {
     loadData()
+  }
+
+  const getStudentNameForReport = (enrollmentId: string) => {
+    const tutorStudent = tutorStudents.find(ts => ts.enrollment?.id === enrollmentId)
+    return tutorStudent?.student?.fullName || 'Unknown Student'
+  }
+
+  const getSubjectNameForReport = (enrollmentId: string) => {
+    const tutorStudent = tutorStudents.find(ts => ts.enrollment?.id === enrollmentId)
+    return tutorStudent?.subject?.name || tutorStudent?.enrollment?.subject?.name || 'Unknown Subject'
   }
 
   if (loading) {
@@ -121,7 +139,7 @@ export default function TutorProgressReportsPage() {
             Submit Report
           </Button>
         </div>
-        
+
         <div className="mb-8">
           <h2 className="text-lg font-semibold mb-4">Previous Reports</h2>
           {reports.length === 0 ? (
@@ -142,8 +160,12 @@ export default function TutorProgressReportsPage() {
                   </div>
                   <div className="space-y-2 text-sm">
                     <div>
-                      <span className="font-medium text-foreground">Enrollment ID:</span>{' '}
-                      <code className="text-xs bg-muted px-2 py-1 rounded">{report.enrollmentId}</code>
+                      <span className="font-medium text-foreground">Student:</span>{' '}
+                      <span className="text-foreground">{getStudentNameForReport(report.enrollmentId)}</span>
+                    </div>
+                    <div>
+                      <span className="font-medium text-foreground">Subject:</span>{' '}
+                      <span className="text-muted-foreground">{getSubjectNameForReport(report.enrollmentId)}</span>
                     </div>
                     <div>
                       <span className="font-medium text-foreground">Summary:</span>{' '}
@@ -161,6 +183,8 @@ export default function TutorProgressReportsPage() {
         open={reportModalOpen}
         onOpenChange={setReportModalOpen}
         enrollments={enrollments}
+        students={students}
+        tutorStudents={tutorStudents}
         onSuccess={refreshReports}
       />
     </div>

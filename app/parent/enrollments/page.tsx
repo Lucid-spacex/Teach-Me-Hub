@@ -93,11 +93,11 @@ export default function ParentEnrollmentsPage() {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold tracking-tight text-foreground">Academic Enrollments</h1>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/15 text-secondary border border-primary/30 font-medium">
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/15 text-foreground border border-primary/30 font-medium">
                 Courses
               </span>
             </div>
-            <p className="mt-0.5 text-xs text-muted-foreground">
+            <p className="mt-0.5 text-xs text-foreground">
               Review active courses, tutor assignments, monthly tuition status, and enrollment approvals
             </p>
           </div>
@@ -107,7 +107,7 @@ export default function ParentEnrollmentsPage() {
           <Button
             onClick={refreshEnrollments}
             variant="ghost"
-            className="h-10 rounded-xl px-3 text-muted-foreground hover:bg-muted hover:text-foreground"
+            className="h-10 rounded-xl px-3 text-foreground hover:bg-muted hover:text-foreground"
             title="Refresh"
           >
             <RefreshCw className="h-4 w-4" />
@@ -115,7 +115,7 @@ export default function ParentEnrollmentsPage() {
           <Link href="/parent/payments">
             <Button
               variant="outline"
-              className="border-primary/40 bg-muted text-secondary hover:bg-primary/10 hover:border-primary font-semibold h-10 px-4 rounded-xl flex items-center gap-2"
+              className="border-primary/40 bg-muted text-foreground hover:bg-primary/10 hover:border-primary font-semibold h-10 px-4 rounded-xl flex items-center gap-2"
             >
               <CreditCard className="h-4 w-4" />
               Pay Fees

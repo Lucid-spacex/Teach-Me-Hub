@@ -53,14 +53,14 @@ export default function StudentProgressReportsPage() {
               variant="ghost"
               size="sm"
               onClick={() => router.push('/student')}
-              className="gap-2 text-muted-foreground hover:text-white"
+              className="gap-2 text-muted-foreground hover:text-foreground"
             >
               <ArrowLeft className="h-4 w-4" />
               Back
             </Button>
             <div className="h-6 w-px bg-border" />
             <div>
-              <h1 className="text-3xl font-serif font-bold text-white">Progress Reports</h1>
+              <h1 className="text-3xl font-serif font-bold text-foreground">Progress Reports</h1>
               <p className="text-sm text-muted-foreground">Periodic learning evaluations and growth recommendations from your tutor</p>
             </div>
           </div>
@@ -85,7 +85,7 @@ export default function StudentProgressReportsPage() {
           <Card className="bg-card border-brand-gold/30 text-center py-12">
             <CardContent>
               <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-white mb-1">No Progress Reports Yet</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-1">No Progress Reports Yet</h3>
               <p className="text-sm text-muted-foreground max-w-sm mx-auto">
                 Your tutor writes periodic progress reports to summarize your development, strengths, and goals. Your first report will appear here once published.
               </p>
@@ -97,7 +97,7 @@ export default function StudentProgressReportsPage() {
               <Card key={report.id} className="bg-card border-brand-gold/30 overflow-hidden shadow-sm">
                 <CardHeader className="bg-brand-dark/50 border-b border-brand-gold/15 pb-4">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <CardTitle className="text-xl text-white font-serif flex items-center gap-2">
+                    <CardTitle className="text-xl text-foreground font-serif flex items-center gap-2">
                       <Calendar className="h-5 w-5 text-brand-gold" />
                       {report.period || 'Monthly Evaluation'}
                     </CardTitle>

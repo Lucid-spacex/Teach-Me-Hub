@@ -92,7 +92,7 @@ export function NotificationBell() {
       case 'ASSIGNMENT':
         return `/tutor/assignments`
       case 'GRADE':
-        return `/grades`
+        return `/tutor/grades`
       case 'MESSAGE':
         return `/tutor/messages`
       default:

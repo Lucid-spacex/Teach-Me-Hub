@@ -78,7 +78,7 @@ export function DashboardNav({ role, unreadCount = 0 }: DashboardNavProps) {
       { label: 'My Students', icon: Users, href: '/tutor/students' },
       { label: 'Sessions', icon: Calendar, href: '/tutor/sessions' },
       { label: 'Assignments', icon: FileText, href: '/tutor/assignments' },
-      { label: 'Grades', icon: BarChart3, href: '/grades' },
+      { label: 'Grades', icon: BarChart3, href: '/tutor/grades' },
       { label: 'Progress Reports', icon: FileText, href: '/tutor/progress-reports' },
       { label: 'Messages', icon: MessageSquare, href: '/tutor/messages' },
       { label: 'Message Admin', icon: Shield, href: '/tutor/messages?action=message-admin' },

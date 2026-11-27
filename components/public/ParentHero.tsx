@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowRight, Check, LockKeyhole } from 'lucide-react'
+import { ArrowRight, Check, LockKeyhole, ShieldCheck } from 'lucide-react'
 
 const trustPoints = ['Tutor applications reviewed', 'Grades reviewed by an administrator', 'Secure payments']
 
@@ -16,7 +16,7 @@ export function ParentHero() {
           <p className="adult-lede">Qualified tutors, visible progress, and clear communication—planned around your family.</p>
           <div className="adult-actions">
             <Link href="/register" className="public-button public-button-primary">Get started <ArrowRight aria-hidden="true" /></Link>
-            <Link href="/student-login" className="public-button public-button-secondary">Student login</Link>
+            <Link href="/tutors" className="public-button public-button-secondary">Become a Tutor <ArrowRight aria-hidden="true" /></Link>
           </div>
           <p className="adult-privacy"><LockKeyhole aria-hidden="true" /> A parent-managed account keeps student details private.</p>
           <ul className="adult-trust-line" aria-label="What families can expect">

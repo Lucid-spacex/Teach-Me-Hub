@@ -27,14 +27,14 @@ export default function StudentMessagesPage() {
             variant="ghost"
             size="sm"
             onClick={() => router.push('/student')}
-            className="gap-2 text-muted-foreground hover:text-white"
+            className="gap-2 text-muted-foreground hover:text-foreground"
           >
             <Home className="h-4 w-4" />
             Back to Dashboard
           </Button>
           <div className="h-6 w-px bg-border" />
           <div>
-            <h1 className="text-3xl font-serif font-bold text-white">Messages</h1>
+            <h1 className="text-3xl font-serif font-bold text-foreground">Messages</h1>
             <p className="text-sm text-muted-foreground">Communication guidelines</p>
           </div>
         </div>
@@ -47,7 +47,7 @@ export default function StudentMessagesPage() {
             <div className="p-2 rounded-full bg-yellow-500/20 text-yellow-500">
               <AlertCircle className="h-5 w-5" />
             </div>
-            <CardTitle className="text-white">Messaging Not Available</CardTitle>
+            <CardTitle className="text-foreground">Messaging Not Available</CardTitle>
           </div>
           <CardDescription className="text-muted-foreground">
             As of October 12, 2026, students can no longer send messages through the platform.
@@ -55,7 +55,7 @@ export default function StudentMessagesPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="bg-brand-dark/30 p-4 rounded-lg border border-brand-gold/10">
-            <h3 className="text-sm font-semibold text-white mb-2 flex items-center gap-2">
+            <h3 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
               <MessageSquare className="h-4 w-4 text-brand-gold" />
               How to Communicate
             </h3>
@@ -76,7 +76,7 @@ export default function StudentMessagesPage() {
           </div>
 
           <div className="bg-brand-gold/10 p-4 rounded-lg border border-brand-gold/20">
-            <h3 className="text-sm font-semibold text-white mb-2 flex items-center gap-2">
+            <h3 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
               <User className="h-4 w-4 text-brand-gold" />
               Why This Change?
             </h3>

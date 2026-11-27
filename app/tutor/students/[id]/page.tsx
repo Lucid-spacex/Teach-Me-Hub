@@ -422,7 +422,7 @@ export default function TutorStudentDetailPage({ params }: PageProps) {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => router.push('/grades')}
+                  onClick={() => router.push('/tutor/grades')}
                   className="gap-1.5 text-xs h-9"
                 >
                   <Award className="h-3.5 w-3.5" />

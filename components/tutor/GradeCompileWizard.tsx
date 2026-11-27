@@ -64,7 +64,8 @@ export function GradeCompileWizard({ open, onOpenChange, onSuccess, editingGrade
   // Form state
   const [formData, setFormData] = useState({
     enrollmentId: '',
-    period: '',
+    periodStart: '',
+    periodEnd: '',
     selectedItemIds: [] as string[],
     componentWeights: {
       QUIZ: 0,
@@ -86,7 +87,8 @@ export function GradeCompileWizard({ open, onOpenChange, onSuccess, editingGrade
         // Pre-fill from existing grade
         setFormData({
           enrollmentId: editingGrade.enrollmentId,
-          period: editingGrade.period,
+          periodStart: editingGrade.periodStart || '',
+          periodEnd: editingGrade.periodEnd || '',
           selectedItemIds: Array.isArray(editingGrade.frozenSnapshotItems) ? editingGrade.frozenSnapshotItems.map(item => item.id) : [],
           componentWeights: Array.isArray(editingGrade.components) ? editingGrade.components.reduce((acc, comp) => {
             acc[comp.type] = comp.weight
@@ -146,7 +148,8 @@ export function GradeCompileWizard({ open, onOpenChange, onSuccess, editingGrade
   const resetForm = () => {
     setFormData({
       enrollmentId: '',
-      period: '',
+      periodStart: '',
+      periodEnd: '',
       selectedItemIds: [],
       componentWeights: {
         QUIZ: 0,
@@ -208,8 +211,8 @@ export function GradeCompileWizard({ open, onOpenChange, onSuccess, editingGrade
       }))
       const draftGrade = await api.createCompiledGrade({
         enrollmentId: formData.enrollmentId,
-        periodStart: formData.period, // Use period as start date for now
-        periodEnd: formData.period, // Will need to be updated
+        periodStart: formData.periodStart,
+        periodEnd: formData.periodEnd,
         components,
       })
       const previewData = await api.previewCompiledGrade(draftGrade.id)
@@ -256,8 +259,8 @@ export function GradeCompileWizard({ open, onOpenChange, onSuccess, editingGrade
       if (editingGrade) {
         await api.updateCompiledGradeDraft(editingGrade.id, {
           enrollmentId: formData.enrollmentId,
-          periodStart: formData.period,
-          periodEnd: formData.period,
+          periodStart: formData.periodStart,
+          periodEnd: formData.periodEnd,
           components,
           tutorComment: formData.tutorComment || undefined,
         })
@@ -268,8 +271,8 @@ export function GradeCompileWizard({ open, onOpenChange, onSuccess, editingGrade
       } else {
         const grade = await api.createCompiledGrade({
           enrollmentId: formData.enrollmentId,
-          periodStart: formData.period,
-          periodEnd: formData.period,
+          periodStart: formData.periodStart,
+          periodEnd: formData.periodEnd,
           components,
           tutorComment: formData.tutorComment || undefined,
         })
@@ -383,8 +386,12 @@ export function GradeCompileWizard({ open, onOpenChange, onSuccess, editingGrade
                       toast({ title: 'Validation Error', description: 'Please select an enrollment', variant: 'destructive' })
                       return
                     }
-                    if (!formData.period.trim()) {
-                      toast({ title: 'Validation Error', description: 'Please enter a grading period', variant: 'destructive' })
+                    if (!formData.periodStart.trim()) {
+                      toast({ title: 'Validation Error', description: 'Please enter a period start date', variant: 'destructive' })
+                      return
+                    }
+                    if (!formData.periodEnd.trim()) {
+                      toast({ title: 'Validation Error', description: 'Please enter a period end date', variant: 'destructive' })
                       return
                     }
                     if (formData.selectedItemIds.length === 0) {
@@ -437,13 +444,26 @@ export function GradeCompileWizard({ open, onOpenChange, onSuccess, editingGrade
                     </SelectContent>
                   </Select>
                 </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="period">Period *</Label>
+                  <Label htmlFor="periodStart">Period Start Date *</Label>
                   <Input
-                    id="period"
-                    placeholder="e.g., Term 1 2024, Q1 2024"
-                    value={formData.period}
-                    onChange={(e) => setFormData({ ...formData, period: e.target.value })}
+                    id="periodStart"
+                    type="date"
+                    value={formData.periodStart}
+                    onChange={(e) => setFormData({ ...formData, periodStart: e.target.value })}
+                    disabled={!!editingGrade}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="periodEnd">Period End Date *</Label>
+                  <Input
+                    id="periodEnd"
+                    type="date"
+                    value={formData.periodEnd}
+                    onChange={(e) => setFormData({ ...formData, periodEnd: e.target.value })}
                     disabled={!!editingGrade}
                   />
                 </div>

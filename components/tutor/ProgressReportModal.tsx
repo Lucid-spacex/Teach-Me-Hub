@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { api } from '@/lib/api'
-import { CreateProgressReportRequest, Enrollment } from '@/lib/types'
+import { CreateProgressReportRequest, Enrollment, Student, TutorStudent } from '@/lib/types'
 import { Modal } from '@/components/shared/Modal'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -16,10 +16,12 @@ interface ProgressReportModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   enrollments: Enrollment[]
+  students: Student[]
+  tutorStudents: TutorStudent[]
   onSuccess: () => void
 }
 
-export function ProgressReportModal({ open, onOpenChange, enrollments, onSuccess }: ProgressReportModalProps) {
+export function ProgressReportModal({ open, onOpenChange, enrollments, students, tutorStudents, onSuccess }: ProgressReportModalProps) {
   const { toast } = useToast()
   const [formData, setFormData] = useState<CreateProgressReportRequest>({
     enrollmentId: '',
@@ -29,6 +31,22 @@ export function ProgressReportModal({ open, onOpenChange, enrollments, onSuccess
     areasToImprove: '',
   })
   const [loading, setLoading] = useState(false)
+
+  const getStudentName = (enrollmentId: string) => {
+    const tutorStudent = tutorStudents.find(ts => ts.enrollment?.id === enrollmentId)
+    if (tutorStudent?.student?.fullName) {
+      return tutorStudent.student.fullName
+    }
+    if (tutorStudent?.student?.firstName && tutorStudent?.student?.lastName) {
+      return `${tutorStudent.student.firstName} ${tutorStudent.student.lastName}`
+    }
+    return 'Unknown Student'
+  }
+
+  const getSubjectName = (enrollmentId: string) => {
+    const tutorStudent = tutorStudents.find(ts => ts.enrollment?.id === enrollmentId)
+    return tutorStudent?.subject?.name || tutorStudent?.enrollment?.subject?.name || 'Unknown Subject'
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -103,18 +121,18 @@ export function ProgressReportModal({ open, onOpenChange, enrollments, onSuccess
     >
       <form id="progress-report-form" onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="enrollment">Enrollment *</Label>
+          <Label htmlFor="enrollment">Student *</Label>
           <Select
             value={formData.enrollmentId}
             onValueChange={(value) => setFormData({ ...formData, enrollmentId: value })}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select an enrollment" />
+              <SelectValue placeholder="Select a student" />
             </SelectTrigger>
             <SelectContent>
               {enrollments.map((enrollment) => (
                 <SelectItem key={enrollment.id} value={enrollment.id}>
-                  Subject: {enrollment.subjectId} (ID: {enrollment.id})
+                  {getStudentName(enrollment.id)} - {getSubjectName(enrollment.id)}
                 </SelectItem>
               ))}
             </SelectContent>
